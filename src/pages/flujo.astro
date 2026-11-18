@@ -41,11 +41,11 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
           <p class="margin-0 text-base-dark text-uppercase text-bold font-sans-2xs">
             Expediente Pericial Seleccionado
           </p>
-          <h2 class="usa-summary-box__heading margin-y-05 text-primary-darker" id="caso-titulo">
+          <h2 class="usa-summary-box__heading margin-y-05" id="caso-titulo">
             Expediente Pericial en Sincronización...
           </h2>
           <p class="margin-0 font-body-2xs text-base-dark">
-            N° Caso: <strong id="caso-numero" class="text-primary-darker">Consultando...</strong> · Expediente: <strong id="caso-expediente" class="text-primary-darker">...</strong> ·{' '}
+            N° Caso: <strong id="caso-numero">Consultando...</strong> · Expediente: <strong id="caso-expediente">...</strong> ·{' '}
             <span class="usa-tag" id="caso-tipo">PERITAJE</span>
           </p>
         </div>
@@ -118,7 +118,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
             ISO 37301 §8.1 · ISO/IEC 27043 §8 · CRBV Arts. 28 y 60
           </span>
         </p>
-        <h2 class="margin-0 font-heading-lg text-primary-darker" id="fase-nombre">
+        <h2 class="margin-0 font-heading-lg" id="fase-nombre">
           {FASES_ISO[0].nombre}
         </h2>
       </div>
@@ -142,7 +142,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     <div class="grid-row grid-gap">
       <!-- Columna 1: Planillas Obligatorias de la Fase -->
       <div class="tablet:grid-col-6 margin-bottom-3 tablet:margin-bottom-0">
-        <h3 class="margin-top-0 font-heading-md text-primary-darker">Planillas Oficiales Folio (216mm × 330mm)</h3>
+        <h3 class="margin-top-0 font-heading-md">Planillas Oficiales Folio (216mm × 330mm)</h3>
         <p class="text-base-dark font-body-2xs">
           Documentos reglamentarios que deben completarse, rubricarse e imprimirse en esta etapa:
         </p>
@@ -176,7 +176,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
       <!-- Columna 2: Lista de Verificación de Controles ISO -->
       <div class="tablet:grid-col-6">
         <fieldset class="usa-fieldset">
-          <legend class="usa-legend font-heading-md text-bold text-primary-darker">
+          <legend class="usa-legend font-heading-md text-bold">
             Controles de Cumplimiento ISO Obligatorios
           </legend>
           <p class="text-base-dark font-body-2xs">
@@ -211,7 +211,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
       <div class="usa-summary-box__body">
         <div class="grid-row grid-gap flex-align-center">
           <div class="tablet:grid-col-7 margin-bottom-2 tablet:margin-bottom-0">
-            <h3 class="usa-summary-box__heading margin-top-0 margin-bottom-05 text-primary-darker" id="sello-crypto-heading">
+            <h3 class="usa-summary-box__heading margin-top-0 margin-bottom-05" id="sello-crypto-heading">
               Encadenamiento y Sello Criptográfico SHA-256
             </h3>
             <p class="margin-0 font-body-2xs text-base-dark">

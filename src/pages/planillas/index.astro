@@ -120,7 +120,7 @@ const PLANILLAS = [
   <!-- Encabezado de Página -->
   <div class="grid-row grid-gap flex-align-end flex-justify margin-bottom-3">
     <div class="tablet:grid-col-7">
-      <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
+      <h1 class="margin-top-0 margin-bottom-1">
         Catálogo de Planillas Oficiales en Folio (216mm × 330mm)
       </h1>
       <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
@@ -153,13 +153,13 @@ const PLANILLAS = [
   <ul class="usa-card-group">
     {PLANILLAS.map((p) => (
       <li class="usa-card tablet:grid-col-6 desktop:grid-col-4 planilla-card-item" data-fase={p.fase}>
-        <div class="usa-card__container border-top-05 border-primary-darker overflow-hidden">
+        <div class="usa-card__container overflow-hidden">
           <div class="usa-card__header">
             <div class="display-flex flex-justify flex-align-center margin-bottom-1">
-              <span class="usa-tag bg-primary font-mono-3xs">FASE {p.fase}</span>
-              <span class="usa-tag bg-base-lightest text-ink font-mono-3xs">{p.hojas}</span>
+              <span class="usa-tag font-mono-3xs">FASE {p.fase}</span>
+              <span class="usa-tag font-mono-3xs">{p.hojas}</span>
             </div>
-            <h2 class="usa-card__heading font-heading-sm text-primary-darker">{p.titulo}</h2>
+            <h2 class="usa-card__heading font-heading-sm">{p.titulo}</h2>
           </div>
 
           <div class="usa-card__body">

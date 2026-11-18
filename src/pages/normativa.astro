@@ -11,7 +11,7 @@ import { NORMATIVAS_INICIALES } from '../lib/data/seed';
 <AppLayout title="Base Normativa RAG — SHA256.US" activeNav="normativa">
   <!-- Encabezado de Página -->
   <div class="margin-bottom-3">
-    <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
+    <h1 class="margin-top-0 margin-bottom-1">
       Base de Conocimiento Normativo RAG
     </h1>
     <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
@@ -93,16 +93,16 @@ import { NORMATIVAS_INICIALES } from '../lib/data/seed';
   <ul class="usa-card-group" id="contenedor-normas">
     {NORMATIVAS_INICIALES.map((norma) => (
       <li class="usa-card tablet:grid-col-6 desktop:grid-col-4 card-norma" data-tipo={norma.tipo}>
-        <div class="usa-card__container border-top-05 border-primary-darker overflow-hidden">
+        <div class="usa-card__container overflow-hidden">
           <div class="usa-card__header">
             <div class="display-flex flex-justify flex-align-center margin-bottom-1">
-              <span class="usa-tag bg-primary-darker font-mono-3xs">{norma.tipo}</span>
+              <span class="usa-tag font-mono-3xs">{norma.tipo}</span>
               <span class="font-mono-3xs text-base-dark">Vigencia: {norma.version}</span>
             </div>
-            <h2 class="usa-card__heading font-heading-sm text-primary">{norma.codigo}</h2>
+            <h2 class="usa-card__heading font-heading-sm">{norma.codigo}</h2>
           </div>
           <div class="usa-card__body">
-            <p class="text-bold text-primary-darker margin-top-0 margin-bottom-1 font-body-2xs">
+            <p class="text-bold margin-top-0 margin-bottom-1 font-body-2xs">
               {norma.nombre}
             </p>
             <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-2">
@@ -110,7 +110,7 @@ import { NORMATIVAS_INICIALES } from '../lib/data/seed';
             </p>
             {norma.articulos && norma.articulos.length > 0 && (
               <div class="bg-base-lightest border-1px border-base-lighter padding-1">
-                <p class="font-sans-3xs text-bold text-primary-darker text-uppercase margin-top-0 margin-bottom-05">
+                <p class="font-sans-3xs text-bold text-uppercase margin-top-0 margin-bottom-05">
                   Artículos y Módulos Clave:
                 </p>
                 <ul class="usa-list margin-top-0 margin-bottom-0 font-body-3xs">

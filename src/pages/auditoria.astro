@@ -11,7 +11,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
   <!-- Encabezado de Página -->
   <div class="grid-row grid-gap flex-align-center flex-justify margin-bottom-3">
     <div class="tablet:grid-col-8">
-      <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
+      <h1 class="margin-top-0 margin-bottom-1">
         Registro de Auditoría Inmutable (Cadena SHA-256)
       </h1>
       <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
@@ -59,11 +59,11 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
   <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
   <section class="margin-bottom-4" aria-labelledby="bloques-registrados-heading">
     <div class="display-flex flex-justify flex-align-center margin-bottom-2">
-      <h2 class="margin-0 font-heading-lg text-primary-darker" id="bloques-registrados-heading">
+      <h2 class="margin-0 font-heading-lg" id="bloques-registrados-heading">
         Bloques Registrados en la Cadena
       </h2>
       <div class="font-body-2xs text-base-dark">
-        Total bloques: <strong id="total-bloques" class="text-primary-darker">Cargando...</strong>
+        Total bloques: <strong id="total-bloques">Cargando...</strong>
       </div>
     </div>
 
@@ -171,12 +171,12 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
       const hashActTrunc = `${e.hashActual.substring(0, 8)}...${e.hashActual.substring(56)}`;
 
       tr.innerHTML = `
-        <th scope="row" class="text-bold text-primary-darker">#${idx + 1}</th>
+        <th scope="row" class="text-bold">#${idx + 1}</th>
         <td class="font-mono-2xs text-no-wrap">
           ${new Date(e.timestamp).toLocaleString('es-VE')}
         </td>
         <td>
-          <strong class="text-primary">${e.casoId}</strong>
+          <strong>${e.casoId}</strong>
         </td>
         <td>
           <span class="usa-tag bg-base-lighter text-ink text-bold">
@@ -188,7 +188,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
         <td class="font-mono-2xs text-base-dark" title="${e.hashAnterior}">
           <code>${hashAntTrunc}</code>
         </td>
-        <td class="font-mono-2xs text-primary text-bold" title="${e.hashActual}">
+        <td class="font-mono-2xs text-bold" title="${e.hashActual}">
           <code>${hashActTrunc}</code>
         </td>
         <td>

@@ -36,7 +36,7 @@ const navItems = [
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
-    <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css" />
+    <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css?v=3.14.0" />
     <script is:inline src="/assets/uswds/js/uswds-init.min.js"></script>
   </head>
   <body>
@@ -127,7 +127,7 @@ const navItems = [
               <li class="usa-nav__primary-item">
                 <a
                   href={item.href}
-                  class={`usa-nav-link ${activeNav === item.key ? 'usa-current' : ''}`.trim()}
+                  class={`usa-nav__link ${activeNav === item.key ? 'usa-current' : ''}`.trim()}
                 >
                   <span>{item.shortLabel || item.label}</span>
                 </a>
