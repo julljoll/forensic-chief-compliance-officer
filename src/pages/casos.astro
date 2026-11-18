@@ -39,43 +39,49 @@ import Alert from '../components/uswds/Alert.astro';
     </div>
   </div>
 
-  <!-- USWDS: Form controls for filtering | https://designsystem.digital.gov/components/form/ -->
-  <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
-    <div class="grid-row grid-gap flex-align-end">
-      <div class="tablet:grid-col-5">
-        <label class="usa-label margin-top-0" for="input-search">
-          Buscar por N° Caso, Expediente o Serial
-        </label>
-        <input
-          class="usa-input"
-          id="input-search"
-          name="search"
-          type="search"
-          placeholder="Ej: MP-01, iPhone, 7f83..."
-        />
-      </div>
-      <div class="tablet:grid-col-4">
-        <label class="usa-label margin-top-0" for="select-filtro-tipo">
-          Tipología Pericial
-        </label>
-        <select class="usa-select" id="select-filtro-tipo" name="filtro-tipo">
-          <option value="todos">Todas las tipologías</option>
-          <option value="forense_whatsapp">WhatsApp Forense</option>
-          <option value="forense_email">Email Forense (RFC 3227)</option>
-          <option value="forense_discoduro">Disco Duro (E01/DD)</option>
-          <option value="forense_imagen">Imagen Forense (ISO 27037)</option>
-        </select>
-      </div>
-      <div class="tablet:grid-col-3">
-        <p class="margin-bottom-1 font-body-2xs text-base-dark">
-          Mostrando: <strong id="contador-casos" class="text-primary-darker">0</strong> expedientes
-        </p>
+  <!-- USWDS: Card with Filter Controls | https://designsystem.digital.gov/components/card/ -->
+  <div class="usa-card width-full margin-bottom-3">
+    <div class="usa-card__container padding-3">
+      <div class="grid-row grid-gap flex-align-end">
+        <div class="tablet:grid-col-5">
+          <div class="usa-form-group margin-top-0">
+            <label class="usa-label margin-top-0" for="input-search">
+              Buscar por N° Caso, Expediente o Serial
+            </label>
+            <input
+              class="usa-input"
+              id="input-search"
+              name="search"
+              type="search"
+              placeholder="Ej: MP-01, iPhone, 7f83..."
+            />
+          </div>
+        </div>
+        <div class="tablet:grid-col-4">
+          <div class="usa-form-group margin-top-0">
+            <label class="usa-label margin-top-0" for="select-filtro-tipo">
+              Tipología Pericial
+            </label>
+            <select class="usa-select" id="select-filtro-tipo" name="filtro-tipo">
+              <option value="todos">Todas las tipologías</option>
+              <option value="forense_whatsapp">WhatsApp Forense</option>
+              <option value="forense_email">Email Forense (RFC 3227)</option>
+              <option value="forense_discoduro">Disco Duro (E01/DD)</option>
+              <option value="forense_imagen">Imagen Forense (ISO 27037)</option>
+            </select>
+          </div>
+        </div>
+        <div class="tablet:grid-col-3">
+          <p class="margin-bottom-1 font-body-2xs text-base-dark">
+            Mostrando: <strong id="contador-casos" class="text-primary-darker">0</strong> expedientes
+          </p>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
-  <div class="bg-white padding-3 border border-base-lighter margin-bottom-4">
+  <section class="margin-bottom-4" aria-label="Directorio de Expedientes Periciales">
     <div class="usa-table-container--scrollable" tabindex="0">
       <table class="usa-table usa-table--striped usa-table--compact width-full" id="tabla-expedientes">
         <caption>Directorio de expedientes periciales registrados en el CMS de cumplimiento</caption>
@@ -97,7 +103,7 @@ import Alert from '../components/uswds/Alert.astro';
         </tbody>
       </table>
     </div>
-  </div>
+  </section>
 
   <!-- USWDS: Modal (Large) | https://designsystem.digital.gov/components/modal/ -->
   <div

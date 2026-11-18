@@ -18,27 +18,31 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
     </p>
   </div>
 
-  <!-- Selector de Caso a Exportar -->
-  <div class="bg-white border-1px border-base-lighter padding-3 margin-bottom-3">
-    <div class="grid-row grid-gap flex-align-center flex-justify">
-      <div class="tablet:grid-col-7">
-        <span class="font-sans-3xs text-bold text-base-dark text-uppercase">Expediente Activo para Exportación:</span>
-        <h2 class="margin-top-05 margin-bottom-05 font-heading-lg text-primary-darker" id="exportar-caso-titulo">
-          Consultando base de datos MySQL...
-        </h2>
-        <div class="font-body-2xs text-base-dark">
-          Consignante: <strong id="exportar-caso-consignante">—</strong> · Perito: <strong id="exportar-caso-perito">—</strong>
+  <!-- USWDS: Summary box | https://designsystem.digital.gov/components/summary-box/ -->
+  <div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="exportar-caso-titulo">
+    <div class="usa-summary-box__body">
+      <div class="grid-row grid-gap flex-align-center flex-justify">
+        <div class="tablet:grid-col-7">
+          <span class="font-sans-3xs text-bold text-base-dark text-uppercase">Expediente Activo para Exportación:</span>
+          <h2 class="usa-summary-box__heading margin-top-05 margin-bottom-05 text-primary-darker" id="exportar-caso-titulo">
+            Consultando base de datos MySQL...
+          </h2>
+          <div class="font-body-2xs text-base-dark">
+            Consignante: <strong id="exportar-caso-consignante">—</strong> · Perito: <strong id="exportar-caso-perito">—</strong>
+          </div>
         </div>
-      </div>
 
-      <div class="tablet:grid-col-5">
-        <!-- USWDS: Select | https://designsystem.digital.gov/components/select/ -->
-        <label class="usa-label margin-top-0" for="select-exportar-caso">
-          Seleccionar Expediente
-        </label>
-        <select class="usa-select" id="select-exportar-caso">
-          <option value="">Consultando base de datos MySQL...</option>
-        </select>
+        <div class="tablet:grid-col-5">
+          <div class="usa-form-group margin-top-0">
+            <!-- USWDS: Select | https://designsystem.digital.gov/components/select/ -->
+            <label class="usa-label margin-top-0" for="select-exportar-caso">
+              Seleccionar Expediente
+            </label>
+            <select class="usa-select" id="select-exportar-caso">
+              <option value="">Consultando base de datos MySQL...</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -59,10 +63,10 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
     </SummaryBox>
   </div>
 
-  <!-- Contenedor de Selección de Documentos para el Paquete -->
-  <!-- USWDS: Checkbox | https://designsystem.digital.gov/components/checkbox/ -->
-  <div class="bg-white border-1px border-base-lighter padding-3 margin-bottom-3">
-    <fieldset class="usa-fieldset">
+  <!-- USWDS: Card with Checkboxes | https://designsystem.digital.gov/components/card/ -->
+  <div class="usa-card width-full margin-bottom-3">
+    <div class="usa-card__container padding-3">
+      <fieldset class="usa-fieldset">
       <legend class="usa-legend font-heading-lg text-bold text-primary-darker margin-bottom-2">
         Seleccione los Documentos y Entregables a Incluir
       </legend>
@@ -163,6 +167,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
         </svg>
         <span>Generar y Descargar Paquete ZIP Forense</span>
       </button>
+    </div>
     </div>
   </div>
 </AppLayout>

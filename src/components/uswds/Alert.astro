@@ -16,12 +16,18 @@ const { type = 'info', heading, slim = false, noIcon = false, id, className = ''
 const typeClass = `usa-alert--${type}`;
 const slimClass = slim ? 'usa-alert--slim' : '';
 const noIconClass = noIcon ? 'usa-alert--no-icon' : '';
+const headingId = heading && id ? `${id}-heading` : undefined;
 ---
 
 <!-- USWDS: Alert | https://designsystem.digital.gov/components/alert/ -->
-<div id={id} class={`usa-alert ${typeClass} ${slimClass} ${noIconClass} ${className}`.trim()} role={type === 'error' ? 'alert' : 'status'}>
+<div
+  id={id}
+  class={`usa-alert ${typeClass} ${slimClass} ${noIconClass} ${className}`.trim()}
+  role={type === 'error' ? 'alert' : 'region'}
+  aria-labelledby={headingId}
+>
   <div class="usa-alert__body">
-    {heading && <h2 class="usa-alert__heading">{heading}</h2>}
+    {heading && <h4 class="usa-alert__heading" id={headingId}>{heading}</h4>}
     <div class="usa-alert__text">
       <slot />
     </div>

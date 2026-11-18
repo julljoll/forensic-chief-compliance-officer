@@ -37,50 +37,54 @@ import { NORMATIVAS_INICIALES } from '../lib/data/seed';
     </SummaryBox>
   </div>
 
-  <!-- Barra de Búsqueda y Filtros de Normas -->
-  <div class="bg-white border-1px border-base-lighter padding-2 margin-bottom-3">
-    <div class="grid-row grid-gap flex-align-end">
-      <div class="tablet:grid-col-5">
-        <!-- USWDS: Text input | https://designsystem.digital.gov/components/text-input/ -->
-        <label class="usa-label margin-top-0" for="input-search-normas">
-          Filtrar compendio normativo
-        </label>
-        <input
-          class="usa-input"
-          id="input-search-normas"
-          type="search"
-          placeholder="Buscar por código, nombre o descripción..."
-        />
-      </div>
-      <div class="tablet:grid-col-7 margin-top-2 tablet:margin-top-0">
-        <!-- USWDS: Button group flex-wrap | https://designsystem.digital.gov/components/button-group/ -->
-        <ul class="usa-button-group flex-wrap" id="filtros-tipo-norma">
-          <li class="usa-button-group__item">
-            <button type="button" class="usa-button font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="todos">
-              Todas ({NORMATIVAS_INICIALES.length})
-            </button>
-          </li>
-          <li class="usa-button-group__item">
-            <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="ISO">
-              ISO/IEC
-            </button>
-          </li>
-          <li class="usa-button-group__item">
-            <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="NIST">
-              NIST
-            </button>
-          </li>
-          <li class="usa-button-group__item">
-            <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="LEY">
-              Leyes
-            </button>
-          </li>
-          <li class="usa-button-group__item">
-            <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="MANUAL">
-              Manuales
-            </button>
-          </li>
-        </ul>
+  <!-- USWDS: Card with Search and Filters | https://designsystem.digital.gov/components/card/ -->
+  <div class="usa-card width-full margin-bottom-3">
+    <div class="usa-card__container padding-2">
+      <div class="grid-row grid-gap flex-align-end">
+        <div class="tablet:grid-col-5">
+          <div class="usa-form-group margin-top-0">
+            <!-- USWDS: Text input | https://designsystem.digital.gov/components/text-input/ -->
+            <label class="usa-label margin-top-0" for="input-search-normas">
+              Filtrar compendio normativo
+            </label>
+            <input
+              class="usa-input"
+              id="input-search-normas"
+              type="search"
+              placeholder="Buscar por código, nombre o descripción..."
+            />
+          </div>
+        </div>
+        <div class="tablet:grid-col-7 margin-top-2 tablet:margin-top-0">
+          <!-- USWDS: Button group flex-wrap | https://designsystem.digital.gov/components/button-group/ -->
+          <ul class="usa-button-group flex-wrap" id="filtros-tipo-norma">
+            <li class="usa-button-group__item">
+              <button type="button" class="usa-button font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="todos">
+                Todas ({NORMATIVAS_INICIALES.length})
+              </button>
+            </li>
+            <li class="usa-button-group__item">
+              <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="ISO">
+                ISO/IEC
+              </button>
+            </li>
+            <li class="usa-button-group__item">
+              <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="NIST">
+                NIST
+              </button>
+            </li>
+            <li class="usa-button-group__item">
+              <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="LEY">
+                Leyes
+              </button>
+            </li>
+            <li class="usa-button-group__item">
+              <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-norma" data-tipo="MANUAL">
+                Manuales
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>

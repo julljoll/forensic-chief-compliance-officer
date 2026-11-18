@@ -43,20 +43,26 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
     </div>
   </div>
 
-  <!-- Selector de Caso Activo -->
-  <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
-    <div class="grid-row grid-gap flex-align-center">
-      <div class="tablet:grid-col-8">
-        <p class="margin-0 text-base-dark text-uppercase text-bold font-sans-2xs">Expediente en Custodia</p>
-        <h2 class="margin-0 font-heading-lg text-primary-darker" id="custodia-caso-titulo">Expediente en Custodia...</h2>
-      </div>
-      <div class="tablet:grid-col-4 margin-top-2 tablet:margin-top-0">
-        <label class="usa-label margin-top-0" for="select-custodia-caso">
-          Seleccionar Expediente en Custodia
-        </label>
-        <select class="usa-select" id="select-custodia-caso" name="custodia-caso">
-          <option value="">Consultando base de datos MySQL...</option>
-        </select>
+  <!-- USWDS: Summary box | https://designsystem.digital.gov/components/summary-box/ -->
+  <div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="custodia-caso-titulo">
+    <div class="usa-summary-box__body">
+      <div class="grid-row grid-gap flex-align-center">
+        <div class="tablet:grid-col-7">
+          <p class="margin-0 text-base-dark text-uppercase text-bold font-sans-2xs">Expediente en Custodia Activo</p>
+          <h3 class="usa-summary-box__heading margin-top-05 margin-bottom-0 text-primary-darker" id="custodia-caso-titulo">
+            Expediente en Custodia...
+          </h3>
+        </div>
+        <div class="tablet:grid-col-5 margin-top-2 tablet:margin-top-0">
+          <div class="usa-form-group margin-top-0">
+            <label class="usa-label margin-top-0" for="select-custodia-caso">
+              Seleccionar Expediente en Custodia
+            </label>
+            <select class="usa-select" id="select-custodia-caso" name="custodia-caso">
+              <option value="">Consultando base de datos MySQL...</option>
+            </select>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -142,10 +148,12 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
   </SummaryBox>
 
   <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
-  <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
+  <section class="margin-bottom-4" aria-labelledby="historial-transferencias-heading">
     <div class="grid-row grid-gap flex-justify flex-align-center margin-bottom-2">
       <div class="tablet:grid-col-8">
-        <h2 class="margin-0 font-heading-md text-primary-darker">Historial de Transferencias y Traspasos de Custodia</h2>
+        <h2 class="margin-0 font-heading-md text-primary-darker" id="historial-transferencias-heading">
+          Historial de Transferencias y Traspasos de Custodia
+        </h2>
       </div>
       <div class="tablet:grid-col-4 tablet:display-flex tablet:flex-justify-end margin-top-2 tablet:margin-top-0">
         <button id="btn-nueva-transferencia" type="button" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
@@ -203,7 +211,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
         </tbody>
       </table>
     </div>
-  </div>
+  </section>
 </AppLayout>
 
 <script>
