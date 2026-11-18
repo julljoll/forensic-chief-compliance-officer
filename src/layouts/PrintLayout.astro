@@ -1,8 +1,8 @@
 ---
 /**
  * SHA256.US — PrintLayout para Planillas Oficiales en Folio (216mm x 330mm)
- * Aislado 100% de estilos USWDS con soporte para impresión web limpia o exportación a PDF.
- * Incluye barra de control no imprimible con conmutador de Modo Blanco vs Con Datos.
+ * Aislado 100% en .folio-forense-aislado con soporte para impresión web limpia o exportación a PDF.
+ * Incluye barra superior USWDS no imprimible (.usa-header.no-print) con conmutador de Modo Blanco vs Con Datos.
  */
 import '../styles/folio-aislado.css';
 
@@ -11,7 +11,7 @@ interface Props {
   activeSlug?: string;
 }
 
-const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = Astro.props;
+const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
 ---
 
 <!doctype html>
@@ -21,145 +21,99 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <script is:inline src="/assets/uswds/js/uswds-init.min.js"></script>
     <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css" />
-    <style is:inline>
-      html, body {
-        margin: 0;
-        padding: 0;
-        background-color: #0F172A;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        min-height: 100vh;
-      }
-      @media print {
-        html, body {
-          background-color: #FFFFFF !important;
-          background: #FFFFFF !important;
-        }
-      }
-      .no-print-bar {
-        width: 100%;
-        max-width: 216mm;
-        margin: 14px auto 0 auto;
-        background: #1E293B;
-        color: #F8FAFC;
-        padding: 10px 16px;
-        border-radius: 6px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        font-family: 'Public Sans Web', -apple-system, sans-serif;
-        font-size: 13px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        border: 1px solid #334155;
-        box-sizing: border-box;
-      }
-      .mode-toggle-group {
-        display: flex;
-        gap: 6px;
-        background: #0F172A;
-        padding: 3px;
-        border-radius: 4px;
-        border: 1px solid #334155;
-      }
-      .mode-btn {
-        background: transparent;
-        border: none;
-        color: #94A3B8;
-        padding: 4px 10px;
-        border-radius: 3px;
-        font-size: 11.5px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: all 0.15s ease;
-      }
-      .mode-btn.active {
-        background: #005EA2;
-        color: #FFFFFF;
-      }
-      .mode-btn:hover:not(.active) {
-        color: #FFFFFF;
-        background: #1E293B;
-      }
-      @media print {
-        .no-print-bar {
-          display: none !important;
-        }
-      }
-    </style>
   </head>
-  <body>
-    <!-- Barra de Control de Impresión (se oculta automáticamente al imprimir) -->
-    <div class="no-print-bar">
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <svg class="usa-icon" aria-hidden="true" role="img" style="width: 18px; height: 18px; fill: #D9A700;">
-          <use xlink:href="/assets/uswds/img/sprite.svg#verified_user"></use>
-        </svg>
-        <div>
-          <strong style="color: #F8FAFC; font-size: 13px;">FORMATO FOLIO JUDICIAL:</strong>
-          <span style="color: #94A3B8; font-size: 12px; margin-left: 4px;">216mm × 330mm (Oficio)</span>
+  <body class="bg-base-darkest">
+    <!-- USWDS: Header | https://designsystem.digital.gov/components/header/ -->
+    <!-- Barra de Control de Impresión (se oculta automáticamente al imprimir vía @media print en folio-aislado.css) -->
+    <header class="usa-header usa-header--basic no-print bg-white border-bottom-1px border-base-lighter">
+      <div class="grid-container-widescreen padding-y-105">
+        <div class="grid-row grid-gap flex-align-center flex-justify">
+          <div class="tablet:grid-col-auto display-flex flex-align-center">
+            <svg class="usa-icon text-primary margin-right-1" aria-hidden="true" focusable="false" role="img">
+              <use href="/assets/uswds/img/sprite.svg#verified_user"></use>
+            </svg>
+            <div>
+              <strong class="text-primary-darker font-body-2xs">FORMATO FOLIO JUDICIAL:</strong>
+              <span class="text-base-dark font-body-2xs margin-left-05">216mm × 330mm (Oficio)</span>
+            </div>
+          </div>
+
+          <!-- Selector de Modo de Visualización / Impresión -->
+          <div class="tablet:grid-col-auto" id="mode-toggle-container">
+            <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
+            <ul class="usa-button-group usa-button-group--segmented">
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  class="usa-button"
+                  id="btn-modo-blanco"
+                  title="Muestra el formulario completamente en blanco con líneas para llenado manual"
+                >
+                  Plantilla en Blanco (Manual)
+                </button>
+              </li>
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  class="usa-button usa-button--outline"
+                  id="btn-modo-datos"
+                  title="Rellena los campos con los datos del expediente seleccionado"
+                >
+                  Con Datos de Caso
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          <div class="tablet:grid-col-auto">
+            <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
+            <ul class="usa-button-group">
+              <li class="usa-button-group__item">
+                <a href="/planillas" class="usa-button usa-button--outline">
+                  Catálogo
+                </a>
+              </li>
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  id="btn-descargar-word"
+                  class="usa-button usa-button--base"
+                  title="Descargar esta planilla oficial en formato editable Microsoft Word (.docx)"
+                >
+                  <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                    <use href="/assets/uswds/img/sprite.svg#file_download"></use>
+                  </svg>
+                  <span id="txt-btn-word">Word (.docx)</span>
+                </button>
+              </li>
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  id="btn-imprimir-folio"
+                  class="usa-button"
+                >
+                  <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                    <use href="/assets/uswds/img/sprite.svg#print"></use>
+                  </svg>
+                  <span>Imprimir / PDF</span>
+                </button>
+              </li>
+            </ul>
+          </div>
         </div>
       </div>
+    </header>
 
-      <!-- Selector de Modo de Visualización / Impresión -->
-      <div class="mode-toggle-group" id="mode-toggle-container">
-        <button
-          type="button"
-          class="mode-btn active"
-          id="btn-modo-blanco"
-          title="Muestra el formulario completamente en blanco con líneas para llenado manual"
-        >
-          Plantilla en Blanco (Manual)
-        </button>
-        <button
-          type="button"
-          class="mode-btn"
-          id="btn-modo-datos"
-          title="Rellena los campos con los datos del expediente seleccionado"
-        >
-          Con Datos de Caso
-        </button>
+    <!-- EXCEPCIÓN FUERA DE USWDS: Contenedor Raíz Aislado Monocromático Folio (216mm × 330mm) -->
+    <main id="main-content" class="display-flex flex-column flex-align-center">
+      <div class="folio-forense-aislado">
+        <slot />
       </div>
+    </main>
 
-      <div style="display: flex; gap: 8px; align-items: center;">
-        <button
-          type="button"
-          onclick="window.location.href='/planillas'"
-          style="background: transparent; border: 1px solid #475569; color: #CBD5E1; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;"
-        >
-          Catálogo
-        </button>
-        <button
-          type="button"
-          id="btn-descargar-word"
-          style="background: #112E51; border: 1px solid #334155; color: #FFFFFF; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;"
-          title="Descargar esta planilla oficial en formato editable Microsoft Word (.docx)"
-        >
-          <svg class="usa-icon" aria-hidden="true" role="img" style="width: 16px; height: 16px; fill: #FFFFFF;">
-            <use xlink:href="/assets/uswds/img/sprite.svg#file_download"></use>
-          </svg>
-          <span id="txt-btn-word">Word (.docx)</span>
-        </button>
-        <button
-          type="button"
-          id="btn-imprimir-folio"
-          onclick="window.print()"
-          style="background: #005EA2; border: 1px solid #005EA2; color: #FFFFFF; font-weight: 700; padding: 6px 14px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 6px;"
-        >
-          <svg class="usa-icon" aria-hidden="true" role="img" style="width: 16px; height: 16px; fill: #FFFFFF;">
-            <use xlink:href="/assets/uswds/img/sprite.svg#print"></use>
-          </svg>
-          <span>Imprimir / PDF</span>
-        </button>
-      </div>
-    </div>
-
-    <!-- Contenedor Raíz Aislado Monocromático -->
-    <div class="folio-forense-aislado">
-      <slot />
-    </div>
-
+    <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
     <script>
       import { exportCurrentPlanillaToWordDocx } from '../lib/export/exportWordDocx';
 
@@ -170,14 +124,15 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
       const btnDatos = document.getElementById('btn-modo-datos');
       const btnWord = document.getElementById('btn-descargar-word');
       const txtWord = document.getElementById('txt-btn-word');
+      const btnImprimir = document.getElementById('btn-imprimir-folio');
 
       function updateActiveBtn(modo: string) {
         if (modo === 'datos') {
-          btnDatos?.classList.add('active');
-          btnBlanco?.classList.remove('active');
+          btnDatos?.classList.remove('usa-button--outline');
+          btnBlanco?.classList.add('usa-button--outline');
         } else {
-          btnBlanco?.classList.add('active');
-          btnDatos?.classList.remove('active');
+          btnBlanco?.classList.remove('usa-button--outline');
+          btnDatos?.classList.add('usa-button--outline');
         }
       }
 
@@ -193,6 +148,10 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
         const u = new URL(window.location.href);
         u.searchParams.set('modo', 'datos');
         window.location.href = u.toString();
+      });
+
+      btnImprimir?.addEventListener('click', () => {
+        window.print();
       });
 
       // Manejador de descarga Microsoft Word (.docx)

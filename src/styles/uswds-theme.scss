@@ -1,5 +1,6 @@
 // SHA256.US — Tema USWDS institucional (DC3 Cyber Forensics Light).
 // Compilado por scripts/build-uswds.mjs → public/assets/uswds/css/uswds.min.css
+// Fuente: https://designsystem.digital.gov/documentation/settings/
 @use "uswds-core" with (
   $theme-image-path: "../img",
   $theme-font-path: "../fonts",
@@ -19,18 +20,24 @@
   $theme-global-link-styles: true,
   $theme-global-paragraph-styles: true,
 
-  // Paleta (tokens USWDS más cercanos a los hex DC3)
-  $theme-color-primary: "blue-60v",          // #005EA2 Vivid Blue
+  // Paleta (tokens USWDS DC3 Cyber Forensics Light)
+  $theme-color-primary: "blue-60v",             // #005EA2 Vivid Blue
   $theme-color-primary-dark: "blue-warm-70v",
-  $theme-color-primary-darker: "blue-warm-80v", // ≈ #112E51 Navy
-  $theme-color-base-lightest: "gray-cool-5",  // #F0F4F8 canvas aprox.
+  $theme-color-primary-darker: "blue-warm-80v", // #112E51 Dark Navy Ink
+  $theme-color-base-lightest: "gray-cool-5",    // #F0F4F8 Cool Gray 5
+  $theme-color-base-ink: "blue-warm-80v",
   $theme-color-accent-warm: "gold-20v",
   $theme-color-success: "green-cool-50v",
   $theme-color-warning: "gold-20v",
   $theme-color-error: "red-warm-50v",
 
+  $theme-body-background-color: "gray-cool-5",
+  $theme-banner-background-color: "ink",
+  $theme-banner-max-width: "widescreen",
   $theme-header-max-width: "widescreen",
+  $theme-identifier-max-width: "widescreen",
   $theme-site-margins-width: 3,
   $theme-sidenav-font-family: "ui"
 );
 @forward "uswds";
+

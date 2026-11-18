@@ -1,23 +1,30 @@
 ---
 /**
  * SHA256.US — USWDS Summary Box
- * Muestra objetivos de la fase, normativas aplicadas y advertencias de nulidad probatoria.
+ * Fuente: https://designsystem.digital.gov/components/summary-box/
  */
 interface Props {
   heading?: string;
+  headingId?: string;
   className?: string;
 }
 
-const { heading = 'Marco Normativo y Requisitos Obligatorios', className = '' } = Astro.props;
+const {
+  heading = 'Marco Normativo y Requisitos Obligatorios',
+  headingId = 'summary-box-key-information',
+  className = '',
+} = Astro.props;
 ---
 
-<div class={`usa-summary-box ${className}`} role="region" aria-labelledby="summary-box-key-information">
+<!-- USWDS: Summary box | https://designsystem.digital.gov/components/summary-box/ -->
+<div class={`usa-summary-box ${className}`.trim()} role="region" aria-labelledby={headingId}>
   <div class="usa-summary-box__body">
-    <h3 class="usa-summary-box__heading" id="summary-box-key-information">
+    <h2 class="usa-summary-box__heading" id={headingId}>
       {heading}
-    </h3>
+    </h2>
     <div class="usa-summary-box__text">
       <slot />
     </div>
   </div>
 </div>
+

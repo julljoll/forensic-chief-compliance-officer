@@ -1,15 +1,20 @@
 ---
 /**
- * SHA256.US — Ciclo Pericial ISO (F0 - F5) con Gating Criptográfico y USWDS
+ * SHA256.US — Ciclo Pericial ISO (F0 - F5) del CMS con Gating Criptográfico y USWDS Estricto
  * Control estricto de cumplimiento: ISO/IEC 27037, 27042, 27043, 37301 y MUCC-2017.
+ * Fuentes:
+ * - https://designsystem.digital.gov/components/step-indicator/
+ * - https://designsystem.digital.gov/components/button-group/
+ * - https://designsystem.digital.gov/components/summary-box/
+ * - https://designsystem.digital.gov/components/collection/
+ * - https://designsystem.digital.gov/components/checkbox/
+ * - https://designsystem.digital.gov/components/tag/
  */
 import AppLayout from '../layouts/AppLayout.astro';
 import StepIndicator from '../components/uswds/StepIndicator.astro';
 import SummaryBox from '../components/uswds/SummaryBox.astro';
-import Alert from '../components/uswds/Alert.astro';
 import { FASES_ISO } from '../lib/domain/gating';
 
-// Mapeo amigable de nombres de planillas
 const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
   acta_consentimiento: { titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento' },
   acta_entrevista: { titulo: 'Acta de Entrevista Forense', slug: 'acta-entrevista' },
@@ -29,210 +34,192 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
 
 <AppLayout title="Ciclo Pericial ISO — SHA256.US" activeNav="flujo">
   <!-- Selector y Encabezado del Expediente Activo -->
-  <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #112E51; border-radius: 4px; padding: 20px 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px;">
-      <div>
-        <div style="font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.5px;">
+  <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
+    <div class="grid-row grid-gap flex-align-center margin-bottom-2">
+      <div class="tablet:grid-col-8">
+        <p class="margin-0 text-base-dark text-uppercase text-bold font-sans-2xs">
           Expediente Pericial Seleccionado
-        </div>
-        <h1 style="font-size: 22px; font-weight: 800; color: #112E51; margin: 4px 0;" id="caso-titulo">
+        </p>
+        <h1 class="margin-y-05" id="caso-titulo">
           Expediente Pericial en Sincronización...
         </h1>
-        <div style="font-size: 13px; color: #475569; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
-          <span>N° Caso: <strong style="color: #005EA2;" id="caso-numero">Consultando...</strong></span>
-          <span>•</span>
-          <span>Expediente: <strong id="caso-expediente">...</strong></span>
-          <span>•</span>
-          <span class="usa-tag" style="background-color: #112E51; color: #FFF; font-size: 11px;" id="caso-tipo">
-            PERITAJE
-          </span>
-        </div>
+        <p class="margin-0">
+          N° Caso: <strong id="caso-numero">Consultando...</strong> · Expediente: <strong id="caso-expediente">...</strong> ·{' '}
+          <span class="usa-tag" id="caso-tipo">PERITAJE</span>
+        </p>
       </div>
 
-      <div style="min-width: 260px;">
-        <label class="usa-label" for="select-cambiar-caso" style="margin-top: 0; font-size: 12px; font-weight: 700; color: #475569;">
-          Cambiar Expediente Activo:
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-0" for="select-cambiar-caso">
+          Cambiar Expediente Activo
         </label>
-        <select class="usa-select" id="select-cambiar-caso" style="margin-top: 4px; height: 38px;">
+        <select class="usa-select" id="select-cambiar-caso" name="cambiar-caso">
           <option value="">Consultando base de datos MySQL...</option>
         </select>
       </div>
     </div>
 
-    <!-- Metadatos de la Evidencia y Consignante -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; padding-top: 14px; border-top: 1px solid #E2E8F0; font-size: 12px;">
-      <div>
-        <span style="color: #64748B;">Consignante:</span>
-        <div style="font-weight: 700; color: #1E293B;" id="caso-consignante">
-          Cargando datos...
-        </div>
+    <div class="grid-row grid-gap border-top border-base-lighter padding-top-2">
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Consignante:</span>
+        <p class="margin-0 text-bold" id="caso-consignante">Cargando datos...</p>
       </div>
-      <div>
-        <span style="color: #64748B;">Dispositivo / Evidencia:</span>
-        <div style="font-weight: 700; color: #1E293B;" id="caso-evidencia">
-          Cargando evidencia...
-        </div>
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Dispositivo / Evidencia:</span>
+        <p class="margin-0 text-bold" id="caso-evidencia">Cargando evidencia...</p>
       </div>
-      <div>
-        <span style="color: #64748B;">Aislamiento Faraday:</span>
-        <div style="font-weight: 700; color: #008837;" id="caso-aislamiento">
-          Consultando estado...
-        </div>
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Aislamiento Faraday:</span>
+        <p class="margin-0 text-bold" id="caso-aislamiento">Consultando estado...</p>
       </div>
-      <div>
-        <span style="color: #64748B;">Perito Líder Designado:</span>
-        <div style="font-weight: 700; color: #112E51;" id="caso-perito">
-          Consultando asignación...
-        </div>
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Perito Líder Designado:</span>
+        <p class="margin-0 text-bold" id="caso-perito">Consultando asignación...</p>
       </div>
     </div>
   </div>
 
   <!-- USWDS Step Indicator de las 6 Fases ISO -->
-  <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 20px; margin-bottom: 24px;">
+  <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
     <div id="step-indicator-container">
       <StepIndicator faseActual="F0" />
     </div>
 
-    <!-- Selector Rápido de Pestañas de Fase -->
-    <div style="display: flex; gap: 8px; margin-top: 20px; border-top: 1px solid #E2E8F0; padding-top: 16px; overflow-x: auto;">
+    <!-- USWDS: Button group segmented | https://designsystem.digital.gov/components/button-group/ -->
+    <ul class="usa-button-group usa-button-group--segmented margin-top-2">
       {FASES_ISO.map((f, i) => (
-        <button
-          class="btn-fase-tab"
-          data-fase={f.id}
-          style={`padding: 8px 16px; border-radius: 4px; border: 1px solid ${i === 0 ? '#005EA2' : '#CBD5E1'}; background: ${i === 0 ? '#005EA2' : '#F8FAFC'}; color: ${i === 0 ? '#FFF' : '#112E51'}; font-weight: 700; font-size: 13px; cursor: pointer; white-space: nowrap;`}
-        >
-          {f.id}: {f.corto}
-        </button>
+        <li class="usa-button-group__item">
+          <button
+            type="button"
+            class={`usa-button btn-fase-tab ${i === 0 ? '' : 'usa-button--outline'}`.trim()}
+            data-fase={f.id}
+          >
+            {f.id}: {f.corto}
+          </button>
+        </li>
       ))}
-    </div>
+    </ul>
   </div>
 
   <!-- Vista Detallada de la Fase Seleccionada -->
-  <div id="fase-panel" style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
-    <!-- Encabezado de la Fase -->
-    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
-      <div>
-        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
-          <span class="usa-tag" style="background-color: #005EA2; color: #FFFFFF; font-weight: 800; font-size: 12px;" id="fase-badge-id">
-            FASE F0
-          </span>
-          <span style="font-size: 12px; color: #64748B;" id="fase-normas">
+  <div id="fase-panel" class="bg-white padding-3 border border-base-lighter margin-bottom-3">
+    <div class="grid-row grid-gap flex-align-center margin-bottom-2">
+      <div class="tablet:grid-col-9">
+        <p class="margin-top-0 margin-bottom-05">
+          <span class="usa-tag bg-primary" id="fase-badge-id">FASE F0</span>{' '}
+          <span class="text-base-dark" id="fase-normas">
             ISO 37301 §8.1 · ISO/IEC 27043 §8 · CRBV Arts. 28 y 60
           </span>
-        </div>
-        <h2 style="font-size: 22px; font-weight: 800; color: #112E51; margin: 0;" id="fase-nombre">
+        </p>
+        <h2 class="margin-0" id="fase-nombre">
           {FASES_ISO[0].nombre}
         </h2>
       </div>
 
-      <div id="fase-estado-badge">
-        <span class="usa-tag" style="background-color: #D9A700; color: #112E51; font-weight: 700; font-size: 12px;">
-          EN CURSO
-        </span>
+      <div class="tablet:grid-col-3" id="fase-estado-badge">
+        <span class="usa-tag bg-accent-warm text-ink">EN CURSO</span>
       </div>
     </div>
 
-    <!-- Objetivo Normativo -->
-    <div style="margin-bottom: 20px;">
-      <SummaryBox heading="Objetivo Pericial y Alcance Normativo">
-        <p style="margin: 0; font-size: 14px; color: #1E293B;" id="fase-objetivo">
-          {FASES_ISO[0].objetivo}
-        </p>
-      </SummaryBox>
-    </div>
+    <SummaryBox
+      heading="Objetivo Pericial y Alcance Normativo"
+      headingId="summary-fase-objetivo"
+      className="margin-bottom-3"
+    >
+      <p class="margin-0" id="fase-objetivo">
+        {FASES_ISO[0].objetivo}
+      </p>
+    </SummaryBox>
 
     <!-- Rejilla de Dos Columnas: Planillas Oficiales vs Controles Obligatorios -->
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 24px;">
+    <div class="grid-row grid-gap">
       <!-- Columna 1: Planillas Obligatorias de la Fase -->
-      <div>
-        <h3 style="font-size: 16px; font-weight: 800; color: #112E51; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
-          Planillas Oficiales Folio (216mm × 330mm)
-        </h3>
-        <p style="font-size: 13px; color: #64748B; margin: 0 0 14px 0;">
+      <div class="tablet:grid-col-6">
+        <h3 class="margin-top-0">Planillas Oficiales Folio (216mm × 330mm)</h3>
+        <p class="text-base-dark">
           Documentos reglamentarios que deben completarse, rubricarse e imprimirse en esta etapa:
         </p>
 
-        <div id="fase-planillas-lista" style="display: flex; flex-direction: column; gap: 10px;">
+        <!-- USWDS: Collection | https://designsystem.digital.gov/components/collection/ -->
+        <ul class="usa-collection" id="fase-planillas-lista">
           {FASES_ISO[0].planillas.map((pId) => {
             const pInfo = PLANILLAS_MAP[pId] || { titulo: pId, slug: pId };
             return (
-              <div style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <div style="font-weight: 700; color: #112E51; font-size: 13px;">{pInfo.titulo}</div>
-                  <div style="font-size: 11px; color: #64748B;">Formato Folio Oficial · Cierre Bilateral</div>
+              <li class="usa-collection__item">
+                <div class="usa-collection__body">
+                  <h4 class="usa-collection__heading">
+                    <a
+                      href={`/planillas/${pInfo.slug}`}
+                      class="usa-link btn-link-planilla"
+                      data-base-slug={pInfo.slug}
+                    >
+                      {pInfo.titulo}
+                    </a>
+                  </h4>
+                  <p class="usa-collection__description">
+                    Formato Folio Oficial (216mm × 330mm) · Cierre Bilateral y Dactiloscopía
+                  </p>
                 </div>
-                <a
-                  href={`/planillas/${pInfo.slug}`}
-                  class="usa-button usa-button--outline btn-link-planilla"
-                  data-base-slug={pInfo.slug}
-                  style="padding: 4px 10px; font-size: 12px; font-weight: 700; text-decoration: none; border-color: #005EA2; color: #005EA2; white-space: nowrap;"
-                >
-                  Abrir Folio
-                </a>
-              </div>
+              </li>
             );
           })}
-        </div>
+        </ul>
       </div>
 
       <!-- Columna 2: Lista de Verificación de Controles ISO -->
-      <div>
-        <h3 style="font-size: 16px; font-weight: 800; color: #112E51; margin: 0 0 12px 0; display: flex; align-items: center; gap: 8px;">
-          Controles de Cumplimiento ISO Obligatorios
-        </h3>
-        <p style="font-size: 13px; color: #64748B; margin: 0 0 14px 0;">
-          Requisitos mandantes para habilitar el sellado criptográfico SHA-256 de la fase:
-        </p>
+      <div class="tablet:grid-col-6">
+        <fieldset class="usa-fieldset">
+          <legend class="usa-legend text-bold">
+            Controles de Cumplimiento ISO Obligatorios
+          </legend>
+          <p class="text-base-dark">
+            Requisitos mandantes para habilitar el sellado criptográfico SHA-256 de la fase:
+          </p>
 
-        <div id="fase-controles-lista" style="display: flex; flex-direction: column; gap: 10px;">
-          {FASES_ISO[0].controles.map((ctrl) => (
-            <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start;">
-              <input
-                type="checkbox"
-                id={`chk-${ctrl.id}`}
-                class="chk-control-iso"
-                data-control-id={ctrl.id}
-                style="width: 18px; height: 18px; margin-top: 2px; cursor: pointer;"
-              />
-              <label for={`chk-${ctrl.id}`} style="font-size: 13px; color: #1E293B; margin: 0; cursor: pointer; flex: 1;">
-                <div style="font-weight: 600;">{ctrl.texto}</div>
-                <div style="font-size: 11px; color: #64748B; margin-top: 2px; font-family: 'Roboto Mono Web', monospace;">
-                  Norma: {ctrl.norma}
-                </div>
-              </label>
-            </div>
-          ))}
-        </div>
+          <!-- USWDS: Checkbox | https://designsystem.digital.gov/components/checkbox/ -->
+          <div id="fase-controles-lista">
+            {FASES_ISO[0].controles.map((ctrl) => (
+              <div class="usa-checkbox margin-bottom-2">
+                <input
+                  class="usa-checkbox__input chk-control-iso"
+                  type="checkbox"
+                  id={`chk-${ctrl.id}`}
+                  data-control-id={ctrl.id}
+                />
+                <label class="usa-checkbox__label" for={`chk-${ctrl.id}`}>
+                  {ctrl.texto}
+                  <span class="usa-checkbox__label-description">
+                    Norma: <code>{ctrl.norma}</code>
+                  </span>
+                </label>
+              </div>
+            ))}
+          </div>
+        </fieldset>
       </div>
     </div>
 
     <!-- Sección de Sello Criptográfico SHA-256 y Cierre de Fase -->
-    <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #CBD5E1;">
-      <div style="background: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 4px; padding: 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px;">
-        <div>
-          <div style="font-size: 14px; font-weight: 800; color: #112E51;">
-            Encadenamiento y Sello Criptográfico SHA-256
+    <div class="margin-top-3 padding-top-2 border-top border-base-lighter">
+      <div class="bg-base-lightest padding-3 border border-base-lighter">
+        <div class="grid-row grid-gap flex-align-center">
+          <div class="tablet:grid-col-8">
+            <h3 class="margin-top-0 margin-bottom-05">
+              Encadenamiento y Sello Criptográfico SHA-256
+            </h3>
+            <p class="margin-0">
+              Al sellar la fase, se calculará el hash canónico del estado y se encadenará al bloque previo de auditoría.
+            </p>
+            <p id="sello-info-hash" class="margin-top-1 margin-bottom-0" hidden>
+              Hash Génesis: <code id="sello-hash-valor"></code>
+            </p>
           </div>
-          <div style="font-size: 12px; color: #475569; margin-top: 4px;">
-            Al sellar la fase, se calculará el hash canónico del estado y se encadenará al bloque previo de auditoría.
-          </div>
-          <div id="sello-info-hash" style="display: none; margin-top: 8px; font-size: 12px; font-family: 'Roboto Mono Web', monospace; color: #008837;">
-            Hash Génesis: <span id="sello-hash-valor" style="font-weight: 700;"></span>
-          </div>
-        </div>
 
-        <div>
-          <button
-            id="btn-sellar-fase"
-            class="usa-button"
-            style="background-color: #008837; color: #FFFFFF; font-weight: 800; padding: 12px 24px; border-radius: 4px; border: none; cursor: pointer; font-size: 14px; display: inline-flex; align-items: center; gap: 8px;"
-          >
-            <svg class="usa-icon" aria-hidden="true" role="img" style="width: 16px; height: 16px; fill: #FFFFFF;">
-              <use xlink:href="/assets/uswds/img/sprite.svg#lock"></use>
-            </svg>
-            <span>Sellar Fase con Hash SHA-256</span>
-          </button>
+          <div class="tablet:grid-col-4">
+            <button id="btn-sellar-fase" type="button" class="usa-button">
+              Sellar Fase con Hash SHA-256
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -242,7 +229,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
 <script>
   import { FASES_ISO } from '../lib/domain/gating';
   import { phpApi } from '../lib/data/phpApi';
-  import { idbGet, idbPut, idbGetAll } from '../lib/data/idb';
+  import { idbPut, idbGetAll } from '../lib/data/idb';
   import type { CasoCMS } from '../lib/domain/types';
 
   const PLANILLAS_MAP_CLIENT: Record<string, { titulo: string; slug: string }> = {
@@ -283,7 +270,6 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
       return;
     }
 
-    // Actualizar select de casos
     if (select) {
       select.innerHTML = '';
       casos.forEach((c) => {
@@ -294,7 +280,6 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
       });
     }
 
-    // Comprobar parámetro ?casoId= en la URL
     const params = new URLSearchParams(window.location.search);
     const paramId = params.get('casoId');
     const seleccionado = (paramId && casos.find((c) => c.id === paramId)) || casos[0];
@@ -306,7 +291,6 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     const select = document.getElementById('select-cambiar-caso') as HTMLSelectElement;
     if (select) select.value = caso.id;
 
-    // Actualizar encabezado
     const tit = document.getElementById('caso-titulo');
     const num = document.getElementById('caso-numero');
     const exp = document.getElementById('caso-expediente');
@@ -325,7 +309,6 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     if (aisl) aisl.textContent = caso.evidenciaAislamientoRF ? 'Aislado RF (Modo Avión)' : 'No Aislado';
     if (per) per.textContent = caso.peritoLiderNombre || 'Jull Joll';
 
-    // Determinar fase activa
     faseSeleccionadaId = (caso.faseIsoActual as string) || 'F0';
     renderizarFase(faseSeleccionadaId);
   }
@@ -335,21 +318,15 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     const faseObj = FASES_ISO.find((f) => f.id === faseId);
     if (!faseObj || !casoActual) return;
 
-    // Actualizar botones de pestañas
     document.querySelectorAll('.btn-fase-tab').forEach((btn) => {
       const fId = btn.getAttribute('data-fase');
       if (fId === faseId) {
-        (btn as HTMLElement).style.background = '#005EA2';
-        (btn as HTMLElement).style.color = '#FFFFFF';
-        (btn as HTMLElement).style.borderColor = '#005EA2';
+        btn.classList.remove('usa-button--outline');
       } else {
-        (btn as HTMLElement).style.background = '#F8FAFC';
-        (btn as HTMLElement).style.color = '#112E51';
-        (btn as HTMLElement).style.borderColor = '#CBD5E1';
+        btn.classList.add('usa-button--outline');
       }
     });
 
-    // Actualizar detalles de la fase
     const badgeId = document.getElementById('fase-badge-id');
     const normas = document.getElementById('fase-normas');
     const nombre = document.getElementById('fase-nombre');
@@ -360,33 +337,29 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     if (nombre) nombre.textContent = faseObj.nombre;
     if (objetivo) objetivo.textContent = faseObj.objetivo;
 
-    // Renderizar planillas
     const listaPlanillas = document.getElementById('fase-planillas-lista');
     if (listaPlanillas) {
       listaPlanillas.innerHTML = '';
       faseObj.planillas.forEach((pId) => {
         const info = PLANILLAS_MAP_CLIENT[pId] || { titulo: pId, slug: pId };
-        const row = document.createElement('div');
-        row.style.cssText = 'background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px 16px; display: flex; justify-content: space-between; align-items: center;';
-        row.innerHTML = `
-          <div>
-            <div style="font-weight: 700; color: #112E51; font-size: 13px;">${info.titulo}</div>
-            <div style="font-size: 11px; color: #64748B;">Formato Folio Oficial · Cierre Bilateral</div>
+        const li = document.createElement('li');
+        li.className = 'usa-collection__item';
+        li.innerHTML = `
+          <div class="usa-collection__body">
+            <h4 class="usa-collection__heading">
+              <a href="/planillas/${info.slug}?casoId=${casoActual?.id}" class="usa-link">
+                ${info.titulo}
+              </a>
+            </h4>
+            <p class="usa-collection__description">
+              Formato Folio Oficial (216mm × 330mm) · Cierre Bilateral y Dactiloscopía
+            </p>
           </div>
-          <a
-            href="/planillas/${info.slug}?casoId=${casoActual?.id}"
-            class="usa-button usa-button--outline"
-            style="padding: 4px 10px; font-size: 12px; font-weight: 700; text-decoration: none; border-color: #005EA2; color: #005EA2; white-space: nowrap; display: inline-flex; align-items: center; gap: 4px;"
-          >
-            Abrir Folio
-            <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" style="width: 14px; height: 14px;"><use xlink:href="/assets/uswds/img/sprite.svg#launch"></use></svg>
-          </a>
         `;
-        listaPlanillas.appendChild(row);
+        listaPlanillas.appendChild(li);
       });
     }
 
-    // Renderizar controles ISO
     const listaControles = document.getElementById('fase-controles-lista');
     if (listaControles) {
       listaControles.innerHTML = '';
@@ -396,27 +369,25 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
 
       aplicables.forEach((ctrl) => {
         const row = document.createElement('div');
-        row.style.cssText = 'background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start;';
+        row.className = 'usa-checkbox margin-bottom-2';
         row.innerHTML = `
           <input
+            class="usa-checkbox__input chk-control-iso"
             type="checkbox"
             id="chk-${ctrl.id}"
-            class="chk-control-iso"
             data-control-id="${ctrl.id}"
-            style="width: 18px; height: 18px; margin-top: 2px; cursor: pointer;"
           />
-          <label for="chk-${ctrl.id}" style="font-size: 13px; color: #1E293B; margin: 0; cursor: pointer; flex: 1;">
-            <div style="font-weight: 600;">${ctrl.texto}</div>
-            <div style="font-size: 11px; color: #64748B; margin-top: 2px; font-family: 'Roboto Mono Web', monospace;">
-              Norma: ${ctrl.norma}
-            </div>
+          <label class="usa-checkbox__label" for="chk-${ctrl.id}">
+            ${ctrl.texto}
+            <span class="usa-checkbox__label-description">
+              Norma: <code>${ctrl.norma}</code>
+            </span>
           </label>
         `;
         listaControles.appendChild(row);
       });
     }
 
-    // Gestionar estado de sello
     const btnSellar = document.getElementById('btn-sellar-fase') as HTMLButtonElement;
     const selloInfo = document.getElementById('sello-info-hash');
     const selloHash = document.getElementById('sello-hash-valor');
@@ -425,34 +396,27 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     const ordenSeleccionado = FASES_ISO.findIndex((f) => f.id === faseId);
 
     if (ordenSeleccionado < ordenActual) {
-      // Fase ya completada
       if (btnSellar) {
         btnSellar.textContent = 'Fase Completada y Sellada';
         btnSellar.disabled = true;
-        btnSellar.style.backgroundColor = '#64748B';
       }
-      if (selloInfo) selloInfo.style.display = 'block';
+      if (selloInfo) selloInfo.hidden = false;
       if (selloHash) selloHash.textContent = 'SHA-256 VERIFICADO E INMUTABLE';
     } else if (ordenSeleccionado === ordenActual) {
-      // Fase activa actual
       if (btnSellar) {
         btnSellar.textContent = 'Sellar Fase con Hash SHA-256';
         btnSellar.disabled = false;
-        btnSellar.style.backgroundColor = '#008837';
       }
-      if (selloInfo) selloInfo.style.display = 'none';
+      if (selloInfo) selloInfo.hidden = true;
     } else {
-      // Fase futura (bloqueada)
       if (btnSellar) {
         btnSellar.textContent = 'Bloqueada (Complete fases previas)';
         btnSellar.disabled = true;
-        btnSellar.style.backgroundColor = '#94A3B8';
       }
-      if (selloInfo) selloInfo.style.display = 'none';
+      if (selloInfo) selloInfo.hidden = true;
     }
   }
 
-  // Listener para cambiar de caso en el select
   const selectCaso = document.getElementById('select-cambiar-caso');
   if (selectCaso) {
     selectCaso.addEventListener('change', async (e) => {
@@ -463,7 +427,6 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     });
   }
 
-  // Listener para las pestañas de fase
   document.querySelectorAll('.btn-fase-tab').forEach((btn) => {
     btn.addEventListener('click', () => {
       const fId = btn.getAttribute('data-fase');
@@ -471,13 +434,11 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     });
   });
 
-  // Listener para el botón Sellar Fase
   const btnSellar = document.getElementById('btn-sellar-fase');
   if (btnSellar) {
     btnSellar.addEventListener('click', async () => {
       if (!casoActual) return;
 
-      // Obtener controles marcados
       const chks = document.querySelectorAll('.chk-control-iso:checked');
       const controles: Record<string, boolean> = {};
       chks.forEach((c) => {
@@ -502,7 +463,6 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
         window.location.reload();
       } catch (err: any) {
         console.warn('Fallo en API PHP, aplicando avance offline en IndexedDB:', err);
-        // Avance offline en IndexedDB
         const fIdx = FASES_ISO.findIndex((f) => f.id === faseSeleccionadaId);
         const sigFase = FASES_ISO[fIdx + 1]?.id || faseSeleccionadaId;
         casoActual.faseIsoActual = sigFase;
@@ -517,3 +477,4 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     cargarCasosYSeleccionar();
   }
 </script>
+

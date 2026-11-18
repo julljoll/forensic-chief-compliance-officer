@@ -5,136 +5,162 @@
  */
 import AppLayout from '../layouts/AppLayout.astro';
 import SummaryBox from '../components/uswds/SummaryBox.astro';
-import Alert from '../components/uswds/Alert.astro';
 ---
 
 <AppLayout title="Exportación de Caso — SHA256.US" activeNav="exportar">
   <!-- Encabezado de Página -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-    <div>
-      <h1 style="font-size: 28px; font-weight: 800; color: #112E51; margin: 0 0 6px 0;">
-        Exportación y Empaquetado Oficial del Expediente
-      </h1>
-      <p style="margin: 0; color: #475569; font-size: 15px;">
-        Generación de entregables judiciales en formato comprimido (.ZIP) con sellos de verificación criptográfica.
-      </p>
-    </div>
+  <div class="margin-bottom-3">
+    <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
+      Exportación y Empaquetado Oficial del Expediente
+    </h1>
+    <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
+      Generación de entregables judiciales en formato comprimido (.ZIP) con sellos de verificación criptográfica.
+    </p>
   </div>
 
   <!-- Selector de Caso a Exportar -->
-  <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 20px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-    <div>
-      <span style="font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase;">Seleccionar Expediente:</span>
-      <div style="font-size: 20px; font-weight: 800; color: #112E51;" id="exportar-caso-titulo">
-        Consultando base de datos MySQL...
+  <div class="bg-white border-1px border-base-lighter padding-3 margin-bottom-3">
+    <div class="grid-row grid-gap flex-align-center flex-justify">
+      <div class="tablet:grid-col-7">
+        <span class="font-sans-3xs text-bold text-base-dark text-uppercase">Expediente Activo para Exportación:</span>
+        <h2 class="margin-top-05 margin-bottom-05 font-heading-lg text-primary-darker" id="exportar-caso-titulo">
+          Consultando base de datos MySQL...
+        </h2>
+        <div class="font-body-2xs text-base-dark">
+          Consignante: <strong id="exportar-caso-consignante">—</strong> · Perito: <strong id="exportar-caso-perito">—</strong>
+        </div>
       </div>
-      <div style="font-size: 13px; color: #475569; margin-top: 4px;">
-        Consignante: <strong id="exportar-caso-consignante">—</strong> · Perito: <strong id="exportar-caso-perito">—</strong>
-      </div>
-    </div>
 
-    <div style="min-width: 280px;">
-      <select class="usa-select" id="select-exportar-caso" style="height: 40px;">
-        <option value="">Consultando base de datos MySQL...</option>
-      </select>
+      <div class="tablet:grid-col-5">
+        <!-- USWDS: Select | https://designsystem.digital.gov/components/select/ -->
+        <label class="usa-label margin-top-0" for="select-exportar-caso">
+          Seleccionar Expediente
+        </label>
+        <select class="usa-select" id="select-exportar-caso">
+          <option value="">Consultando base de datos MySQL...</option>
+        </select>
+      </div>
     </div>
   </div>
 
   <!-- Resumen de Requisitos de Entrega Judicial -->
-  <div style="margin-bottom: 24px;">
-    <SummaryBox heading="Estructura del Paquete Forense Digital (ISO/IEC 27043 · COPP 223)">
-      <p style="margin: 0 0 10px 0; font-size: 14px; color: #1E293B;">
-        El archivo ZIP exportado constituye una unidad documental sellada. Incluye las planillas en HTML con CSS embebido
-        para visualización sin conexión, el manifiesto de datos JSON canónico y el árbol de hashes SHA-256 para comprobación por el tribunal.
+  <div class="margin-bottom-3">
+    <SummaryBox heading="Estructura del Paquete Forense Digital (ISO/IEC 27043 · COPP 223)" headingId="summary-paquete-forense">
+      <p class="margin-top-0 margin-bottom-1">
+        El archivo ZIP exportado constituye una unidad documental sellada. Incluye las planillas en HTML para visualización sin conexión,
+        el manifiesto de datos JSON canónico y el árbol de hashes SHA-256 para comprobación por el tribunal.
       </p>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 12px;">
-        <span class="usa-tag" style="background-color: #112E51; color: #FFF;">STANDALONE HTML (FOLIO)</span>
-        <span class="usa-tag" style="background-color: #005EA2; color: #FFF;">CANONICAL JSON (RFC 8785)</span>
-        <span class="usa-tag" style="background-color: #008837; color: #FFF;">MANIFEST SHA-256</span>
+      <!-- USWDS: Tag | https://designsystem.digital.gov/components/tag/ -->
+      <div class="display-flex flex-wrap">
+        <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05">STANDALONE HTML (FOLIO)</span>
+        <span class="usa-tag bg-primary margin-right-1 margin-bottom-05">CANONICAL JSON (RFC 8785)</span>
+        <span class="usa-tag bg-green margin-bottom-05">MANIFEST SHA-256</span>
       </div>
     </SummaryBox>
   </div>
 
   <!-- Contenedor de Selección de Documentos para el Paquete -->
-  <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
-    <h2 style="font-size: 18px; font-weight: 800; color: #112E51; margin: 0 0 16px 0;">
-      Seleccione los Documentos y Entregables a Incluir
-    </h2>
+  <!-- USWDS: Checkbox | https://designsystem.digital.gov/components/checkbox/ -->
+  <div class="bg-white border-1px border-base-lighter padding-3 margin-bottom-3">
+    <fieldset class="usa-fieldset">
+      <legend class="usa-legend font-heading-lg text-bold text-primary-darker margin-bottom-2">
+        Seleccione los Documentos y Entregables a Incluir
+      </legend>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 14px; margin-bottom: 24px;">
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="prcc" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Planilla de Registro de Cadena de Custodia (PRCC)</strong>
-          <div style="font-size: 11px; color: #64748B;">Obligatoria conforme al COPP Art. 187 y MUCC-2017.</div>
+      <div class="grid-row grid-gap">
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-prcc" type="checkbox" name="export-items" value="prcc" checked />
+            <label class="usa-checkbox__label" for="chk-exp-prcc">
+              Planilla de Registro de Cadena de Custodia (PRCC)
+              <span class="usa-checkbox__label-description">Obligatoria conforme al COPP Art. 187 y MUCC-2017.</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="acta_consentimiento" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Acta de Consentimiento Informado</strong>
-          <div style="font-size: 11px; color: #64748B;">Respaldo de Hábeas Data (CRBV Art. 28).</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-consentimiento" type="checkbox" name="export-items" value="acta_consentimiento" checked />
+            <label class="usa-checkbox__label" for="chk-exp-consentimiento">
+              Acta de Consentimiento Informado
+              <span class="usa-checkbox__label-description">Respaldo de Hábeas Data (CRBV Art. 28).</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="acta_entrevista" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Acta de Entrevista Forense</strong>
-          <div style="font-size: 11px; color: #64748B;">Declaraciones iniciales y contexto técnico.</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-entrevista" type="checkbox" name="export-items" value="acta_entrevista" checked />
+            <label class="usa-checkbox__label" for="chk-exp-entrevista">
+              Acta de Entrevista Forense
+              <span class="usa-checkbox__label-description">Declaraciones iniciales y contexto técnico.</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="acta_obtencion" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Acta de Obtención y Preservación</strong>
-          <div style="font-size: 11px; color: #64748B;">Fijación fotográfica inicial y precintado.</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-obtencion" type="checkbox" name="export-items" value="acta_obtencion" checked />
+            <label class="usa-checkbox__label" for="chk-exp-obtencion">
+              Acta de Obtención y Preservación
+              <span class="usa-checkbox__label-description">Fijación fotográfica inicial y precintado.</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="acta_desprecintado" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Acta de Desprecintado en Laboratorio</strong>
-          <div style="font-size: 11px; color: #64748B;">Apertura reglamentaria para adquisición bit-a-bit.</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-desprecintado" type="checkbox" name="export-items" value="acta_desprecintado" checked />
+            <label class="usa-checkbox__label" for="chk-exp-desprecintado">
+              Acta de Desprecintado en Laboratorio
+              <span class="usa-checkbox__label-description">Apertura reglamentaria para adquisición bit-a-bit.</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="acta_dictamen" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Dictamen Pericial Oficial</strong>
-          <div style="font-size: 11px; color: #64748B;">Informe motivado con firma pericial bilateral.</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-dictamen" type="checkbox" name="export-items" value="acta_dictamen" checked />
+            <label class="usa-checkbox__label" for="chk-exp-dictamen">
+              Dictamen Pericial Oficial
+              <span class="usa-checkbox__label-description">Informe motivado con firma pericial bilateral.</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="acta_sanitizacion" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #112E51; font-size: 13px;">Acta de Sanitización (NIST SP 800-88)</strong>
-          <div style="font-size: 11px; color: #64748B;">Certificación de purga y destrucción segura.</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-sanitizacion" type="checkbox" name="export-items" value="acta_sanitizacion" checked />
+            <label class="usa-checkbox__label" for="chk-exp-sanitizacion">
+              Acta de Sanitización (NIST SP 800-88)
+              <span class="usa-checkbox__label-description">Certificación de purga y destrucción segura.</span>
+            </label>
+          </div>
         </div>
-      </label>
 
-      <label style="background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 12px; display: flex; gap: 12px; align-items: flex-start; cursor: pointer;">
-        <input type="checkbox" checked class="chk-export-item" value="manifest_sha256" style="width: 18px; height: 18px; margin-top: 2px;" />
-        <div>
-          <strong style="color: #008837; font-size: 13px;">Manifiesto Criptográfico y Cadena SHA-256</strong>
-          <div style="font-size: 11px; color: #64748B;">Árbol de hashes para verificación matemática por el juez.</div>
+        <div class="tablet:grid-col-6 margin-bottom-2">
+          <div class="usa-checkbox">
+            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-manifest" type="checkbox" name="export-items" value="manifest_sha256" checked />
+            <label class="usa-checkbox__label" for="chk-exp-manifest">
+              Manifiesto Criptográfico y Cadena SHA-256
+              <span class="usa-checkbox__label-description">Árbol de hashes para verificación matemática por el juez.</span>
+            </label>
+          </div>
         </div>
-      </label>
-    </div>
+      </div>
+    </fieldset>
 
     <!-- Botón de Descarga -->
-    <div style="border-top: 1px solid #E2E8F0; padding-top: 20px; display: flex; justify-content: flex-end;">
+    <div class="border-top-1px border-base-lighter padding-top-2 display-flex flex-justify-end">
+      <!-- USWDS: Button | https://designsystem.digital.gov/components/button/ -->
       <button
         id="btn-generar-zip"
+        type="button"
         class="usa-button"
-        style="background-color: #005EA2; color: #FFFFFF; font-weight: 800; font-size: 15px; padding: 12px 28px; border-radius: 4px; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px;"
       >
-        <svg class="usa-icon" aria-hidden="true" focusable="false" role="img"><use xlink:href="/assets/uswds/img/sprite.svg#file_download"></use></svg>
+        <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+          <use href="/assets/uswds/img/sprite.svg#file_download"></use>
+        </svg>
         <span>Generar y Descargar Paquete ZIP Forense</span>
       </button>
     </div>
@@ -253,20 +279,15 @@ import Alert from '../components/uswds/Alert.astro';
 <head>
   <meta charset="utf-8" />
   <title>Planilla PRCC — ${casoSeleccionado.numeroCaso}</title>
-  <style>
-    @page { size: 216mm 330mm; margin: 15mm 15mm 15mm 30mm; }
-    body { font-family: sans-serif; margin: 0; padding: 20px; color: #112E51; }
-    h1 { font-size: 18px; border-bottom: 2px solid #112E51; padding-bottom: 6px; }
-    .meta { margin-bottom: 16px; font-size: 13px; }
-  </style>
+  <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css" />
 </head>
-<body>
+<body class="usa-prose padding-4">
   <h1>PLANILLA DE REGISTRO DE CADENA DE CUSTODIA (PRCC)</h1>
-  <div class="meta">
+  <div>
     <p><strong>N° Expediente:</strong> ${casoSeleccionado.numeroCaso}</p>
     <p><strong>Evidencia:</strong> ${casoSeleccionado.evidenciaMarca} ${casoSeleccionado.evidenciaModelo} (S/N: ${casoSeleccionado.evidenciaSerial})</p>
     <p><strong>Consignante:</strong> ${casoSeleccionado.consignanteNombre}</p>
-    <p><strong>Hash SHA-256:</strong> ${hashCaso}</p>
+    <p><strong>Hash SHA-256:</strong> <code>${hashCaso}</code></p>
   </div>
   <p>Documento generado oficialmente por SHA256.US bajo el estándar ISO/IEC 27037:2012.</p>
 </body>
@@ -283,7 +304,7 @@ import Alert from '../components/uswds/Alert.astro';
         alert('Error al generar el archivo comprimido.');
       } finally {
         btn.disabled = false;
-        btn.innerHTML = '<svg class="usa-icon" aria-hidden="true" focusable="false" role="img"><use xlink:href="/assets/uswds/img/sprite.svg#file_download"></use></svg> <span>Generar y Descargar Paquete ZIP Forense</span>';
+        btn.innerHTML = '<svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img"><use href="/assets/uswds/img/sprite.svg#file_download"></use></svg> <span>Generar y Descargar Paquete ZIP Forense</span>';
       }
     });
   }

@@ -1,7 +1,14 @@
 ---
 /**
- * SHA256.US — Pantalla de Acceso Oficial al Laboratorio Forense
+ * SHA256.US — Pantalla de Acceso Oficial al CMS de Cumplimiento Forense
  * Autenticación de Peritos mediante Contraseña o Google Authenticator (TOTP RFC 6238).
+ * Fuentes:
+ * - https://designsystem.digital.gov/components/banner/
+ * - https://designsystem.digital.gov/components/header/
+ * - https://designsystem.digital.gov/components/form/
+ * - https://designsystem.digital.gov/components/button-group/
+ * - https://designsystem.digital.gov/components/alert/
+ * - https://designsystem.digital.gov/components/identifier/
  */
 ---
 
@@ -13,157 +20,231 @@
     <title>Acceso Pericial Oficial — SHA256.US</title>
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css" />
-    <style>
-      body {
-        background-color: #F0F4F8;
-        font-family: 'Public Sans Web', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-      }
-      .login-container {
-        max-width: 440px;
-        width: 100%;
-        margin: auto;
-        background: #FFFFFF;
-        border: 1px solid #CBD5E1;
-        border-radius: 8px;
-        box-shadow: 0 4px 16px rgba(17, 46, 81, 0.08);
-        padding: 32px;
-      }
-      .login-header {
-        text-align: center;
-        margin-bottom: 24px;
-      }
-      .login-logo {
-        width: 54px;
-        height: 54px;
-        margin-bottom: 12px;
-      }
-      .tab-btn {
-        flex: 1;
-        padding: 8px 12px;
-        font-size: 13px;
-        font-weight: 700;
-        border: 1px solid #CBD5E1;
-        background: #F8FAFC;
-        color: #475569;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.2s ease;
-      }
-      .tab-btn.active {
-        background: #005EA2;
-        color: #FFFFFF;
-        border-color: #005EA2;
-      }
-    </style>
+    <script is:inline src="/assets/uswds/js/uswds-init.min.js"></script>
   </head>
   <body>
-    <!-- Banner de Gobierno -->
-    <div style="background-color: #1A2536; color: #E2E8F0; padding: 6px 16px; font-size: 12px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;">
-      <svg class="usa-icon" aria-hidden="true" focusable="false" role="img" style="width: 14px; height: 14px; fill: currentColor;"><use xlink:href="/assets/uswds/img/sprite.svg#lock"></use></svg>
-      <span><strong>SISTEMA FORENSE OFICIAL:</strong> Autenticación de Peritos y Operadores de Cadena de Custodia</span>
-    </div>
+    <!-- USWDS: Skipnav | https://designsystem.digital.gov/components/skip-navigation/ -->
+    <a class="usa-skipnav" href="#main-content">Saltar al contenido principal</a>
+    <div class="usa-overlay"></div>
 
-    <div class="login-container">
-      <div class="login-header">
-        <img src="/logo.png" alt="SHA256.US" class="login-logo" />
-        <h1 style="font-size: 22px; font-weight: 800; color: #112E51; margin: 0;">
-          SHA256<span style="color: #D9A700;">.US</span>
-        </h1>
-        <p style="font-size: 13px; color: #475569; margin: 4px 0 0 0;">
-          Forensic Chief Compliance Officer
-        </p>
-      </div>
-
-      <!-- Selector de Método de Autenticación -->
-      <div style="display: flex; gap: 8px; margin-bottom: 20px;">
-        <button type="button" id="tab-pass" class="tab-btn active">
-          Contraseña
-        </button>
-        <button type="button" id="tab-totp" class="tab-btn">
-          Google Authenticator
-        </button>
-      </div>
-
-      <!-- Alerta de Error (oculta por defecto) -->
-      <div id="login-error-alert" class="usa-alert usa-alert--error usa-alert--slim" style="display: none; margin-bottom: 16px;">
-        <div class="usa-alert__body">
-          <p class="usa-alert__text" id="login-error-msg">Credenciales inválidas</p>
-        </div>
-      </div>
-
-      <!-- Formulario USWDS -->
-      <form class="usa-form" id="login-form" style="max-width: 100%;">
-        <fieldset class="usa-fieldset">
-          <legend class="usa-legend" style="font-size: 14px; font-weight: 700; color: #112E51; margin-bottom: 16px;">
-            Acceso a Bóveda Pericial
-          </legend>
-
-          <label class="usa-label" for="email" style="font-size: 13px; font-weight: 600;">Correo Electrónico Oficial</label>
-          <input
-            class="usa-input"
-            id="email"
-            name="email"
-            type="email"
-            autocapitalize="off"
-            autocorrect="off"
-            required
-            placeholder="perito@sha256.us"
-            style="margin-bottom: 14px;"
-          />
-
-          <!-- Campo Contraseña -->
-          <div id="campo-password-wrap">
-            <label class="usa-label" for="password" style="font-size: 13px; font-weight: 600;">Contraseña de Seguridad</label>
-            <input
-              class="usa-input"
-              id="password"
-              name="password"
-              type="password"
-              placeholder="Contraseña de acceso"
-              style="margin-bottom: 20px;"
-            />
+    <!-- USWDS: Banner | https://designsystem.digital.gov/components/banner/ -->
+    <section class="usa-banner" aria-label="Sistema Oficial de Cumplimiento Forense">
+      <div class="usa-accordion">
+        <header class="usa-banner__header">
+          <div class="usa-banner__inner">
+            <div class="grid-col-auto">
+              <img aria-hidden="true" class="usa-banner__header-flag" src="/logo.png" alt="" />
+            </div>
+            <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
+              <p class="usa-banner__header-text">
+                CMS Oficial de Cumplimiento Forense y Cadena de Custodia Digital — SHA256.US
+              </p>
+              <p class="usa-banner__header-action">Así es como usted puede verificarlo</p>
+            </div>
+            <button
+              type="button"
+              class="usa-accordion__button usa-banner__button"
+              aria-expanded="false"
+              aria-controls="gov-banner-login"
+            >
+              <span class="usa-banner__button-text">Así es como usted puede verificarlo</span>
+            </button>
           </div>
-
-          <!-- Campo Google Authenticator (TOTP) -->
-          <div id="campo-totp-wrap" style="display: none;">
-            <label class="usa-label" for="totp-code" style="font-size: 13px; font-weight: 600;">Código de Google Authenticator (6 dígitos)</label>
-            <input
-              class="usa-input"
-              id="totp-code"
-              name="totpCode"
-              type="text"
-              inputmode="numeric"
-              pattern="[0-9]*"
-              maxlength="6"
-              placeholder="000000"
-              style="font-family: 'Roboto Mono Web', Menlo, monospace; font-size: 24px; letter-spacing: 8px; text-align: center; height: 48px; margin-bottom: 14px;"
-            />
-            
-            <div style="margin-bottom: 20px; font-size: 12px; color: #64748B; background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 4px; padding: 10px;">
-              <div style="font-weight: 700; color: #112E51; margin-bottom: 4px;">Configuración en Google Authenticator:</div>
-              <div>Agregue la cuenta ingresando la clave secreta manual según su usuario:</div>
-              <ul style="margin: 4px 0 0 0; padding-left: 18px; line-height: 1.5;">
-                <li>Perito Analizador: <code style="font-weight: bold; color: #005EA2;">JULLJOLLFCCO2FA1</code></li>
-                <li>Encargado Adquisición: <code style="font-weight: bold; color: #005EA2;">SHA256USFCCO2FA2</code></li>
-              </ul>
+        </header>
+        <div class="usa-banner__content usa-accordion__content" id="gov-banner-login" hidden>
+          <div class="grid-row grid-gap-lg">
+            <div class="usa-banner__guidance tablet:grid-col-6">
+              <img
+                class="usa-banner__icon usa-media-block__img"
+                src="/assets/uswds/img/icon-dot-gov.svg"
+                role="img"
+                alt=""
+                aria-hidden="true"
+              />
+              <div class="usa-media-block__body">
+                <p>
+                  <strong>Acceso restringido a peritos y custodios acreditados</strong><br />
+                  Toda sesión se audita bajo los controles ISO/IEC 27001 A.8.15 y el Manual Único de Cadena de Custodia (MUCC-2017).
+                </p>
+              </div>
+            </div>
+            <div class="usa-banner__guidance tablet:grid-col-6">
+              <img
+                class="usa-banner__icon usa-media-block__img"
+                src="/assets/uswds/img/icon-https.svg"
+                role="img"
+                alt=""
+                aria-hidden="true"
+              />
+              <div class="usa-media-block__body">
+                <p>
+                  <strong>Autenticación multifactor (TOTP RFC 6238)</strong><br />
+                  Los operadores pueden autenticar su identidad pericial mediante contraseña cifrada o código dinámico de 6 dígitos.
+                </p>
+              </div>
             </div>
           </div>
+        </div>
+      </div>
+    </section>
 
-          <button
-            class="usa-button"
-            type="submit"
-            id="btn-submit"
-            style="width: 100%; background-color: #005EA2; font-weight: 700; padding: 12px;"
-          >
-            Ingresar al Sistema Forense
-          </button>
-        </fieldset>
-      </form>
+    <!-- USWDS: Header Basic | https://designsystem.digital.gov/components/header/ -->
+    <header class="usa-header usa-header--basic">
+      <div class="usa-nav-container">
+        <div class="usa-navbar">
+          <div class="usa-logo">
+            <em class="usa-logo__text">
+              <a href="/" title="SHA256.US — Forensic Chief Compliance Officer">
+                SHA256.US — Forensic Chief Compliance Officer
+              </a>
+            </em>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <div class="bg-base-lightest">
+        <section class="grid-container usa-section">
+          <div class="grid-row flex-justify-center">
+            <div class="grid-col-12 tablet:grid-col-8 desktop:grid-col-6">
+              <div class="bg-white padding-y-3 padding-x-5 border border-base-lighter">
+                <h1 class="margin-bottom-1">Acceso a Bóveda Pericial</h1>
+                <p class="usa-intro margin-top-0 margin-bottom-3">
+                  CMS de Cumplimiento Normativo ISO/IEC 27037 y Cadena de Custodia MUCC-2017.
+                </p>
+
+                <!-- USWDS: Button group segmented | https://designsystem.digital.gov/components/button-group/ -->
+                <ul class="usa-button-group usa-button-group--segmented margin-bottom-3">
+                  <li class="usa-button-group__item">
+                    <button type="button" id="tab-pass" class="usa-button">
+                      Contraseña
+                    </button>
+                  </li>
+                  <li class="usa-button-group__item">
+                    <button type="button" id="tab-totp" class="usa-button usa-button--outline">
+                      Google Authenticator (2FA)
+                    </button>
+                  </li>
+                </ul>
+
+                <!-- USWDS: Alert | https://designsystem.digital.gov/components/alert/ -->
+                <div
+                  id="login-error-alert"
+                  class="usa-alert usa-alert--error usa-alert--slim margin-bottom-2"
+                  role="alert"
+                  hidden
+                >
+                  <div class="usa-alert__body">
+                    <p class="usa-alert__text" id="login-error-msg">Credenciales inválidas</p>
+                  </div>
+                </div>
+
+                <!-- USWDS: Sign-in form | https://designsystem.digital.gov/templates/sign-in-page/ -->
+                <form class="usa-form" id="login-form">
+                  <fieldset class="usa-fieldset">
+                    <legend class="usa-legend usa-legend--large">Credenciales del Operador Forense</legend>
+
+                    <label class="usa-label" for="email">
+                      Correo electrónico institucional <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                    </label>
+                    <input
+                      class="usa-input"
+                      id="email"
+                      name="email"
+                      type="email"
+                      autocapitalize="off"
+                      autocorrect="off"
+                      required
+                    />
+
+                    <div id="campo-password-wrap">
+                      <label class="usa-label" for="password">
+                        Contraseña de seguridad <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                      </label>
+                      <input
+                        class="usa-input"
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                      />
+                    </div>
+
+                    <div id="campo-totp-wrap" hidden>
+                      <label class="usa-label" for="totp-code">
+                        Código de Google Authenticator (6 dígitos) <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                      </label>
+                      <div class="usa-hint" id="totp-hint">Ingrese el código numérico temporal de 6 dígitos</div>
+                      <input
+                        class="usa-input font-mono-lg"
+                        id="totp-code"
+                        name="totpCode"
+                        type="text"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        maxlength="6"
+                        aria-describedby="totp-hint"
+                      />
+
+                      <!-- USWDS: Summary box | https://designsystem.digital.gov/components/summary-box/ -->
+                      <div class="usa-summary-box margin-top-2" role="region" aria-labelledby="totp-config-heading">
+                        <div class="usa-summary-box__body">
+                          <h2 class="usa-summary-box__heading" id="totp-config-heading">
+                            Configuración de clave secreta TOTP
+                          </h2>
+                          <div class="usa-summary-box__text">
+                            <ul class="usa-list">
+                              <li>Perito Analizador: <code>JULLJOLLFCCO2FA1</code></li>
+                              <li>Encargado Adquisición: <code>SHA256USFCCO2FA2</code></li>
+                            </ul>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <input
+                      class="usa-button margin-top-3"
+                      type="submit"
+                      id="btn-submit"
+                      value="Ingresar al Sistema Forense"
+                    />
+                  </fieldset>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- USWDS: Identifier | https://designsystem.digital.gov/components/identifier/ -->
+    <div class="usa-identifier">
+      <section
+        class="usa-identifier__section usa-identifier__section--masthead"
+        aria-label="Identificación institucional del laboratorio"
+      >
+        <div class="usa-identifier__container">
+          <div class="usa-identifier__logos">
+            <a href="/" class="usa-identifier__logo">
+              <img
+                class="usa-identifier__logo-img"
+                src="/logo.png"
+                alt="Logo Laboratorio Forense SHA256.US"
+                role="img"
+              />
+            </a>
+          </div>
+          <section class="usa-identifier__identity" aria-label="Descripción de la institución">
+            <p class="usa-identifier__identity-domain">sha256.us</p>
+            <p class="usa-identifier__identity-disclaimer">
+              Sistema Oficial de Gestión de Cumplimiento Forense de{' '}
+              <a href="/">Forensic Chief Compliance Officer (FCCO)</a>.
+              El uso del U.S. Web Design System responde a estándares de accesibilidad WCAG 2.1 AA y no implica afiliación con el gobierno de EE. UU.
+            </p>
+          </section>
+        </div>
+      </section>
     </div>
 
     <script>
@@ -173,7 +254,7 @@
       const form = document.getElementById('login-form');
       const errorAlert = document.getElementById('login-error-alert');
       const errorMsg = document.getElementById('login-error-msg');
-      const btnSubmit = document.getElementById('btn-submit');
+      const btnSubmit = document.getElementById('btn-submit') as HTMLInputElement;
 
       const tabPass = document.getElementById('tab-pass');
       const tabTotp = document.getElementById('tab-totp');
@@ -187,17 +268,17 @@
       function setMode(mode: 'pass' | 'totp') {
         authMode = mode;
         if (mode === 'pass') {
-          tabPass?.classList.add('active');
-          tabTotp?.classList.remove('active');
-          if (wrapPass) wrapPass.style.display = 'block';
-          if (wrapTotp) wrapTotp.style.display = 'none';
+          tabPass?.classList.remove('usa-button--outline');
+          tabTotp?.classList.add('usa-button--outline');
+          if (wrapPass) wrapPass.hidden = false;
+          if (wrapTotp) wrapTotp.hidden = true;
           if (passwordInput) passwordInput.required = true;
           if (totpInput) totpInput.required = false;
         } else {
-          tabPass?.classList.remove('active');
-          tabTotp?.classList.add('active');
-          if (wrapPass) wrapPass.style.display = 'none';
-          if (wrapTotp) wrapTotp.style.display = 'block';
+          tabPass?.classList.add('usa-button--outline');
+          tabTotp?.classList.remove('usa-button--outline');
+          if (wrapPass) wrapPass.hidden = true;
+          if (wrapTotp) wrapTotp.hidden = false;
           if (passwordInput) passwordInput.required = false;
           if (totpInput) {
             totpInput.required = true;
@@ -214,13 +295,12 @@
           e.preventDefault();
           const emailInput = document.getElementById('email') as HTMLInputElement;
 
-          if (btnSubmit) btnSubmit.textContent = 'Verificando credenciales...';
+          if (btnSubmit) btnSubmit.value = 'Verificando credenciales...';
 
           const email = (emailInput?.value || '').trim();
           const pass = authMode === 'pass' ? (passwordInput?.value || '').trim() : '';
           const totp = authMode === 'totp' ? (totpInput?.value || '').trim() : '';
 
-          // 1. Intentar API PHP
           const res = await phpApi.login(email, pass, totp);
 
           if (res.ok) {
@@ -228,22 +308,22 @@
             return;
           }
 
-          // 2. Si falló por offline o error de red, probar store local
           const localOk = await useAuthStore.getState().login(email, pass, totp);
           if (localOk) {
             window.location.href = '/dashboard';
             return;
           }
 
-          // Mostrar error
           if (errorAlert && errorMsg) {
-            errorMsg.textContent = res.error || useAuthStore.getState().error || 'Credenciales no autorizadas o código 2FA erróneo';
-            errorAlert.style.display = 'block';
+            errorMsg.textContent =
+              res.error || useAuthStore.getState().error || 'Credenciales no autorizadas o código 2FA erróneo';
+            errorAlert.hidden = false;
           }
-          if (btnSubmit) btnSubmit.textContent = 'Ingresar al Sistema Forense';
+          if (btnSubmit) btnSubmit.value = 'Ingresar al Sistema Forense';
         });
       }
     </script>
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
   </body>
 </html>
+

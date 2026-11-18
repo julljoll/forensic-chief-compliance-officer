@@ -118,20 +118,23 @@ const PLANILLAS = [
 
 <AppLayout title="Planillas Oficiales en Folio — SHA256.US" activeNav="planillas">
   <!-- Encabezado de Página -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-    <div>
-      <h1 style="font-size: 28px; font-weight: 800; color: #112E51; margin: 0 0 6px 0;">
+  <div class="grid-row grid-gap flex-align-end flex-justify margin-bottom-3">
+    <div class="tablet:grid-col-7">
+      <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
         Catálogo de Planillas Oficiales en Folio (216mm × 330mm)
       </h1>
-      <p style="margin: 0; color: #475569; font-size: 15px;">
-        13 instrumentos periciales de informática forense con estándar canónico B&W, membrete unificado de la República, dactiloscopía bilateral y cierre formal.
+      <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
+        13 instrumentos periciales de informática forense con estándar canónico B&amp;W, membrete unificado de la República, dactiloscopía bilateral y cierre formal.
       </p>
     </div>
 
     <!-- Selector de Modo / Expediente -->
-    <div style="background: #FFFFFF; border: 1px solid #CBD5E1; padding: 10px 16px; border-radius: 6px; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-      <span style="font-size: 13px; font-weight: 700; color: #1E293B;">Modo de Emisión:</span>
-      <select class="usa-select" id="select-caso-planillas" style="height: 38px; margin: 0; font-size: 13px; font-weight: 600; min-width: 320px;">
+    <div class="tablet:grid-col-5">
+      <!-- USWDS: Select | https://designsystem.digital.gov/components/select/ -->
+      <label class="usa-label margin-top-0" for="select-caso-planillas">
+        Modo de Emisión
+      </label>
+      <select class="usa-select" id="select-caso-planillas">
         <option value="blanco" selected>
           Formato en Blanco (Llenado Manual con Bolígrafo)
         </option>
@@ -140,78 +143,80 @@ const PLANILLAS = [
   </div>
 
   <!-- Alerta de Especificaciones de Impresión Folio -->
-  <Alert type="info" heading="Consignación Privada y Adquisición Lógica (NIST SP 800-101 Nivel 2 · LMDFE Arts. 4 y 7)">
-    Este catálogo opera bajo el modelo de <strong>Consignación Voluntaria y Adquisición Lógica Forense</strong> de dispositivos móviles y mensajería (WhatsApp SQLite <code>msgstore.db</code>). Todas las planillas están estrictamente adaptadas al <strong>Manual Único de Cadena de Custodia (MUCC-2017)</strong> y a la <strong>Ley sobre Mensajes de Datos y Firmas Electrónicas</strong>, imprimiéndose por defecto en <strong>Modo Plantilla en Blanco</strong> en hojas tamaño Folio (216mm × 330mm) en Blanco y Negro puro con 25mm de margen de encuadernación.
-  </Alert>
-
-  <div style="margin-top: 24px;"></div>
-
-  <!-- Rejilla de las 13 Planillas -->
-  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px;">
-    {PLANILLAS.map((p) => (
-      <div class="usa-card planilla-card-item" data-fase={p.fase} style="background: #FFFFFF; border: 1px solid #CBD5E1; border-top: 4px solid #112E51; border-radius: 4px; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 1px 3px rgba(0,0,0,0.05);">
-        <div>
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-            <span class="usa-tag" style="background-color: #005EA2; color: #FFFFFF; font-weight: 800; font-size: 11px;">
-              FASE {p.fase}
-            </span>
-            <span class="usa-tag" style="background-color: #F1F5F9; color: #1E293B; font-weight: 700; font-size: 11px;">
-              {p.hojas} (216×330mm)
-            </span>
-          </div>
-
-          <h3 style="font-size: 16px; font-weight: 800; color: #112E51; margin: 0 0 8px 0; min-height: 44px; display: flex; align-items: center;">
-            {p.titulo}
-          </h3>
-
-          <div style="font-size: 11px; font-weight: 700; color: #D9A700; margin-bottom: 8px; font-family: 'Roboto Mono Web', monospace;">
-            ESTÁNDAR: {p.norma}
-          </div>
-
-          <p style="font-size: 13px; color: #475569; margin: 0 0 16px 0; min-height: 54px; line-height: 1.45;">
-            {p.descripcion}
-          </p>
-        </div>
-
-        <div style="display: flex; gap: 6px; border-top: 1px solid #E2E8F0; padding-top: 14px; flex-wrap: wrap;">
-          <a
-            href={`/planillas/${p.slug}?modo=blanco`}
-            class="usa-button usa-button--outline link-abrir-planilla"
-            data-slug={p.slug}
-            style="flex: 1; text-align: center; font-size: 11.5px; font-weight: 700; padding: 7px 8px; border-color: #005EA2; color: #005EA2; text-decoration: none; min-width: 100px;"
-          >
-            Ver Formato
-          </a>
-          <button
-            type="button"
-            class="usa-button btn-descargar-docx"
-            data-slug={p.slug}
-            data-titulo={p.titulo}
-            style="background-color: #112E51; color: #FFFFFF; font-size: 11.5px; font-weight: 700; padding: 7px 10px; border: none; cursor: pointer; white-space: nowrap; display: flex; align-items: center; gap: 4px;"
-            title="Descargar esta planilla en formato Microsoft Word (.docx)"
-          >
-            <svg class="usa-icon" aria-hidden="true" role="img" style="width: 14px; height: 14px; fill: #FFFFFF;">
-              <use xlink:href="/assets/uswds/img/sprite.svg#file_download"></use>
-            </svg>
-            <span class="txt-descargar-docx">Word (.docx)</span>
-          </button>
-          <a
-            href={`/planillas/${p.slug}?modo=blanco&imprimir=1`}
-            target="_blank"
-            class="usa-button link-imprimir-planilla"
-            data-slug={p.slug}
-            style="background-color: #005EA2; color: #FFFFFF; font-size: 11.5px; font-weight: 700; padding: 7px 10px; text-decoration: none; white-space: nowrap; display: flex; align-items: center; gap: 4px;"
-            title="Imprimir directamente en Folio en blanco"
-          >
-            <svg class="usa-icon" aria-hidden="true" role="img" style="width: 14px; height: 14px; fill: #FFFFFF;">
-              <use xlink:href="/assets/uswds/img/sprite.svg#print"></use>
-            </svg>
-            <span>Imprimir</span>
-          </a>
-        </div>
-      </div>
-    ))}
+  <div class="margin-bottom-3">
+    <Alert type="info" heading="Consignación Privada y Adquisición Lógica (NIST SP 800-101 Nivel 2 · LMDFE Arts. 4 y 7)">
+      Este catálogo opera bajo el modelo de <strong>Consignación Voluntaria y Adquisición Lógica Forense</strong> de dispositivos móviles y mensajería (WhatsApp SQLite <code>msgstore.db</code>). Todas las planillas están estrictamente adaptadas al <strong>Manual Único de Cadena de Custodia (MUCC-2017)</strong> y a la <strong>Ley sobre Mensajes de Datos y Firmas Electrónicas</strong>, imprimiéndose por defecto en <strong>Modo Plantilla en Blanco</strong> en hojas tamaño Folio (216mm × 330mm) en Blanco y Negro puro con 25mm de margen de encuadernación.
+    </Alert>
   </div>
+
+  <!-- USWDS: Card | https://designsystem.digital.gov/components/card/ -->
+  <ul class="usa-card-group">
+    {PLANILLAS.map((p) => (
+      <li class="usa-card tablet:grid-col-6 desktop:grid-col-4 planilla-card-item" data-fase={p.fase}>
+        <div class="usa-card__container border-top-05 border-primary-darker">
+          <div class="usa-card__header">
+            <div class="display-flex flex-justify flex-align-center margin-bottom-1">
+              <span class="usa-tag bg-primary">FASE {p.fase}</span>
+              <span class="usa-tag bg-base-lightest text-ink">{p.hojas} (216×330mm)</span>
+            </div>
+            <h2 class="usa-card__heading font-heading-md text-primary-darker">{p.titulo}</h2>
+          </div>
+
+          <div class="usa-card__body">
+            <p class="font-mono-3xs text-bold text-accent-warm-dark margin-top-0 margin-bottom-1">
+              ESTÁNDAR: {p.norma}
+            </p>
+            <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-0">
+              {p.descripcion}
+            </p>
+          </div>
+
+          <div class="usa-card__footer border-top-1px border-base-lighter padding-top-2">
+            <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
+            <ul class="usa-button-group">
+              <li class="usa-button-group__item">
+                <a
+                  href={`/planillas/${p.slug}?modo=blanco`}
+                  class="usa-button usa-button--outline link-abrir-planilla"
+                  data-slug={p.slug}
+                >
+                  Ver Formato
+                </a>
+              </li>
+              <li class="usa-button-group__item">
+                <button
+                  type="button"
+                  class="usa-button usa-button--base btn-descargar-docx"
+                  data-slug={p.slug}
+                  data-titulo={p.titulo}
+                  title="Descargar esta planilla en formato Microsoft Word (.docx)"
+                >
+                  <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                    <use href="/assets/uswds/img/sprite.svg#file_download"></use>
+                  </svg>
+                  <span class="txt-descargar-docx">Word (.docx)</span>
+                </button>
+              </li>
+              <li class="usa-button-group__item">
+                <a
+                  href={`/planillas/${p.slug}?modo=blanco&imprimir=1`}
+                  target="_blank"
+                  class="usa-button link-imprimir-planilla"
+                  data-slug={p.slug}
+                  title="Imprimir directamente en Folio en blanco"
+                >
+                  <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                    <use href="/assets/uswds/img/sprite.svg#print"></use>
+                  </svg>
+                  <span>Imprimir</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </li>
+    ))}
+  </ul>
 </AppLayout>
 
 <script>

@@ -5,29 +5,29 @@
  */
 import AppLayout from '../layouts/AppLayout.astro';
 import SummaryBox from '../components/uswds/SummaryBox.astro';
-import Alert from '../components/uswds/Alert.astro';
 ---
 
 <AppLayout title="Auditoría Inmutable SHA-256 — SHA256.US" activeNav="auditoria">
   <!-- Encabezado de Página -->
-  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 24px; flex-wrap: wrap; gap: 16px;">
-    <div>
-      <h1 style="font-size: 28px; font-weight: 800; color: #112E51; margin: 0 0 6px 0;">
+  <div class="grid-row grid-gap flex-align-center flex-justify margin-bottom-3">
+    <div class="tablet:grid-col-8">
+      <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
         Registro de Auditoría Inmutable (Cadena SHA-256)
       </h1>
-      <p style="margin: 0; color: #475569; font-size: 15px;">
+      <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
         Trazabilidad criptográfica sellada en tiempo real. Cada evento contiene el hash matemático del evento inmediatamente anterior.
       </p>
     </div>
 
-    <div>
+    <div class="tablet:grid-col-auto">
+      <!-- USWDS: Button | https://designsystem.digital.gov/components/button/ -->
       <button
         id="btn-verificar-cadena"
+        type="button"
         class="usa-button"
-        style="background-color: #008837; color: #FFFFFF; font-weight: 800; display: inline-flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 4px; border: none; cursor: pointer;"
       >
-        <svg class="usa-icon" aria-hidden="true" role="img" style="width: 16px; height: 16px; fill: #FFFFFF;">
-          <use xlink:href="/assets/uswds/img/sprite.svg#verified_user"></use>
+        <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+          <use href="/assets/uswds/img/sprite.svg#verified_user"></use>
         </svg>
         <span>Verificar Integridad Criptográfica</span>
       </button>
@@ -35,54 +35,56 @@ import Alert from '../components/uswds/Alert.astro';
   </div>
 
   <!-- Contenedor del Resultado de la Verificación Criptográfica -->
-  <div id="contenedor-resultado-verificacion" style="display: none; margin-bottom: 24px;">
+  <div id="contenedor-resultado-verificacion" class="margin-bottom-3" hidden>
     <!-- Se inyecta la alerta dinámica según el resultado -->
   </div>
 
   <!-- Resumen de Principios Criptográficos -->
-  <div style="margin-bottom: 24px;">
-    <SummaryBox heading="Garantía de Imposibilidad de Alteración Retrospectiva">
-      <p style="margin: 0 0 10px 0; font-size: 14px; color: #1E293B;">
+  <div class="margin-bottom-3">
+    <SummaryBox heading="Garantía de Imposibilidad de Alteración Retrospectiva" headingId="summary-principios-criptograficos">
+      <p class="margin-top-0 margin-bottom-1">
         La bitácora de auditoría implementa un encadenamiento criptográfico determinista: modificar un solo carácter o milisegundo
         de una acción previa alteraría su digest SHA-256, rompiendo inmediatamente el enlace con todos los bloques subsiguientes
         y alertando al tribunal sobre una potencial contaminación de prueba digital.
       </p>
-      <div style="display: flex; gap: 10px; flex-wrap: wrap; font-size: 11px; font-family: 'Roboto Mono Web', monospace;">
-        <span class="usa-tag" style="background-color: #112E51; color: #FFF;">GÉNESIS: 00000000...0000</span>
-        <span class="usa-tag" style="background-color: #005EA2; color: #FFF;">CANONICAL JSON (RFC 8785)</span>
-        <span class="usa-tag" style="background-color: #008837; color: #FFF;">ALGORITMO: SHA-256 FIPS 180-4</span>
+      <!-- USWDS: Tag | https://designsystem.digital.gov/components/tag/ -->
+      <div class="display-flex flex-wrap">
+        <span class="usa-tag bg-primary-darker font-mono-2xs margin-right-1 margin-bottom-05">GÉNESIS: 00000000...0000</span>
+        <span class="usa-tag bg-primary font-mono-2xs margin-right-1 margin-bottom-05">CANONICAL JSON (RFC 8785)</span>
+        <span class="usa-tag bg-green font-mono-2xs margin-bottom-05">ALGORITMO: SHA-256 FIPS 180-4</span>
       </div>
     </SummaryBox>
   </div>
 
-  <!-- Tabla USWDS de Eventos de la Cadena de Auditoría -->
-  <div style="background: #FFFFFF; border: 1px solid #CBD5E1; border-radius: 4px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-      <h2 style="font-size: 18px; font-weight: 800; color: #112E51; margin: 0;">
+  <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
+  <div class="bg-white border-1px border-base-lighter padding-3 margin-bottom-3">
+    <div class="display-flex flex-justify flex-align-center margin-bottom-2">
+      <h2 class="margin-0 font-heading-lg text-primary-darker">
         Bloques Registrados en la Cadena
       </h2>
-      <div style="font-size: 12px; color: #64748B;">
-        Total bloques: <strong id="total-bloques" style="color: #112E51;">Cargando...</strong>
+      <div class="font-body-2xs text-base-dark">
+        Total bloques: <strong id="total-bloques" class="text-primary-darker">Cargando...</strong>
       </div>
     </div>
 
-    <div style="overflow-x: auto;">
-      <table class="usa-table usa-table--striped usa-table--compact" style="width: 100%; font-size: 12px;" id="tabla-auditoria">
+    <div class="usa-table-container--scrollable" tabindex="0">
+      <table class="usa-table usa-table--striped usa-table--compact width-full" id="tabla-auditoria">
+        <caption>Registro cronológico de bloques de auditoría encadenados con SHA-256</caption>
         <thead>
-          <tr style="background-color: #F1F5F9; color: #112E51;">
-            <th scope="col" style="font-weight: 700;">#</th>
-            <th scope="col" style="font-weight: 700;">Fecha y Hora</th>
-            <th scope="col" style="font-weight: 700;">Expediente</th>
-            <th scope="col" style="font-weight: 700;">Acción Pericial</th>
-            <th scope="col" style="font-weight: 700;">Perito Responsable</th>
-            <th scope="col" style="font-weight: 700;">Hash Anterior</th>
-            <th scope="col" style="font-weight: 700;">Hash Actual SHA-256</th>
-            <th scope="col" style="text-align: center; font-weight: 700;">Integridad</th>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Fecha y Hora</th>
+            <th scope="col">Expediente</th>
+            <th scope="col">Acción Pericial</th>
+            <th scope="col">Perito Responsable</th>
+            <th scope="col">Hash Anterior</th>
+            <th scope="col">Hash Actual SHA-256</th>
+            <th scope="col">Integridad</th>
           </tr>
         </thead>
         <tbody id="tbody-auditoria">
           <tr>
-            <td colspan="8" style="text-align: center; padding: 20px; color: #64748B;">
+            <td colspan="8">
               Cargando eventos de la cadena inmutable...
             </td>
           </tr>
@@ -169,31 +171,28 @@ import Alert from '../components/uswds/Alert.astro';
       const hashActTrunc = `${e.hashActual.substring(0, 8)}...${e.hashActual.substring(56)}`;
 
       tr.innerHTML = `
-        <td style="font-weight: 700; color: #112E51;">#${idx + 1}</td>
-        <td style="font-family: 'Roboto Mono Web', monospace; white-space: nowrap;">
+        <th scope="row" class="text-bold text-primary-darker">#${idx + 1}</th>
+        <td class="font-mono-2xs text-no-wrap">
           ${new Date(e.timestamp).toLocaleString('es-VE')}
         </td>
         <td>
-          <strong style="color: #005EA2;">${e.casoId}</strong>
+          <strong class="text-primary">${e.casoId}</strong>
         </td>
         <td>
-          <span class="usa-tag" style="background-color: #E2E8F0; color: #112E51; font-weight: 700; font-size: 10px;">
+          <span class="usa-tag bg-base-lighter text-ink text-bold">
             ${e.evento}
           </span>
-          <div style="font-size: 11px; color: #64748B; margin-top: 2px;">${e.faseOrigen || 'F0'} → ${e.faseDestino || 'F1'}</div>
+          <div class="font-body-3xs text-base-dark margin-top-05">${e.faseOrigen || 'F0'} → ${e.faseDestino || 'F1'}</div>
         </td>
         <td>${e.actor}</td>
-        <td style="font-family: 'Roboto Mono Web', monospace; color: #64748B;" title="${e.hashAnterior}">
-          ${hashAntTrunc}
+        <td class="font-mono-2xs text-base-dark" title="${e.hashAnterior}">
+          <code>${hashAntTrunc}</code>
         </td>
-        <td style="font-family: 'Roboto Mono Web', monospace; color: #005EA2; font-weight: 600;" title="${e.hashActual}">
-          ${hashActTrunc}
+        <td class="font-mono-2xs text-primary text-bold" title="${e.hashActual}">
+          <code>${hashActTrunc}</code>
         </td>
-        <td style="text-align: center;">
-          <span style="display: inline-flex; align-items: center; gap: 4px; color: #008837; font-weight: 700; font-size: 11px;">
-            <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: #008837;"></span>
-            VÁLIDO
-          </span>
+        <td>
+          <span class="usa-tag bg-green">VÁLIDO</span>
         </td>
       `;
       tbody.appendChild(tr);
@@ -203,7 +202,7 @@ import Alert from '../components/uswds/Alert.astro';
   if (btnVerificar) {
     btnVerificar.addEventListener('click', async () => {
       if (!contResultado) return;
-      contResultado.style.display = 'block';
+      contResultado.hidden = false;
 
       try {
         const res = await phpApi.verificarAuditoria();
@@ -211,11 +210,11 @@ import Alert from '../components/uswds/Alert.astro';
           contResultado.innerHTML = `
             <div class="usa-alert usa-alert--success" role="status">
               <div class="usa-alert__body">
-                <h4 class="usa-alert__heading">Cadena 100% Íntegra y Verificada</h4>
-                <div class="usa-alert__text">
+                <h2 class="usa-alert__heading">Cadena 100% Íntegra y Verificada</h2>
+                <p class="usa-alert__text">
                   Se verificaron matemáticamente los <strong>${res.totalEntradas} bloques</strong> de la cadena.
                   Todos los enlaces SHA-256 coinciden punto a punto sin roturas de trazabilidad ni adulteraciones.
-                </div>
+                </p>
               </div>
             </div>
           `;
@@ -223,10 +222,10 @@ import Alert from '../components/uswds/Alert.astro';
           contResultado.innerHTML = `
             <div class="usa-alert usa-alert--error" role="alert">
               <div class="usa-alert__body">
-                <h4 class="usa-alert__heading">Rotura de Integridad Detectada</h4>
-                <div class="usa-alert__text">
+                <h2 class="usa-alert__heading">Rotura de Integridad Detectada</h2>
+                <p class="usa-alert__text">
                   ${res.error || 'Inconsistencia en el hash de un bloque previo.'}
-                </div>
+                </p>
               </div>
             </div>
           `;
@@ -238,10 +237,10 @@ import Alert from '../components/uswds/Alert.astro';
           contResultado.innerHTML = `
             <div class="usa-alert usa-alert--success" role="status">
               <div class="usa-alert__body">
-                <h4 class="usa-alert__heading">Cadena 100% Íntegra (Verificación Local WebCrypto)</h4>
-                <div class="usa-alert__text">
+                <h2 class="usa-alert__heading">Cadena 100% Íntegra (Verificación Local WebCrypto)</h2>
+                <p class="usa-alert__text">
                   Los <strong>${resLocal.total} bloques</strong> verificados en cliente concuerdan con la regla de enlace SHA-256 inmutable.
-                </div>
+                </p>
               </div>
             </div>
           `;
@@ -249,10 +248,10 @@ import Alert from '../components/uswds/Alert.astro';
           contResultado.innerHTML = `
             <div class="usa-alert usa-alert--error" role="alert">
               <div class="usa-alert__body">
-                <h4 class="usa-alert__heading">Rotura de Cadena Detectada</h4>
-                <div class="usa-alert__text">
+                <h2 class="usa-alert__heading">Rotura de Cadena Detectada</h2>
+                <p class="usa-alert__text">
                   ${resLocal.error} en el bloque #${resLocal.indiceInvalido}.
-                </div>
+                </p>
               </div>
             </div>
           `;
