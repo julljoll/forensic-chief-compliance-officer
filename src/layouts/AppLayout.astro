@@ -1,11 +1,11 @@
 ---
 /**
  * SHA256.US — Layout Principal del CMS de Cumplimiento Forense con USWDS Estricto (@uswds/uswds)
- * Esqueleto canónico USWDS: skipnav → overlay → banner → header → main (sidenav + content) → footer → identifier → scripts.
+ * Navegación centralizada única en encabezado superior oficial (usa-header--extended).
+ * Esqueleto canónico USWDS: skipnav → overlay → banner → header (nav único) → main (widescreen) → footer → identifier → scripts.
  * Fuentes:
  * - https://designsystem.digital.gov/components/banner/
  * - https://designsystem.digital.gov/components/header/
- * - https://designsystem.digital.gov/components/side-navigation/
  * - https://designsystem.digital.gov/components/footer/
  * - https://designsystem.digital.gov/components/identifier/
  */
@@ -105,7 +105,7 @@ const navItems = [
       </div>
     </section>
 
-    <!-- USWDS: Header Extended | https://designsystem.digital.gov/components/header/ -->
+    <!-- USWDS: Header Extended (Menú único centralizado) | https://designsystem.digital.gov/components/header/ -->
     <header class="usa-header usa-header--extended">
       <div class="usa-navbar">
         <div class="usa-logo" id="extended-logo">
@@ -148,34 +148,12 @@ const navItems = [
       </nav>
     </header>
 
-    <!-- USWDS: Layout Grid + Side Navigation | https://designsystem.digital.gov/utilities/layout-grid/ -->
-    <div class="usa-section padding-top-3 padding-bottom-6">
+    <!-- USWDS: Layout Grid a ancho completo (sin barra lateral) | https://designsystem.digital.gov/utilities/layout-grid/ -->
+    <main class="usa-section padding-top-3 padding-bottom-6" id="main-content">
       <div class="grid-container-widescreen">
-        <div class="grid-row grid-gap">
-          <div class="usa-layout-docs__sidenav desktop:grid-col-3 margin-bottom-3 desktop:margin-bottom-0">
-            <!-- USWDS: Side navigation | https://designsystem.digital.gov/components/side-navigation/ -->
-            <nav aria-label="Menú lateral de módulos de cumplimiento">
-              <ul class="usa-sidenav">
-                {navItems.map((item) => (
-                  <li class="usa-sidenav__item">
-                    <a
-                      href={item.href}
-                      class={activeNav === item.key ? 'usa-current' : undefined}
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </nav>
-          </div>
-
-          <main class="usa-layout-docs__main desktop:grid-col-9 width-full overflow-hidden" id="main-content">
-            <slot />
-          </main>
-        </div>
+        <slot />
       </div>
-    </div>
+    </main>
 
     <!-- USWDS: Footer Slim | https://designsystem.digital.gov/components/footer/ -->
     <footer class="usa-footer usa-footer--slim">
