@@ -18,23 +18,23 @@ import Alert from '../components/uswds/Alert.astro';
 <AppLayout title="Forensic Chief Compliance Officer — Panel General" activeNav="dashboard">
   <div class="grid-row grid-gap flex-align-center margin-bottom-3">
     <div class="tablet:grid-col-7">
-      <h1 class="margin-top-0 margin-bottom-1">
+      <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
         Forensic Chief Compliance Officer — Panel General
       </h1>
-      <p class="usa-intro margin-top-0 margin-bottom-0">
+      <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
         CMS de monitoreo de expedientes periciales, sellos criptográficos SHA-256 y cumplimiento ISO/IEC.
       </p>
     </div>
     <div class="tablet:grid-col-5">
       <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
-      <ul class="usa-button-group">
+      <ul class="usa-button-group flex-wrap tablet:flex-justify-end">
         <li class="usa-button-group__item">
-          <a href="/casos?nuevo=1" class="usa-button">
+          <a href="/casos?nuevo=1" class="usa-button font-sans-xs padding-x-2 padding-y-1">
             Aperturar Nuevo Expediente
           </a>
         </li>
         <li class="usa-button-group__item">
-          <a href="/auditoria" class="usa-button usa-button--outline">
+          <a href="/auditoria" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
             Verificar Cadena
           </a>
         </li>
@@ -51,49 +51,49 @@ import Alert from '../components/uswds/Alert.astro';
 
   <!-- USWDS: Card | https://designsystem.digital.gov/components/card/ -->
   <ul class="usa-card-group margin-bottom-3">
-    <li class="usa-card tablet:grid-col-6 desktop:grid-col-3">
-      <div class="usa-card__container">
+    <li class="usa-card tablet:grid-col-6 desktop:grid-col-6 widescreen:grid-col-3">
+      <div class="usa-card__container border-top-05 border-green">
         <div class="usa-card__header">
-          <h2 class="usa-card__heading">Expedientes Activos</h2>
+          <h2 class="usa-card__heading font-heading-sm text-primary-darker">Expedientes Activos</h2>
         </div>
         <div class="usa-card__body">
-          <p class="font-sans-2xl text-bold margin-y-1" id="kpi-total-casos">0</p>
+          <p class="font-sans-2xl text-bold margin-y-1 text-primary" id="kpi-total-casos">0</p>
           <p class="margin-0"><span class="usa-tag bg-green">En curso procesal</span></p>
         </div>
       </div>
     </li>
 
-    <li class="usa-card tablet:grid-col-6 desktop:grid-col-3">
-      <div class="usa-card__container">
+    <li class="usa-card tablet:grid-col-6 desktop:grid-col-6 widescreen:grid-col-3">
+      <div class="usa-card__container border-top-05 border-primary">
         <div class="usa-card__header">
-          <h2 class="usa-card__heading">Evidencias Custodiadas</h2>
+          <h2 class="usa-card__heading font-heading-sm text-primary-darker">Evidencias Custodiadas</h2>
         </div>
         <div class="usa-card__body">
-          <p class="font-sans-2xl text-bold margin-y-1" id="kpi-evidencias">0</p>
-          <p class="margin-0"><span class="usa-tag">Con precinto PRCC</span></p>
+          <p class="font-sans-2xl text-bold margin-y-1 text-primary" id="kpi-evidencias">0</p>
+          <p class="margin-0"><span class="usa-tag bg-primary-darker">Con precinto PRCC</span></p>
         </div>
       </div>
     </li>
 
-    <li class="usa-card tablet:grid-col-6 desktop:grid-col-3">
-      <div class="usa-card__container">
+    <li class="usa-card tablet:grid-col-6 desktop:grid-col-6 widescreen:grid-col-3">
+      <div class="usa-card__container border-top-05 border-primary-darker">
         <div class="usa-card__header">
-          <h2 class="usa-card__heading">Fases ISO Validadas</h2>
+          <h2 class="usa-card__heading font-heading-sm text-primary-darker">Fases ISO Validadas</h2>
         </div>
         <div class="usa-card__body">
-          <p class="font-sans-2xl text-bold margin-y-1" id="kpi-fases">12 / 18</p>
+          <p class="font-sans-2xl text-bold margin-y-1 text-primary" id="kpi-fases">12 / 18</p>
           <p class="margin-0"><span class="usa-tag bg-primary">Gating 100% superado</span></p>
         </div>
       </div>
     </li>
 
-    <li class="usa-card tablet:grid-col-6 desktop:grid-col-3">
-      <div class="usa-card__container">
+    <li class="usa-card tablet:grid-col-6 desktop:grid-col-6 widescreen:grid-col-3">
+      <div class="usa-card__container border-top-05 border-accent-warm-dark">
         <div class="usa-card__header">
-          <h2 class="usa-card__heading">Integridad SHA-256</h2>
+          <h2 class="usa-card__heading font-heading-sm text-primary-darker">Integridad SHA-256</h2>
         </div>
         <div class="usa-card__body">
-          <p class="font-sans-2xl text-bold margin-y-1" id="kpi-integridad">100%</p>
+          <p class="font-sans-2xl text-bold margin-y-1 text-green" id="kpi-integridad">100%</p>
           <p class="margin-0"><span class="usa-tag bg-green">Cadena verificada</span></p>
         </div>
       </div>
@@ -106,26 +106,26 @@ import Alert from '../components/uswds/Alert.astro';
     headingId="summary-ciclo-iso"
     className="margin-bottom-3"
   >
-    <p>
+    <p class="margin-top-0 margin-bottom-1">
       El CMS opera bajo un flujo determinista cerrado: ninguna etapa puede cerrarse sin que el perito
       adjunte los requisitos de fijación, adquiera la imagen forense con hardware de bloqueo de escritura
       y selle criptográficamente el hash génesis.
     </p>
     <!-- USWDS: Tag | https://designsystem.digital.gov/components/tag/ -->
-    <p class="margin-bottom-0">
-      <span class="usa-tag">ISO/IEC 27037:2012</span>
-      <span class="usa-tag">ISO/IEC 27042:2015</span>
-      <span class="usa-tag">NIST SP 800-86</span>
-      <span class="usa-tag bg-accent-warm text-ink">MUCC-2017</span>
-      <span class="usa-tag bg-primary">COPP Art. 187</span>
-    </p>
+    <div class="display-flex flex-wrap">
+      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05">ISO/IEC 27037:2012</span>
+      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05">ISO/IEC 27042:2015</span>
+      <span class="usa-tag bg-primary margin-right-1 margin-bottom-05">NIST SP 800-86</span>
+      <span class="usa-tag bg-accent-warm-dark text-ink text-bold margin-right-1 margin-bottom-05">MUCC-2017</span>
+      <span class="usa-tag bg-green margin-bottom-05">COPP Art. 187</span>
+    </div>
   </SummaryBox>
 
   <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
   <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
     <div class="grid-row flex-justify flex-align-center margin-bottom-2">
-      <h2 class="margin-0">Expedientes Periciales en Curso</h2>
-      <a href="/casos" class="usa-link">Ver todos los casos</a>
+      <h2 class="margin-0 font-heading-md text-primary-darker">Expedientes Periciales en Curso</h2>
+      <a href="/casos" class="usa-link font-sans-2xs">Ver todos los casos</a>
     </div>
 
     <div class="usa-table-container--scrollable" tabindex="0">
@@ -156,13 +156,13 @@ import Alert from '../components/uswds/Alert.astro';
     <li class="usa-card tablet:grid-col-6">
       <div class="usa-card__container">
         <div class="usa-card__header">
-          <h2 class="usa-card__heading">Planillas Oficiales en Folio (216mm × 330mm)</h2>
+          <h2 class="usa-card__heading font-heading-md text-primary-darker">Planillas Oficiales en Folio (216mm × 330mm)</h2>
         </div>
         <div class="usa-card__body">
-          <p>
+          <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
             Formatos reglamentarios con membrete oficial, dactiloscopía bilateral y márgenes de impresión exactos:
           </p>
-          <ul class="usa-list">
+          <ul class="usa-list font-body-2xs">
             <li><a href="/planillas/acta-consentimiento" class="usa-link">Acta de Consentimiento Informado</a></li>
             <li><a href="/planillas/acta-entrevista" class="usa-link">Acta de Entrevista Forense al Consignante</a></li>
             <li><a href="/planillas/acta-obtencion" class="usa-link">Acta de Obtención y Preservación Inicial</a></li>
@@ -171,8 +171,8 @@ import Alert from '../components/uswds/Alert.astro';
             <li><a href="/planillas/acta-dictamen" class="usa-link">Dictamen Pericial Oficial de Informática Forense</a></li>
           </ul>
         </div>
-        <div class="usa-card__footer">
-          <a href="/planillas" class="usa-button usa-button--outline">
+        <div class="usa-card__footer border-top-1px border-base-lighter padding-top-2">
+          <a href="/planillas" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
             Ver catálogo de 13 planillas
           </a>
         </div>
@@ -182,13 +182,13 @@ import Alert from '../components/uswds/Alert.astro';
     <li class="usa-card tablet:grid-col-6">
       <div class="usa-card__container">
         <div class="usa-card__header">
-          <h2 class="usa-card__heading">Admisibilidad y Blindaje Procesal</h2>
+          <h2 class="usa-card__heading font-heading-md text-primary-darker">Admisibilidad y Blindaje Procesal</h2>
         </div>
         <div class="usa-card__body">
-          <p>
+          <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
             Garantías procesales activas para evitar la nulidad conforme al Art. 187 del COPP:
           </p>
-          <ul class="usa-list">
+          <ul class="usa-list font-body-2xs">
             <li>
               <strong>Bloqueadores de Escritura (Write-Blockers):</strong> Obligatorios para la clonación bit-a-bit en ISO 27037.
             </li>
@@ -200,8 +200,8 @@ import Alert from '../components/uswds/Alert.astro';
             </li>
           </ul>
         </div>
-        <div class="usa-card__footer">
-          <a href="/normativa" class="usa-button usa-button--outline">
+        <div class="usa-card__footer border-top-1px border-base-lighter padding-top-2">
+          <a href="/normativa" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
             Consultar Base Normativa RAG (77 normas)
           </a>
         </div>
@@ -240,14 +240,14 @@ import Alert from '../components/uswds/Alert.astro';
           <span class="usa-tag bg-green">Sincronizado DB</span>
         </td>
         <td>
-          <ul class="usa-button-group">
+          <ul class="usa-button-group flex-wrap">
             <li class="usa-button-group__item">
-              <a href="/flujo?casoId=${c.id}" class="usa-button usa-button--outline">
+              <a href="/flujo?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
                 Ciclo ISO
               </a>
             </li>
             <li class="usa-button-group__item">
-              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline">
+              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
                 PRCC
               </a>
             </li>
@@ -301,4 +301,3 @@ import Alert from '../components/uswds/Alert.astro';
     cargarDatosDashboard();
   }
 </script>
-

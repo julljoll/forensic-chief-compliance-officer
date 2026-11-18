@@ -93,7 +93,7 @@
       <div class="usa-nav-container">
         <div class="usa-navbar">
           <div class="usa-logo">
-            <em class="usa-logo__text">
+            <em class="usa-logo__text font-heading-sm tablet:font-heading-md">
               <a href="/" title="SHA256.US — Forensic Chief Compliance Officer">
                 SHA256.US — Forensic Chief Compliance Officer
               </a>
@@ -105,25 +105,27 @@
 
     <main id="main-content">
       <div class="bg-base-lightest">
-        <section class="grid-container usa-section">
+        <section class="grid-container usa-section padding-y-3 tablet:padding-y-6">
           <div class="grid-row flex-justify-center">
-            <div class="grid-col-12 tablet:grid-col-8 desktop:grid-col-6">
-              <div class="bg-white padding-y-3 padding-x-5 border border-base-lighter">
-                <h1 class="margin-bottom-1">Acceso a Bóveda Pericial</h1>
-                <p class="usa-intro margin-top-0 margin-bottom-3">
+            <div class="grid-col-12 tablet:grid-col-10 desktop:grid-col-7 widescreen:grid-col-6">
+              <div class="bg-white padding-2 tablet:padding-4 desktop:padding-5 border border-base-lighter">
+                <h1 class="margin-top-0 margin-bottom-1 font-heading-lg text-primary-darker">
+                  Acceso a Bóveda Pericial
+                </h1>
+                <p class="usa-intro margin-top-0 margin-bottom-3 font-body-sm text-base-dark">
                   CMS de Cumplimiento Normativo ISO/IEC 27037 y Cadena de Custodia MUCC-2017.
                 </p>
 
                 <!-- USWDS: Button group segmented | https://designsystem.digital.gov/components/button-group/ -->
-                <ul class="usa-button-group usa-button-group--segmented margin-bottom-3">
-                  <li class="usa-button-group__item">
-                    <button type="button" id="tab-pass" class="usa-button">
+                <ul class="usa-button-group usa-button-group--segmented margin-bottom-3 width-full">
+                  <li class="usa-button-group__item flex-1">
+                    <button type="button" id="tab-pass" class="usa-button width-full font-sans-xs padding-x-1 padding-y-1 text-center">
                       Contraseña
                     </button>
                   </li>
-                  <li class="usa-button-group__item">
-                    <button type="button" id="tab-totp" class="usa-button usa-button--outline">
-                      Google Authenticator (2FA)
+                  <li class="usa-button-group__item flex-1">
+                    <button type="button" id="tab-totp" class="usa-button usa-button--outline width-full font-sans-xs padding-x-1 padding-y-1 text-center">
+                      Google 2FA (TOTP)
                     </button>
                   </li>
                 </ul>
@@ -141,9 +143,11 @@
                 </div>
 
                 <!-- USWDS: Sign-in form | https://designsystem.digital.gov/templates/sign-in-page/ -->
-                <form class="usa-form" id="login-form">
+                <form class="usa-form width-full maxw-full" id="login-form">
                   <fieldset class="usa-fieldset">
-                    <legend class="usa-legend usa-legend--large">Credenciales del Operador Forense</legend>
+                    <legend class="usa-legend usa-legend--large font-heading-md text-primary-darker">
+                      Credenciales del Operador Forense
+                    </legend>
 
                     <label class="usa-label" for="email">
                       Correo electrónico institucional <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
@@ -204,7 +208,7 @@
                     </div>
 
                     <input
-                      class="usa-button margin-top-3"
+                      class="usa-button margin-top-3 width-full font-sans-xs padding-y-1"
                       type="submit"
                       id="btn-submit"
                       value="Ingresar al Sistema Forense"
@@ -326,4 +330,3 @@
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
   </body>
 </html>
-

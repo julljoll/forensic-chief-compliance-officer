@@ -129,7 +129,7 @@ const PLANILLAS = [
     </div>
 
     <!-- Selector de Modo / Expediente -->
-    <div class="tablet:grid-col-5">
+    <div class="tablet:grid-col-5 margin-top-2 tablet:margin-top-0">
       <!-- USWDS: Select | https://designsystem.digital.gov/components/select/ -->
       <label class="usa-label margin-top-0" for="select-caso-planillas">
         Modo de Emisión
@@ -152,14 +152,14 @@ const PLANILLAS = [
   <!-- USWDS: Card | https://designsystem.digital.gov/components/card/ -->
   <ul class="usa-card-group">
     {PLANILLAS.map((p) => (
-      <li class="usa-card tablet:grid-col-6 desktop:grid-col-4 planilla-card-item" data-fase={p.fase}>
-        <div class="usa-card__container border-top-05 border-primary-darker">
+      <li class="usa-card tablet:grid-col-6 desktop:grid-col-6 widescreen:grid-col-4 planilla-card-item" data-fase={p.fase}>
+        <div class="usa-card__container border-top-05 border-primary-darker overflow-hidden">
           <div class="usa-card__header">
             <div class="display-flex flex-justify flex-align-center margin-bottom-1">
-              <span class="usa-tag bg-primary">FASE {p.fase}</span>
-              <span class="usa-tag bg-base-lightest text-ink">{p.hojas} (216×330mm)</span>
+              <span class="usa-tag bg-primary font-mono-3xs">FASE {p.fase}</span>
+              <span class="usa-tag bg-base-lightest text-ink font-mono-3xs">{p.hojas}</span>
             </div>
-            <h2 class="usa-card__heading font-heading-md text-primary-darker">{p.titulo}</h2>
+            <h2 class="usa-card__heading font-heading-sm text-primary-darker">{p.titulo}</h2>
           </div>
 
           <div class="usa-card__body">
@@ -172,21 +172,35 @@ const PLANILLAS = [
           </div>
 
           <div class="usa-card__footer border-top-1px border-base-lighter padding-top-2">
-            <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
-            <ul class="usa-button-group">
-              <li class="usa-button-group__item">
+            <!-- USWDS: Button group flex-wrap | https://designsystem.digital.gov/components/button-group/ -->
+            <ul class="usa-button-group flex-wrap width-full">
+              <li class="usa-button-group__item flex-1">
                 <a
                   href={`/planillas/${p.slug}?modo=blanco`}
-                  class="usa-button usa-button--outline link-abrir-planilla"
+                  class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05 width-full text-center link-abrir-planilla"
                   data-slug={p.slug}
                 >
                   Ver Formato
                 </a>
               </li>
-              <li class="usa-button-group__item">
+              <li class="usa-button-group__item flex-1">
+                <a
+                  href={`/planillas/${p.slug}?modo=blanco&imprimir=1`}
+                  target="_blank"
+                  class="usa-button font-sans-2xs padding-x-1 padding-y-05 width-full text-center link-imprimir-planilla"
+                  data-slug={p.slug}
+                  title="Imprimir directamente en Folio en blanco"
+                >
+                  <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                    <use href="/assets/uswds/img/sprite.svg#print"></use>
+                  </svg>
+                  <span>Imprimir</span>
+                </a>
+              </li>
+              <li class="usa-button-group__item width-full margin-top-1">
                 <button
                   type="button"
-                  class="usa-button usa-button--base btn-descargar-docx"
+                  class="usa-button usa-button--base font-sans-2xs padding-x-1 padding-y-05 width-full text-center btn-descargar-docx"
                   data-slug={p.slug}
                   data-titulo={p.titulo}
                   title="Descargar esta planilla en formato Microsoft Word (.docx)"
@@ -196,20 +210,6 @@ const PLANILLAS = [
                   </svg>
                   <span class="txt-descargar-docx">Word (.docx)</span>
                 </button>
-              </li>
-              <li class="usa-button-group__item">
-                <a
-                  href={`/planillas/${p.slug}?modo=blanco&imprimir=1`}
-                  target="_blank"
-                  class="usa-button link-imprimir-planilla"
-                  data-slug={p.slug}
-                  title="Imprimir directamente en Folio en blanco"
-                >
-                  <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
-                    <use href="/assets/uswds/img/sprite.svg#print"></use>
-                  </svg>
-                  <span>Imprimir</span>
-                </a>
               </li>
             </ul>
           </div>

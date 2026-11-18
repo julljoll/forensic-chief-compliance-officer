@@ -18,19 +18,19 @@ import Alert from '../components/uswds/Alert.astro';
 <AppLayout title="Expedientes Periciales — SHA256.US" activeNav="casos">
   <div class="grid-row grid-gap flex-align-center margin-bottom-3">
     <div class="tablet:grid-col-8">
-      <h1 class="margin-top-0 margin-bottom-1">
+      <h1 class="margin-top-0 margin-bottom-1 text-primary-darker">
         Directorio de Expedientes Periciales
       </h1>
-      <p class="usa-intro margin-top-0 margin-bottom-0">
+      <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
         Gestión centralizada de investigaciones forenses, asignación pericial y control de evidencias digitales.
       </p>
     </div>
-    <div class="tablet:grid-col-4">
+    <div class="tablet:grid-col-4 tablet:display-flex tablet:flex-justify-end margin-top-2 tablet:margin-top-0">
       <!-- USWDS: Modal trigger | https://designsystem.digital.gov/components/modal/ -->
       <a
         href="#modal-nuevo-caso"
         id="btn-abrir-modal-nuevo"
-        class="usa-button"
+        class="usa-button font-sans-xs padding-x-2 padding-y-1 width-full tablet:width-auto text-center"
         aria-controls="modal-nuevo-caso"
         data-open-modal
       >
@@ -42,15 +42,16 @@ import Alert from '../components/uswds/Alert.astro';
   <!-- USWDS: Form controls for filtering | https://designsystem.digital.gov/components/form/ -->
   <div class="bg-white padding-3 border border-base-lighter margin-bottom-3">
     <div class="grid-row grid-gap flex-align-end">
-      <div class="tablet:grid-col-6">
+      <div class="tablet:grid-col-5">
         <label class="usa-label margin-top-0" for="input-search">
-          Buscar por N° Caso, Expediente, Consignante o Serial
+          Buscar por N° Caso, Expediente o Serial
         </label>
         <input
           class="usa-input"
           id="input-search"
           name="search"
           type="search"
+          placeholder="Ej: MP-01, iPhone, 7f83..."
         />
       </div>
       <div class="tablet:grid-col-4">
@@ -65,9 +66,9 @@ import Alert from '../components/uswds/Alert.astro';
           <option value="forense_imagen">Imagen Forense (ISO 27037)</option>
         </select>
       </div>
-      <div class="tablet:grid-col-2">
-        <p class="margin-bottom-1">
-          Mostrando: <strong id="contador-casos">0</strong> expedientes
+      <div class="tablet:grid-col-3">
+        <p class="margin-bottom-1 font-body-2xs text-base-dark">
+          Mostrando: <strong id="contador-casos" class="text-primary-darker">0</strong> expedientes
         </p>
       </div>
     </div>
@@ -76,7 +77,7 @@ import Alert from '../components/uswds/Alert.astro';
   <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
   <div class="bg-white padding-3 border border-base-lighter margin-bottom-4">
     <div class="usa-table-container--scrollable" tabindex="0">
-      <table class="usa-table usa-table--striped width-full" id="tabla-expedientes">
+      <table class="usa-table usa-table--striped usa-table--compact width-full" id="tabla-expedientes">
         <caption>Directorio de expedientes periciales registrados en el CMS de cumplimiento</caption>
         <thead>
           <tr>
@@ -260,9 +261,9 @@ import Alert from '../components/uswds/Alert.astro';
 
           <div class="usa-modal__footer">
             <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
-            <ul class="usa-button-group">
+            <ul class="usa-button-group flex-wrap">
               <li class="usa-button-group__item">
-                <button type="submit" class="usa-button">
+                <button type="submit" class="usa-button font-sans-xs padding-x-2 padding-y-1">
                   Registrar Expediente e Iniciar F0
                 </button>
               </li>
@@ -270,7 +271,7 @@ import Alert from '../components/uswds/Alert.astro';
                 <button
                   type="button"
                   id="btn-cancelar-modal"
-                  class="usa-button usa-button--unstyled padding-105 text-center"
+                  class="usa-button usa-button--unstyled font-sans-xs padding-1 text-center"
                   data-close-modal
                 >
                   Cancelar
@@ -354,20 +355,20 @@ import Alert from '../components/uswds/Alert.astro';
         <th scope="row">
           <strong>${c.numeroCaso}</strong><br />
           <code>${c.expediente || 'S/E'}</code><br />
-          <span>${c.titulo}</span>
+          <span class="font-body-3xs text-base-dark">${c.titulo}</span>
         </th>
         <td>
           <span class="usa-tag">${tipo}</span>
         </td>
         <td>
           <strong>${c.consignanteNombre || 'Consignante no reg.'}</strong><br />
-          <span>C.I. ${c.consignanteCedula || 'N/A'}</span><br />
-          <span>Tlf: ${c.consignanteTelefono || 'N/A'}</span>
+          <span class="font-body-3xs">C.I. ${c.consignanteCedula || 'N/A'}</span><br />
+          <span class="font-body-3xs text-base-dark">Tlf: ${c.consignanteTelefono || 'N/A'}</span>
         </td>
         <td>
           <strong>${c.evidenciaMarca || ''} ${c.evidenciaModelo || ''}</strong><br />
           <code>S/N: ${c.evidenciaSerial || 'N/A'}</code><br />
-          <span>Bolsa Faraday: ${c.evidenciaAislamientoRF ? 'Aislado RF' : 'No'}</span>
+          <span class="font-body-3xs text-base-dark">Bolsa Faraday: ${c.evidenciaAislamientoRF ? 'Aislado RF' : 'No'}</span>
         </td>
         <td>
           <span class="usa-tag bg-primary">${c.faseIsoActual || 'F0'}</span>
@@ -376,19 +377,19 @@ import Alert from '../components/uswds/Alert.astro';
           <span class="usa-tag bg-green">Sincronizado DB</span>
         </td>
         <td>
-          <ul class="usa-button-group">
+          <ul class="usa-button-group flex-wrap">
             <li class="usa-button-group__item">
-              <a href="/flujo?casoId=${c.id}" class="usa-button">
+              <a href="/flujo?casoId=${c.id}" class="usa-button font-sans-2xs padding-x-1 padding-y-05">
                 Fases ISO
               </a>
             </li>
             <li class="usa-button-group__item">
-              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline">
+              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
                 PRCC
               </a>
             </li>
             <li class="usa-button-group__item">
-              <a href="/planillas?casoId=${c.id}" class="usa-button usa-button--outline">
+              <a href="/planillas?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
                 Planillas
               </a>
             </li>
@@ -483,4 +484,3 @@ import Alert from '../components/uswds/Alert.astro';
     });
   }
 </script>
-

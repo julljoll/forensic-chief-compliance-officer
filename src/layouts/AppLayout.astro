@@ -18,14 +18,14 @@ interface Props {
 const { title = 'Forensic Chief Compliance Officer — SHA256.US', activeNav = '' } = Astro.props;
 
 const navItems = [
-  { href: '/dashboard', label: 'Panel General', key: 'dashboard' },
-  { href: '/casos', label: 'Expedientes Periciales', key: 'casos' },
-  { href: '/flujo', label: 'Ciclo Pericial ISO', key: 'flujo' },
-  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', key: 'custodia' },
-  { href: '/planillas', label: 'Planillas Oficiales (Folio)', key: 'planillas' },
-  { href: '/normativa', label: 'Base Normativa RAG', key: 'normativa' },
-  { href: '/auditoria', label: 'Auditoría Inmutable (SHA-256)', key: 'auditoria' },
-  { href: '/exportar', label: 'Exportación de Caso', key: 'exportar' },
+  { href: '/dashboard', label: 'Panel General', shortLabel: 'Panel', key: 'dashboard' },
+  { href: '/casos', label: 'Expedientes Periciales', shortLabel: 'Expedientes', key: 'casos' },
+  { href: '/flujo', label: 'Ciclo Pericial ISO', shortLabel: 'Ciclo ISO', key: 'flujo' },
+  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', shortLabel: 'Custodia PRCC', key: 'custodia' },
+  { href: '/planillas', label: 'Planillas Oficiales (Folio)', shortLabel: 'Planillas Folio', key: 'planillas' },
+  { href: '/normativa', label: 'Base Normativa RAG', shortLabel: 'Normativa RAG', key: 'normativa' },
+  { href: '/auditoria', label: 'Auditoría Inmutable (SHA-256)', shortLabel: 'Auditoría SHA-256', key: 'auditoria' },
+  { href: '/exportar', label: 'Exportación de Caso', shortLabel: 'Exportar', key: 'exportar' },
 ];
 ---
 
@@ -109,7 +109,7 @@ const navItems = [
     <header class="usa-header usa-header--extended">
       <div class="usa-navbar">
         <div class="usa-logo" id="extended-logo">
-          <em class="usa-logo__text">
+          <em class="usa-logo__text font-heading-sm tablet:font-heading-md">
             <a href="/dashboard" title="Forensic Chief Compliance Officer — SHA256.US">
               SHA256.US — Forensic Chief Compliance Officer
             </a>
@@ -129,7 +129,7 @@ const navItems = [
                   href={item.href}
                   class={`usa-nav-link ${activeNav === item.key ? 'usa-current' : ''}`.trim()}
                 >
-                  <span>{item.label}</span>
+                  <span>{item.shortLabel || item.label}</span>
                 </a>
               </li>
             ))}
@@ -149,10 +149,10 @@ const navItems = [
     </header>
 
     <!-- USWDS: Layout Grid + Side Navigation | https://designsystem.digital.gov/utilities/layout-grid/ -->
-    <div class="usa-section padding-top-4 padding-bottom-6">
+    <div class="usa-section padding-top-3 padding-bottom-6">
       <div class="grid-container-widescreen">
         <div class="grid-row grid-gap">
-          <div class="usa-layout-docs__sidenav desktop:grid-col-3 margin-bottom-4 desktop:margin-bottom-0">
+          <div class="usa-layout-docs__sidenav desktop:grid-col-3 margin-bottom-3 desktop:margin-bottom-0">
             <!-- USWDS: Side navigation | https://designsystem.digital.gov/components/side-navigation/ -->
             <nav aria-label="Menú lateral de módulos de cumplimiento">
               <ul class="usa-sidenav">
@@ -170,7 +170,7 @@ const navItems = [
             </nav>
           </div>
 
-          <main class="usa-layout-docs__main desktop:grid-col-9" id="main-content">
+          <main class="usa-layout-docs__main desktop:grid-col-9 width-full overflow-hidden" id="main-content">
             <slot />
           </main>
         </div>
@@ -323,4 +323,3 @@ const navItems = [
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
   </body>
 </html>
-

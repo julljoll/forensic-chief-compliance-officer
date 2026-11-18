@@ -28,36 +28,36 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
     <!-- USWDS: Header | https://designsystem.digital.gov/components/header/ -->
     <!-- Barra de Control de Impresión (se oculta automáticamente al imprimir vía @media print en folio-aislado.css) -->
     <header class="usa-header usa-header--basic no-print bg-white border-bottom-1px border-base-lighter">
-      <div class="grid-container-widescreen padding-y-105">
-        <div class="grid-row grid-gap flex-align-center flex-justify">
-          <div class="tablet:grid-col-auto display-flex flex-align-center">
-            <svg class="usa-icon text-primary margin-right-1" aria-hidden="true" focusable="false" role="img">
+      <div class="grid-container-widescreen padding-y-1">
+        <div class="grid-row grid-gap-1 flex-align-center flex-justify">
+          <div class="tablet:grid-col-auto display-flex flex-align-center margin-bottom-1 tablet:margin-bottom-0">
+            <svg class="usa-icon text-primary margin-right-05" aria-hidden="true" focusable="false" role="img">
               <use href="/assets/uswds/img/sprite.svg#verified_user"></use>
             </svg>
             <div>
-              <strong class="text-primary-darker font-body-2xs">FORMATO FOLIO JUDICIAL:</strong>
-              <span class="text-base-dark font-body-2xs margin-left-05">216mm × 330mm (Oficio)</span>
+              <strong class="text-primary-darker font-body-3xs tablet:font-body-2xs">FORMATO FOLIO JUDICIAL:</strong>
+              <span class="text-base-dark font-body-3xs tablet:font-body-2xs margin-left-05">216mm × 330mm (Oficio)</span>
             </div>
           </div>
 
           <!-- Selector de Modo de Visualización / Impresión -->
-          <div class="tablet:grid-col-auto" id="mode-toggle-container">
+          <div class="tablet:grid-col-auto margin-bottom-1 tablet:margin-bottom-0" id="mode-toggle-container">
             <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
             <ul class="usa-button-group usa-button-group--segmented">
               <li class="usa-button-group__item">
                 <button
                   type="button"
-                  class="usa-button"
+                  class="usa-button font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
                   id="btn-modo-blanco"
                   title="Muestra el formulario completamente en blanco con líneas para llenado manual"
                 >
-                  Plantilla en Blanco (Manual)
+                  Plantilla en Blanco
                 </button>
               </li>
               <li class="usa-button-group__item">
                 <button
                   type="button"
-                  class="usa-button usa-button--outline"
+                  class="usa-button usa-button--outline font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
                   id="btn-modo-datos"
                   title="Rellena los campos con los datos del expediente seleccionado"
                 >
@@ -69,9 +69,9 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
 
           <div class="tablet:grid-col-auto">
             <!-- USWDS: Button group | https://designsystem.digital.gov/components/button-group/ -->
-            <ul class="usa-button-group">
+            <ul class="usa-button-group flex-wrap">
               <li class="usa-button-group__item">
-                <a href="/planillas" class="usa-button usa-button--outline">
+                <a href="/planillas" class="usa-button usa-button--outline font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05">
                   Catálogo
                 </a>
               </li>
@@ -79,7 +79,7 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
                 <button
                   type="button"
                   id="btn-descargar-word"
-                  class="usa-button usa-button--base"
+                  class="usa-button usa-button--base font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
                   title="Descargar esta planilla oficial en formato editable Microsoft Word (.docx)"
                 >
                   <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
@@ -92,7 +92,7 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
                 <button
                   type="button"
                   id="btn-imprimir-folio"
-                  class="usa-button"
+                  class="usa-button font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
                 >
                   <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
                     <use href="/assets/uswds/img/sprite.svg#print"></use>
@@ -107,7 +107,7 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
     </header>
 
     <!-- EXCEPCIÓN FUERA DE USWDS: Contenedor Raíz Aislado Monocromático Folio (216mm × 330mm) -->
-    <main id="main-content" class="display-flex flex-column flex-align-center">
+    <main id="main-content" class="display-flex flex-column flex-align-center width-full overflow-x-auto padding-x-1">
       <div class="folio-forense-aislado">
         <slot />
       </div>
