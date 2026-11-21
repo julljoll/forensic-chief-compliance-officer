@@ -120,6 +120,23 @@
   const passwordInput = document.getElementById('password') as HTMLInputElement;
   const totpInput = document.getElementById('totp-code') as HTMLInputElement;
 
+  // Verificar si viene redirigido por intento de acceso sin autenticación
+  const urlParams = new URLSearchParams(window.location.search);
+  const msg = urlParams.get('msg');
+  if (msg === 'sesion_requerida') {
+    if (errorAlert && errorMsg) {
+      errorMsg.textContent = 'Acceso Denegado: Debe iniciar sesión con su correo y contraseña para acceder a la boveda pericial.';
+      errorAlert.hidden = false;
+    }
+  } else if (msg === 'sesion_cerrada') {
+    if (errorAlert && errorMsg) {
+      errorAlert.classList.remove('usa-alert--error');
+      errorAlert.classList.add('usa-alert--info');
+      errorMsg.textContent = 'Su sesión pericial ha sido cerrada de forma segura.';
+      errorAlert.hidden = false;
+    }
+  }
+
   if (form) {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -138,6 +155,10 @@
         const res = await phpApi.login(email, pass, totp);
 
         if (res.ok) {
+          sessionStorage.setItem('fcco_auth_active', '1');
+          if (res.data?.user) {
+            sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+          }
           window.location.href = '/dashboard';
           return;
         }
@@ -159,15 +180,21 @@
         // Fallback local autenticado
         const localOk = await useAuthStore.getState().login(email, pass, totp);
         if (localOk) {
+          sessionStorage.setItem('fcco_auth_active', '1');
           window.location.href = '/dashboard';
           return;
         }
+
+        sessionStorage.removeItem('fcco_auth_active');
+        sessionStorage.removeItem('fcco_auth_user');
 
         if (errorAlert && errorMsg) {
           errorMsg.textContent = res.error || useAuthStore.getState().error || 'Credenciales no autorizadas o código 2FA erróneo.';
           errorAlert.hidden = false;
         }
       } catch (err: any) {
+        sessionStorage.removeItem('fcco_auth_active');
+        sessionStorage.removeItem('fcco_auth_user');
         if (errorAlert && errorMsg) {
           errorMsg.textContent = err.message || 'Error de conexión con el servidor.';
           errorAlert.hidden = false;

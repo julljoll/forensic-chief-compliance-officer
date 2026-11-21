@@ -22,9 +22,20 @@ $method = $_SERVER['REQUEST_METHOD'];
 if ($method === 'GET') {
     $user = Session::getUser();
     $csrf = Session::getCsrfToken();
+    if ($user === null) {
+        http_response_code(401);
+        echo json_encode([
+            'ok'            => false,
+            'authenticated' => false,
+            'user'          => null,
+            'csrf_token'    => $csrf,
+            'error'         => 'Sesión no autorizada o expirada. Debe iniciar sesión.'
+        ], JSON_UNESCAPED_UNICODE);
+        exit;
+    }
     echo json_encode([
         'ok'            => true,
-        'authenticated' => $user !== null,
+        'authenticated' => true,
         'user'          => $user,
         'csrf_token'    => $csrf,
     ], JSON_UNESCAPED_UNICODE);

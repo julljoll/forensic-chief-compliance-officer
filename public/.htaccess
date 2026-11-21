@@ -56,7 +56,7 @@ DirectoryIndex index.html
     ExpiresByType application/javascript "access plus 1 month"
 </IfModule>
 
-# 6. Reescritura de Rutas Limpias (Clean URLs)
+# 6. Reescritura de Rutas y Gatekeeper Server-Side de Autenticación
 <IfModule mod_rewrite.c>
     RewriteEngine On
     RewriteBase /
@@ -67,14 +67,23 @@ DirectoryIndex index.html
     # Permitir acceso directo a endpoints públicos de la API PHP sin alterar
     RewriteRule ^api/ - [L]
 
-    # Permitir acceso directo a archivos físicos existentes (.css, .js, .png, .svg, etc.)
+    # Permitir acceso directo a activos públicos (assets, logos, favicons, fuentes, estilos)
+    RewriteCond %{REQUEST_URI} ^/(assets/|favicon\.|logo.*|\.well-known/) [NC]
     RewriteCond %{REQUEST_FILENAME} -f
     RewriteRule ^ - [L]
 
-    # Mapeo prioritario para el catálogo oficial de planillas (/planillas o /planillas/)
-    RewriteRule ^planillas/?$ planillas/index.html [L]
+    # Permitir acceso a la página pública de inicio de sesión (raíz, index.html)
+    RewriteRule ^(index(\.html)?)?$ - [L]
 
-    # Si existe una versión .html del archivo solicitado (ej. /casos -> casos.html o /planillas/acta-consentimiento -> planillas/acta-consentimiento.html)
+    # GATEKEEPER SERVER-SIDE: Interceptar todas las vistas del CMS y planillas oficiales
+    # Requiere sesión PHP activa; si no existe, gatekeeper.php redirige a /?msg=sesion_requerida
+    RewriteRule ^(dashboard|casos|flujo|custodia|normativa|auditoria|exportar|seguridad|planillas)(.*)$ gatekeeper.php [QSA,L]
+
+    # Cualquier otro archivo físico existente (no protegido)
+    RewriteCond %{REQUEST_FILENAME} -f
+    RewriteRule ^ - [L]
+
+    # Si existe una versión .html del archivo solicitado
     RewriteCond %{REQUEST_FILENAME}.html -f
     RewriteRule ^(.*)/?$ $1.html [L]
 
