@@ -36,7 +36,7 @@ export async function generarTotpCode(secretBase32: string, timeStepSeconds: num
   const cryptoObj = typeof window !== 'undefined' ? window.crypto : globalThis.crypto;
   const key = await cryptoObj.subtle.importKey(
     'raw',
-    keyBytes,
+    keyBytes as unknown as ArrayBuffer,
     { name: 'HMAC', hash: 'SHA-1' },
     false,
     ['sign']
@@ -68,7 +68,7 @@ export async function verificarTotpCode(secretBase32: string, codigoUsuario: str
 
   const key = await cryptoObj.subtle.importKey(
     'raw',
-    keyBytes,
+    keyBytes as unknown as ArrayBuffer,
     { name: 'HMAC', hash: 'SHA-1' },
     false,
     ['sign']

@@ -91,6 +91,19 @@ export const phpApi = {
     });
   },
 
+  async avanzarEtapa(opts: { casoId: string; fase?: string; faseOrigen?: string; etapa?: string; peritoActor?: string; controles?: Record<string, any> }): Promise<ApiResponse<any> & { hash?: string }> {
+    const res = await request<any>('/avanzar-etapa.php', {
+      method: 'POST',
+      body: JSON.stringify({
+        casoId: opts.casoId,
+        fase: opts.fase || opts.faseOrigen || opts.etapa,
+        peritoActor: opts.peritoActor,
+        controles: opts.controles || {},
+      }),
+    });
+    return { ...res, hash: (res.data as any)?.hash };
+  },
+
   // ── Auditoría ──
   async listarAuditoria(casoId?: string): Promise<EntradaAuditoria[]> {
     const url = casoId ? `/auditoria.php?caso_id=${encodeURIComponent(casoId)}` : '/auditoria.php';
@@ -101,12 +114,27 @@ export const phpApi = {
     return idbGetAll<EntradaAuditoria>('auditoria');
   },
 
-  async verificarCadenaAuditoria(): Promise<{ valida: boolean; total: number; motivo?: string }> {
-    const res = await request<{ valida: boolean; total: number; motivo?: string }>('/auditoria.php?verificar=1');
+  async obtenerAuditoria(casoId?: string): Promise<EntradaAuditoria[]> {
+    return this.listarAuditoria(casoId);
+  },
+
+  async verificarCadenaAuditoria(): Promise<{ valida: boolean; total: number; motivo?: string; integra?: boolean; totalEntradas?: number; error?: string }> {
+    const res = await request<any>('/auditoria.php?verificar=1');
     if (res.ok && res.data) {
-      return res.data;
+      return {
+        valida: res.data.valida ?? res.data.integra ?? false,
+        total: res.data.total ?? res.data.totalEntradas ?? 0,
+        motivo: res.data.motivo ?? res.data.error,
+        integra: res.data.integra ?? res.data.valida ?? false,
+        totalEntradas: res.data.totalEntradas ?? res.data.total ?? 0,
+        error: res.data.error ?? res.data.motivo,
+      };
     }
-    return { valida: false, total: 0, motivo: res.error || 'No se pudo conectar con el servidor' };
+    return { valida: false, total: 0, motivo: res.error || 'No se pudo conectar con el servidor', integra: false, totalEntradas: 0, error: res.error };
+  },
+
+  async verificarAuditoria(): Promise<{ valida: boolean; total: number; motivo?: string; integra?: boolean; totalEntradas?: number; error?: string }> {
+    return this.verificarCadenaAuditoria();
   },
 
   // ── Autenticación ──

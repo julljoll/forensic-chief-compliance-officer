@@ -417,7 +417,7 @@ export async function descargarPlanillaPorSlug(
       try {
         caso = await phpApi.obtenerCaso(casoId);
       } catch {
-        const casos = await idbGetAll('casos');
+        const casos = await idbGetAll<CasoCMS>('casos');
         caso = casos.find((c) => c.id === casoId);
       }
 

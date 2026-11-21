@@ -270,10 +270,11 @@ const navItems = [
     <script>
       import { phpApi } from '../lib/data/phpApi';
       import { idbGetAll, idbDelete } from '../lib/data/idb';
+      import type { CasoCMS } from '../lib/domain/types';
 
       async function initApp() {
         try {
-          const locales = await idbGetAll('casos');
+          const locales = await idbGetAll<CasoCMS>('casos');
           for (const c of locales) {
             if (c.id && c.id.startsWith('caso-mock-')) {
               await idbDelete('casos', c.id);

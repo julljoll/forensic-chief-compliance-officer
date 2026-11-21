@@ -153,7 +153,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
           hashAnterior: '4b227777d4dd1fc61c6f884f48641d02b4d121d3fd328cb08b5531fcacdabf8a',
           hashActual: 'ef2d127de37b942baad06145e54b0c619a1f22327b2ebbcfbec78f5564afe39d',
         },
-      ];
+      ] as any;
     }
 
     if (totalBloquesEl) totalBloquesEl.textContent = `${entriesMemoria.length} bloques`;
@@ -173,7 +173,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
       tr.innerHTML = `
         <th scope="row" class="text-bold">#${idx + 1}</th>
         <td class="font-mono-2xs text-no-wrap">
-          ${new Date(e.timestamp).toLocaleString('es-VE')}
+          ${new Date(e.timestamp || e.ts || Date.now()).toLocaleString('es-VE')}
         </td>
         <td>
           <strong>${e.casoId}</strong>
@@ -250,7 +250,7 @@ import SummaryBox from '../components/uswds/SummaryBox.astro';
               <div class="usa-alert__body">
                 <h2 class="usa-alert__heading">Rotura de Cadena Detectada</h2>
                 <p class="usa-alert__text">
-                  ${resLocal.error} en el bloque #${resLocal.indiceInvalido}.
+                  ${resLocal.motivo || 'Error en verificación'} en el bloque #${resLocal.rotoEn || 'N/A'}.
                 </p>
               </div>
             </div>

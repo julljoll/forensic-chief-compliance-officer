@@ -263,10 +263,10 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
     let casos: CasoCMS[] = [];
     try {
       const data = await phpApi.listarCasos();
-      casos = (data || []).filter((c) => !c.id.startsWith('caso-mock-'));
+      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
     } catch {
-      const data = await idbGetAll('casos');
-      casos = (data || []).filter((c) => !c.id.startsWith('caso-mock-'));
+      const data = await idbGetAll<CasoCMS>('casos');
+      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
     }
 
     const select = document.getElementById('select-cambiar-caso') as HTMLSelectElement;
@@ -310,7 +310,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
 
     if (tit) tit.textContent = caso.titulo;
     if (num) num.textContent = caso.numeroCaso;
-    if (exp) exp.textContent = caso.expediente;
+    if (exp) exp.textContent = caso.expediente || '';
     if (tipo) tipo.textContent = caso.tipoProyecto.replace('forense_', '').toUpperCase();
     if (cons) cons.textContent = `${caso.consignanteNombre || 'Consignante'} (C.I. ${caso.consignanteCedula || 'N/A'})`;
     if (evid) evid.textContent = `${caso.evidenciaMarca} ${caso.evidenciaModelo} (S/N: ${caso.evidenciaSerial || 'N/A'})`;
@@ -429,7 +429,7 @@ const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
   if (selectCaso) {
     selectCaso.addEventListener('change', async (e) => {
       const id = (e.target as HTMLSelectElement).value;
-      const casos = await idbGetAll('casos');
+      const casos = await idbGetAll<CasoCMS>('casos');
       const c = casos.find((x) => x.id === id);
       if (c) seleccionarCaso(c);
     });

@@ -258,7 +258,28 @@ export interface CasoCMS {
   planillaOverrides?: Record<string, Record<string, string>>;
   /** Versión para control de concurrencia optimista con el servidor PHP. */
   version?: number;
+
+  // Campos de compatibilidad de acceso rápido
+  consignanteNombre?: string;
+  consignanteCedula?: string;
+  consignanteTelefono?: string;
+  consignanteEmail?: string;
+  consignanteDireccion?: string;
+  evidenciaTipo?: string;
+  evidenciaMarca?: string;
+  evidenciaModelo?: string;
+  evidenciaColor?: string;
+  evidenciaEstado?: string;
+  evidenciaSerial?: string;
+  evidenciaAislamientoRF?: boolean;
+  fiscaliaTribunal?: string;
+  peritoLiderNombre?: string;
+  peritoLiderCedula?: string;
+  peritoLiderCiv?: string;
+  faseIsoActual?: FaseIsoId | string;
 }
+
+export type { EntradaAuditoria as AuditEntry } from '../crypto/hashChain';
 
 // ─── Ciclo ISO (v4) ───────────────────────────────────────────────────────────
 
