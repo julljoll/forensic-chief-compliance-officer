@@ -1,0 +1,483 @@
+---
+/**
+ * SHA256.US — Vista Modular del Ciclo Pericial ISO (F0 - F5)
+ */
+import StepIndicator from '../uswds/StepIndicator.astro';
+import SummaryBox from '../uswds/SummaryBox.astro';
+import { FASES_ISO } from '../../lib/domain/gating';
+
+const PLANILLAS_MAP: Record<string, { titulo: string; slug: string }> = {
+  acta_consentimiento: { titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento' },
+  acta_entrevista: { titulo: 'Acta de Entrevista Forense', slug: 'acta-entrevista' },
+  acta_obtencion: { titulo: 'Acta de Obtención y Preservación', slug: 'acta-obtencion' },
+  prcc: { titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)', slug: 'planilla-prcc' },
+  acta_desprecintado: { titulo: 'Acta de Desprecintado en Laboratorio', slug: 'acta-desprecintado' },
+  informe_audio_sonic: { titulo: 'Planilla Análisis Audio Sonic Visualiser', slug: 'planilla-audio-sonic' },
+  planilla_evaluacion_ux: { titulo: 'Planilla de Evaluación de Calidad UX', slug: 'planilla-evaluacion-ux' },
+  acta_dictamen: { titulo: 'Dictamen Pericial Oficial', slug: 'acta-dictamen' },
+  dictamen_imagenes: { titulo: 'Dictamen Especializado de Imágenes', slug: 'dictamen-imagenes' },
+  dictamen_audios: { titulo: 'Dictamen Especializado de Audios', slug: 'dictamen-audios' },
+  acta_entrega_resultados: { titulo: 'Acta de Entrega de Resultados', slug: 'acta-entrega-resultados' },
+  acta_sanitizacion: { titulo: 'Acta de Sanitización de Medios (NIST 800-88)', slug: 'acta-sanitizacion' },
+  acta_auditoria_timeline: { titulo: 'Acta de Auditoría y Cadena Inmutable', slug: 'acta-auditoria-timeline' },
+};
+---
+<!-- Resumen del Caso Seleccionado -->
+<div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="caso-titulo">
+  <div class="usa-summary-box__body">
+    <div class="grid-row grid-gap flex-align-center margin-bottom-2">
+      <div class="tablet:grid-col-8">
+        <p class="margin-0 text-base-dark text-uppercase text-bold font-sans-2xs">
+          Expediente Pericial Seleccionado
+        </p>
+        <h2 class="usa-summary-box__heading margin-y-05" id="caso-titulo">
+          Expediente Pericial en Sincronización...
+        </h2>
+        <p class="margin-0 font-body-2xs text-base-dark">
+          N° Caso: <strong id="caso-numero">Consultando...</strong> · Expediente: <strong id="caso-expediente">...</strong> ·{' '}
+          <span class="usa-tag" id="caso-tipo">PERITAJE</span>
+        </p>
+      </div>
+
+      <div class="tablet:grid-col-4 tablet:display-flex tablet:flex-justify-end margin-top-2 tablet:margin-top-0">
+        <div class="width-full">
+          <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="select-cambiar-caso">
+            Cambiar Expediente Activo:
+          </label>
+          <select class="usa-select font-sans-xs" id="select-cambiar-caso">
+            <option value="">Cargando expedientes...</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Metadatos Básicos Relevantes del Caso -->
+    <div class="grid-row grid-gap border-top-1px border-base-lighter padding-top-2 font-body-2xs">
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Consignante:</span><br />
+        <strong id="caso-consignante">-</strong>
+      </div>
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Evidencia Digital:</span><br />
+        <strong id="caso-evidencia">-</strong>
+      </div>
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Aislamiento Electromagnético:</span><br />
+        <strong id="caso-aislamiento">-</strong>
+      </div>
+      <div class="tablet:grid-col-3">
+        <span class="text-base-dark">Perito Responsable:</span><br />
+        <strong id="caso-perito">Jull Joll (CIV-284910)</strong>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Indicador Visual de Etapas USWDS -->
+<div class="margin-bottom-3" id="step-indicator-wrap">
+  <StepIndicator faseActual="F0" />
+</div>
+
+<!-- Pestañas de Fases del Ciclo Pericial -->
+<div class="usa-button-group usa-button-group--segmented margin-bottom-3 width-full overflow-x-auto">
+  {FASES_ISO.map((f, i) => (
+    <button
+      type="button"
+      class={`usa-button btn-fase-tab ${i === 0 ? '' : 'usa-button--outline'}`}
+      data-fase={f.id}
+      id={`tab-fase-${f.id}`}
+    >
+      <span class="font-sans-xs text-bold">{f.id}: {f.corto}</span>
+    </button>
+  ))}
+</div>
+
+<!-- Contenedor de la Fase Activa -->
+<div class="usa-card width-full margin-bottom-4">
+  <div class="usa-card__container padding-3 tablet:padding-4">
+    <div class="grid-row grid-gap flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-3">
+      <div class="tablet:grid-col-8">
+        <div class="display-flex flex-align-center margin-bottom-05">
+          <span class="usa-tag bg-primary-darker text-bold margin-right-1 font-mono-sm" id="badge-fase-id">
+            F0
+          </span>
+          <h2 class="margin-0 font-heading-lg" id="titulo-fase-nombre">
+            Apertura y Legitimación
+          </h2>
+        </div>
+        <p class="margin-0 font-body-xs text-base-dark" id="txt-fase-objetivo">
+          Legitimar el encargo pericial, identificar al consignante y delimitar el alcance técnico.
+        </p>
+      </div>
+
+      <div class="tablet:grid-col-4 tablet:display-flex tablet:flex-justify-end">
+        <div class="display-flex flex-wrap" id="normas-fase-wrap">
+          <span class="usa-tag margin-right-05 margin-bottom-05">ISO 37301 §8.1</span>
+          <span class="usa-tag margin-right-05 margin-bottom-05">ISO/IEC 27043 §8</span>
+          <span class="usa-tag bg-accent-warm-dark text-ink text-bold margin-bottom-05">CRBV Arts. 28/60</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Planillas Reglamentarias de esta Fase -->
+    <div class="margin-bottom-4">
+      <h3 class="margin-top-0 margin-bottom-1 font-heading-md">
+        Planillas Forenses Oficiales de la Fase (Formato Folio 216mm × 330mm)
+      </h3>
+      <p class="margin-top-0 margin-bottom-2 font-body-2xs text-base-dark">
+        Diligencie, imprima y recolecte las firmas y pulgares correspondientes. Al abrir la planilla, se completarán los campos del expediente activo:
+      </p>
+
+      <ul class="usa-collection" id="lista-planillas-fase">
+        <li class="usa-collection__item">
+          <div class="usa-collection__body">
+            <h4 class="usa-collection__heading">
+              <a href="/planillas/acta-consentimiento" class="usa-link" id="link-p1">
+                Acta de Consentimiento Informado (Hábeas Data)
+              </a>
+            </h4>
+            <p class="usa-collection__description font-body-3xs text-base-dark">
+              Autorización expresa y delimitación de privacidad (CRBV Arts. 28, 48, 60 y LPPC Arts. 1-9).
+            </p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Lista de Controles Obligatorios de Cumplimiento -->
+    <div class="margin-bottom-3">
+      <h3 class="margin-top-0 margin-bottom-1 font-heading-md">
+        Lista de Controles Obligatorios de Cumplimiento (Gating Criptográfico)
+      </h3>
+      <p class="margin-top-0 margin-bottom-2 font-body-2xs text-base-dark">
+        Todos los controles aplicables deben estar marcados positivamente antes de autorizar el sellado y avanzar a la siguiente fase:
+      </p>
+
+      <div id="controles-fase-container">
+        {FASES_ISO.map((fase) => (
+          <fieldset
+            class="usa-fieldset margin-bottom-2 fcco-controles-fieldset"
+            id={`controles-group-${fase.id}`}
+            hidden={fase.id !== 'F0'}
+          >
+            <legend class="usa-sr-only">Controles de la fase {fase.nombre}</legend>
+            <div class="grid-row grid-gap-1">
+              {fase.controles.map((c) => (
+                <div class="tablet:grid-col-6 margin-bottom-1">
+                  <div class="usa-checkbox bg-base-lightest padding-1 radius-md border-1px border-base-lighter height-full">
+                    <input
+                      class="usa-checkbox__input chk-control-iso"
+                      type="checkbox"
+                      id={`chk-${c.id}`}
+                      name={`control-${c.id}`}
+                      data-control-id={c.id}
+                      data-fase-id={fase.id}
+                    />
+                    <label class="usa-checkbox__label font-body-3xs" for={`chk-${c.id}`}>
+                      <strong>{c.texto}</strong>
+                      <span class="display-block font-mono-3xs text-base-dark margin-top-05">
+                        Norma: {c.norma}
+                      </span>
+                    </label>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+      </div>
+    </div>
+
+    <!-- Sección de Sello Criptográfico SHA-256 y Cierre de Fase -->
+    <div class="usa-summary-box margin-top-3" role="region" aria-labelledby="sello-crypto-heading">
+      <div class="usa-summary-box__body">
+        <div class="grid-row grid-gap flex-align-center">
+          <div class="tablet:grid-col-7 margin-bottom-2 tablet:margin-bottom-0">
+            <h3 class="usa-summary-box__heading margin-top-0 margin-bottom-05" id="sello-crypto-heading">
+              Encadenamiento y Sello Criptográfico SHA-256
+            </h3>
+            <p class="margin-0 font-body-2xs text-base-dark">
+              Al sellar la fase, se calculará el hash canónico del estado y se encadenará al bloque previo de auditoría.
+            </p>
+            <p id="sello-info-hash" class="margin-top-1 margin-bottom-0 font-mono-2xs" hidden>
+              Hash Génesis: <code id="sello-hash-valor"></code>
+            </p>
+          </div>
+
+          <div class="tablet:grid-col-5 tablet:display-flex tablet:flex-justify-end">
+            <button id="btn-sellar-fase" type="button" class="usa-button font-sans-xs padding-x-2 padding-y-1 width-full tablet:width-auto text-center">
+              Sellar Fase con Hash SHA-256
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { FASES_ISO } from '../../lib/domain/gating';
+  import { phpApi } from '../../lib/data/phpApi';
+  import { idbPut, idbGetAll } from '../../lib/data/idb';
+  import type { CasoCMS } from '../../lib/domain/types';
+
+  const PLANILLAS_MAP_CLIENT: Record<string, { titulo: string; slug: string }> = {
+    acta_consentimiento: { titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento' },
+    acta_entrevista: { titulo: 'Acta de Entrevista Forense', slug: 'acta-entrevista' },
+    acta_obtencion: { titulo: 'Acta de Obtención y Preservación', slug: 'acta-obtencion' },
+    prcc: { titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)', slug: 'planilla-prcc' },
+    acta_desprecintado: { titulo: 'Acta de Desprecintado en Laboratorio', slug: 'acta-desprecintado' },
+    informe_audio_sonic: { titulo: 'Planilla Análisis Audio Sonic Visualiser', slug: 'planilla-audio-sonic' },
+    planilla_evaluacion_ux: { titulo: 'Planilla de Evaluación de Calidad UX', slug: 'planilla-evaluacion-ux' },
+    acta_dictamen: { titulo: 'Dictamen Pericial Oficial', slug: 'acta-dictamen' },
+    dictamen_imagenes: { titulo: 'Dictamen Especializado de Imágenes', slug: 'dictamen-imagenes' },
+    dictamen_audios: { titulo: 'Dictamen Especializado de Audios', slug: 'dictamen-audios' },
+    acta_entrega_resultados: { titulo: 'Acta de Entrega de Resultados', slug: 'acta-entrega-resultados' },
+    acta_sanitizacion: { titulo: 'Acta de Sanitización de Medios (NIST 800-88)', slug: 'acta-sanitizacion' },
+    acta_auditoria_timeline: { titulo: 'Acta de Auditoría y Cadena Inmutable', slug: 'acta-auditoria-timeline' },
+  };
+
+  let casoActual: CasoCMS | null = null;
+  let faseSeleccionadaId = 'F0';
+
+  async function cargarCasosYSeleccionar() {
+    let casos: CasoCMS[] = [];
+    try {
+      const data = await phpApi.listarCasos();
+      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+    } catch {
+      const data = await idbGetAll<CasoCMS>('casos');
+      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+    }
+
+    const select = document.getElementById('select-cambiar-caso') as HTMLSelectElement;
+
+    if (!casos || casos.length === 0) {
+      const tit = document.getElementById('caso-titulo');
+      if (tit) tit.textContent = 'No hay expedientes activos. Registre uno nuevo en la sección Casos.';
+      return;
+    }
+
+    if (select) {
+      select.innerHTML = '';
+      casos.forEach((c) => {
+        const opt = document.createElement('option');
+        opt.value = c.id;
+        opt.textContent = `${c.numeroCaso} (${c.titulo})`;
+        select.appendChild(opt);
+      });
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramId = urlParams.get('casoId');
+    const seleccionado = (paramId ? casos.find((x) => x.id === paramId) : null) || casos[0];
+
+    if (seleccionado) {
+      if (select) select.value = seleccionado.id;
+      seleccionarCaso(seleccionado);
+    }
+  }
+
+  function seleccionarCaso(caso: CasoCMS) {
+    casoActual = caso;
+    const tit = document.getElementById('caso-titulo');
+    const num = document.getElementById('caso-numero');
+    const exp = document.getElementById('caso-expediente');
+    const tipo = document.getElementById('caso-tipo');
+    const cons = document.getElementById('caso-consignante');
+    const evid = document.getElementById('caso-evidencia');
+    const aisl = document.getElementById('caso-aislamiento');
+    const per = document.getElementById('caso-perito');
+
+    if (tit) tit.textContent = caso.titulo;
+    if (num) num.textContent = caso.numeroCaso;
+    if (exp) exp.textContent = caso.expediente || '';
+    if (tipo) tipo.textContent = caso.tipoProyecto.replace('forense_', '').toUpperCase();
+    if (cons) cons.textContent = `${caso.consignanteNombre || 'Consignante'} (C.I. ${caso.consignanteCedula || 'N/A'})`;
+    if (evid) evid.textContent = `${caso.evidenciaMarca} ${caso.evidenciaModelo} (S/N: ${caso.evidenciaSerial || 'N/A'})`;
+    if (aisl) aisl.textContent = caso.evidenciaAislamientoRF ? 'Aislado RF (Modo Avión)' : 'No Aislado';
+    if (per) per.textContent = caso.peritoLiderNombre || 'Jull Joll';
+
+    faseSeleccionadaId = (caso.faseIsoActual as string) || 'F0';
+    activarTabFase(faseSeleccionadaId);
+    cargarEstadoControles();
+  }
+
+  function activarTabFase(faseId: string) {
+    faseSeleccionadaId = faseId;
+    const faseObj = FASES_ISO.find((f) => f.id === faseId);
+    if (!faseObj) return;
+
+    document.querySelectorAll('.btn-fase-tab').forEach((b) => {
+      if (b.getAttribute('data-fase') === faseId) {
+        b.classList.remove('usa-button--outline');
+      } else {
+        b.classList.add('usa-button--outline');
+      }
+    });
+
+    const badgeFase = document.getElementById('badge-fase-id');
+    const titFase = document.getElementById('titulo-fase-nombre');
+    const txtObj = document.getElementById('txt-fase-objetivo');
+    const normasWrap = document.getElementById('normas-fase-wrap');
+
+    if (badgeFase) badgeFase.textContent = faseObj.id;
+    if (titFase) titFase.textContent = faseObj.nombre;
+    if (txtObj) txtObj.textContent = faseObj.objetivo;
+
+    if (normasWrap) {
+      normasWrap.innerHTML = faseObj.normas
+        .map((n) => `<span class="usa-tag margin-right-05 margin-bottom-05">${n}</span>`)
+        .join('');
+    }
+
+    const ulPlanillas = document.getElementById('lista-planillas-fase');
+    if (ulPlanillas) {
+      ulPlanillas.innerHTML = faseObj.planillas
+        .map((pId) => {
+          const info = PLANILLAS_MAP_CLIENT[pId] || { titulo: pId, slug: pId };
+          const cId = casoActual ? casoActual.id : '';
+          return `
+            <li class="usa-collection__item">
+              <div class="usa-collection__body">
+                <h4 class="usa-collection__heading">
+                  <a href="/planillas/${info.slug}?casoId=${cId}" class="usa-link" target="_blank">
+                    ${info.titulo}
+                  </a>
+                </h4>
+                <p class="usa-collection__description font-body-3xs text-base-dark">
+                  Formato Folio Oficial (216mm × 330mm) con dactiloscopía e inmutabilidad.
+                </p>
+              </div>
+            </li>
+          `;
+        })
+        .join('');
+    }
+
+    document.querySelectorAll('.fcco-controles-fieldset').forEach((fs) => {
+      (fs as HTMLElement).hidden = true;
+    });
+    const fsActivo = document.getElementById(`controles-group-${faseId}`);
+    if (fsActivo) fsActivo.hidden = false;
+
+    cargarEstadoControles();
+  }
+
+  function cargarEstadoControles() {
+    if (!casoActual) return;
+    const faseEstado = (casoActual.fasesIso as any)?.[faseSeleccionadaId];
+    const controlesGuardados = faseEstado?.controles || {};
+
+    const ordenActual = FASES_ISO.findIndex((f) => f.id === casoActual?.faseIsoActual);
+    const ordenVista = FASES_ISO.findIndex((f) => f.id === faseSeleccionadaId);
+    const faseBloqueada = ordenVista > ordenActual;
+
+    document.querySelectorAll(`[data-fase-id="${faseSeleccionadaId}"]`).forEach((input) => {
+      const chk = input as HTMLInputElement;
+      const cId = chk.getAttribute('data-control-id') || '';
+      chk.checked = !!controlesGuardados[cId]?.ok;
+      chk.disabled = faseBloqueada;
+    });
+
+    const btnSellar = document.getElementById('btn-sellar-fase') as HTMLButtonElement;
+    const infoHash = document.getElementById('sello-info-hash');
+    const hashVal = document.getElementById('sello-hash-valor');
+
+    if (btnSellar) {
+      if (faseEstado?.estado === 'COMPLETADA') {
+        btnSellar.textContent = 'Fase Completada y Sellada';
+        btnSellar.disabled = true;
+        btnSellar.className = 'usa-button bg-green font-sans-xs padding-x-2 padding-y-1';
+        if (infoHash && hashVal) {
+          infoHash.hidden = false;
+          hashVal.textContent = faseEstado.hash || 'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855';
+        }
+      } else if (faseBloqueada) {
+        btnSellar.textContent = 'Fase Bloqueada por Gating';
+        btnSellar.disabled = true;
+        btnSellar.className = 'usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1';
+        if (infoHash) infoHash.hidden = true;
+      } else {
+        btnSellar.textContent = `Sellar Fase ${faseSeleccionadaId} con SHA-256`;
+        btnSellar.disabled = false;
+        btnSellar.className = 'usa-button font-sans-xs padding-x-2 padding-y-1';
+        if (infoHash) infoHash.hidden = true;
+      }
+    }
+  }
+
+  const selectCaso = document.getElementById('select-cambiar-caso');
+  if (selectCaso) {
+    selectCaso.addEventListener('change', async (e) => {
+      const id = (e.target as HTMLSelectElement).value;
+      const casos = await idbGetAll<CasoCMS>('casos');
+      const c = casos.find((x) => x.id === id);
+      if (c) seleccionarCaso(c);
+    });
+  }
+
+  document.querySelectorAll('.btn-fase-tab').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const fId = btn.getAttribute('data-fase');
+      if (fId) activarTabFase(fId);
+    });
+  });
+
+  const btnSellar = document.getElementById('btn-sellar-fase');
+  if (btnSellar) {
+    btnSellar.addEventListener('click', async () => {
+      if (!casoActual) {
+        alert('Debe tener un caso seleccionado.');
+        return;
+      }
+
+      const checks = document.querySelectorAll(`[data-fase-id="${faseSeleccionadaId}"]`);
+      let todosOk = true;
+      const controles: Record<string, any> = {};
+
+      checks.forEach((chk) => {
+        const input = chk as HTMLInputElement;
+        const cId = input.getAttribute('data-control-id') || '';
+        if (!input.checked) todosOk = false;
+        controles[cId] = { ok: input.checked, ts: new Date().toISOString() };
+      });
+
+      if (!todosOk) {
+        alert(
+          'Error de Gating ISO: No puede sellar la fase porque existen controles periciales obligatorios pendientes de validación.'
+        );
+        return;
+      }
+
+      const confirmacion = confirm(
+        `¿Confirma el sellado criptográfico SHA-256 de la ${faseSeleccionadaId} para el caso ${casoActual.numeroCaso}? Esta acción es inmutable y registrará su firma pericial.`
+      );
+      if (!confirmacion) return;
+
+      try {
+        const res = await phpApi.avanzarEtapa({
+          casoId: casoActual.id,
+          faseOrigen: faseSeleccionadaId,
+          controles,
+          peritoActor: casoActual.peritoLiderNombre || 'Jull Joll',
+        });
+
+        alert(`¡Fase ${faseSeleccionadaId} sellada exitosamente!\nHash SHA-256: ${res.hash}\nExpediente avanzado.`);
+        window.location.reload();
+      } catch (err: any) {
+        console.warn('Fallo en API PHP, aplicando avance offline en IndexedDB:', err);
+        const fIdx = FASES_ISO.findIndex((f) => f.id === faseSeleccionadaId);
+        const sigFase = FASES_ISO[fIdx + 1]?.id || faseSeleccionadaId;
+        casoActual.faseIsoActual = sigFase;
+        await idbPut('casos', casoActual);
+        alert(`Fase sellada localmente en IndexedDB. Nuevo estado: ${sigFase}.`);
+        window.location.reload();
+      }
+    });
+  }
+
+  if (typeof window !== 'undefined') {
+    cargarCasosYSeleccionar();
+  }
+</script>

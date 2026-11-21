@@ -1,0 +1,292 @@
+---
+/**
+ * SHA256.US — Vista Modular de Expedientes Periciales
+ */
+import PageHeader from '../uswds/PageHeader.astro';
+import NuevoCasoModal from '../casos/NuevoCasoModal.astro';
+---
+<PageHeader
+  title="Directorio de Expedientes Periciales"
+  subtitle="Gestión centralizada de investigaciones forenses, asignación pericial y control de evidencias digitales."
+  tag="Cadena de Custodia"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions">
+    <a
+      href="#modal-nuevo-caso"
+      id="btn-abrir-modal-nuevo"
+      class="usa-button font-sans-xs padding-x-2 padding-y-1 width-full tablet:width-auto text-center"
+      aria-controls="modal-nuevo-caso"
+      data-open-modal
+    >
+      Aperturar Nuevo Expediente
+    </a>
+  </div>
+</PageHeader>
+
+<!-- Filtros de Búsqueda y Tipología -->
+<div class="usa-card width-full margin-bottom-3 bg-white shadow-1 radius-md border-1px border-base-lighter">
+  <div class="usa-card__container padding-3">
+    <div class="grid-row grid-gap flex-align-end">
+      <div class="tablet:grid-col-5">
+        <div class="usa-form-group margin-top-0">
+          <label class="usa-label margin-top-0 text-bold font-sans-2xs" for="input-search">
+            Buscar por N° Caso, Expediente o Serial
+          </label>
+          <input
+            class="usa-input"
+            id="input-search"
+            name="search"
+            type="search"
+            placeholder="Ej: MP-01, iPhone, 7f83..."
+          />
+        </div>
+      </div>
+      <div class="tablet:grid-col-4">
+        <div class="usa-form-group margin-top-0">
+          <label class="usa-label margin-top-0 text-bold font-sans-2xs" for="select-filtro-tipo">
+            Tipología Pericial
+          </label>
+          <select class="usa-select" id="select-filtro-tipo" name="filtro-tipo">
+            <option value="todos">Todas las tipologías</option>
+            <option value="forense_whatsapp">WhatsApp Forense</option>
+            <option value="forense_email">Email Forense (RFC 3227)</option>
+            <option value="forense_discoduro">Disco Duro (E01/DD)</option>
+            <option value="forense_imagen">Imagen Forense (ISO 27037)</option>
+          </select>
+        </div>
+      </div>
+      <div class="tablet:grid-col-3 text-right">
+        <p class="margin-bottom-1 font-body-2xs text-base-dark">
+          Mostrando: <strong id="contador-casos">0</strong> expedientes
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Tabla de Expedientes -->
+<section class="margin-bottom-4" aria-label="Directorio de Expedientes Periciales">
+  <div class="usa-table-container--scrollable" tabindex="0">
+    <table class="usa-table usa-table--striped usa-table--compact width-full" id="tabla-expedientes">
+      <caption>Directorio de expedientes periciales registrados en el CMS de cumplimiento</caption>
+      <thead>
+        <tr>
+          <th scope="col">N° Expediente / Caso</th>
+          <th scope="col">Tipología</th>
+          <th scope="col">Consignante / C.I.</th>
+          <th scope="col">Evidencia Incautada</th>
+          <th scope="col">Fase ISO</th>
+          <th scope="col">Estado Cripto</th>
+          <th scope="col">Acciones de Gestión</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-casos">
+        <tr>
+          <td colspan="7">Consultando expedientes sincronizados en MySQL...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Modal de Registro -->
+<NuevoCasoModal />
+
+<script>
+  import { phpApi } from '../../lib/data/phpApi';
+  import { idbPut } from '../../lib/data/idb';
+  import type { CasoCMS } from '../../lib/domain/types';
+
+  const btnAbrir = document.getElementById('btn-abrir-modal-nuevo');
+  const form = document.getElementById('form-nuevo-caso') as HTMLFormElement;
+
+  if (typeof window !== 'undefined') {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('nuevo') === '1') {
+      setTimeout(() => {
+        btnAbrir?.click();
+      }, 200);
+    }
+  }
+
+  const searchInput = document.getElementById('input-search') as HTMLInputElement;
+  const filterSelect = document.getElementById('select-filtro-tipo') as HTMLSelectElement;
+  const tbody = document.getElementById('tbody-casos');
+  const contador = document.getElementById('contador-casos');
+
+  function aplicarFiltros() {
+    if (!tbody) return;
+    const q = (searchInput?.value || '').toLowerCase().trim();
+    const tipo = filterSelect?.value || 'todos';
+
+    let visibles = 0;
+    const filas = tbody.querySelectorAll('tr');
+    filas.forEach((tr) => {
+      const text = tr.textContent?.toLowerCase() || '';
+      const filaTipo = tr.getAttribute('data-tipo') || '';
+
+      const coincideTexto = !q || text.includes(q);
+      const coincideTipo = tipo === 'todos' || filaTipo === tipo;
+
+      if (coincideTexto && coincideTipo) {
+        tr.hidden = false;
+        visibles++;
+      } else {
+        tr.hidden = true;
+      }
+    });
+
+    if (contador) contador.textContent = String(visibles);
+  }
+
+  if (searchInput) searchInput.addEventListener('input', aplicarFiltros);
+  if (filterSelect) filterSelect.addEventListener('change', aplicarFiltros);
+
+  let casosSincronizados: CasoCMS[] = [];
+
+  function renderizarFilaCaso(c: CasoCMS): string {
+    const tipo = (c.tipoProyecto || '').replace('forense_', '').toUpperCase();
+    return `
+      <tr data-id="${c.id}" data-tipo="${c.tipoProyecto}">
+        <th scope="row">
+          <strong>${c.numeroCaso}</strong><br />
+          <code>${c.expediente || 'S/E'}</code><br />
+          <span class="font-body-3xs text-base-dark">${c.titulo}</span>
+        </th>
+        <td>
+          <span class="usa-tag">${tipo}</span>
+        </td>
+        <td>
+          <strong>${c.consignanteNombre || 'Consignante no reg.'}</strong><br />
+          <span class="font-body-3xs">C.I. ${c.consignanteCedula || 'N/A'}</span><br />
+          <span class="font-body-3xs text-base-dark">Tlf: ${c.consignanteTelefono || 'N/A'}</span>
+        </td>
+        <td>
+          <strong>${c.evidenciaMarca || ''} ${c.evidenciaModelo || ''}</strong><br />
+          <code>S/N: ${c.evidenciaSerial || 'N/A'}</code><br />
+          <span class="font-body-3xs text-base-dark">Bolsa Faraday: ${c.evidenciaAislamientoRF ? 'Aislado RF' : 'No'}</span>
+        </td>
+        <td>
+          <span class="usa-tag bg-primary text-white">${c.faseIsoActual || 'F0'}</span>
+        </td>
+        <td>
+          <span class="usa-tag bg-success text-white">Sincronizado DB</span>
+        </td>
+        <td>
+          <ul class="usa-button-group flex-wrap">
+            <li class="usa-button-group__item">
+              <a href="/flujo?casoId=${c.id}" class="usa-button font-sans-2xs padding-x-1 padding-y-05">
+                Fases ISO
+              </a>
+            </li>
+            <li class="usa-button-group__item">
+              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
+                PRCC
+              </a>
+            </li>
+            <li class="usa-button-group__item">
+              <a href="/planillas?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
+                Planillas
+              </a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    `;
+  }
+
+  async function cargarCasosSincronizados() {
+    try {
+      const data = await phpApi.listarCasos();
+      casosSincronizados = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+
+      if (!tbody) return;
+
+      if (casosSincronizados.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              <p><strong>No hay expedientes sincronizados en la base de datos MySQL.</strong></p>
+              <p>Aperture un nuevo expediente pericial o importe el archivo <code>database.sql</code> en phpMyAdmin.</p>
+            </td>
+          </tr>
+        `;
+        if (contador) contador.textContent = '0';
+        return;
+      }
+
+      tbody.innerHTML = casosSincronizados.map(renderizarFilaCaso).join('');
+      if (contador) contador.textContent = String(casosSincronizados.length);
+      aplicarFiltros();
+    } catch (e) {
+      console.error('Error cargando casos sincronizados:', e);
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    cargarCasosSincronizados();
+  }
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(form);
+
+      const nuevoId = 'caso-' + Date.now();
+      const nuevoCaso: CasoCMS = {
+        id: nuevoId,
+        numeroCaso: String(formData.get('numeroCaso') || ''),
+        expediente: String(formData.get('expediente') || ''),
+        tipoProyecto: (formData.get('tipoProyecto') as any) || 'forense_whatsapp',
+        titulo: String(formData.get('titulo') || ''),
+        descripcion: String(formData.get('descripcion') || ''),
+        prioridad: (formData.get('prioridad') as any) || 'media',
+        estado: 'iniciado',
+        faseIsoActual: 'F0',
+        fechaCreacion: new Date().toISOString(),
+        fechaUltimaActualizacion: new Date().toISOString(),
+        peritoLider: 'Jull Joll',
+        normativasAplicadas: ['ISO/IEC 27037:2012', 'MUCC-2017', 'COPP-187'],
+        fasesCompletadas: 0,
+        totalFases: 6,
+        porcentajeCompletado: 0,
+        totalEvidencias: 1,
+        nivelCumplimientoGeneral: 'conforme',
+        etiquetas: ['Forense'],
+        notas: '',
+
+        consignanteNombre: String(formData.get('consignanteNombre') || ''),
+        consignanteCedula: String(formData.get('consignanteCedula') || ''),
+        consignanteTelefono: String(formData.get('consignanteTelefono') || ''),
+        consignanteEmail: String(formData.get('consignanteEmail') || ''),
+        consignanteDireccion: String(formData.get('consignanteDireccion') || ''),
+
+        evidenciaTipo: String(formData.get('evidenciaTipo') || 'Dispositivo'),
+        evidenciaMarca: String(formData.get('evidenciaMarca') || ''),
+        evidenciaModelo: String(formData.get('evidenciaModelo') || ''),
+        evidenciaSerial: String(formData.get('evidenciaSerial') || ''),
+        evidenciaColor: String(formData.get('evidenciaColor') || ''),
+        evidenciaEstado: String(formData.get('evidenciaEstado') || 'Operativo'),
+        evidenciaAislamientoRF: formData.get('evidenciaAislamientoRF') === 'on',
+
+        fiscaliaTribunal: 'Ministerio Público / Tribunal de Control',
+        peritoLiderNombre: 'Jull Joll',
+        peritoLiderCedula: 'V-15.890.123',
+        peritoLiderCiv: 'CIV-284910',
+      };
+
+      try {
+        await phpApi.guardarCaso(nuevoCaso);
+        await idbPut('casos', nuevoCaso);
+        alert(`Expediente ${nuevoCaso.numeroCaso} registrado con éxito bajo normativa ISO/IEC 27037.`);
+        window.location.href = `/flujo?casoId=${nuevoCaso.id}`;
+      } catch (err: any) {
+        console.error('Error guardando en backend:', err);
+        await idbPut('casos', nuevoCaso);
+        alert(`Expediente ${nuevoCaso.numeroCaso} guardado localmente (modo offline).`);
+        window.location.href = `/flujo?casoId=${nuevoCaso.id}`;
+      }
+    });
+  }
+</script>

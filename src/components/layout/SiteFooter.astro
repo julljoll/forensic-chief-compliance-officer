@@ -1,0 +1,65 @@
+---
+/**
+ * SHA256.US — Componente Oficial USWDS Footer Minimalista para CMS de Cumplimiento
+ * Aplica Leyes de Gestalt (Proximidad, Región Común y Simplicidad)
+ * https://designsystem.digital.gov/components/footer/
+ */
+---
+<footer class="usa-footer usa-footer--slim fcco-footer" role="contentinfo">
+  <div class="grid-container-widescreen">
+    <div class="fcco-footer__inner grid-row grid-gap-2 flex-align-center flex-justify">
+      
+      <!-- Cluster 1 (Proximidad: Identidad y Acreditación Pericial) -->
+      <div class="grid-col-12 tablet:grid-col-4 display-flex flex-align-center">
+        <img
+          src="/logo.png?v=2"
+          alt="Logo SHA256.US"
+          class="fcco-footer__logo margin-right-105"
+          width="32"
+          height="32"
+          loading="lazy"
+        />
+        <div class="fcco-footer__identity">
+          <p class="font-sans-xs text-bold text-ink margin-0 line-height-sans-2">
+            Forensic Chief Compliance Officer
+          </p>
+          <p class="font-mono-3xs text-base margin-0 line-height-sans-1">
+            SHA256.US · Conforme ISO/IEC 27037 · MUCC-2017 · COPP 187
+          </p>
+        </div>
+      </div>
+
+      <!-- Cluster 2 (Proximidad: Navegación Esencial de Flujo de Trabajo CMS) -->
+      <div class="grid-col-12 tablet:grid-col-5 text-center">
+        <nav class="fcco-footer__nav" aria-label="Navegación secundaria de pie de página">
+          <ul class="add-list-reset display-flex flex-wrap flex-justify-center grid-gap-1 font-sans-3xs margin-0">
+            <li><a class="usa-link text-base-darker" href="/dashboard">Panel</a></li>
+            <li aria-hidden="true" class="text-base-light">·</li>
+            <li><a class="usa-link text-base-darker" href="/casos">Expedientes</a></li>
+            <li aria-hidden="true" class="text-base-light">·</li>
+            <li><a class="usa-link text-base-darker" href="/flujo">Ciclo ISO</a></li>
+            <li aria-hidden="true" class="text-base-light">·</li>
+            <li><a class="usa-link text-base-darker" href="/planillas">Planillas (13)</a></li>
+            <li aria-hidden="true" class="text-base-light">·</li>
+            <li><a class="usa-link text-base-darker" href="/auditoria">Auditoría</a></li>
+            <li aria-hidden="true" class="text-base-light">·</li>
+            <li><a class="usa-link text-base-darker text-bold" href="/seguridad">Seguridad MFA</a></li>
+          </ul>
+        </nav>
+      </div>
+
+      <!-- Cluster 3 (Proximidad: Integridad Criptográfica y Contacto Institucional) -->
+      <div class="grid-col-12 tablet:grid-col-3 text-right">
+        <div class="display-inline-flex flex-column flex-align-end">
+          <span class="usa-tag bg-success-dark text-white font-mono-3xs text-bold padding-x-1 padding-y-2px radius-pill">
+            🔒 Inmutabilidad SHA-256 (RFC 8785)
+          </span>
+          <span class="font-sans-3xs text-base-dark margin-top-05">
+            Soporte: <a href="mailto:custodia@sha256.us" class="usa-link text-base-darker">custodia@sha256.us</a> · <span class="font-mono-3xs">v1.0.0</span>
+          </span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</footer>

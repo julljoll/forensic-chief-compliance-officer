@@ -1,0 +1,183 @@
+---
+/**
+ * SHA256.US — Vista Modular de Acceso Pericial
+ */
+---
+<div class="grid-row flex-justify-center">
+  <div class="grid-col-12 tablet:grid-col-10 desktop:grid-col-7 widescreen:grid-col-6">
+    <div class="usa-card width-full bg-white shadow-2 radius-md border-1px border-base-lighter">
+      <div class="usa-card__container padding-3 tablet:padding-5">
+        <div class="text-center margin-bottom-3">
+          <img src="/logo.png?v=2" alt="Logo SHA256.US" class="width-8 height-8 margin-bottom-1 display-inline-block" />
+          <h1 class="margin-top-0 margin-bottom-1 font-heading-lg text-ink">
+            Acceso a Bóveda Pericial
+          </h1>
+          <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
+            CMS de Cumplimiento Normativo ISO/IEC 27037 y Cadena de Custodia MUCC-2017
+          </p>
+        </div>
+
+        <!-- Alerta de Error -->
+        <div
+          id="login-error-alert"
+          class="usa-alert usa-alert--error usa-alert--slim margin-bottom-3 radius-md"
+          role="alert"
+          hidden
+        >
+          <div class="usa-alert__body">
+            <p class="usa-alert__text" id="login-error-msg">Credenciales inválidas</p>
+          </div>
+        </div>
+
+        <!-- Formulario Oficial de Acceso -->
+        <form class="usa-form width-full maxw-full" id="login-form">
+          <fieldset class="usa-fieldset">
+            <legend class="usa-sr-only">Credenciales del Operador Forense</legend>
+
+            <!-- Paso 1: Correo y Contraseña -->
+            <div id="step-1-credentials">
+              <label class="usa-label text-bold font-sans-xs" for="email">
+                Correo Electrónico Institucional <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input
+                class="usa-input"
+                id="email"
+                name="email"
+                type="email"
+                autocomplete="username"
+                autocapitalize="off"
+                autocorrect="off"
+                placeholder="perito@sha256.us"
+                required
+              />
+
+              <div class="margin-top-2">
+                <label class="usa-label text-bold font-sans-xs" for="password">
+                  Contraseña de Seguridad <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                </label>
+                <input
+                  class="usa-input"
+                  id="password"
+                  name="password"
+                  type="password"
+                  autocomplete="current-password"
+                  required
+                />
+              </div>
+
+              <!-- Campo TOTP (si está solicitado o disponible) -->
+              <div id="campo-totp-wrap" class="margin-top-2" hidden>
+                <label class="usa-label text-bold font-sans-xs" for="totp-code">
+                  Código Google Authenticator (6 dígitos) <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                </label>
+                <div class="usa-hint font-sans-3xs text-base-dark" id="totp-hint">
+                  Ingrese el código dinámico de su aplicación de autenticación
+                </div>
+                <input
+                  class="usa-input font-mono-lg letter-spacing-2 text-center"
+                  id="totp-code"
+                  name="totpCode"
+                  type="text"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  maxlength="6"
+                  placeholder="000000"
+                  aria-describedby="totp-hint"
+                />
+              </div>
+
+              <input
+                class="usa-button margin-top-3 width-full font-sans-xs padding-y-105"
+                type="submit"
+                id="btn-submit"
+                value="Ingresar al Sistema Forense"
+              />
+            </div>
+          </fieldset>
+        </form>
+
+        <div class="margin-top-3 border-top-1px border-base-lighter padding-top-2 text-center">
+          <p class="font-sans-3xs text-base margin-0">
+            🔒 Sesión pericial protegida con cifrado FIPS y trazabilidad de acceso en base de datos MySQL (cPanel).
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { phpApi } from '../../lib/data/phpApi';
+  import { useAuthStore } from '../../store/authStore';
+
+  const form = document.getElementById('login-form');
+  const errorAlert = document.getElementById('login-error-alert');
+  const errorMsg = document.getElementById('login-error-msg');
+  const btnSubmit = document.getElementById('btn-submit') as HTMLInputElement;
+  const totpWrap = document.getElementById('campo-totp-wrap');
+  const emailInput = document.getElementById('email') as HTMLInputElement;
+  const passwordInput = document.getElementById('password') as HTMLInputElement;
+  const totpInput = document.getElementById('totp-code') as HTMLInputElement;
+
+  if (form) {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      if (btnSubmit) {
+        btnSubmit.value = 'Verificando credenciales...';
+        btnSubmit.disabled = true;
+      }
+      if (errorAlert) errorAlert.hidden = true;
+
+      const email = (emailInput?.value || '').trim();
+      const pass = (passwordInput?.value || '').trim();
+      const totp = (totpInput?.value || '').trim();
+
+      try {
+        const res = await phpApi.login(email, pass, totp);
+
+        if (res.ok) {
+          window.location.href = '/dashboard';
+          return;
+        }
+
+        // Si el backend solicita código 2FA
+        if (res.data?.requires_totp) {
+          if (totpWrap) {
+            totpWrap.hidden = false;
+            totpInput.required = true;
+            totpInput.focus();
+          }
+          if (btnSubmit) {
+            btnSubmit.value = 'Validar Código 2FA';
+            btnSubmit.disabled = false;
+          }
+          return;
+        }
+
+        // Fallback local autenticado
+        const localOk = await useAuthStore.getState().login(email, pass, totp);
+        if (localOk) {
+          window.location.href = '/dashboard';
+          return;
+        }
+
+        if (errorAlert && errorMsg) {
+          errorMsg.textContent = res.error || useAuthStore.getState().error || 'Credenciales no autorizadas o código 2FA erróneo.';
+          errorAlert.hidden = false;
+        }
+      } catch (err: any) {
+        if (errorAlert && errorMsg) {
+          errorMsg.textContent = err.message || 'Error de conexión con el servidor.';
+          errorAlert.hidden = false;
+        }
+      } finally {
+        if (btnSubmit) {
+          btnSubmit.value = totpWrap && !totpWrap.hidden ? 'Validar Código 2FA' : 'Ingresar al Sistema Forense';
+          btnSubmit.disabled = false;
+        }
+      }
+    });
+  }
+</script>

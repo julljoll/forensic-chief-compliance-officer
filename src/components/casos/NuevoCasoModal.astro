@@ -1,0 +1,199 @@
+---
+/**
+ * SHA256.US — Modal de Apertura Oficial de Expediente Forense (USWDS)
+ * Los datos ingresados se replicarán en las 13 planillas oficiales legales (Folio 216mm × 330mm).
+ */
+---
+<div
+  class="usa-modal usa-modal--lg"
+  id="modal-nuevo-caso"
+  aria-labelledby="modal-nuevo-caso-heading"
+  aria-describedby="modal-nuevo-caso-description"
+>
+  <div class="usa-modal__content">
+    <div class="usa-modal__main">
+      <h2 class="usa-modal__heading" id="modal-nuevo-caso-heading">
+        Apertura Oficial de Expediente Forense
+      </h2>
+      <div class="usa-prose">
+        <p id="modal-nuevo-caso-description">
+          Los datos ingresados se replicarán automáticamente en las 13 planillas oficiales legales (Folio 216mm × 330mm).
+        </p>
+      </div>
+
+      <form id="form-nuevo-caso">
+        <!-- Sección 1: Datos Procesales -->
+        <fieldset class="usa-fieldset margin-top-2">
+          <legend class="usa-legend text-bold">
+            1. Identificación del Caso y Tipología
+          </legend>
+          <div class="grid-row grid-gap">
+            <div class="tablet:grid-col-6">
+              <label class="usa-label" for="nuevo-numeroCaso">
+                N° de Caso Interno <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-numeroCaso" name="numeroCaso" required />
+            </div>
+            <div class="tablet:grid-col-6">
+              <label class="usa-label" for="nuevo-expediente">
+                N° de Expediente Judicial / Fiscalía <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-expediente" name="expediente" required />
+            </div>
+          </div>
+
+          <div class="grid-row grid-gap">
+            <div class="tablet:grid-col-6">
+              <label class="usa-label" for="nuevo-tipoProyecto">
+                Tipología Forense <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <select class="usa-select" id="nuevo-tipoProyecto" name="tipoProyecto" required>
+                <option value="forense_whatsapp">WhatsApp Forense (msgstore.db)</option>
+                <option value="forense_email">Email Forense (SMTP/RFC 3227)</option>
+                <option value="forense_discoduro">Disco Duro (Clonado E01/DD)</option>
+                <option value="forense_imagen">Adquisición Imagen (ISO 27037)</option>
+              </select>
+            </div>
+            <div class="tablet:grid-col-6">
+              <label class="usa-label" for="nuevo-prioridad">Prioridad Procesal</label>
+              <select class="usa-select" id="nuevo-prioridad" name="prioridad">
+                <option value="media">Media (Estándar)</option>
+                <option value="alta">Alta (Flagrancia / Notitia Criminis)</option>
+                <option value="urgente">Urgente (Riesgo de Destrucción)</option>
+              </select>
+            </div>
+          </div>
+
+          <label class="usa-label" for="nuevo-titulo">
+            Título o Asunto del Peritaje <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+          </label>
+          <input class="usa-input" id="nuevo-titulo" name="titulo" required />
+
+          <label class="usa-label" for="nuevo-descripcion">Objeto de la Peritación y Alcance</label>
+          <textarea class="usa-textarea" id="nuevo-descripcion" name="descripcion" rows="2"></textarea>
+        </fieldset>
+
+        <!-- Sección 2: Consignante / Solicitante -->
+        <fieldset class="usa-fieldset margin-top-3">
+          <legend class="usa-legend text-bold">
+            2. Datos del Consignante / Solicitante
+          </legend>
+          <div class="grid-row grid-gap">
+            <div class="tablet:grid-col-8">
+              <label class="usa-label" for="nuevo-consignanteNombre">
+                Nombre y Apellido <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-consignanteNombre" name="consignanteNombre" required />
+            </div>
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-consignanteCedula">
+                Cédula de Identidad <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-consignanteCedula" name="consignanteCedula" required />
+            </div>
+          </div>
+
+          <div class="grid-row grid-gap">
+            <div class="tablet:grid-col-6">
+              <label class="usa-label" for="nuevo-consignanteTelefono">Teléfono de Contacto</label>
+              <input class="usa-input" id="nuevo-consignanteTelefono" name="consignanteTelefono" />
+            </div>
+            <div class="tablet:grid-col-6">
+              <label class="usa-label" for="nuevo-consignanteEmail">Correo Electrónico</label>
+              <input class="usa-input" id="nuevo-consignanteEmail" name="consignanteEmail" type="email" />
+            </div>
+          </div>
+
+          <label class="usa-label" for="nuevo-consignanteDireccion">Dirección de Residencia / Despacho</label>
+          <input class="usa-input" id="nuevo-consignanteDireccion" name="consignanteDireccion" />
+        </fieldset>
+
+        <!-- Sección 3: Evidencia Digital -->
+        <fieldset class="usa-fieldset margin-top-3">
+          <legend class="usa-legend text-bold">
+            3. Registro Técnico de la Evidencia Digital
+          </legend>
+          <div class="grid-row grid-gap">
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-evidenciaTipo">Tipo Dispositivo</label>
+              <input class="usa-input" id="nuevo-evidenciaTipo" name="evidenciaTipo" />
+            </div>
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-evidenciaMarca">
+                Marca <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-evidenciaMarca" name="evidenciaMarca" required />
+            </div>
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-evidenciaModelo">
+                Modelo <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-evidenciaModelo" name="evidenciaModelo" required />
+            </div>
+          </div>
+
+          <div class="grid-row grid-gap">
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-evidenciaSerial">
+                Serial / IMEI <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input class="usa-input" id="nuevo-evidenciaSerial" name="evidenciaSerial" required />
+            </div>
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-evidenciaColor">Color / Aspecto</label>
+              <input class="usa-input" id="nuevo-evidenciaColor" name="evidenciaColor" />
+            </div>
+            <div class="tablet:grid-col-4">
+              <label class="usa-label" for="nuevo-evidenciaEstado">Estado Físico</label>
+              <input class="usa-input" id="nuevo-evidenciaEstado" name="evidenciaEstado" />
+            </div>
+          </div>
+
+          <!-- USWDS: Checkbox -->
+          <div class="usa-checkbox margin-top-2">
+            <input
+              class="usa-checkbox__input"
+              type="checkbox"
+              id="nuevo-evidenciaAislamientoRF"
+              name="evidenciaAislamientoRF"
+            />
+            <label class="usa-checkbox__label" for="nuevo-evidenciaAislamientoRF">
+              Aislamiento RF Aplicado (Bolsa Faraday y Modo Avión obligatorio según ISO 27037)
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="usa-modal__footer">
+          <ul class="usa-button-group flex-wrap">
+            <li class="usa-button-group__item">
+              <button type="submit" class="usa-button font-sans-xs padding-x-2 padding-y-1">
+                Registrar Expediente e Iniciar F0
+              </button>
+            </li>
+            <li class="usa-button-group__item">
+              <button
+                type="button"
+                id="btn-cancelar-modal"
+                class="usa-button usa-button--unstyled font-sans-xs padding-1 text-center"
+                data-close-modal
+              >
+                Cancelar
+              </button>
+            </li>
+          </ul>
+        </div>
+      </form>
+    </div>
+    <button
+      type="button"
+      id="btn-cerrar-modal"
+      class="usa-button usa-modal__close"
+      aria-label="Cerrar esta ventana"
+      data-close-modal
+    >
+      <svg class="usa-icon" aria-hidden="true" focusable="false" role="img">
+        <use href="/assets/uswds/img/sprite.svg#close"></use>
+      </svg>
+    </button>
+  </div>
+</div>

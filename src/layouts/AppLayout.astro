@@ -1,14 +1,12 @@
 ---
 /**
- * SHA256.US — Layout Principal del CMS de Cumplimiento Forense con USWDS Estricto (@uswds/uswds)
- * Navegación centralizada única en encabezado superior oficial (usa-header--extended).
- * Esqueleto canónico USWDS: skipnav → overlay → banner → header (nav único) → main (widescreen) → footer → identifier → scripts.
- * Fuentes:
- * - https://designsystem.digital.gov/components/banner/
- * - https://designsystem.digital.gov/components/header/
- * - https://designsystem.digital.gov/components/footer/
- * - https://designsystem.digital.gov/components/identifier/
+ * SHA256.US — Layout Principal del CMS de Cumplimiento Forense (Astro Modular)
+ * Stack: Astro ('output: static') + USWDS 3.14 + PHP/MySQL (cPanel)
  */
+import SiteBanner from '../components/layout/SiteBanner.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import AuthGuard from '../components/layout/AuthGuard.astro';
 
 interface Props {
   title?: string;
@@ -16,19 +14,7 @@ interface Props {
 }
 
 const { title = 'Forensic Chief Compliance Officer — SHA256.US', activeNav = '' } = Astro.props;
-
-const navItems = [
-  { href: '/dashboard', label: 'Panel General', shortLabel: 'Panel', key: 'dashboard' },
-  { href: '/casos', label: 'Expedientes Periciales', shortLabel: 'Expedientes', key: 'casos' },
-  { href: '/flujo', label: 'Ciclo Pericial ISO', shortLabel: 'Ciclo ISO', key: 'flujo' },
-  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', shortLabel: 'Custodia PRCC', key: 'custodia' },
-  { href: '/planillas', label: 'Planillas Oficiales (Folio)', shortLabel: 'Planillas Folio', key: 'planillas' },
-  { href: '/normativa', label: 'Base Normativa RAG', shortLabel: 'Normativa RAG', key: 'normativa' },
-  { href: '/auditoria', label: 'Auditoría Inmutable (SHA-256)', shortLabel: 'Auditoría SHA-256', key: 'auditoria' },
-  { href: '/exportar', label: 'Exportación de Caso', shortLabel: 'Exportar', key: 'exportar' },
-];
 ---
-
 <!doctype html>
 <html lang="es">
   <head>
@@ -39,266 +25,18 @@ const navItems = [
     <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css?v=3.14.0" />
     <script is:inline src="/assets/uswds/js/uswds-init.min.js"></script>
   </head>
-  <body>
-    <!-- USWDS: Skipnav | https://designsystem.digital.gov/components/skip-navigation/ -->
+  <body class="bg-base-lightest display-flex flex-column minh-viewport">
     <a class="usa-skipnav" href="#main-content">Saltar al contenido principal</a>
     <div class="usa-overlay"></div>
-
-    <!-- USWDS: Banner | https://designsystem.digital.gov/components/banner/ -->
-    <section class="usa-banner" aria-label="Sistema Oficial de Cumplimiento Forense">
-      <div class="usa-accordion">
-        <header class="usa-banner__header">
-          <div class="usa-banner__inner">
-            <div class="grid-col-auto">
-              <img aria-hidden="true" class="usa-banner__header-flag" src="/logo.png" alt="" />
-            </div>
-            <div class="grid-col-fill tablet:grid-col-auto" aria-hidden="true">
-              <p class="usa-banner__header-text">
-                CMS Oficial de Cumplimiento Forense y Cadena de Custodia Digital — SHA256.US (ISO/IEC 27037 · MUCC-2017)
-              </p>
-              <p class="usa-banner__header-action">Así es como usted puede verificarlo</p>
-            </div>
-            <button
-              type="button"
-              class="usa-accordion__button usa-banner__button"
-              aria-expanded="false"
-              aria-controls="gov-banner-default"
-            >
-              <span class="usa-banner__button-text">Así es como usted puede verificarlo</span>
-            </button>
-          </div>
-        </header>
-        <div class="usa-banner__content usa-accordion__content" id="gov-banner-default" hidden>
-          <div class="grid-row grid-gap-lg">
-            <div class="usa-banner__guidance tablet:grid-col-6">
-              <img
-                class="usa-banner__icon usa-media-block__img"
-                src="/assets/uswds/img/icon-dot-gov.svg"
-                role="img"
-                alt=""
-                aria-hidden="true"
-              />
-              <div class="usa-media-block__body">
-                <p>
-                  <strong>Los registros forenses oficiales cumplen con ISO/IEC 27037 y MUCC-2017</strong><br />
-                  Un sistema de gestión de cumplimiento (CMS) pericial garantiza la trazabilidad documental en formato Folio reglamentario (216mm × 330mm) y el bloqueo secuencial de fases (F0–F5).
-                </p>
-              </div>
-            </div>
-            <div class="usa-banner__guidance tablet:grid-col-6">
-              <img
-                class="usa-banner__icon usa-media-block__img"
-                src="/assets/uswds/img/icon-https.svg"
-                role="img"
-                alt=""
-                aria-hidden="true"
-              />
-              <div class="usa-media-block__body">
-                <p>
-                  <strong>Los expedientes periciales están protegidos con SHA-256 (FIPS 180-4)</strong><br />
-                  Cada actuación y transición de fase se sella mediante JSON canónico (RFC 8785) encadenado criptográficamente en base de datos relacional con disparadores de inmutabilidad.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- USWDS: Header Extended (Menú único centralizado) | https://designsystem.digital.gov/components/header/ -->
-    <header class="usa-header usa-header--extended">
-      <div class="usa-navbar">
-        <div class="usa-logo" id="extended-logo">
-          <em class="usa-logo__text font-heading-sm tablet:font-heading-md">
-            <a href="/dashboard" title="Forensic Chief Compliance Officer — SHA256.US">
-              SHA256.US — Forensic Chief Compliance Officer
-            </a>
-          </em>
-        </div>
-        <button type="button" class="usa-menu-btn">Menú</button>
-      </div>
-      <nav aria-label="Navegación principal del CMS" class="usa-nav">
-        <div class="usa-nav__inner">
-          <button type="button" class="usa-nav__close">
-            <img src="/assets/uswds/img/usa-icons/close.svg" role="img" alt="Cerrar" />
-          </button>
-          <ul class="usa-nav__primary usa-accordion">
-            {navItems.map((item) => (
-              <li class="usa-nav__primary-item">
-                <a
-                  href={item.href}
-                  class={`usa-nav__link ${activeNav === item.key ? 'usa-current' : ''}`.trim()}
-                >
-                  <span>{item.shortLabel || item.label}</span>
-                </a>
-              </li>
-            ))}
-          </ul>
-          <div class="usa-nav__secondary">
-            <ul class="usa-nav__secondary-links">
-              <li class="usa-nav__secondary-item">
-                <a href="/auditoria" id="user-name">Perito: Jull Joll (FCCO)</a>
-              </li>
-              <li class="usa-nav__secondary-item">
-                <a href="/" id="btn-logout">Cerrar Sesión</a>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <!-- USWDS: Layout Grid a ancho completo (sin barra lateral) | https://designsystem.digital.gov/utilities/layout-grid/ -->
-    <main class="usa-section padding-top-3 padding-bottom-6" id="main-content">
+    <SiteBanner />
+    <SiteHeader activeNav={activeNav} />
+    <main class="usa-section padding-top-3 padding-bottom-6 flex-1" id="main-content">
       <div class="grid-container-widescreen">
         <slot />
       </div>
     </main>
-
-    <!-- USWDS: Footer Slim | https://designsystem.digital.gov/components/footer/ -->
-    <footer class="usa-footer usa-footer--slim">
-      <div class="grid-container-widescreen usa-footer__return-to-top">
-        <a href="#main-content">Subir al inicio</a>
-      </div>
-      <div class="usa-footer__primary-section">
-        <div class="usa-footer__primary-container grid-row">
-          <div class="mobile-lg:grid-col-8">
-            <nav class="usa-footer__nav" aria-label="Navegación de pie de página">
-              <ul class="grid-row grid-gap">
-                <li class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content">
-                  <a class="usa-footer__primary-link" href="/dashboard">Panel General</a>
-                </li>
-                <li class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content">
-                  <a class="usa-footer__primary-link" href="/casos">Expedientes</a>
-                </li>
-                <li class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content">
-                  <a class="usa-footer__primary-link" href="/planillas">Catálogo Folio (13)</a>
-                </li>
-                <li class="mobile-lg:grid-col-6 desktop:grid-col-auto usa-footer__primary-content">
-                  <a class="usa-footer__primary-link" href="/auditoria">Cadena SHA-256</a>
-                </li>
-              </ul>
-            </nav>
-          </div>
-          <div class="mobile-lg:grid-col-4">
-            <address class="usa-footer__address">
-              <div class="grid-row grid-gap">
-                <div class="grid-col-auto mobile-lg:grid-col-12 desktop:grid-col-auto">
-                  <div class="usa-footer__contact-info">
-                    <a href="mailto:custodia@sha256.us">custodia@sha256.us</a>
-                  </div>
-                </div>
-              </div>
-            </address>
-          </div>
-        </div>
-      </div>
-      <div class="usa-footer__secondary-section">
-        <div class="grid-container-widescreen">
-          <div class="usa-footer__logo grid-row grid-gap-2">
-            <div class="grid-col-auto">
-              <img class="usa-footer__logo-img" src="/logo.png" alt="Logo SHA256.US" />
-            </div>
-            <div class="grid-col-auto">
-              <p class="usa-footer__logo-heading">
-                Laboratorio de Informática Forense — Forensic Chief Compliance Officer (SHA256.US)
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </footer>
-
-    <!-- USWDS: Identifier | https://designsystem.digital.gov/components/identifier/ -->
-    <div class="usa-identifier">
-      <section
-        class="usa-identifier__section usa-identifier__section--masthead"
-        aria-label="Identificación institucional del laboratorio"
-      >
-        <div class="usa-identifier__container">
-          <div class="usa-identifier__logos">
-            <a href="/dashboard" class="usa-identifier__logo">
-              <img
-                class="usa-identifier__logo-img"
-                src="/logo.png"
-                alt="Logo Laboratorio Forense SHA256.US"
-                role="img"
-              />
-            </a>
-          </div>
-          <section class="usa-identifier__identity" aria-label="Descripción de la institución">
-            <p class="usa-identifier__identity-domain">sha256.us</p>
-            <p class="usa-identifier__identity-disclaimer">
-              Sistema Oficial de Gestión de Cumplimiento Forense de{' '}
-              <a href="/dashboard">Forensic Chief Compliance Officer (FCCO)</a>.
-              El uso de componentes del U.S. Web Design System responde a estándares técnicos de accesibilidad (Sección 508 / WCAG 2.1 AA) y no implica afiliación con agencias del gobierno de EE. UU.
-            </p>
-          </section>
-        </div>
-      </section>
-      <nav
-        class="usa-identifier__section usa-identifier__section--required-links"
-        aria-label="Enlaces normativos y de cumplimiento"
-      >
-        <div class="usa-identifier__container">
-          <ul class="usa-identifier__required-links-list">
-            <li class="usa-identifier__required-links-item">
-              <a href="/normativa" class="usa-identifier__required-link usa-link">
-                Marco Legal ISO/IEC 27037 y MUCC-2017
-              </a>
-            </li>
-            <li class="usa-identifier__required-links-item">
-              <a href="/auditoria" class="usa-identifier__required-link usa-link">
-                Verificación Criptográfica RFC 8785
-              </a>
-            </li>
-            <li class="usa-identifier__required-links-item">
-              <a href="/planillas" class="usa-identifier__required-link usa-link">
-                Formatos Reglamentarios en Folio (216mm × 330mm)
-              </a>
-            </li>
-            <li class="usa-identifier__required-links-item">
-              <a href="/exportar" class="usa-identifier__required-link usa-link">
-                Exportación Judicial Sellada
-              </a>
-            </li>
-          </ul>
-        </div>
-      </nav>
-    </div>
-
-    <script>
-      import { phpApi } from '../lib/data/phpApi';
-      import { idbGetAll, idbDelete } from '../lib/data/idb';
-      import type { CasoCMS } from '../lib/domain/types';
-
-      async function initApp() {
-        try {
-          const locales = await idbGetAll<CasoCMS>('casos');
-          for (const c of locales) {
-            if (c.id && c.id.startsWith('caso-mock-')) {
-              await idbDelete('casos', c.id);
-            }
-          }
-          await phpApi.listarCasos();
-        } catch (e) {
-          console.warn('Error sincronizando casos desde base de datos:', e);
-        }
-
-        const btnLogout = document.getElementById('btn-logout');
-        if (btnLogout) {
-          btnLogout.addEventListener('click', async (e) => {
-            e.preventDefault();
-            await phpApi.logout();
-            window.location.href = '/';
-          });
-        }
-      }
-
-      if (typeof window !== 'undefined') {
-        initApp();
-      }
-    </script>
+    <SiteFooter />
+    <AuthGuard />
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
   </body>
 </html>

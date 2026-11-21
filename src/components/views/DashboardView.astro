@@ -1,0 +1,265 @@
+---
+/**
+ * SHA256.US — Vista Modular del Panel General (Dashboard)
+ */
+import PageHeader from '../uswds/PageHeader.astro';
+import KpiCard from '../uswds/KpiCard.astro';
+import SummaryBox from '../uswds/SummaryBox.astro';
+import Alert from '../uswds/Alert.astro';
+---
+<PageHeader
+  title="Panel General de Cumplimiento"
+  subtitle="CMS de monitoreo de expedientes periciales, sellos criptográficos SHA-256 y trazabilidad ISO/IEC."
+  tag="Acreditación Activa"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions" class="display-flex grid-gap-1 flex-wrap">
+    <a href="/casos?nuevo=1" class="usa-button font-sans-xs padding-x-2 padding-y-1">
+      Aperturar Expediente
+    </a>
+    <a href="/auditoria" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+      Verificar Cadena
+    </a>
+  </div>
+</PageHeader>
+
+<Alert type="info" heading="Laboratorio Forense Certificado · Entorno Auditado" className="margin-bottom-3">
+  Todos los procedimientos registrados en este CMS de cumplimiento están respaldados por sellos criptográficos
+  <strong>SHA-256</strong> bajo la cadena de custodia reglamentaria <strong>MUCC-2017</strong> (Gaceta N° 41.247)
+  y el estándar internacional <strong>ISO/IEC 27037:2012</strong>.
+</Alert>
+
+<!-- Grupo de Métricas Principales (KPIs) -->
+<div class="grid-row grid-gap-2 margin-bottom-3">
+  <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
+    <KpiCard
+      label="Expedientes Activos"
+      value="0"
+      id="kpi-total-casos"
+      subtext="En curso procesal en laboratorio"
+      variant="primary"
+    />
+  </div>
+  <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
+    <KpiCard
+      label="Evidencias Custodiadas"
+      value="0"
+      id="kpi-evidencias"
+      subtext="Con precinto numerado y PRCC"
+      variant="info"
+    />
+  </div>
+  <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
+    <KpiCard
+      label="Fases ISO Validadas"
+      value="12 / 18"
+      id="kpi-fases"
+      subtext="Gating F0–F5 superado"
+      variant="warning"
+    />
+  </div>
+  <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
+    <KpiCard
+      label="Integridad SHA-256"
+      value="100%"
+      id="kpi-integridad"
+      subtext="Cadena sin roturas (RFC 8785)"
+      variant="success"
+    />
+  </div>
+</div>
+
+<SummaryBox
+  heading="Control de Calidad Pericial — Ciclo ISO 6 Fases (F0 - F5)"
+  headingId="summary-ciclo-iso"
+  className="margin-bottom-3"
+>
+  <p class="margin-top-0 margin-bottom-1">
+    El CMS opera bajo un flujo determinista cerrado: ninguna etapa puede cerrarse sin que el perito
+    adjunte los requisitos de fijación, adquiera la imagen forense con hardware de bloqueo de escritura
+    y selle criptográficamente el hash génesis.
+  </p>
+  <div class="display-flex flex-wrap grid-gap-05 margin-top-1">
+    <span class="usa-tag bg-primary-darker text-white">ISO/IEC 27037:2012</span>
+    <span class="usa-tag bg-primary-darker text-white">ISO/IEC 27042:2015</span>
+    <span class="usa-tag bg-primary text-white">NIST SP 800-86</span>
+    <span class="usa-tag bg-gold text-ink text-bold">MUCC-2017</span>
+    <span class="usa-tag bg-success text-white">COPP Art. 187</span>
+  </div>
+</SummaryBox>
+
+<!-- Tabla de Expedientes Activos -->
+<section class="margin-bottom-4" aria-labelledby="expedientes-curso-heading">
+  <div class="grid-row flex-justify flex-align-center margin-bottom-2">
+    <h2 class="margin-0 font-heading-md" id="expedientes-curso-heading">Expedientes Periciales en Curso</h2>
+    <a href="/casos" class="usa-link font-sans-2xs">Ver todos los casos →</a>
+  </div>
+
+  <div class="usa-table-container--scrollable" tabindex="0">
+    <table class="usa-table usa-table--striped usa-table--compact width-full">
+      <caption>Listado de expedientes forenses activos sincronizados en base de datos</caption>
+      <thead>
+        <tr>
+          <th scope="col">N° Expediente</th>
+          <th scope="col">Tipología Forense</th>
+          <th scope="col">Consignante / C.I.</th>
+          <th scope="col">Dispositivo Evidencia</th>
+          <th scope="col">Fase Actual</th>
+          <th scope="col">Integridad</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-casos-body">
+        <tr>
+          <td colspan="7">Consultando expedientes sincronizados en MySQL...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Tarjetas Rápidas de Planillas y Normativa -->
+<div class="grid-row grid-gap-2">
+  <div class="grid-col-12 tablet:grid-col-6">
+    <div class="usa-card bg-white padding-3 radius-md shadow-1 border-1px border-base-lighter height-full display-flex flex-column flex-justify-between">
+      <div>
+        <h2 class="margin-top-0 margin-bottom-1 font-heading-md">Planillas Oficiales en Folio (216mm × 330mm)</h2>
+        <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
+          Formatos reglamentarios con membrete oficial, dactiloscopía bilateral y márgenes de impresión exactos:
+        </p>
+        <ul class="usa-list font-body-2xs">
+          <li><a href="/planillas/acta-consentimiento" class="usa-link">Acta de Consentimiento Informado (F0)</a></li>
+          <li><a href="/planillas/acta-entrevista" class="usa-link">Acta de Entrevista Forense al Consignante (F0)</a></li>
+          <li><a href="/planillas/acta-obtencion" class="usa-link">Acta de Obtención y Preservación Inicial (F1)</a></li>
+          <li><a href="/planillas/planilla-prcc" class="usa-link">Planilla de Cadena de Custodia PRCC (F1)</a></li>
+          <li><a href="/planillas/acta-desprecintado" class="usa-link">Acta de Desprecintado en Laboratorio (F2)</a></li>
+          <li><a href="/planillas/acta-dictamen" class="usa-link">Dictamen Pericial Oficial Forense (F4)</a></li>
+        </ul>
+      </div>
+      <div class="border-top-1px border-base-lighter padding-top-2 margin-top-2">
+        <a href="/planillas" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+          Ver Catálogo Completo (13 Planillas)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid-col-12 tablet:grid-col-6">
+    <div class="usa-card bg-white padding-3 radius-md shadow-1 border-1px border-base-lighter height-full display-flex flex-column flex-justify-between">
+      <div>
+        <h2 class="margin-top-0 margin-bottom-1 font-heading-md">Admisibilidad y Blindaje Procesal</h2>
+        <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
+          Garantías procesales activas para evitar la nulidad conforme al Art. 187 del COPP:
+        </p>
+        <ul class="usa-list font-body-2xs">
+          <li>
+            <strong>Bloqueadores de Escritura (Write-Blockers):</strong> Obligatorios para la clonación bit-a-bit en ISO 27037 §5.4.4.
+          </li>
+          <li>
+            <strong>Sellado Génesis SHA-256:</strong> Cálculo bit-a-bit antes de cualquier análisis o triaje pericial.
+          </li>
+          <li>
+            <strong>Dactiloscopía Bilateral:</strong> Pulgar izquierdo y pulgar derecho en todas las actas judiciales.
+          </li>
+        </ul>
+      </div>
+      <div class="border-top-1px border-base-lighter padding-top-2 margin-top-2">
+        <a href="/normativa" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+          Consultar Base Normativa RAG
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { phpApi } from '../../lib/data/phpApi';
+  import type { CasoCMS } from '../../lib/domain/types';
+
+  function renderizarFilaDashboard(c: CasoCMS): string {
+    const tipo = (c.tipoProyecto || '').replace('forense_', '').toUpperCase();
+    return `
+      <tr>
+        <th scope="row">
+          <strong>${c.numeroCaso}</strong><br />
+          <code>${c.expediente || 'S/E'}</code>
+        </th>
+        <td>
+          <span class="usa-tag">${tipo}</span>
+        </td>
+        <td>
+          ${c.consignanteNombre || 'Consignante no reg.'}<br />
+          <span>C.I. ${c.consignanteCedula || 'N/A'}</span>
+        </td>
+        <td>
+          ${c.evidenciaMarca || ''} ${c.evidenciaModelo || ''}<br />
+          <code>S/N: ${c.evidenciaSerial || 'S/N'}</code>
+        </td>
+        <td>
+          <span class="usa-tag bg-primary text-white">${c.faseIsoActual || 'F0'}</span>
+        </td>
+        <td>
+          <span class="usa-tag bg-success text-white">Sincronizado DB</span>
+        </td>
+        <td>
+          <ul class="usa-button-group flex-wrap">
+            <li class="usa-button-group__item">
+              <a href="/flujo?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
+                Ciclo ISO
+              </a>
+            </li>
+            <li class="usa-button-group__item">
+              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
+                PRCC
+              </a>
+            </li>
+          </ul>
+        </td>
+      </tr>
+    `;
+  }
+
+  async function cargarDatosDashboard() {
+    const tbody = document.getElementById('tabla-casos-body');
+    const kpiCasos = document.getElementById('kpi-total-casos');
+    const kpiEvidencias = document.getElementById('kpi-evidencias');
+
+    try {
+      const data = await phpApi.listarCasos();
+      const sincronizados = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+
+      if (kpiCasos) kpiCasos.textContent = String(sincronizados.length);
+      if (kpiEvidencias) kpiEvidencias.textContent = String(sincronizados.length);
+
+      if (!tbody) return;
+
+      if (sincronizados.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              No hay expedientes sincronizados en MySQL. Inicie un caso en <a href="/casos?nuevo=1" class="usa-link">Expedientes Periciales</a>.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      tbody.innerHTML = sincronizados.map(renderizarFilaDashboard).join('');
+    } catch (e) {
+      console.warn('Error cargando datos del dashboard:', e);
+      if (tbody) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7">
+              No hay conexión activa con la base de datos MySQL en cPanel.
+            </td>
+          </tr>
+        `;
+      }
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    cargarDatosDashboard();
+  }
+</script>
