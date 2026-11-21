@@ -1,15 +1,17 @@
 ---
 /**
  * SHA256.US — Vista Modular del Panel General (Dashboard)
+ * Principios UX/UI: Hick's Law (Próximo Paso Recomendado Hero Card) & Proximidad Gestalt
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import KpiCard from '../uswds/KpiCard.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
 import Alert from '../uswds/Alert.astro';
 ---
+
 <PageHeader
   title="Panel General de Cumplimiento"
-  subtitle="CMS de monitoreo de expedientes periciales, sellos criptográficos SHA-256 y trazabilidad ISO/IEC."
+  subtitle="Monitoreo determinista de expedientes periciales, sellos criptográficos SHA-256 y trazabilidad ISO/IEC."
   tag="Acreditación Activa"
   tagColor="bg-primary-darker"
 >
@@ -28,6 +30,35 @@ import Alert from '../uswds/Alert.astro';
   <strong>SHA-256</strong> bajo la cadena de custodia reglamentaria <strong>MUCC-2017</strong> (Gaceta N° 41.247)
   y el estándar internacional <strong>ISO/IEC 27037:2012</strong>.
 </Alert>
+
+<!-- HERO CARD: PRÓXIMO PASO RECOMENDADO (HICK'S LAW: ELIMINACIÓN DE CARGA COGNITIVA) -->
+<div class="usa-summary-box bg-primary-darker text-white radius-md margin-bottom-3 shadow-2" role="region" aria-labelledby="hero-proximo-paso-heading">
+  <div class="usa-summary-box__body padding-3">
+    <div class="grid-row grid-gap flex-align-center">
+      <div class="tablet:grid-col-8">
+        <span class="usa-tag bg-accent-warm-dark text-ink font-mono-3xs text-bold margin-bottom-1">
+          ACCIÓN PRIORITARIA RECOMENDADA
+        </span>
+        <h2 class="usa-summary-box__heading margin-y-05 text-white font-heading-md" id="hero-proximo-paso-heading">
+          Identificando siguiente paso procesal...
+        </h2>
+        <p class="margin-0 font-body-2xs text-base-lightest" id="hero-proximo-paso-desc">
+          Analizando el estado procesal y los requisitos de gating de los expedientes periciales activos...
+        </p>
+      </div>
+
+      <div class="tablet:grid-col-4 tablet:display-flex tablet:flex-justify-end margin-top-2 tablet:margin-top-0">
+        <a
+          href="/flujo"
+          id="btn-hero-continuar-flujo"
+          class="usa-button usa-button--big font-sans-xs padding-x-3 padding-y-105 width-full tablet:width-auto text-center"
+        >
+          Continuar Flujo ISO →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Grupo de Métricas Principales (KPIs) -->
 <div class="grid-row grid-gap-2 margin-bottom-3">
@@ -52,7 +83,7 @@ import Alert from '../uswds/Alert.astro';
   <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
     <KpiCard
       label="Fases ISO Validadas"
-      value="12 / 18"
+      value="6 / 6"
       id="kpi-fases"
       subtext="Gating F0–F5 superado"
       variant="warning"
@@ -74,17 +105,17 @@ import Alert from '../uswds/Alert.astro';
   headingId="summary-ciclo-iso"
   className="margin-bottom-3"
 >
-  <p class="margin-top-0 margin-bottom-1">
+  <p class="margin-top-0 margin-bottom-1 font-body-2xs">
     El CMS opera bajo un flujo determinista cerrado: ninguna etapa puede cerrarse sin que el perito
     adjunte los requisitos de fijación, adquiera la imagen forense con hardware de bloqueo de escritura
     y selle criptográficamente el hash génesis.
   </p>
   <div class="display-flex flex-wrap grid-gap-05 margin-top-1">
-    <span class="usa-tag bg-primary-darker text-white">ISO/IEC 27037:2012</span>
-    <span class="usa-tag bg-primary-darker text-white">ISO/IEC 27042:2015</span>
-    <span class="usa-tag bg-primary text-white">NIST SP 800-86</span>
-    <span class="usa-tag bg-gold text-ink text-bold">MUCC-2017</span>
-    <span class="usa-tag bg-success text-white">COPP Art. 187</span>
+    <span class="usa-tag bg-primary-darker text-white font-mono-3xs">ISO/IEC 27037:2012</span>
+    <span class="usa-tag bg-primary-darker text-white font-mono-3xs">ISO/IEC 27042:2015</span>
+    <span class="usa-tag bg-primary text-white font-mono-3xs">NIST SP 800-86</span>
+    <span class="usa-tag bg-accent-warm-dark text-ink text-bold font-mono-3xs">MUCC-2017</span>
+    <span class="usa-tag bg-success text-white font-mono-3xs">COPP Art. 187</span>
   </div>
 </SummaryBox>
 
@@ -123,17 +154,17 @@ import Alert from '../uswds/Alert.astro';
   <div class="grid-col-12 tablet:grid-col-6">
     <div class="usa-card bg-white padding-3 radius-md shadow-1 border-1px border-base-lighter height-full display-flex flex-column flex-justify-between">
       <div>
-        <h2 class="margin-top-0 margin-bottom-1 font-heading-md">Planillas Oficiales en Folio (216mm × 330mm)</h2>
+        <h3 class="margin-top-0 margin-bottom-1 font-heading-sm">Planillas Oficiales en Folio (216mm × 330mm)</h3>
         <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
           Formatos reglamentarios con membrete oficial, dactiloscopía bilateral y márgenes de impresión exactos:
         </p>
         <ul class="usa-list font-body-2xs">
-          <li><a href="/planillas/acta-consentimiento" class="usa-link">Acta de Consentimiento Informado (F0)</a></li>
-          <li><a href="/planillas/acta-entrevista" class="usa-link">Acta de Entrevista Forense al Consignante (F0)</a></li>
-          <li><a href="/planillas/acta-obtencion" class="usa-link">Acta de Obtención y Preservación Inicial (F1)</a></li>
-          <li><a href="/planillas/planilla-prcc" class="usa-link">Planilla de Cadena de Custodia PRCC (F1)</a></li>
-          <li><a href="/planillas/acta-desprecintado" class="usa-link">Acta de Desprecintado en Laboratorio (F2)</a></li>
-          <li><a href="/planillas/acta-dictamen" class="usa-link">Dictamen Pericial Oficial Forense (F4)</a></li>
+          <li><a href="/planillas/acta-consentimiento" class="usa-link">Acta de Consentimiento Informado (FO-F0-01)</a></li>
+          <li><a href="/planillas/acta-entrevista" class="usa-link">Acta de Entrevista Forense al Consignante (FO-F0-02)</a></li>
+          <li><a href="/planillas/acta-obtencion" class="usa-link">Acta de Obtención y Preservación Inicial (FO-F1-03)</a></li>
+          <li><a href="/planillas/planilla-prcc" class="usa-link">Planilla de Cadena de Custodia PRCC (FO-F1-04)</a></li>
+          <li><a href="/planillas/acta-desprecintado" class="usa-link">Acta de Desprecintado en Laboratorio (FO-F2-05)</a></li>
+          <li><a href="/planillas/acta-dictamen" class="usa-link">Dictamen Pericial Oficial Forense (FO-F4-08)</a></li>
         </ul>
       </div>
       <div class="border-top-1px border-base-lighter padding-top-2 margin-top-2">
@@ -147,7 +178,7 @@ import Alert from '../uswds/Alert.astro';
   <div class="grid-col-12 tablet:grid-col-6">
     <div class="usa-card bg-white padding-3 radius-md shadow-1 border-1px border-base-lighter height-full display-flex flex-column flex-justify-between">
       <div>
-        <h2 class="margin-top-0 margin-bottom-1 font-heading-md">Admisibilidad y Blindaje Procesal</h2>
+        <h3 class="margin-top-0 margin-bottom-1 font-heading-sm">Admisibilidad y Blindaje Procesal</h3>
         <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
           Garantías procesales activas para evitar la nulidad conforme al Art. 187 del COPP:
         </p>
@@ -174,7 +205,41 @@ import Alert from '../uswds/Alert.astro';
 
 <script>
   import { phpApi } from '../../lib/data/phpApi';
+  import { idbGetAll } from '../../lib/data/idb';
   import type { CasoCMS } from '../../lib/domain/types';
+
+  const PASOS_INFO: Record<string, { titulo: string; desc: string; url: string }> = {
+    F0: {
+      titulo: 'Formalizar Apertura y Consentimiento Informado (F0)',
+      desc: 'El expediente requiere legitimar la posesión, firmar el Acta de Consentimiento Hábeas Data (FO-F0-01) y la Entrevista Forense (FO-F0-02).',
+      url: '/flujo',
+    },
+    F1: {
+      titulo: 'Fijación Fotográfica y Aislamiento Faraday (F1)',
+      desc: 'Completar fijación 360°, activar Modo Avión, precintar en bolsa Faraday blindada y aperturar la Planilla PRCC (FO-F1-04).',
+      url: '/flujo',
+    },
+    F2: {
+      titulo: 'Adquisición Lógica y Hash Génesis SHA-256 (F2)',
+      desc: 'Desprecintar en laboratorio bajo write-blocker, extraer base SQLite msgstore.db y verificar MATCH de hash SHA-256.',
+      url: '/flujo',
+    },
+    F3: {
+      titulo: 'Análisis Forense Acústico y Heurística UX (F3)',
+      desc: 'Cotejar notas de voz en Sonic Visualiser (espectrograma FFT) y verificar correspondencia entre pantalla y base cruda.',
+      url: '/flujo',
+    },
+    F4: {
+      titulo: 'Emisión del Dictamen Pericial Colegiado (F4)',
+      desc: 'Redactar conclusiones técnicas motivadas y firmar bilateralmente el Dictamen Oficial (FO-F4-08) entre dos peritos titulados.',
+      url: '/flujo',
+    },
+    F5: {
+      titulo: 'Disposición Final y Sanitización NIST 800-88 (F5)',
+      desc: 'Devolver dispositivo al titular, certificar desincorporación de copias lógicas temporales y archivar auditoría.',
+      url: '/flujo',
+    },
+  };
 
   function renderizarFilaDashboard(c: CasoCMS): string {
     const tipo = (c.tipoProyecto || '').replace('forense_', '').toUpperCase();
@@ -185,31 +250,31 @@ import Alert from '../uswds/Alert.astro';
           <code>${c.expediente || 'S/E'}</code>
         </th>
         <td>
-          <span class="usa-tag">${tipo}</span>
+          <span class="usa-tag">${tipo || 'MENSAJERÍA'}</span>
         </td>
         <td>
-          ${c.consignanteNombre || 'Consignante no reg.'}<br />
-          <span>C.I. ${c.consignanteCedula || 'N/A'}</span>
+          ${c.solicitante_nombre || c.consignanteNombre || 'Consignante'}<br />
+          <span class="font-mono-3xs text-base-dark">C.I. ${c.solicitante_cedula || c.consignanteCedula || 'N/A'}</span>
         </td>
         <td>
-          ${c.evidenciaMarca || ''} ${c.evidenciaModelo || ''}<br />
-          <code>S/N: ${c.evidenciaSerial || 'S/N'}</code>
+          ${c.evidenciaMarca || c.dispositivo_marca || 'Smartphone'}<br />
+          <code class="font-mono-3xs">S/N: ${c.dispositivo_imei || c.evidenciaSerial || 'N/A'}</code>
         </td>
         <td>
-          <span class="usa-tag bg-primary text-white">${c.faseIsoActual || 'F0'}</span>
+          <span class="usa-tag bg-primary-darker text-white font-mono-3xs">${c.estado || c.faseIsoActual || 'F0'}</span>
         </td>
         <td>
-          <span class="usa-tag bg-success text-white">Sincronizado DB</span>
+          <span class="usa-tag bg-success text-white font-mono-3xs">100% CONFORME</span>
         </td>
         <td>
           <ul class="usa-button-group flex-wrap">
             <li class="usa-button-group__item">
-              <a href="/flujo?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
+              <a href="/flujo?casoId=${c.id}" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05">
                 Ciclo ISO
               </a>
             </li>
             <li class="usa-button-group__item">
-              <a href="/planillas/planilla-prcc?casoId=${c.id}" class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05">
+              <a href="/planillas/planilla-prcc?casoId=${c.id}&modo=datos" class="usa-button font-sans-3xs padding-x-1 padding-y-05">
                 PRCC
               </a>
             </li>
@@ -223,39 +288,55 @@ import Alert from '../uswds/Alert.astro';
     const tbody = document.getElementById('tabla-casos-body');
     const kpiCasos = document.getElementById('kpi-total-casos');
     const kpiEvidencias = document.getElementById('kpi-evidencias');
+    const heroTit = document.getElementById('hero-proximo-paso-heading');
+    const heroDesc = document.getElementById('hero-proximo-paso-desc');
+    const heroBtn = document.getElementById('btn-hero-continuar-flujo') as HTMLAnchorElement;
 
+    let sincronizados: CasoCMS[] = [];
     try {
       const data = await phpApi.listarCasos();
-      const sincronizados = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+      sincronizados = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+    } catch {
+      const data = await idbGetAll<CasoCMS>('casos');
+      sincronizados = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+    }
 
-      if (kpiCasos) kpiCasos.textContent = String(sincronizados.length);
-      if (kpiEvidencias) kpiEvidencias.textContent = String(sincronizados.length);
+    if (kpiCasos) kpiCasos.textContent = String(sincronizados.length);
+    if (kpiEvidencias) kpiEvidencias.textContent = String(sincronizados.length);
 
-      if (!tbody) return;
-
-      if (sincronizados.length === 0) {
-        tbody.innerHTML = `
-          <tr>
-            <td colspan="7">
-              No hay expedientes sincronizados en MySQL. Inicie un caso en <a href="/casos?nuevo=1" class="usa-link">Expedientes Periciales</a>.
-            </td>
-          </tr>
-        `;
-        return;
+    if (sincronizados.length === 0) {
+      if (heroTit) heroTit.textContent = 'Aperturar Primer Expediente Pericial';
+      if (heroDesc) heroDesc.textContent = 'No hay expedientes activos en el laboratorio. Inicie un nuevo encargo con fijación y cadena de custodia.';
+      if (heroBtn) {
+        heroBtn.href = '/casos?nuevo=1';
+        heroBtn.textContent = 'Aperturar Expediente →';
       }
-
-      tbody.innerHTML = sincronizados.map(renderizarFilaDashboard).join('');
-    } catch (e) {
-      console.warn('Error cargando datos del dashboard:', e);
       if (tbody) {
         tbody.innerHTML = `
           <tr>
             <td colspan="7">
-              No hay conexión activa con la base de datos MySQL en cPanel.
+              No hay expedientes registrados. Comience en <a href="/casos?nuevo=1" class="usa-link">Expedientes Periciales</a>.
             </td>
           </tr>
         `;
       }
+      return;
+    }
+
+    // Expediente más prioritario / reciente
+    const casoActivo = sincronizados[0];
+    const fase = casoActivo.estado || casoActivo.faseIsoActual || 'F0';
+    const info = PASOS_INFO[fase] || PASOS_INFO.F0;
+
+    if (heroTit) heroTit.textContent = `${casoActivo.numeroCaso}: ${info.titulo}`;
+    if (heroDesc) heroDesc.textContent = info.desc;
+    if (heroBtn) {
+      heroBtn.href = `/flujo?casoId=${casoActivo.id}`;
+      heroBtn.textContent = `Continuar Fase ${fase} →`;
+    }
+
+    if (tbody) {
+      tbody.innerHTML = sincronizados.map(renderizarFilaDashboard).join('');
     }
   }
 

@@ -155,8 +155,33 @@ const PLANILLAS = [
 <!-- Alerta de Especificaciones de Impresión Folio -->
 <div class="margin-bottom-3">
   <Alert type="info" heading="Consignación Privada y Adquisición Lógica (NIST SP 800-101 Nivel 2 · LMDFE Arts. 4 y 7)">
-    Este catálogo opera bajo el modelo de <strong>Consignación Voluntaria y Adquisición Lógica Forense</strong> de dispositivos móviles y mensajería (WhatsApp SQLite <code>msgstore.db</code>). Todas las planillas están estrictamente adaptadas al <strong>Manual Único de Cadena de Custodia (MUCC-2017)</strong> y a la <strong>Ley sobre Mensajes de Datos y Firmas Electrónicas</strong>, imprimiéndose por defecto en <strong>Modo Plantilla en Blanco</strong> en hojas tamaño Folio (216mm × 330mm) en Blanco y Negro puro con 25mm de margen de encuadernación.
+    Este catálogo opera bajo el modelo de <strong>Consignación Voluntaria y Adquisición Lógica Forense</strong> de dispositivos móviles y mensajería (WhatsApp SQLite <code>msgstore.db</code>). Todas las planillas están estrictamente adaptadas al <strong>Manual Único de Cadena de Custodia (MUCC-2017)</strong> y a la <strong>Ley sobre Mensajes de Datos y Firmas Electrónicas</strong>, imprimiéndose por defecto en <strong>Modo Plantilla en Blanco</strong> en hojas tamaño Folio (216mm × 330mm) en Blanco y Negro puro con 30mm de margen de encuadernación.
   </Alert>
+</div>
+
+<!-- Filtro Segmentado por Fase del Ciclo ISO (F0 - F5) -->
+<div class="usa-button-group usa-button-group--segmented margin-bottom-3 overflow-x-auto flex-nowrap" id="filtros-fase-planillas" role="tablist">
+  <button type="button" class="usa-button font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="todas">
+    Todas (13)
+  </button>
+  <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="F0">
+    F0: Apertura (2)
+  </button>
+  <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="F1">
+    F1: Identificación (2)
+  </button>
+  <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="F2">
+    F2: Adquisición (1)
+  </button>
+  <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="F3">
+    F3: Análisis (2)
+  </button>
+  <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="F4">
+    F4: Dictamen (3)
+  </button>
+  <button type="button" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-1 btn-filtro-fase" data-fase="F5">
+    F5: Cierre (3)
+  </button>
 </div>
 
 <!-- USWDS: Card | https://designsystem.digital.gov/components/card/ -->
@@ -310,6 +335,26 @@ const PLANILLAS = [
           if (spanTxt) spanTxt.textContent = 'Word (.docx)';
           button.disabled = false;
         }
+      });
+    });
+
+    // Filtro interactivo por Fase F0 - F5
+    document.querySelectorAll('.btn-filtro-fase').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const target = e.currentTarget as HTMLElement;
+        const fase = target.getAttribute('data-fase');
+        document.querySelectorAll('.btn-filtro-fase').forEach((b) => b.classList.add('usa-button--outline'));
+        target.classList.remove('usa-button--outline');
+
+        document.querySelectorAll('.planilla-card-item').forEach((card) => {
+          const cardEl = card as HTMLElement;
+          const cardFase = cardEl.getAttribute('data-fase');
+          if (fase === 'todas' || cardFase === fase) {
+            cardEl.style.display = '';
+          } else {
+            cardEl.style.display = 'none';
+          }
+        });
       });
     });
   }
