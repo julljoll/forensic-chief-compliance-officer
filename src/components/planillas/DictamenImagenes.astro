@@ -25,7 +25,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <PlanillaHeader
       title="Dictamen Pericial Especializado en Análisis de Imágenes"
       norma="COPP ARTS. 223–225 · LMDFE ARTS. 4 Y 7 · ISO/IEC 27042"
-      codigoDoc="FO-IMG-01"
+      codigoDoc="FO-F4-09"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -34,9 +34,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     />
 
     <div class="planilla-body">
-      <!-- 1.0 IDENTIFICACIÓN DE LA IMAGEN -->
+      <!-- 1.0 DESCRIPCIÓN DEL OBJETO DEL PERITAJE (COPP ART. 225.1) -->
       <div class="section-block">
-        <div class="section-heading">1.0 IDENTIFICACIÓN DE LA IMAGEN EXTRAÍDA Y HASH SHA-256 (LMDFE ART. 7)</div>
+        <div class="section-heading">1.0 MOTIVO Y DESCRIPCIÓN DEL OBJETO PERITADO (COPP ART. 225 NUM. 1 · LMDFE ART. 7)</div>
         <table class="forense-table">
           <tbody>
             <tr>
@@ -55,9 +55,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         </table>
       </div>
 
-      <!-- 2.0 EXTRACCIÓN Y COTEJO EXIF -->
+      <!-- 2.0 OPERACIONES TÉCNICAS: EXTRACCIÓN Y COTEJO EXIF (COPP ART. 225.2) -->
       <div class="section-block">
-        <div class="section-heading">2.0 ANÁLISIS DE METADATOS EXIF (EXIFTOOL v12.70 / JPEGSNOOP)</div>
+        <div class="section-heading">2.0 OPERACIONES TÉCNICAS PRACTICADAS: ANÁLISIS EXIF (COPP ART. 225 NUM. 2)</div>
         <table class="forense-table">
           <thead>
             <tr>
@@ -91,9 +91,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         </table>
       </div>
 
-      <!-- 3.0 ANÁLISIS ELA -->
+      <!-- 3.0 OPERACIONES TÉCNICAS: ANÁLISIS ELA (COPP ART. 225.2) -->
       <div class="section-block">
-        <div class="section-heading">3.0 ANÁLISIS DE NIVEL DE ERROR DE COMPRESIÓN (ELA) Y PÍXELES</div>
+        <div class="section-heading">3.0 OPERACIONES TÉCNICAS: ANÁLISIS DE ERROR DE COMPRESIÓN (ELA) Y PÍXELES</div>
         <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
           {isBlanco ? (
             <div class="lineas-pautadas-2">
@@ -106,25 +106,27 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         </div>
       </div>
 
-      <!-- 4.0 CONCLUSIONES FORENSES -->
+      <!-- 4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225.3) -->
       <div class="legal-clause">
-        <strong>4.0 DICTAMEN DE AUTENTICIDAD DE IMAGEN:</strong> Se concluye categóricamente que la fotografía analizada es <strong>AUTÉNTICA E INALTERADA</strong>, conservando su integridad de origen como mensaje de datos original conforme al Art. 7 de la Ley sobre Mensajes de Datos y Firmas Electrónicas y Arts. 223 al 225 del COPP.
+        <strong>4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225 NUM. 3):</strong> Con arreglo a los principios de la informática forense y el método científico, los peritos actuantes dictaminan categóricamente que la fotografía analizada es <strong>AUTÉNTICA E INALTERADA</strong>, conservando su integridad de origen como mensaje de datos conforme al Art. 7 de la Ley sobre Mensajes de Datos y Firmas Electrónicas y Arts. 223 al 225 del COPP.
       </div>
     </div>
 
-    <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
+    <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
-      consignanteTitulo="PERITO EN ANÁLISIS DE IMÁGENES"
-      peritoTitulo="PERITO COORDINADOR FORENSE"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
-      peritoNombre="Co-Perito de Imágenes"
-      peritoCedula="V-18.114.908"
-      peritoCiv="CIV-289410"
-      peritoInpre="INPRE-179420"
-      peritoCargo="Especialista en Fotografía Forense"
+      leftRole="perito"
+      consignanteTitulo="PERITO EN ANÁLISIS DE IMÁGENES (CO-PERITO)"
+      peritoTitulo="PERITO PRINCIPAL / COORDINADOR FORENSE"
+      coPeritoNombre={caso.co_perito_nombre || "Ing. Perito de Imágenes"}
+      coPeritoCedula={caso.co_perito_cedula || "V-18.114.908"}
+      coPeritoCiv="289410"
+      coPeritoInpre="179420"
+      coPeritoCargo="Especialista en Fotografía y Análisis de Imagen Forense"
+      peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
+      peritoCedula={caso.perito_cedula || "V-18.999.001"}
+      peritoCiv={caso.perito_civ || "299410"}
+      peritoInpre={caso.perito_inpre || "184920"}
+      peritoCargo={caso.perito_cargo || "Perito Informático Forense"}
       rolIso="DES (Digital Evidence Specialist) · ISO 27042"
       modo={modo}
     />

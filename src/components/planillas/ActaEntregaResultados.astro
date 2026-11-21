@@ -25,7 +25,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <PlanillaHeader
       title="Acta de Disposición Final y Devolución de Evidencias"
       norma="MUCC-2017 DISPOSICIÓN FINAL (G.O. 41.247) · COPP ART. 187"
-      codigoDoc="ACT-ENT-01"
+      codigoDoc="FO-F5-11"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -34,9 +34,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     />
 
     <div class="planilla-body">
-      <!-- 1.0 DATOS DEL ACTO DE DISPOSICIÓN FINAL -->
+      <!-- 1.0 DATOS DEL ACTO DE DISPOSICIÓN FINAL (EST-04) -->
       <div class="section-block">
-        <div class="section-heading">1.0 DATOS DEL ACTO DE DISPOSICIÓN FINAL Y CIERRE (MUCC-2017)</div>
+        <div class="section-heading">1.0 DATOS DEL ACTO DE DISPOSICIÓN FINAL Y DESTINO LEGAL (MUCC-2017)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
@@ -50,9 +50,14 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
               </td>
             </tr>
             <tr>
-              <td class="forense-cell-label">Modalidad:</td>
-              <td class="forense-cell-value" colspan="3" style="font-weight: 700;">
-                {isBlanco ? <span>[&nbsp;&nbsp;] DEVOLUCIÓN AL TITULAR CONSIGNANTE &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] ENTREGA A AUTORIDAD JUDICIAL</span> : <span>[&nbsp;X&nbsp;] DEVOLUCIÓN AL CONSIGNANTE TITULAR (CIERRE FORMAL DE CUSTODIA)</span>}
+              <td class="forense-cell-label">Destino / Disposición:</td>
+              <td class="forense-cell-value" colspan="3" style="font-size: 6.8pt; line-height: 1.4;">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
+                  <span>{isBlanco ? '[   ]' : '[ X ]'} <strong>a) Devolución formal al Titular o Interlocutor Legítimo</strong></span>
+                  <span>[&nbsp;&nbsp;] <strong>b) Remisión a Sede Fiscal o Tribunal de Control</strong></span>
+                  <span>[&nbsp;&nbsp;] <strong>c) Depósito en Bóveda de Resguardo / Sala de Evidencias</strong></span>
+                  <span>[&nbsp;&nbsp;] <strong>d) Destrucción / Desincorporación Autorizada Judicialmente</strong></span>
+                </div>
               </td>
             </tr>
           </tbody>

@@ -1,0 +1,80 @@
+---
+/**
+ * SHA256.US — Componente Oficial USWDS Header (Menú Superior del CMS)
+ * https://designsystem.digital.gov/components/header/
+ */
+interface Props {
+  activeNav?: string;
+}
+
+const { activeNav = '' } = Astro.props;
+
+const navItems = [
+  { href: '/dashboard', label: 'Panel General', shortLabel: 'Panel', key: 'dashboard' },
+  { href: '/casos', label: 'Expedientes Periciales', shortLabel: 'Expedientes', key: 'casos' },
+  { href: '/flujo', label: 'Ciclo Pericial ISO', shortLabel: 'Ciclo ISO', key: 'flujo' },
+  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', shortLabel: 'Custodia PRCC', key: 'custodia' },
+  { href: '/planillas', label: 'Planillas Oficiales (Folio)', shortLabel: 'Planillas Folio', key: 'planillas' },
+  { href: '/normativa', label: 'Base Normativa RAG', shortLabel: 'Normativa RAG', key: 'normativa' },
+  { href: '/auditoria', label: 'Auditoría Inmutable (SHA-256)', shortLabel: 'Auditoría SHA-256', key: 'auditoria' },
+  { href: '/exportar', label: 'Exportación de Caso', shortLabel: 'Exportar', key: 'exportar' },
+];
+---
+<header class="usa-header usa-header--extended fcco-header">
+  <div class="usa-navbar">
+    <div class="usa-logo" id="extended-logo">
+      <div class="display-flex flex-align-center">
+        <a href="/dashboard" class="margin-right-1 display-inline-block" title="Inicio FCCO">
+          <img src="/logo.png?v=2" alt="Logo SHA256.US" class="width-4 height-4 display-block" />
+        </a>
+        <em class="usa-logo__text font-heading-sm tablet:font-heading-md">
+          <a href="/dashboard" title="Forensic Chief Compliance Officer — SHA256.US">
+            SHA256.US — Forensic Chief Compliance Officer
+          </a>
+        </em>
+      </div>
+    </div>
+    <button type="button" class="usa-menu-btn">Menú</button>
+  </div>
+  <nav aria-label="Navegación principal del CMS" class="usa-nav">
+    <div class="usa-nav__inner">
+      <button type="button" class="usa-nav__close">
+        <img src="/assets/uswds/img/usa-icons/close.svg" role="img" alt="Cerrar" />
+      </button>
+      <ul class="usa-nav__primary usa-accordion">
+        {navItems.map((item) => (
+          <li class="usa-nav__primary-item">
+            <a
+              href={item.href}
+              class={`usa-nav__link ${activeNav === item.key ? 'usa-current' : ''}`.trim()}
+            >
+              <span>{item.shortLabel || item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+      <div class="usa-nav__secondary">
+        <ul class="usa-nav__secondary-links flex-align-center">
+          <li class="usa-nav__secondary-item">
+            <span class="usa-tag bg-primary-darker text-white text-bold margin-right-1 font-mono-3xs">
+              CIV-284910
+            </span>
+            <a href="/seguridad" id="user-name" class="text-ink text-bold font-sans-2xs" title="Configurar Autenticador MFA">
+              Perito: Jull Joll (FCCO)
+            </a>
+          </li>
+          <li class="usa-nav__secondary-item">
+            <a href="/seguridad" class="font-sans-2xs text-primary" title="Autenticación en 2 Pasos (Google Authenticator)">
+              🔒 MFA / TOTP
+            </a>
+          </li>
+          <li class="usa-nav__secondary-item">
+            <button type="button" id="btn-logout" class="usa-button usa-button--unstyled font-sans-2xs text-secondary text-bold" style="cursor: pointer;">
+              Cerrar Sesión
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+</header>

@@ -1,0 +1,37 @@
+---
+/**
+ * SHA256.US — KPI Card USWDS Estandarizado para Métricas de Cumplimiento
+ */
+interface Props {
+  label: string;
+  value: string | number;
+  subtext?: string;
+  variant?: 'primary' | 'success' | 'warning' | 'error' | 'info';
+  id?: string;
+}
+
+const { label, value, subtext, variant = 'primary', id } = Astro.props;
+
+const borderMap = {
+  primary: 'border-left-05 border-primary',
+  success: 'border-left-05 border-success',
+  warning: 'border-left-05 border-gold',
+  error: 'border-left-05 border-secondary-dark',
+  info: 'border-left-05 border-info',
+};
+---
+<div class={`usa-card bg-white padding-2 radius-md shadow-1 ${borderMap[variant]} height-full display-flex flex-column flex-justify-between fcco-kpi-card`}>
+  <div>
+    <span class="font-sans-3xs text-uppercase text-bold text-base-dark tracking-1 display-block margin-bottom-05">
+      {label}
+    </span>
+    <div class="font-heading-xl text-ink text-bold line-height-sans-1" id={id}>
+      {value}
+    </div>
+  </div>
+  {subtext && (
+    <div class="font-sans-3xs text-base margin-top-1 line-height-sans-2">
+      {subtext}
+    </div>
+  )}
+</div>

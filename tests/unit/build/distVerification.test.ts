@@ -20,6 +20,8 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `casos`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `fases_caso`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `auditoria`');
+    expect(sql).toContain('CREATE TABLE IF NOT EXISTS `login_attempts`');
+    expect(sql).toContain('`totp_enabled`');
     expect(sql).toContain('trg_auditoria_no_update');
     expect(sql).toContain('trg_auditoria_no_delete');
   });
@@ -29,9 +31,11 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(fs.existsSync(htaccessPath)).toBe(true);
     const htaccess = fs.readFileSync(htaccessPath, 'utf-8');
     expect(htaccess).toContain('RewriteEngine On');
+    expect(htaccess).toContain('RewriteRule ^api/lib/ - [F,L]');
     expect(htaccess).toContain('RewriteRule ^api/ - [L]');
     expect(htaccess).toContain('X-Frame-Options');
     expect(htaccess).toContain('X-Content-Type-Options');
+    expect(htaccess).toContain('Content-Security-Policy');
   });
 
   it('dist/api/ debe contener todos los controladores y bibliotecas de PHP PDO', () => {
@@ -41,9 +45,11 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'auditoria.php',
       'auth.php',
       'config.php',
+      'config.example.php',
       'lib/canonical.php',
       'lib/db.php',
       'lib/auth.php',
+      'lib/totp.php',
     ];
     for (const file of expectedPhp) {
       const p = path.resolve(distDir, 'api', file);
@@ -61,6 +67,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'normativa.html',
       'auditoria.html',
       'exportar.html',
+      'seguridad.html',
       'planillas.html',
       'planillas/index.html',
     ];

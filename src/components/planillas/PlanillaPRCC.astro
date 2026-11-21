@@ -33,7 +33,7 @@ const dispositivoDesc = caso.dispositivo_marca
     <PlanillaHeader
       title="Planilla de Registro de Cadena de Custodia (PRCC)"
       norma="MANUAL ÚNICO DE CADENA DE CUSTODIA (MUCC-2017) · COPP ART. 187"
-      codigoDoc="FO-PRCC-01"
+      codigoDoc="FO-F1-04"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={prccNum}
       modo={modo}
@@ -44,7 +44,7 @@ const dispositivoDesc = caso.dispositivo_marca
     <div class="planilla-body">
       <!-- I. DATOS GENERALES -->
       <div class="section-block">
-        <div class="section-heading">I. DATOS GENERALES DE LA CAUSA Y DESPACHO INSTRUCTOR</div>
+        <div class="section-heading">I. DATOS GENERALES DE LA CAUSA Y DESPACHO INSTRUCTOR (MUCC-2017)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
@@ -58,19 +58,23 @@ const dispositivoDesc = caso.dispositivo_marca
               </td>
             </tr>
             <tr>
-              <td class="forense-cell-label">Despacho / Asunto:</td>
-              <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="despachoFiscal"></span> : <span data-field="despachoFiscal">{caso.despachoFiscal || 'Consignación de Parte / Causa'}</span>}
+              <td class="forense-cell-label">N° Oficio / Memorando:</td>
+              <td class="forense-cell-value font-mono">
+                {isBlanco ? <span class="linea-manual"></span> : <span>OFIC-2026-F11-094</span>}
               </td>
-              <td class="forense-cell-label">Organismo que Apertura:</td>
+              <td class="forense-cell-label">Despacho / Fiscalía:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="organismoOrdenante"></span> : <span data-field="organismoOrdenante">Laboratorio SHA256.US (División Pericial)</span>}
+                {isBlanco ? <span class="linea-manual" data-field="despachoFiscal"></span> : <span data-field="despachoFiscal">{caso.despachoFiscal || 'Fiscalía Décima Primera del MP'}</span>}
               </td>
             </tr>
             <tr>
+              <td class="forense-cell-label">Organismo que Apertura:</td>
+              <td class="forense-cell-value">
+                {isBlanco ? <span class="linea-manual" data-field="organismoOrdenante"></span> : <span data-field="organismoOrdenante">Laboratorio Forense SHA256.US</span>}
+              </td>
               <td class="forense-cell-label">Sede de Obtención:</td>
-              <td class="forense-cell-value" colspan="3">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion"></span> : <span data-field="solicitante_direccion">Edificio Mercantil La Ceiba, Piso 1, Ofic. 8, Quíbor, Estado Lara</span>}
+              <td class="forense-cell-value">
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion"></span> : <span data-field="solicitante_direccion">Sede Central Forense SHA256.US</span>}
               </td>
             </tr>
           </tbody>
@@ -169,7 +173,7 @@ const dispositivoDesc = caso.dispositivo_marca
     <PlanillaHeader
       title="PRCC — Trazabilidad y Transferencias Cronológicas"
       norma="MANUAL ÚNICO DE CADENA DE CUSTODIA (MUCC-2017) · COPP ART. 187"
-      codigoDoc="FO-PRCC-01-REV"
+      codigoDoc="FO-F1-04-REV"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={prccNum}
       modo={modo}
@@ -178,18 +182,18 @@ const dispositivoDesc = caso.dispositivo_marca
     />
 
     <div class="planilla-body">
-      <!-- V. REGISTRO CRONOLÓGICO DE TRANSFERENCIAS -->
+      <!-- V. REGISTRO CRONOLÓGICO DE TRANSFERENCIAS (MUCC-2017) -->
       <div class="section-block">
-        <div class="section-heading">V. REGISTRO CRONOLÓGICO DE TRANSFERENCIAS DE CUSTODIA (MUCC-2017)</div>
+        <div class="section-heading">V. REGISTRO CRONOLÓGICO DE TRANSFERENCIAS DE CUSTODIA (MUCC-2017 §TRASPASOS)</div>
         <table class="forense-table">
           <thead>
             <tr>
-              <th style="width: 4%;">N°</th>
-              <th style="width: 14%;">Fecha y Hora</th>
-              <th style="width: 25%;">Entrega (Nombres, C.I., Firma)</th>
-              <th style="width: 25%;">Recibe (Nombres, C.I., Firma)</th>
-              <th style="width: 20%;">Motivo de Transferencia</th>
-              <th style="width: 12%;">Precinto</th>
+              <th style="width: 3%;">N°</th>
+              <th style="width: 12%;">Fecha / Hora</th>
+              <th style="width: 25%;">Entrega (Nombres, C.I., Cred./CIV, Firma)</th>
+              <th style="width: 25%;">Recibe (Nombres, C.I., Cred./CIV, Firma)</th>
+              <th style="width: 20%;">Motivo / N° Oficio / Despacho</th>
+              <th style="width: 15%;">Precinto (N° y Condición)</th>
             </tr>
           </thead>
           <tbody>
@@ -197,9 +201,9 @@ const dispositivoDesc = caso.dispositivo_marca
               <td style="text-align: center; font-weight: 700;">1</td>
               <td class="font-mono">{isBlanco ? '' : new Date().toLocaleDateString('es-VE')}</td>
               <td>{isBlanco ? <span class="linea-manual"></span> : <span>{caso.solicitante_nombre || 'Consignante'} (C.I. {caso.solicitante_cedula || ''})</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>{caso.peritoLider || 'Perito SHA256.US'} (C.I. {caso.perito_cedula || ''})</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Consignación e inicio de peritaje</span>}</td>
-              <td>{isBlanco ? '' : 'Intacto'}</td>
+              <td>{isBlanco ? <span class="linea-manual"></span> : <span>{caso.peritoLider || 'Perito SHA256.US'} (CIV {caso.perito_civ || '299410'})</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Consignación e ingreso a laboratorio</span>}</td>
+              <td class="font-mono">{isBlanco ? '' : `N° ${caso.precinto_numero || 'PREC-991'} [X] Intacto`}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">2</td>
@@ -207,7 +211,7 @@ const dispositivoDesc = caso.dispositivo_marca
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
-              <td></td>
+              <td>[&nbsp;&nbsp;] Intacto [&nbsp;&nbsp;] Reemp.</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">3</td>
@@ -215,7 +219,7 @@ const dispositivoDesc = caso.dispositivo_marca
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
-              <td></td>
+              <td>[&nbsp;&nbsp;] Intacto [&nbsp;&nbsp;] Reemp.</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">4</td>
@@ -223,7 +227,7 @@ const dispositivoDesc = caso.dispositivo_marca
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
-              <td></td>
+              <td>[&nbsp;&nbsp;] Intacto [&nbsp;&nbsp;] Reemp.</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">5</td>
@@ -231,7 +235,7 @@ const dispositivoDesc = caso.dispositivo_marca
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
               <td><span class="linea-manual"></span></td>
-              <td></td>
+              <td>[&nbsp;&nbsp;] Intacto [&nbsp;&nbsp;] Reemp.</td>
             </tr>
           </tbody>
         </table>

@@ -19,7 +19,7 @@ import type { CasoCMS } from '../domain/types';
 /**
  * Pre-procesa el árbol HTML de una planilla forense para compatibilidad total con Word
  */
-export function transformPlanillaHtmlForWord(element: HTMLElement, docTitle: string = 'Planilla Forense'): string {
+export function transformPlanillaHtmlForWord(element: HTMLElement, _docTitle: string = 'Planilla Forense'): string {
   // 1. Clonar el elemento para no alterar la interfaz de usuario visible
   const clone = element.cloneNode(true) as HTMLElement;
 
@@ -28,7 +28,7 @@ export function transformPlanillaHtmlForWord(element: HTMLElement, docTitle: str
 
   // 3. Transformar membrete institucional (.header-institution-row) a tabla de 2 columnas
   clone.querySelectorAll('.header-institution-row').forEach((row) => {
-    const badge = row.querySelector('.header-badge-legal');
+    const badge = row.querySelector('.header-control-box') || row.querySelector('.header-badge-legal');
     const badgeHtml = badge ? badge.innerHTML : 'CÓDIGO: FO-FOR<br>COPP ART. 187';
 
     const tableHeader = document.createElement('table');
@@ -211,7 +211,7 @@ export function transformPlanillaHtmlForWord(element: HTMLElement, docTitle: str
   // 10. Pie de página institucional (.canonical-footer)
   clone.querySelectorAll('.canonical-footer').forEach((ft) => {
     const el = ft as HTMLElement;
-    const hashEl = el.querySelector('.footer-hash-box, .footer-hash-line');
+    const hashEl = el.querySelector('.footer-crypto-line, .footer-hash-box, .footer-hash-line');
     const hashHtml = hashEl ? hashEl.innerHTML : '';
 
     const tableFt = document.createElement('table');
@@ -269,7 +269,7 @@ export function buildWordDocxHtmlTemplate(innerHtml: string, title: string = 'Pl
   <style>
     @page {
       size: 216mm 330mm; /* Folio / Oficio Judicial */
-      margin: 15mm 12mm 15mm 25mm; /* Margen izquierdo de 25mm para encuadernación */
+      margin: 15mm 15mm 15mm 30mm; /* Margen izquierdo de 30mm para encuadernación */
     }
     body {
       font-family: Arial, Helvetica, sans-serif;
@@ -417,7 +417,7 @@ export async function descargarPlanillaPorSlug(
       try {
         caso = await phpApi.obtenerCaso(casoId);
       } catch {
-        const casos = await idbGetAll('casos');
+        const casos = await idbGetAll<CasoCMS>('casos');
         caso = casos.find((c) => c.id === casoId);
       }
 

@@ -255,7 +255,8 @@ try {
 
 } catch (\Throwable $e) {
     $pdo->rollBack();
+    error_log('[FCCO AvanzarEtapa Error] ' . $e->getMessage());
     http_response_code(500);
-    echo json_encode(['error' => 'Error al avanzar etapa', 'detail' => $e->getMessage()]);
+    echo json_encode(['error' => 'Error interno al procesar el avance de etapa']);
     exit;
 }

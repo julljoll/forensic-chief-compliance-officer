@@ -1,9 +1,10 @@
 /**
  * SHA256.US — Store de Autenticación de Peritos y Compliance Officers.
- * Soporta autenticación por contraseña y Google Authenticator (TOTP RFC 6238).
+ * Cumplimiento: NIST SP 800-63B (AAL2) · RFC 6238 TOTP · OWASP ASVS
+ * Toda autenticación es delegada determinísticamente al backend PHP PDO (/api/auth.php).
  */
 
-import { verificarTotpCode } from '../lib/crypto/totp';
+import { phpApi } from '../lib/data/phpApi';
 
 export interface User {
   id: string;
@@ -16,51 +17,31 @@ export interface User {
   organismo?: string;
   despacho?: string;
   profileImage?: string;
-  totpSecret?: string;
 }
 
-interface AuthState {
+export interface AuthState {
   isAuthenticated: boolean;
   user: User | null;
+  csrfToken: string | null;
   error: string | null;
   isLoading: boolean;
+  needsMfa: boolean;
+  pendingEmail: string | null;
 
   login: (email: string, pass?: string, totpCode?: string) => Promise<boolean>;
   logout: () => void;
   updateProfileImage: (b64: string) => void;
+  setNeedsMfa: (needed: boolean, email?: string) => void;
 }
-
-export const USER_JULL: User = {
-  id: 'usr-jull-01',
-  email: 'julljoll@gmail.com',
-  nombre: 'Jull Joll',
-  apellido: 'Joll',
-  rol: 'admin',
-  cargo: 'Perito Analizador de Datos Forenses',
-  ci: 'V-18.999.001',
-  organismo: 'Laboratorio Privado SHA256.US',
-  despacho: 'Área de Análisis e Interpretación (F3/F4)',
-  totpSecret: 'JULLJOLLFCCO2FA1',
-};
-
-export const USER_SHA256: User = {
-  id: 'usr-sha256-02',
-  email: 'sha256.us@gmail.com',
-  nombre: 'SHA256 Adquisición',
-  apellido: 'Oficial',
-  rol: 'perito_lider',
-  cargo: 'Encargado de la Etapa de Adquisición',
-  ci: 'V-15.816.003',
-  organismo: 'Laboratorio Privado SHA256.US',
-  despacho: 'Área de Adquisición y Cadena de Custodia (F1/F2)',
-  totpSecret: 'SHA256USFCCO2FA2',
-};
 
 let state: AuthState = {
   isAuthenticated: false,
   user: null,
+  csrfToken: null,
   error: null,
   isLoading: false,
+  needsMfa: false,
+  pendingEmail: null,
 
   login: async (email: string, pass: string = '', totpCode: string = '') => {
     const trimmedEmail = (email || '').trim().toLowerCase();
@@ -83,57 +64,58 @@ let state: AuthState = {
       return false;
     }
 
-    // 1. Perito Analizador de Datos (Jull)
-    if (trimmedEmail === 'julljoll@gmail.com') {
-      let ok = false;
-      if (trimmedPass && (trimmedPass === 'Karupano' || trimmedPass === 'admin')) {
-        ok = true;
-      }
-      if (trimmedTotp) {
-        const totpValido = await verificarTotpCode(USER_JULL.totpSecret!, trimmedTotp);
-        if (totpValido) ok = true;
-      }
-
-      if (ok) {
-        state.isAuthenticated = true;
-        state.user = { ...USER_JULL };
-        state.error = null;
-        notify();
-        return true;
-      }
-    }
-
-    // 2. Perito Encargado de Adquisición (SHA256)
-    if (trimmedEmail === 'sha256.us@gmail.com') {
-      let ok = false;
-      if (trimmedPass && trimmedPass === '15816003') {
-        ok = true;
-      }
-      if (trimmedTotp) {
-        const totpValido = await verificarTotpCode(USER_SHA256.totpSecret!, trimmedTotp);
-        if (totpValido) ok = true;
-      }
-
-      if (ok) {
-        state.isAuthenticated = true;
-        state.user = { ...USER_SHA256 };
-        state.error = null;
-        notify();
-        return true;
-      }
-    }
-
-    state.error = 'Credenciales no autorizadas o código 2FA erróneo';
-    state.isAuthenticated = false;
-    state.user = null;
+    state.isLoading = true;
+    state.error = null;
     notify();
-    return false;
+
+    try {
+      const res = await phpApi.login(trimmedEmail, trimmedPass, trimmedTotp);
+
+      if (res.ok && res.data?.user) {
+        state.isAuthenticated = true;
+        state.user = res.data.user;
+        state.csrfToken = res.data.csrf_token || null;
+        state.error = null;
+        state.needsMfa = false;
+        state.pendingEmail = null;
+        state.isLoading = false;
+        notify();
+        return true;
+      }
+
+      if (res.data?.needs_mfa || res.data?.requires_totp) {
+        state.needsMfa = true;
+        state.pendingEmail = trimmedEmail;
+        state.error = null;
+        state.isLoading = false;
+        notify();
+        return false;
+      }
+
+      state.error = res.error || 'Credenciales no autorizadas o código 2FA erróneo';
+      state.isAuthenticated = false;
+      state.user = null;
+      state.isLoading = false;
+      notify();
+      return false;
+    } catch (err: any) {
+      state.error = err?.message || 'Error al conectar con el servidor de autenticación';
+      state.isAuthenticated = false;
+      state.user = null;
+      state.isLoading = false;
+      notify();
+      return false;
+    }
   },
 
   logout: () => {
     state.isAuthenticated = false;
     state.user = null;
+    state.csrfToken = null;
     state.error = null;
+    state.needsMfa = false;
+    state.pendingEmail = null;
+    phpApi.logout().catch(() => {});
     notify();
   },
 
@@ -142,6 +124,12 @@ let state: AuthState = {
       state.user = { ...state.user, profileImage: b64 };
       notify();
     }
+  },
+
+  setNeedsMfa: (needed: boolean, email?: string) => {
+    state.needsMfa = needed;
+    state.pendingEmail = email || null;
+    notify();
   },
 };
 

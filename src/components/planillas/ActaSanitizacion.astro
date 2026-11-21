@@ -25,7 +25,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <PlanillaHeader
       title="Acta de Sanitización Criptográfica y Borrado Seguro"
       norma="NIST SP 800-88 REV. 1 · ISO/IEC 27001 · LEDCI ARTS. 20 Y 22"
-      codigoDoc="ACT-SAN-01"
+      codigoDoc="FO-F5-12"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -114,16 +114,18 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
     <PlanillaFirmasBilaterales
+      leftRole="perito"
       consignanteTitulo="PERITO RESPONSABLE DE SANITIZACIÓN"
       peritoTitulo="AUDITOR DE COMPLIANCE FORENSE"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
-      peritoNombre="Oficial de Compliance"
+      coPeritoNombre={caso.peritoLider || "Jull Joll (Perito Forense)"}
+      coPeritoCedula={caso.perito_cedula || "V-18.999.001"}
+      coPeritoCiv={caso.perito_civ || "299410"}
+      coPeritoInpre={caso.perito_inpre || "184920"}
+      coPeritoCargo={caso.perito_cargo || "Perito Informático Forense"}
+      peritoNombre="Oficial de Cumplimiento FCCO"
       peritoCedula="V-20.111.222"
-      peritoCiv="CIV-299841"
-      peritoInpre="INPRE-184510"
+      peritoCiv="299841"
+      peritoInpre="184510"
       peritoCargo="Auditor Interno de Seguridad ISO 27001"
       rolIso="DPA (Data Protection Auditor) · ISO 37301"
       modo={modo}

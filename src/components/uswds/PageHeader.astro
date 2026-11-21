@@ -1,0 +1,37 @@
+---
+/**
+ * SHA256.US — Encabezado de Página USWDS Estandarizado
+ */
+interface Props {
+  title: string;
+  subtitle?: string;
+  tag?: string;
+  tagColor?: string;
+}
+
+const { title, subtitle, tag, tagColor = 'bg-primary-darker' } = Astro.props;
+---
+<div class="fcco-page-header margin-bottom-3 border-bottom-1px border-base-lighter padding-bottom-2">
+  <div class="grid-row grid-gap-2 flex-align-center flex-justify">
+    <div class="grid-col-12 tablet:grid-col-auto">
+      <div class="display-flex flex-align-center flex-wrap grid-gap-1">
+        <h1 class="font-heading-lg text-ink margin-0 line-height-sans-2">
+          {title}
+        </h1>
+        {tag && (
+          <span class={`usa-tag ${tagColor} text-white font-mono-3xs text-bold padding-x-1 padding-y-2px radius-pill`}>
+            {tag}
+          </span>
+        )}
+      </div>
+      {subtitle && (
+        <p class="font-sans-xs text-base-dark margin-top-05 margin-bottom-0">
+          {subtitle}
+        </p>
+      )}
+    </div>
+    <div class="grid-col-12 tablet:grid-col-auto display-flex grid-gap-1 flex-align-center">
+      <slot name="actions" />
+    </div>
+  </div>
+</div>

@@ -1,7 +1,8 @@
 ---
 /**
  * SHA256.US — Encabezado Oficial Canónico Monocromático (Folio 216mm x 330mm)
- * Presente idénticamente en todas las 13 planillas y hojas periciales.
+ * Estándar Federal Institucional EE.UU. (NIST SP 800-86 / FBI FD-1004 / OMB Style Control Block)
+ * Vector Monocromático /logo-mono.svg · Banda de Título Federal · Grid de Metadatos.
  */
 interface Props {
   title: string;
@@ -19,7 +20,7 @@ interface Props {
 const {
   title,
   norma,
-  codigoDoc = 'FOR-SHA256',
+  codigoDoc = 'FO-FOR-01',
   numeroCaso = '',
   numeroPRCC = '',
   fecha = '',
@@ -33,27 +34,41 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
 ---
 
 <header class="canonical-header">
+  <!-- Fila Institucional Superior: Emblema Oficial + Control Box Estilo FBI FD-1004 / OMB -->
   <div class="header-institution-row">
     <div class="header-logo-group">
-      <img src="/logo.png" alt="SHA256.US" class="header-logo" />
+      <img src="/logo-mono.svg" alt="SHA256.US Forensic Seal" class="header-logo" width="36" height="36" />
       <div class="header-rep-text">
         <span class="header-rep-country">REPÚBLICA BOLIVARIANA DE VENEZUELA</span>
         <span class="header-rep-lab">LABORATORIO DE INFORMÁTICA FORENSE SHA256.US</span>
-        <span class="header-rep-sub">DIVISIÓN PERICIAL DE EVIDENCIA DIGITAL &amp; CUMPLIMIENTO LEGAL</span>
+        <span class="header-rep-sub">DIVISIÓN PERICIAL DE EVIDENCIA DIGITAL &amp; AUDITORÍA DE CUMPLIMIENTO</span>
       </div>
     </div>
-    <div class="header-badge-legal">
-      <div>CÓDIGO: {codigoDoc}</div>
-      <div>VALIDEZ: COPP ART. 187</div>
-      <div>HOJA {hojaActual} DE {totalHojas}</div>
+
+    <!-- FBI FD-1004 / OMB Federal Form Control Box -->
+    <div class="header-control-box">
+      <div class="control-box-row">
+        <span class="control-box-lbl">FORM CODE:</span>
+        <strong class="control-box-val font-mono">{codigoDoc}</strong>
+      </div>
+      <div class="control-box-row">
+        <span class="control-box-lbl">JURISDICTION:</span>
+        <span class="control-box-val">COPP ART. 187 / 223</span>
+      </div>
+      <div class="control-box-row">
+        <span class="control-box-lbl">FOLIO:</span>
+        <strong class="control-box-val font-mono">HOJA {hojaActual} DE {totalHojas}</strong>
+      </div>
     </div>
   </div>
 
+  <!-- Banda de Título Federal de Alto Contraste (#1B1B1B) -->
   <div class="header-title-box">
     <h1 class="canonical-doc-title">{title}</h1>
     <div class="canonical-doc-norm">{norma}</div>
   </div>
 
+  <!-- Grid Micro-Label de Metadatos de la Causa (ISO/IEC 27037 §7.1) -->
   <table class="header-meta-table">
     <tbody>
       <tr>
@@ -65,7 +80,7 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
             <span data-field="numeroCaso">{numeroCaso || '_________________________'}</span>
           )}
         </td>
-        <td class="header-meta-label">FECHA:</td>
+        <td class="header-meta-label">FECHA DE ACTUACIÓN:</td>
         <td class="header-meta-val">
           {isBlanco ? (
             <span class="linea-manual" data-field="fecha"></span>
@@ -75,7 +90,7 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
         </td>
       </tr>
       <tr>
-        <td class="header-meta-label">REGISTRO PRCC:</td>
+        <td class="header-meta-label">REGISTRO PRCC N°:</td>
         <td class="header-meta-val">
           {isBlanco ? (
             <span class="linea-manual" data-field="numero_prcc"></span>
@@ -83,12 +98,12 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
             <span data-field="numero_prcc">{numeroPRCC || '_________________________'}</span>
           )}
         </td>
-        <td class="header-meta-label">HORA / SEDE:</td>
+        <td class="header-meta-label">HORA / SEDE FORENSE:</td>
         <td class="header-meta-val">
           {isBlanco ? (
             <span class="linea-manual"></span>
           ) : (
-            <span>{hora || '10:00 AM · SEDE CENTRAL'}</span>
+            <span>{hora || '10:00 VET · SEDE PRINCIPAL QUÍBOR'}</span>
           )}
         </td>
       </tr>

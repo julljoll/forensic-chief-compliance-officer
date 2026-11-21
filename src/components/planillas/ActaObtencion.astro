@@ -1,7 +1,7 @@
 ---
 /**
  * SHA256.US — Acta de Obtención por Consignación Directa y Preservación Inicial
- * Fundamentación: MUCC-2017 Modelo 3 (Gaceta Oficial N° 41.247) · COPP Art. 187 · ISO/IEC 27037 §5.3.
+ * Fundamentación: MUCC-2017 Obtención y Preservación (Gaceta Oficial N° 41.247) · COPP Art. 187 · ISO/IEC 27037 §5.4.2 / §5.4.3.
  * Formato Oficial: Tamaño Folio (216mm x 330mm) · 2 Hojas Físicas · Monocromático B&W Puro.
  */
 import PlanillaHeader from './PlanillaHeader.astro';
@@ -31,8 +31,8 @@ const dispositivoDesc = caso.dispositivo_marca
 
     <PlanillaHeader
       title="Acta de Obtención por Consignación y Preservación"
-      norma="MUCC-2017 MODELO 3 (G.O. 41.247) · COPP ART. 187 · ISO/IEC 27037"
-      codigoDoc="FO-FOR-03"
+      norma="MUCC-2017 (G.O. 41.247) · COPP ART. 187 · ISO/IEC 27037 §5.4.2 / §5.4.3"
+      codigoDoc="FO-F1-03"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -43,7 +43,7 @@ const dispositivoDesc = caso.dispositivo_marca
     <div class="planilla-body">
       <!-- 1.0 DATOS DEL ACTO DE CONSIGNACIÓN -->
       <div class="section-block">
-        <div class="section-heading">1.0 DATOS DEL ACTO DE CONSIGNACIÓN DIRECTA (MUCC-2017 MODELO 3)</div>
+        <div class="section-heading">1.0 DATOS DEL ACTO DE CONSIGNACIÓN Y PRESERVACIÓN (G.O. N° 41.247 · MUCC-2017)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
@@ -91,7 +91,7 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 3.0 IDENTIFICACIÓN TÉCNICA DE LA EVIDENCIA DIGITAL -->
       <div class="section-block">
-        <div class="section-heading">3.0 IDENTIFICACIÓN TÉCNICA DEL DISPOSITIVO MÓVIL (ISO/IEC 27037 §5.3)</div>
+        <div class="section-heading">3.0 IDENTIFICACIÓN TÉCNICA DEL DISPOSITIVO MÓVIL (ISO/IEC 27037 §5.4.2 / §5.4.3)</div>
         <table class="forense-table">
           <tbody>
             <tr>
@@ -149,8 +149,8 @@ const dispositivoDesc = caso.dispositivo_marca
 
     <PlanillaHeader
       title="Acta de Obtención por Consignación (Continuación)"
-      norma="MUCC-2017 MODELO 3 (G.O. 41.247) · COPP ART. 187 · ISO/IEC 27037"
-      codigoDoc="FO-FOR-03"
+      norma="MUCC-2017 (G.O. 41.247) · COPP ART. 187 · ISO/IEC 27037 §5.4.2 / §5.4.3"
+      codigoDoc="FO-F1-03"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -159,29 +159,39 @@ const dispositivoDesc = caso.dispositivo_marca
     />
 
     <div class="planilla-body">
-      <!-- 5.0 EMBALAJE, AISLAMIENTO Y FIJACIÓN FOTOGRÁFICA -->
+      <!-- 5.0 EMBALAJE, AISLAMIENTO Y FIJACIÓN FOTOGRÁFICA (EST-03) -->
       <div class="section-block">
-        <div class="section-heading">5.0 MEDIDAS DE PRESERVACIÓN, EMBALAJE Y FIJACIÓN TÉCNICA (MUCC-2017)</div>
+        <div class="section-heading">5.0 MEDIDAS DE PRESERVACIÓN, EMBALAJE Y AISLAMIENTO ELECTROMAGNÉTICO (MUCC-2017 · ISO/IEC 27037 §5.4.3)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
-              <td class="forense-cell-label" style="width: 25%;">Bolsa Faraday N° (RF):</td>
+              <td class="forense-cell-label" style="width: 25%;">Bolsa Faraday N° (RF Shield):</td>
               <td class="forense-cell-value font-mono" style="width: 25%;">
                 {isBlanco ? <span class="linea-manual" data-field="bolsa_faraday_numero"></span> : <span data-field="bolsa_faraday_numero">{caso.bolsa_faraday_numero || 'FARADAY-2026-001'}</span>}
               </td>
-              <td class="forense-cell-label" style="width: 25%;">Precinto Inicial N°:</td>
+              <td class="forense-cell-label" style="width: 25%;">Precinto de Seguridad N°:</td>
               <td class="forense-cell-value font-mono" style="width: 25%;">
                 {isBlanco ? <span class="linea-manual" data-field="precinto_numero"></span> : <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-2026-991'}</span>}
               </td>
             </tr>
             <tr>
-              <td class="forense-cell-label">Aislamiento de Redes:</td>
+              <td class="forense-cell-label">Modo Avión Activado:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span>[&nbsp;&nbsp;] Modo Avión &nbsp;&nbsp; [&nbsp;&nbsp;] Apagado</span> : <span>[&nbsp;X&nbsp;] Modo Avión + Faraday Blindada</span>}
+                {isBlanco ? <span>[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] APAGADO</span> : <span>[&nbsp;X&nbsp;] SÍ (Modo Avión Forzado)</span>}
               </td>
+              <td class="forense-cell-label">Bloqueo WiFi / BT / Celular / NFC:</td>
+              <td class="forense-cell-value">
+                {isBlanco ? <span>[&nbsp;&nbsp;] VERIFICADO &nbsp;&nbsp; [&nbsp;&nbsp;] N/A</span> : <span>[&nbsp;X&nbsp;] VERIFICADO / AISLADO (0 dBm)</span>}
+              </td>
+            </tr>
+            <tr>
               <td class="forense-cell-label">Fijación Fotográfica 360°:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span>[&nbsp;&nbsp;] Conforme &nbsp;&nbsp; [&nbsp;&nbsp;] Pendiente</span> : <span>[&nbsp;X&nbsp;] Conforme (6 tomas macro)</span>}
+                {isBlanco ? <span>[&nbsp;&nbsp;] CONFORME (6 vistas) &nbsp; [&nbsp;&nbsp;] PENDIENTE</span> : <span>[&nbsp;X&nbsp;] CONFORME (6 vistas macro registradas)</span>}
+              </td>
+              <td class="forense-cell-label">Condición Embalaje / Precinto:</td>
+              <td class="forense-cell-value">
+                {isBlanco ? <span>[&nbsp;&nbsp;] INTACTO &nbsp;&nbsp; [&nbsp;&nbsp;] OBSERVADO</span> : <span>[&nbsp;X&nbsp;] INTACTO / SIN VIOLACIÓN</span>}
               </td>
             </tr>
           </tbody>

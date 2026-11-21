@@ -1,6 +1,7 @@
 <?php
 /**
  * SHA256.US — Conexión y Gestión de Base de Datos PDO (MySQL).
+ * Cumplimiento: OWASP ASVS · ISO/IEC 27001 (Prevención de fuga de información de depuración).
  */
 
 declare(strict_types=1);
@@ -37,11 +38,14 @@ class Database
             try {
                 self::$instance = new PDO($dsn, $dbCfg['username'], $dbCfg['password'], $options);
             } catch (PDOException $e) {
+                // Registrar detalle internamente en el log del servidor web sin exponer credenciales
+                error_log('[FCCO DB Error] ' . $e->getMessage());
+
                 http_response_code(503);
                 header('Content-Type: application/json; charset=utf-8');
                 echo json_encode([
-                    'error' => 'Error de conexión a la base de datos MySQL',
-                    'detail' => $e->getMessage()
+                    'ok'    => false,
+                    'error' => 'Servicio temporalmente no disponible (Error interno de conexión a base de datos)',
                 ], JSON_UNESCAPED_UNICODE);
                 exit;
             }

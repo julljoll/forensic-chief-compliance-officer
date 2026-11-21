@@ -1,7 +1,7 @@
 ---
 /**
  * SHA256.US — Acta de Desprecintado, Apertura y Adquisición Lógica en Laboratorio
- * Fundamentación: ISO/IEC 27037 §5.4.3 · NIST SP 800-101 Nivel 2 · COPP Art. 187 · LMDFE Art. 7.
+ * Fundamentación: ISO/IEC 27037 §5.4.4 / §7.1.3 · NIST SP 800-101 Nivel 2 · COPP Art. 187 · LMDFE Art. 7.
  * Formato Oficial: Tamaño Folio (216mm x 330mm) · 1 Hoja Física · Monocromático B&W Puro.
  */
 import PlanillaHeader from './PlanillaHeader.astro';
@@ -30,8 +30,8 @@ const dispositivoDesc = caso.dispositivo_marca
 
     <PlanillaHeader
       title="Acta de Desprecintado y Adquisición Lógica en Laboratorio"
-      norma="ISO/IEC 27037 §5.4.3 · NIST SP 800-101 NIVEL 2 · COPP ART. 187"
-      codigoDoc="FO-FOR-04"
+      norma="ISO/IEC 27037 §5.4.4 / §7.1.3 · NIST SP 800-101 NIVEL 2 · COPP ART. 187"
+      codigoDoc="FO-F2-05"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -121,16 +121,17 @@ const dispositivoDesc = caso.dispositivo_marca
 
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
     <PlanillaFirmasBilaterales
-      consignanteTitulo="PERITO EXTRACTOR / ADQUISIDOR"
+      leftRole="perito"
+      coPeritoTitulo="PERITO EXTRACTOR / ADQUISIDOR"
       peritoTitulo="CO-PERITO DE CONTROL DE CALIDAD"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
-      peritoNombre="Co-Perito Revisor"
-      peritoCedula="V-19.882.110"
-      peritoCiv="CIV-301290"
-      peritoInpre="INPRE-192014"
+      coPeritoNombre={caso.peritoLider || 'Ing. Jull Joll'}
+      coPeritoCedula={caso.perito_cedula || 'V-18.999.001'}
+      coPeritoCiv={caso.perito_civ || '299410'}
+      coPeritoCargo="Perito Informático Forense (Extracción Lógica)"
+      peritoNombre="Ing. Christopher V. Vance"
+      peritoCedula="V-15.816.003"
+      peritoCiv="CIV-310520"
+      peritoInpre="INPRE-201450"
       peritoCargo="Especialista en Adquisición Lógica"
       rolIso="DEFR / DES · ISO/IEC 27037"
       modo={modo}

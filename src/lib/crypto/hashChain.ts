@@ -20,6 +20,15 @@ export interface EntradaAuditoria {
   hashActual: string;
   /** true cuando el servidor PHP ya registró y re-encadenó este evento. */
   sincronizado?: boolean;
+
+  // Campos de compatibilidad de visualización
+  id?: string;
+  actor?: string;
+  evento?: string;
+  faseOrigen?: string;
+  faseDestino?: string;
+  timestamp?: string;
+  detalles?: any;
 }
 
 export type NuevaEntrada = Pick<EntradaAuditoria, 'casoId' | 'usuario' | 'accion' | 'detalle' | 'nivel'>;
@@ -56,6 +65,9 @@ export interface ResultadoVerificacion {
   total: number;
   rotoEn?: number;
   motivo?: string;
+  integra?: boolean;
+  totalEntradas?: number;
+  error?: string;
 }
 
 /** Verifica la cadena completa ordenada por `seq`. */

@@ -1,6 +1,7 @@
 ---
 /**
  * SHA256.US — Pie de Página Oficial Canónico Monocromático (Folio 216mm x 330mm)
+ * Cumplimiento Estricto: Cero estilos inline · Tipografía Federal USWDS · Inmutabilidad SHA-256
  * Presente idénticamente al pie de cada hoja física de las 13 planillas oficiales.
  */
 interface Props {
@@ -25,18 +26,20 @@ const displayHash = isBlanco
 
 <footer class="canonical-footer">
   <div class="footer-top-line">
-    <span>
-      DOCUMENTO JUDICIAL PERICIAL · VALIDEZ LEGAL COPP ART. 187 · ISO/IEC 27037 &amp; ISO/IEC 27042
+    <span class="footer-legal-tag">
+      DOCUMENTO PERICIAL JUDICIAL · VALIDEZ COPP ARTS. 187 / 223–225 · ISO/IEC 27037 · NIST SP 800-86
     </span>
-    <span class="font-mono">
+    <span class="footer-folio-tag font-mono">
       HOJA {hojaActual} DE {totalHojas}
     </span>
   </div>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1px; font-family: 'Roboto Mono Web', monospace; font-size: 6pt;">
-    <span>VERIFICACIÓN CRIPTOGRÁFICA SHA-256:</span>
-    <span style="letter-spacing: -0.02em;">{displayHash}</span>
+
+  <div class="footer-crypto-line">
+    <span class="footer-crypto-label">SELLO CRIPTOGRÁFICO DE AUDITORÍA SHA-256 (RFC 8785):</span>
+    <span class="footer-crypto-hash font-mono">{displayHash}</span>
   </div>
+
   <address class="footer-address-line">
-    Avenida 6 con calle 7, Edificio Mercantil La Ceiba, Piso 1, Ofic. N° 8, Quíbor, Municipio Jiménez, Estado Lara, República Bolivariana de Venezuela.
+    Laboratorio de Informática Forense SHA256.US · Avenida 6 con Calle 7, Edificio Mercantil La Ceiba, Piso 1, Ofic. N° 8, Quíbor, Municipio Jiménez, Estado Lara, Venezuela.
   </address>
 </footer>

@@ -12,6 +12,8 @@ import catalogo from '../../data/fases-iso.json';
 import type { CasoCMS, ControlMarcado, FaseIsoEstado, FaseIsoId, PlanillaId, TipoProyecto } from './types';
 import { GENESIS_HASH, SHA256_RE, hashCanonical } from '../crypto/canonical';
 
+export type { FaseIsoId };
+
 export type ReglaCampo = 'requerido' | 'sha256' | 'verdadero';
 
 export interface ControlIso {

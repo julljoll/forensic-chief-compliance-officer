@@ -1,0 +1,93 @@
+---
+/**
+ * SHA256.US — Barra de Selección Rápida de Expediente Activo
+ */
+interface Props {
+  targetParam?: string;
+}
+
+const { targetParam = 'casoId' } = Astro.props;
+---
+<div class="usa-summary-box padding-105 margin-bottom-3 bg-primary-lightest border-1px border-primary-light radius-md fcco-case-selector-bar">
+  <div class="grid-row grid-gap-2 flex-align-center">
+    <div class="grid-col-12 tablet:grid-col-auto display-flex flex-align-center">
+      <svg class="usa-icon text-primary margin-right-1" aria-hidden="true" focusable="false" role="img">
+        <use href="/assets/uswds/img/sprite.svg#folder"></use>
+      </svg>
+      <div>
+        <label for="select-global-caso" class="usa-label margin-0 font-sans-2xs text-bold text-ink">
+          Expediente Activo:
+        </label>
+        <span class="font-mono-3xs text-base-dark" id="txt-caso-activo-resumen">Cargando expedientes...</span>
+      </div>
+    </div>
+    <div class="grid-col-12 tablet:grid-col-fill">
+      <select id="select-global-caso" class="usa-select margin-0 font-sans-xs height-4 padding-y-0" data-param={targetParam}>
+        <option value="">Seleccione un expediente pericial...</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { phpApi } from '../../lib/data/phpApi';
+  import { idbGetAll } from '../../lib/data/idb';
+  import type { CasoCMS } from '../../lib/domain/types';
+
+  async function initCaseSelector() {
+    const select = document.getElementById('select-global-caso') as HTMLSelectElement;
+    const txtResumen = document.getElementById('txt-caso-activo-resumen');
+    if (!select) return;
+
+    let casos: CasoCMS[] = [];
+    try {
+      const data = await phpApi.listarCasos();
+      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+    } catch {
+      const data = await idbGetAll<CasoCMS>('casos');
+      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+    }
+
+    select.innerHTML = '<option value="">-- Seleccionar Expediente Activo --</option>';
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramKey = select.getAttribute('data-param') || 'casoId';
+    const activeId = urlParams.get(paramKey) || '';
+
+    casos.forEach((c) => {
+      const opt = document.createElement('option');
+      opt.value = c.id;
+      const fase = c.faseIsoActual || 'F0';
+      opt.textContent = `${c.numeroCaso} — ${c.titulo} [${fase}]`;
+      if (c.id === activeId) opt.selected = true;
+      select.appendChild(opt);
+    });
+
+    if (activeId) {
+      const found = casos.find((c) => c.id === activeId);
+      if (found && txtResumen) {
+        txtResumen.textContent = `${found.numeroCaso} (${found.tipoProyecto})`;
+      }
+    } else if (casos.length > 0 && txtResumen) {
+      txtResumen.textContent = `${casos.length} expedientes disponibles`;
+    }
+
+    select.addEventListener('change', () => {
+      const selected = select.value;
+      const u = new URL(window.location.href);
+      if (selected) {
+        u.searchParams.set(paramKey, selected);
+      } else {
+        u.searchParams.delete(paramKey);
+      }
+      window.location.href = u.toString();
+    });
+  }
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initCaseSelector);
+    } else {
+      initCaseSelector();
+    }
+  }
+</script>
