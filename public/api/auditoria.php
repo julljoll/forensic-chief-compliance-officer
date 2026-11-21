@@ -160,8 +160,9 @@ if ($method === 'POST') {
         exit;
     } catch (\Throwable $e) {
         $pdo->rollBack();
+        error_log('[FCCO Auditoria Error] ' . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['error' => 'Error al registrar evento de auditoría', 'detail' => $e->getMessage()]);
+        echo json_encode(['error' => 'Error interno al registrar evento de auditoría']);
         exit;
     }
 }

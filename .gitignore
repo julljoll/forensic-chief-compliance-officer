@@ -20,3 +20,5 @@ dev-dist/
 # Activos USWDS generados (scripts/build-uswds.mjs)
 public/assets/uswds/
 .astro/
+public/api/config.local.php
+dist/api/config.local.php

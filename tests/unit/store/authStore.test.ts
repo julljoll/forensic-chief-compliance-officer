@@ -1,84 +1,122 @@
-import { describe, it, expect, beforeEach } from 'vitest'
-import { useAuthStore, USER_JULL, USER_SHA256 } from '@/store/authStore'
-import { generarTotpCode } from '@/lib/crypto/totp'
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { useAuthStore } from '@/store/authStore';
+import { phpApi } from '@/lib/data/phpApi';
 
 describe('useAuthStore', () => {
   beforeEach(() => {
-    useAuthStore.getState().logout()
-  })
+    vi.restoreAllMocks();
+    useAuthStore.getState().logout();
+  });
 
-  it('debe iniciar sesión exitosamente para Jull con clave Karupano', async () => {
-    const success = await useAuthStore.getState().login('julljoll@gmail.com', 'Karupano')
-    expect(success).toBe(true)
+  it('debe iniciar sesión exitosamente cuando el backend valida credenciales', async () => {
+    const mockUser = {
+      id: 'usr-jull-01',
+      email: 'julljoll@gmail.com',
+      nombre: 'Jull Joll',
+      cargo: 'Perito Analizador de Datos Forenses',
+      rol: 'admin' as const,
+    };
 
-    const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(true)
-    expect(state.user).not.toBeNull()
-    expect(state.user?.email).toBe('julljoll@gmail.com')
-    expect(state.user?.nombre).toBe('Jull Joll')
-    expect(state.user?.cargo).toBe('Perito Analizador de Datos Forenses')
-    expect(state.user?.rol).toBe('admin')
-    expect(state.error).toBeNull()
-  })
+    vi.spyOn(phpApi, 'login').mockResolvedValueOnce({
+      ok: true,
+      data: { user: mockUser, csrf_token: 'fake-csrf-token' },
+    });
 
-  it('debe iniciar sesión exitosamente para SHA256 con clave 15816003', async () => {
-    const success = await useAuthStore.getState().login('sha256.us@gmail.com', '15816003')
-    expect(success).toBe(true)
+    const success = await useAuthStore.getState().login('julljoll@gmail.com', 'test-pass');
+    expect(success).toBe(true);
 
-    const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(true)
-    expect(state.user).not.toBeNull()
-    expect(state.user?.email).toBe('sha256.us@gmail.com')
-    expect(state.user?.cargo).toBe('Encargado de la Etapa de Adquisición')
-    expect(state.user?.rol).toBe('perito_lider')
-    expect(state.error).toBeNull()
-  })
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(true);
+    expect(state.user).not.toBeNull();
+    expect(state.user?.email).toBe('julljoll@gmail.com');
+    expect(state.user?.nombre).toBe('Jull Joll');
+    expect(state.csrfToken).toBe('fake-csrf-token');
+    expect(state.error).toBeNull();
+  });
 
-  it('debe iniciar sesión exitosamente con Google Authenticator (TOTP 6 dígitos)', async () => {
-    const code = await generarTotpCode(USER_JULL.totpSecret!)
-    const success = await useAuthStore.getState().login('julljoll@gmail.com', '', code)
-    expect(success).toBe(true)
+  it('debe manejar solicitud de segundo factor MFA (needs_mfa) correctamente', async () => {
+    vi.spyOn(phpApi, 'login').mockResolvedValueOnce({
+      ok: true,
+      data: { needs_mfa: true, email: 'julljoll@gmail.com' },
+    });
 
-    const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(true)
-    expect(state.user?.email).toBe('julljoll@gmail.com')
-  })
+    const success = await useAuthStore.getState().login('julljoll@gmail.com', 'test-pass');
+    expect(success).toBe(false);
 
-  it('debe rechazar correo electrónico inválido', async () => {
-    const success = await useAuthStore.getState().login('correo-invalido', 'Karupano')
-    expect(success).toBe(false)
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(false);
+    expect(state.needsMfa).toBe(true);
+    expect(state.pendingEmail).toBe('julljoll@gmail.com');
+  });
 
-    const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(false)
-    expect(state.user).toBeNull()
-    expect(state.error).toBe('Ingrese un correo electrónico válido')
-  })
+  it('debe iniciar sesión con código Google Authenticator (TOTP)', async () => {
+    const mockUser = {
+      id: 'usr-jull-01',
+      email: 'julljoll@gmail.com',
+      nombre: 'Jull Joll',
+      rol: 'admin' as const,
+    };
 
-  it('debe rechazar contraseña y código totp vacíos', async () => {
-    const success = await useAuthStore.getState().login('julljoll@gmail.com', '   ', '')
-    expect(success).toBe(false)
+    vi.spyOn(phpApi, 'login').mockResolvedValueOnce({
+      ok: true,
+      data: { user: mockUser },
+    });
 
-    const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(false)
-    expect(state.error).toBe('Ingrese la contraseña o el código de Google Authenticator')
-  })
+    const success = await useAuthStore.getState().login('julljoll@gmail.com', '', '123456');
+    expect(success).toBe(true);
 
-  it('debe cerrar sesión correctamente y limpiar el estado', async () => {
-    await useAuthStore.getState().login('julljoll@gmail.com', 'Karupano')
-    expect(useAuthStore.getState().isAuthenticated).toBe(true)
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(true);
+    expect(state.user?.email).toBe('julljoll@gmail.com');
+  });
 
-    useAuthStore.getState().logout()
-    const state = useAuthStore.getState()
-    expect(state.isAuthenticated).toBe(false)
-    expect(state.user).toBeNull()
-    expect(state.error).toBeNull()
-  })
+  it('debe rechazar correo electrónico inválido antes de llamar a la red', async () => {
+    const apiSpy = vi.spyOn(phpApi, 'login');
+    const success = await useAuthStore.getState().login('correo-invalido', 'pass');
+    expect(success).toBe(false);
+    expect(apiSpy).not.toHaveBeenCalled();
 
-  it('debe actualizar la imagen de perfil del usuario activo', async () => {
-    await useAuthStore.getState().login('julljoll@gmail.com', 'Karupano')
-    const fakeImageBase64 = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErJggg=='
-    
-    useAuthStore.getState().updateProfileImage(fakeImageBase64)
-    expect(useAuthStore.getState().user?.profileImage).toBe(fakeImageBase64)
-  })
-})
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(false);
+    expect(state.user).toBeNull();
+    expect(state.error).toBe('Ingrese un correo electrónico válido');
+  });
+
+  it('debe rechazar contraseña y código totp vacíos sin llamar a la red', async () => {
+    const apiSpy = vi.spyOn(phpApi, 'login');
+    const success = await useAuthStore.getState().login('julljoll@gmail.com', '   ', '');
+    expect(success).toBe(false);
+    expect(apiSpy).not.toHaveBeenCalled();
+
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(false);
+    expect(state.error).toBe('Ingrese la contraseña o el código de Google Authenticator');
+  });
+
+  it('debe cerrar sesión correctamente y limpiar el estado y tokens', async () => {
+    vi.spyOn(phpApi, 'logout').mockResolvedValueOnce();
+    useAuthStore.setState({
+      isAuthenticated: true,
+      user: { id: '1', email: 'j@g.com', nombre: 'J', rol: 'admin' },
+      csrfToken: 'tok',
+    });
+
+    useAuthStore.getState().logout();
+    const state = useAuthStore.getState();
+    expect(state.isAuthenticated).toBe(false);
+    expect(state.user).toBeNull();
+    expect(state.csrfToken).toBeNull();
+    expect(state.error).toBeNull();
+  });
+
+  it('debe actualizar la imagen de perfil del usuario activo', () => {
+    useAuthStore.setState({
+      isAuthenticated: true,
+      user: { id: '1', email: 'j@g.com', nombre: 'J', rol: 'admin' },
+    });
+    const fakeImageBase64 = 'data:image/png;base64,fake';
+
+    useAuthStore.getState().updateProfileImage(fakeImageBase64);
+    expect(useAuthStore.getState().user?.profileImage).toBe(fakeImageBase64);
+  });
+});

@@ -87,11 +87,10 @@ if ($method === 'GET') {
         echo json_encode(['casos' => $casos], JSON_UNESCAPED_UNICODE);
         exit;
     } catch (\PDOException $e) {
+        error_log('[FCCO Casos Error] ' . $e->getMessage());
         http_response_code(500);
         echo json_encode([
             'error' => 'Error al consultar la tabla casos en MySQL',
-            'detail' => $e->getMessage(),
-            'hint' => 'Asegúrese de importar el archivo database.sql en phpMyAdmin dentro de la base de datos sirixutr_Forensic_cco'
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }
@@ -192,8 +191,9 @@ if ($method === 'POST') {
         exit;
     } catch (\Throwable $e) {
         $pdo->rollBack();
+        error_log('[FCCO Casos Create Error] ' . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['error' => 'Error al crear el caso', 'detail' => $e->getMessage()]);
+        echo json_encode(['error' => 'Error al crear el caso en MySQL']);
         exit;
     }
 }
@@ -261,8 +261,9 @@ if ($method === 'PUT') {
         exit;
     } catch (\Throwable $e) {
         $pdo->rollBack();
+        error_log('[FCCO Casos Update Error] ' . $e->getMessage());
         http_response_code(500);
-        echo json_encode(['error' => 'Error al actualizar el caso', 'detail' => $e->getMessage()]);
+        echo json_encode(['error' => 'Error al actualizar el caso en MySQL']);
         exit;
     }
 }

@@ -143,7 +143,7 @@
         }
 
         // Si el backend solicita código 2FA
-        if (res.data?.requires_totp) {
+        if (res.data?.requires_totp || res.data?.needs_mfa) {
           if (totpWrap) {
             totpWrap.hidden = false;
             totpInput.required = true;

@@ -7,7 +7,7 @@ Options -Indexes +FollowSymLinks
 DirectoryIndex index.html
 
 # 1. Seguridad: Bloquear archivos sensibles y directorios ocultos
-<FilesMatch "(config\.php|\.sql|\.env|\.git|\.md|composer\.(json|lock)|package(-lock)?\.json)$">
+<FilesMatch "(config(\.local)?\.php|\.sql|\.env|\.git|\.md|composer\.(json|lock)|package(-lock)?\.json)$">
     <IfModule mod_authz_core.c>
         Require all denied
     </IfModule>
@@ -24,6 +24,7 @@ DirectoryIndex index.html
     Header set X-XSS-Protection "1; mode=block"
     Header set Referrer-Policy "strict-origin-when-cross-origin"
     Header set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; frame-ancestors 'self'; form-action 'self';"
 </IfModule>
 
 # 3. Tipos MIME Estándar para Fuentes y Activos Web
@@ -60,7 +61,10 @@ DirectoryIndex index.html
     RewriteEngine On
     RewriteBase /
 
-    # Permitir acceso directo a endpoints de la API PHP sin alterar
+    # Bloquear acceso directo a archivos internos de biblioteca PHP (api/lib/)
+    RewriteRule ^api/lib/ - [F,L]
+
+    # Permitir acceso directo a endpoints públicos de la API PHP sin alterar
     RewriteRule ^api/ - [L]
 
     # Permitir acceso directo a archivos físicos existentes (.css, .js, .png, .svg, etc.)

@@ -13,6 +13,9 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `email` VARCHAR(191) NOT NULL,
   `password_hash` VARCHAR(255) NOT NULL,
   `totp_secret` VARCHAR(64) DEFAULT NULL,
+  `totp_enabled` TINYINT(1) NOT NULL DEFAULT 1,
+  `totp_last_used_slice` BIGINT NULL DEFAULT NULL,
+  `totp_recovery_hashes` TEXT NULL DEFAULT NULL,
   `nombre` VARCHAR(150) NOT NULL,
   `apellido` VARCHAR(150) NOT NULL DEFAULT '',
   `ci` VARCHAR(32) NOT NULL DEFAULT '',
@@ -118,7 +121,19 @@ CREATE TABLE IF NOT EXISTS `evidencias` (
   CONSTRAINT `fk_evidencias_caso` FOREIGN KEY (`caso_id`) REFERENCES `casos` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 6. Triggers de Inmutabilidad para la Tabla de Auditoría (Prevención de Adulteración)
+-- 6. Tabla de Registro de Intentos de Inicio de Sesión (Rate Limiting y Prevención de Fuerza Bruta)
+CREATE TABLE IF NOT EXISTS `login_attempts` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `ip` VARCHAR(45) NOT NULL,
+  `usuario` VARCHAR(191) NOT NULL,
+  `intentado_en` DATETIME NOT NULL,
+  `exitoso` TINYINT(1) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`id`),
+  KEY `idx_ip_intentos` (`ip`, `intentado_en`),
+  KEY `idx_usuario_intentos` (`usuario`, `intentado_en`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Triggers de Inmutabilidad para la Tabla de Auditoría (Prevención de Adulteración)
 DROP TRIGGER IF EXISTS `trg_auditoria_no_update`;
 DELIMITER $$
 CREATE TRIGGER `trg_auditoria_no_update` BEFORE UPDATE ON `auditoria`
@@ -137,14 +152,15 @@ BEGIN
 END$$
 DELIMITER ;
 
--- 7. Usuarios Oficiales del Laboratorio Forense
--- Usuario 1: Jull Joll — Perito Analizador de Datos (Clave: Karupano | TOTP: JULLJOLLFCCO2FA1)
-INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
+-- 8. Usuarios Oficiales del Laboratorio Forense (Contraseñas cifradas con bcrypt y MFA RFC 6238)
+-- Usuario 1: Jull Joll — Perito Analizador de Datos Forenses
+INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `totp_enabled`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
 VALUES (
   'usr-jull-01',
   'julljoll@gmail.com',
   '$2y$10$rpiUdT4xp.mZyY9ru8Bf4u0pMTGcewPNUroJ0DFs9VBZ061oRK3wm',
-  'JULLJOLLFCCO2FA1',
+  NULL,
+  0,
   'Jull',
   'Joll',
   'V-18.999.001',
@@ -158,18 +174,18 @@ VALUES (
   1
 ) ON DUPLICATE KEY UPDATE 
   `password_hash` = VALUES(`password_hash`),
-  `totp_secret` = VALUES(`totp_secret`),
   `cargo` = VALUES(`cargo`),
   `despacho` = VALUES(`despacho`),
   `activo` = 1;
 
--- Usuario 2: SHA256 — Encargado de la Etapa de Adquisición (Clave: 15816003 | TOTP: SHA256USFCCO2FA2)
-INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
+-- Usuario 2: SHA256 — Encargado de la Etapa de Adquisición
+INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `totp_enabled`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
 VALUES (
   'usr-sha256-02',
   'sha256.us@gmail.com',
   '$2y$10$DsXjrM8atz4tFHyraR1Od.HZL7kvcaBuNSm0SLvm5rhEvQ8xnto3i',
-  'SHA256USFCCO2FA2',
+  NULL,
+  0,
   'SHA256',
   'Adquisición',
   'V-15.816.003',
@@ -184,11 +200,12 @@ VALUES (
 ) ON DUPLICATE KEY UPDATE 
   `password_hash` = VALUES(`password_hash`),
   `totp_secret` = VALUES(`totp_secret`),
+  `totp_enabled` = VALUES(`totp_enabled`),
   `cargo` = VALUES(`cargo`),
   `despacho` = VALUES(`despacho`),
   `activo` = 1;
 
--- 8. Expediente Inicial Sincronizado en Base de Datos (ISO/IEC 27037)
+-- 9. Expediente Inicial Sincronizado en Base de Datos (ISO/IEC 27037)
 INSERT INTO `casos` (`id`, `numero_caso`, `expediente`, `numero_prcc`, `tipo_proyecto`, `titulo`, `descripcion`, `estado`, `prioridad`, `fase_actual`, `perito_lider`, `fiscal`, `solicitante_nombre`, `solicitante_cedula`, `hash_sha256`, `version`, `datos_json`)
 VALUES (
   'caso-wa-01',
