@@ -234,6 +234,8 @@ export interface CasoCMS {
   numero_prcc?: string;
 
   // Funcionarios del Procedimiento
+  co_perito_nombre?: string;
+  co_perito_cedula?: string;
   perito_coadyuvante?: string;
   perito_coadyuvante_cedula?: string;
   fiscal_nombre?: string;

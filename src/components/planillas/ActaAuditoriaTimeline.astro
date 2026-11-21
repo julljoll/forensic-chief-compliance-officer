@@ -34,7 +34,7 @@ const DEFAULT_LOGS = [
     <PlanillaHeader
       title="Acta de Auditoría y Trazabilidad Criptográfica"
       norma="ISO/IEC 27037 · LMDFE ARTS. 4, 7 Y 16 · CADENA SHA-256"
-      codigoDoc="ACT-AUD-01"
+      codigoDoc="FO-F5-13"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -130,16 +130,18 @@ const DEFAULT_LOGS = [
 
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
     <PlanillaFirmasBilaterales
+      leftRole="perito"
       consignanteTitulo="PERITO AUDITOR FORENSE"
       peritoTitulo="OFICIAL DE COMPLIANCE FORENSE"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
+      coPeritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
+      coPeritoCedula={caso.perito_cedula || "V-18.999.001"}
+      coPeritoCiv={caso.perito_civ || "299410"}
+      coPeritoInpre={caso.perito_inpre || "184920"}
+      coPeritoCargo={caso.perito_cargo || "Perito Informático Forense"}
       peritoNombre="Oficial de Cumplimiento FCCO"
       peritoCedula="V-20.111.222"
-      peritoCiv="CIV-299841"
-      peritoInpre="INPRE-184510"
+      peritoCiv="299841"
+      peritoInpre="184510"
       peritoCargo="Chief Compliance Officer"
       rolIso="CIA (Certified Information Security Auditor) · ISO 37301"
       modo={modo}

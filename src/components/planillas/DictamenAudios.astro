@@ -26,7 +26,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <PlanillaHeader
       title="Dictamen Pericial de Autenticidad de Audios Digitales"
       norma="COPP ARTS. 223–225 · LMDFE ARTS. 4 Y 7 · SWGDE AUDIO"
-      codigoDoc="FO-AUD-01"
+      codigoDoc="FO-F4-10"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -35,9 +35,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     />
 
     <div class="planilla-body">
-      <!-- 1.0 IDENTIFICACIÓN TÉCNICA DEL AUDIO -->
+      <!-- 1.0 MOTIVO Y DESCRIPCIÓN DEL OBJETO PERITADO (COPP ART. 225.1) -->
       <div class="section-block">
-        <div class="section-heading">1.0 ESPECIFICACIÓN TÉCNICA DE LA NOTA DE VOZ DE WHATSAPP (LMDFE ART. 7)</div>
+        <div class="section-heading">1.0 MOTIVO Y ESPECIFICACIÓN TÉCNICA DEL OBJETO PERITADO (COPP ART. 225 NUM. 1 · LMDFE ART. 7)</div>
         <table class="forense-table">
           <tbody>
             <tr>
@@ -56,9 +56,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         </table>
       </div>
 
-      <!-- 2.0 ANÁLISIS ESPECTROGRÁFICO Y ACÚSTICO -->
+      <!-- 2.0 OPERACIONES TÉCNICAS PRACTICADAS (COPP ART. 225.2) -->
       <div class="section-block">
-        <div class="section-heading">2.0 ANÁLISIS DE ESPECTROGRAMA FFT Y CONTINUIDAD DE FORMANTES (SWGDE)</div>
+        <div class="section-heading">2.0 OPERACIONES TÉCNICAS PRACTICADAS: ESPECTROGRAMA FFT Y FORMANTES (COPP ART. 225 NUM. 2)</div>
         <table class="forense-table">
           <thead>
             <tr>
@@ -92,9 +92,9 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         </table>
       </div>
 
-      <!-- 3.0 CONCLUSIONES ACÚSTICAS -->
+      <!-- 3.0 RESULTADOS PARTICULARES Y REPRODUCIBILIDAD (COPP ART. 225.2) -->
       <div class="section-block">
-        <div class="section-heading">3.0 EVALUACIÓN DE INTEGRIDAD Y REPRODUCIBILIDAD CIENTÍFICA (CENIF / DAUBERT)</div>
+        <div class="section-heading">3.0 RESULTADOS PARTICULARES Y REPRODUCIBILIDAD CIENTÍFICA (COPP ART. 225 NUM. 2 · DAUBERT)</div>
         <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
           {isBlanco ? (
             <div class="lineas-pautadas-2">
@@ -107,25 +107,27 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         </div>
       </div>
 
-      <!-- 4.0 DICTAMEN MOTIVADO -->
+      <!-- 4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225.3) -->
       <div class="legal-clause">
-        <strong>4.0 DICTAMEN DE AUTENTICIDAD DE AUDIO (COPP ART. 225):</strong> Se dictamina categóricamente que la nota de voz peritada es <strong>AUTÉNTICA, ÍNTEGRA Y NO MANIPULADA</strong>, satisfaciendo el estándar de original de los Arts. 4 y 7 de la LMDFE y habiendo sido aportada por el interlocutor legítimo sin violar la privacidad de terceros (Art. 21 LEDCI).
+        <strong>4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225 NUM. 3):</strong> Con arreglo a los principios de la acústica forense y el método científico colegiado (COPP Art. 223), los peritos dictaminan categóricamente que la nota de voz peritada es <strong>AUTÉNTICA, ÍNTEGRA Y NO MANIPULADA</strong>, satisfaciendo el estándar de original de los Arts. 4 y 7 de la LMDFE y habiendo sido aportada por el interlocutor legítimo sin violar la privacidad de terceros (Art. 21 LEDCI).
       </div>
     </div>
 
-    <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
+    <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
-      consignanteTitulo="PERITO EN ACÚSTICA FORENSE"
-      peritoTitulo="CO-PERITO EN INFORMÁTICA FORENSE"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
-      peritoNombre={caso.perito_coadyuvante || "Co-Perito Informático"}
-      peritoCedula={caso.perito_coadyuvante_cedula || "V-19.888.777"}
-      peritoCiv="CIV-291034"
-      peritoInpre="INPRE-180211"
-      peritoCargo="Especialista en Acústica Forense"
+      leftRole="perito"
+      consignanteTitulo="PERITO EN ACÚSTICA FORENSE (CO-PERITO)"
+      peritoTitulo="PERITO PRINCIPAL / COORDINADOR FORENSE"
+      coPeritoNombre={caso.co_perito_nombre || caso.perito_coadyuvante || "Ing. Perito Acústico"}
+      coPeritoCedula={caso.co_perito_cedula || caso.perito_coadyuvante_cedula || "V-19.888.777"}
+      coPeritoCiv="291034"
+      coPeritoInpre="180211"
+      coPeritoCargo="Especialista en Acústica Forense"
+      peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
+      peritoCedula={caso.perito_cedula || "V-18.999.001"}
+      peritoCiv={caso.perito_civ || "299410"}
+      peritoInpre={caso.perito_inpre || "184920"}
+      peritoCargo={caso.perito_cargo || "Perito Informático Forense"}
       rolIso="DES (Digital Evidence Specialist) · ISO 27042"
       modo={modo}
     />

@@ -1,7 +1,7 @@
 ---
 /**
  * SHA256.US — Acta de Entrevista Forense al Consignante
- * Fundamentación: MUCC-2017 & ISO/IEC 27042 · CRBV Art. 49 ord. 5° · Código Penal Art. 242.
+ * Fundamentación: MUCC-2017 & ISO/IEC 27042 · CRBV Art. 49 ord. 5° · Código Penal Arts. 243 y 246.
  * Formato Oficial: Tamaño Folio (216mm x 330mm) · 1 Hoja Física · Monocromático B&W Puro.
  */
 import PlanillaHeader from './PlanillaHeader.astro';
@@ -24,8 +24,8 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
     <PlanillaHeader
       title="Acta de Entrevista Técnico-Pericial al Consignante"
-      norma="MUCC-2017 · CRBV ART. 49 ORD. 5° · CP ART. 242 · ISO/IEC 27042"
-      codigoDoc="FO-FOR-02"
+      norma="MUCC-2017 · CRBV ART. 49 ORD. 5° · CP ARTS. 243 Y 246 · ISO/IEC 27042"
+      codigoDoc="FO-F0-02"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -145,7 +145,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 3.0 DECLARACIÓN DE VERACIDAD -->
       <div class="legal-clause">
-        <strong>3.0 DECLARACIÓN DE VERACIDAD Y CONFORMIDAD LEGAL:</strong> El entrevistado manifiesta bajo fe de juramento que los datos y credenciales aportados son fidedignos, con pleno conocimiento de las sanciones legales por falso testimonio previstas en el Art. 242 del Código Penal Venezolano, autorizando la incorporación de esta acta al expediente técnico para sustentar la licitud de la prueba digital.
+        <strong>3.0 DECLARACIÓN DE VERACIDAD Y CONFORMIDAD LEGAL:</strong> El entrevistado manifiesta bajo fe de juramento que los datos y credenciales aportados son fidedignos, con pleno conocimiento de las sanciones legales por falso testimonio y perjurio previstas en los Arts. 243 y 246 del Código Penal Venezolano, autorizando la incorporación de esta acta al expediente técnico para sustentar la licitud de la prueba digital.
       </div>
     </div>
 

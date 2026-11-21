@@ -25,7 +25,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <PlanillaHeader
       title="Planilla de Evaluación de Interfaz UX y Calidad de Software"
       norma="ISO/IEC 25010 · ISO/IEC 27042 §8 · LMDFE ART. 4"
-      codigoDoc="FO-UX-01"
+      codigoDoc="FO-F3-07"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -100,19 +100,21 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
       </div>
     </div>
 
-    <!-- 4.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
+    <!-- 4.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
-      consignanteTitulo="PERITO EVALUADOR DE SOFTWARE"
-      peritoTitulo="PERITO COORDINADOR DE CALIDAD"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
-      peritoNombre="Co-Perito de Calidad"
-      peritoCedula="V-16.904.312"
-      peritoCiv="CIV-274190"
-      peritoInpre="INPRE-165219"
-      peritoCargo="Especialista en Evaluación de Software"
+      leftRole="perito"
+      consignanteTitulo="PERITO EVALUADOR DE SOFTWARE (CO-PERITO)"
+      peritoTitulo="PERITO PRINCIPAL / COORDINADOR DE CALIDAD"
+      coPeritoNombre={caso.co_perito_nombre || "Ing. Perito de Software"}
+      coPeritoCedula={caso.co_perito_cedula || "V-16.904.312"}
+      coPeritoCiv="274190"
+      coPeritoInpre="165219"
+      coPeritoCargo="Especialista en Evaluación de Software y UX"
+      peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
+      peritoCedula={caso.perito_cedula || "V-18.999.001"}
+      peritoCiv={caso.perito_civ || "299410"}
+      peritoInpre={caso.perito_inpre || "184920"}
+      peritoCargo={caso.perito_cargo || "Perito Informático Forense"}
       rolIso="DES · ISO/IEC 25010"
       modo={modo}
     />

@@ -2,15 +2,22 @@
 /**
  * SHA256.US — Bloque Canónico de Cierre Legal: Firmas y Huellas Dactilares Bilaterales
  * Cumple con COPP Arts. 187, 223–225 y MUCC-2017.
- * Presenta 2 columnas equilibradas con líneas de firma sólidas y recuadros dactilares dobles.
+ * Soporta firma bilateral Consignante-Perito o Perito-Perito (Colegiado).
  */
 interface Props {
+  leftRole?: 'consignante' | 'perito';
   consignanteTitulo?: string;
   peritoTitulo?: string;
+  coPeritoTitulo?: string;
   solicitanteNombre?: string;
   solicitanteCedula?: string;
   solicitanteTelefono?: string;
   solicitanteDireccion?: string;
+  coPeritoNombre?: string;
+  coPeritoCedula?: string;
+  coPeritoCiv?: string;
+  coPeritoInpre?: string;
+  coPeritoCargo?: string;
   peritoNombre?: string;
   peritoCedula?: string;
   peritoCiv?: string;
@@ -21,12 +28,19 @@ interface Props {
 }
 
 const {
+  leftRole = 'consignante',
   consignanteTitulo = 'CONSIGNANTE / DECLARANTE',
   peritoTitulo = 'PERITO OFICIAL RESPONSABLE',
+  coPeritoTitulo = 'CO-PERITO / PERITO REVISOR',
   solicitanteNombre = '',
   solicitanteCedula = '',
   solicitanteTelefono = '',
   solicitanteDireccion = '',
+  coPeritoNombre = '',
+  coPeritoCedula = '',
+  coPeritoCiv = '',
+  coPeritoInpre = '',
+  coPeritoCargo = '',
   peritoNombre = '',
   peritoCedula = '',
   peritoCiv = '',
@@ -37,75 +51,129 @@ const {
 } = Astro.props;
 
 const isBlanco = modo === 'blanco';
+const isPeritoLeft = leftRole === 'perito';
 ---
 
 <div class="canonical-signatures">
-  <!-- Columna Izquierda: Consignante / Declarante -->
+  <!-- Columna Izquierda: Consignante O Co-Perito -->
   <div class="sig-box">
-    <div class="sig-box-title">{consignanteTitulo}</div>
-    <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
-      <strong style="white-space: nowrap; margin-right: 4px;">NOMBRE:</strong>
-      <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_nombre">{isBlanco ? '' : solicitanteNombre}</span>
-    </div>
-    <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
-      <strong style="white-space: nowrap; margin-right: 4px;">C.I. / RIF:</strong>
-      <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_cedula">{isBlanco ? '' : solicitanteCedula}</span>
-    </div>
-    <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
-      <strong style="white-space: nowrap; margin-right: 4px;">TELÉFONO:</strong>
-      <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_telefono">{isBlanco ? '' : solicitanteTelefono}</span>
-    </div>
-    <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
-      <strong style="white-space: nowrap; margin-right: 4px;">DIRECCIÓN:</strong>
-      <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_direccion">{isBlanco ? '' : solicitanteDireccion}</span>
-    </div>
+    {isPeritoLeft ? (
+      <>
+        <div class="sig-box-title">{coPeritoTitulo}</div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">CO-PERITO:</strong>
+          <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="co_perito_nombre">
+            {isBlanco ? '' : (coPeritoNombre || 'Ing. Christopher V. Vance')}
+          </span>
+        </div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">C.I. N°:</strong>
+          <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="co_perito_cedula">
+            {isBlanco ? '' : (coPeritoCedula || 'V-15.816.003')}
+          </span>
+        </div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">CIV / INPRE:</strong>
+          <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="co_perito_civ">
+            {isBlanco ? '' : `CIV: ${coPeritoCiv || '310520'} · INPRE: ${coPeritoInpre || '201450'}`}
+          </span>
+        </div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">CARGO / ROL:</strong>
+          <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="co_perito_cargo">
+            {isBlanco ? '' : `${coPeritoCargo || 'Perito Informático Forense'} (Co-Perito Revisor)`}
+          </span>
+        </div>
 
-    <div class="sig-line-solid sig-line"></div>
-    <div class="sig-legend">Firma del Consignante / Solicitante</div>
+        <div class="sig-line-solid sig-line"></div>
+        <div class="sig-legend">Firma y Sello del Co-Perito Revisor</div>
+      </>
+    ) : (
+      <>
+        <div class="sig-box-title">{consignanteTitulo}</div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">NOMBRE:</strong>
+          <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_nombre">
+            {isBlanco ? '' : solicitanteNombre}
+          </span>
+        </div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">C.I. / RIF:</strong>
+          <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_cedula">
+            {isBlanco ? '' : solicitanteCedula}
+          </span>
+        </div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">TELÉFONO:</strong>
+          <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_telefono">
+            {isBlanco ? '' : solicitanteTelefono}
+          </span>
+        </div>
+        <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
+          <strong style="white-space: nowrap; margin-right: 4px;">DIRECCIÓN:</strong>
+          <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="solicitante_direccion">
+            {isBlanco ? '' : solicitanteDireccion}
+          </span>
+        </div>
 
+        <div class="sig-line-solid sig-line"></div>
+        <div class="sig-legend">Firma del Consignante / Solicitante</div>
+      </>
+    )}
+
+    <!-- Dactiloscopía Izquierda: PULGAR IZQ. primero, PULGAR DER. segundo -->
     <div class="fingerprint-container">
-      <div class="fingerprint-item">
-        <div class="thumb-box-canonical"></div>
-        <span class="thumb-box-label">PULGAR DER.</span>
-      </div>
       <div class="fingerprint-item">
         <div class="thumb-box-canonical"></div>
         <span class="thumb-box-label">PULGAR IZQ.</span>
       </div>
+      <div class="fingerprint-item">
+        <div class="thumb-box-canonical"></div>
+        <span class="thumb-box-label">PULGAR DER.</span>
+      </div>
     </div>
   </div>
 
-  <!-- Columna Derecha: Perito Oficial SHA256.US -->
+  <!-- Columna Derecha: Perito Oficial Principal SHA256.US -->
   <div class="sig-box">
     <div class="sig-box-title">{peritoTitulo}</div>
     <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
       <strong style="white-space: nowrap; margin-right: 4px;">PERITO LÍDER:</strong>
-      <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="peritoLider">{isBlanco ? '' : (peritoNombre || 'Jull Joll (Perito Principal)')}</span>
+      <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="peritoLider">
+        {isBlanco ? '' : (peritoNombre || 'Jull Joll (Perito Principal)')}
+      </span>
     </div>
     <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
       <strong style="white-space: nowrap; margin-right: 4px;">C.I. N°:</strong>
-      <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="perito_cedula">{isBlanco ? '' : (peritoCedula || 'V-18.999.001')}</span>
+      <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="perito_cedula">
+        {isBlanco ? '' : (peritoCedula || 'V-18.999.001')}
+      </span>
     </div>
     <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
       <strong style="white-space: nowrap; margin-right: 4px;">CIV / INPRE:</strong>
-      <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="perito_civ">{isBlanco ? '' : `CIV: ${peritoCiv || '299410'} · INPRE: ${peritoInpre || '184920'}`}</span>
+      <span class="font-mono" style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="perito_civ">
+        {isBlanco ? '' : `CIV: ${peritoCiv || '299410'} · INPRE: ${peritoInpre || '184920'}`}
+      </span>
     </div>
     <div class="sig-data-row" style="display: flex; align-items: flex-end; margin-bottom: 2px;">
       <strong style="white-space: nowrap; margin-right: 4px;">CARGO / ROL:</strong>
-      <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="perito_cargo">{isBlanco ? '' : `${peritoCargo || 'Perito Informático Forense'} (${rolIso})`}</span>
+      <span style="flex: 1; border-bottom: 1px solid #000; min-height: 14px; padding-left: 2px;" data-field="perito_cargo">
+        {isBlanco ? '' : `${peritoCargo || 'Perito Informático Forense'} (${rolIso})`}
+      </span>
     </div>
 
     <div class="sig-line-solid sig-line"></div>
     <div class="sig-legend">Firma y Sello del Perito Oficial</div>
 
+    <!-- Dactiloscopía Derecha: PULGAR IZQ. primero, PULGAR DER. segundo -->
     <div class="fingerprint-container">
       <div class="fingerprint-item">
         <div class="thumb-box-canonical"></div>
-        <span class="thumb-box-label">PULGAR DER.</span>
+        <span class="thumb-box-label">PULGAR IZQ.</span>
       </div>
       <div class="fingerprint-item">
         <div class="thumb-box-canonical"></div>
-        <span class="thumb-box-label">PULGAR IZQ.</span>
+        <span class="thumb-box-label">PULGAR DER.</span>
       </div>
     </div>
   </div>

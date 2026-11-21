@@ -9,6 +9,7 @@ import Alert from '../uswds/Alert.astro';
 
 const PLANILLAS = [
   {
+    codigo: 'FO-F0-01',
     slug: 'acta-consentimiento',
     fase: 'F0',
     titulo: 'Acta de Consentimiento Informado y Autorización',
@@ -17,22 +18,25 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F0-02',
     slug: 'acta-entrevista',
     fase: 'F0',
     titulo: 'Acta de Entrevista Técnico-Pericial al Consignante',
-    norma: 'MUCC-2017 · CRBV Art. 49 ord. 5° · CP Art. 242',
+    norma: 'MUCC-2017 · CRBV Art. 49 ord. 5° · CP Arts. 243 y 246',
     descripcion: 'Fijación formal de las declaraciones, credenciales de acceso, interlocutores y contexto con advertencia de no autoincriminación.',
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F1-03',
     slug: 'acta-obtencion',
     fase: 'F1',
     titulo: 'Acta de Obtención por Consignación y Preservación',
-    norma: 'MUCC-2017 Modelo 3 (G.O. 41.247) · COPP Art. 187',
+    norma: 'MUCC-2017 (G.O. 41.247) · COPP Art. 187 · ISO/IEC 27037 §5.4.2/§5.4.3',
     descripcion: 'Recepción física y técnica del teléfono inteligente con fijación fotográfica 360°, aislamiento Faraday y precintado numerado.',
     hojas: '2 Hojas Folio',
   },
   {
+    codigo: 'FO-F1-04',
     slug: 'planilla-prcc',
     fase: 'F1',
     titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)',
@@ -41,14 +45,16 @@ const PLANILLAS = [
     hojas: '2 Hojas Folio',
   },
   {
+    codigo: 'FO-F2-05',
     slug: 'acta-desprecintado',
     fase: 'F2',
     titulo: 'Acta de Desprecintado y Adquisición Lógica',
-    norma: 'NIST SP 800-101 Nivel 2 · ISO 27037 §5.4.3 · COPP 187',
+    norma: 'NIST SP 800-101 Nivel 2 · ISO/IEC 27037 §5.4.4 / §7.1.3 · COPP 187',
     descripcion: 'Constancia de apertura en laboratorio, extracción lógica de SQLite msgstore.db, Hash SHA-256 y Nuevo Precinto de Resguardo.',
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F3-06',
     slug: 'planilla-audio-sonic',
     fase: 'F3',
     titulo: 'Planilla de Análisis Forense de Audio (Notas de Voz)',
@@ -57,6 +63,7 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F3-07',
     slug: 'planilla-evaluacion-ux',
     fase: 'F3',
     titulo: 'Planilla de Evaluación de Interfaz UX y Software',
@@ -65,6 +72,7 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F4-08',
     slug: 'acta-dictamen',
     fase: 'F4',
     titulo: 'Dictamen Pericial Oficial de Informática Forense',
@@ -73,6 +81,7 @@ const PLANILLAS = [
     hojas: '2 Hojas Folio',
   },
   {
+    codigo: 'FO-F4-09',
     slug: 'dictamen-imagenes',
     fase: 'F4',
     titulo: 'Dictamen Especializado en Evidencia Fotográfica',
@@ -81,6 +90,7 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F4-10',
     slug: 'dictamen-audios',
     fase: 'F4',
     titulo: 'Dictamen Especializado de Notas de Voz y Audio',
@@ -89,6 +99,7 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F5-11',
     slug: 'acta-entrega-resultados',
     fase: 'F5',
     titulo: 'Acta de Disposición Final y Devolución al Titular',
@@ -97,6 +108,7 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F5-12',
     slug: 'acta-sanitizacion',
     fase: 'F5',
     titulo: 'Acta de Sanitización de Copias Lógicas Temporales',
@@ -105,6 +117,7 @@ const PLANILLAS = [
     hojas: '1 Hoja Folio',
   },
   {
+    codigo: 'FO-F5-13',
     slug: 'acta-auditoria-timeline',
     fase: 'F5',
     titulo: 'Acta de Auditoría y Trazabilidad Criptográfica',
@@ -154,6 +167,7 @@ const PLANILLAS = [
         <div class="usa-card__header">
           <div class="display-flex flex-justify flex-align-center margin-bottom-1">
             <span class="usa-tag font-mono-3xs">FASE {p.fase}</span>
+            <span class="usa-tag usa-tag--informative font-mono-3xs">{p.codigo}</span>
             <span class="usa-tag font-mono-3xs">{p.hojas}</span>
           </div>
           <h2 class="usa-card__heading font-heading-sm">{p.titulo}</h2>

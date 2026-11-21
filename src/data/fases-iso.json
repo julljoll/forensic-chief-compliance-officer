@@ -71,7 +71,7 @@
         { "id": "f2_metodo_logico", "texto": "Método de adquisición lógica/física documentado (ADB, backup, PST/OST)", "norma": "NIST SP 800-101 §5", "tipologias": ["forense_whatsapp", "forense_email"] },
         { "id": "f2_herramienta", "texto": "Herramienta de adquisición y versión registradas", "norma": "ISO/IEC 27037 §7.1.3", "campos": [{ "campo": "imagen_herramienta", "regla": "requerido" }] },
         { "id": "f2_hash_genesis", "texto": "Hash génesis SHA-256 calculado y registrado", "norma": "ISO/IEC 27037 §7.1.3.4", "campos": [{ "campo": "hashSHA256", "regla": "sha256" }] },
-        { "id": "f2_hash_match", "texto": "Verificación MATCH: hash de la imagen = hash del original", "norma": "ISO/IEC 27037 §5.4.3", "tipologias": ["forense_discoduro", "forense_imagen"], "campos": [{ "campo": "imagen_match_hash", "regla": "verdadero" }] },
+        { "id": "f2_hash_match", "texto": "Verificación MATCH: hash de la imagen = hash del original", "norma": "ISO/IEC 27037 §5.4.4 / §7.1.3", "tipologias": ["forense_discoduro", "forense_imagen"], "campos": [{ "campo": "imagen_match_hash", "regla": "verdadero" }] },
         { "id": "f2_resguardo", "texto": "Original resguardado en bóveda y traspaso anotado en PRCC", "norma": "MUCC-2017 Resguardo" }
       ]
     },

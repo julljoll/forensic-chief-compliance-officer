@@ -25,7 +25,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <PlanillaHeader
       title="Planilla de Análisis Forense de Audio y Espectrograma"
       norma="LMDFE ARTS. 4 Y 7 · ISO/IEC 27042 §7–8 · SWGDE AUDIO"
-      codigoDoc="FO-AUD-01"
+      codigoDoc="FO-F3-06"
       numeroCaso={caso.numeroCaso}
       numeroPRCC={caso.numero_prcc || caso.numeroPRCC}
       modo={modo}
@@ -122,19 +122,21 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
       </div>
     </div>
 
-    <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
+    <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
-      consignanteTitulo="PERITO EN ACÚSTICA FORENSE"
-      peritoTitulo="PERITO COORDINADOR REVISOR"
-      solicitanteNombre={caso.peritoLider}
-      solicitanteCedula={caso.perito_cedula}
-      solicitanteTelefono={caso.solicitante_telefono}
-      solicitanteDireccion="Laboratorio Forense SHA256.US"
-      peritoNombre="Co-Perito Acústico"
-      peritoCedula="V-17.442.991"
-      peritoCiv="CIV-281014"
-      peritoInpre="INPRE-174820"
-      peritoCargo="Especialista en Señales de Audio"
+      leftRole="perito"
+      consignanteTitulo="PERITO EN ACÚSTICA FORENSE (CO-PERITO)"
+      peritoTitulo="PERITO PRINCIPAL / COORDINADOR REVISOR"
+      coPeritoNombre={caso.co_perito_nombre || "Ing. Perito Acústico"}
+      coPeritoCedula={caso.co_perito_cedula || "V-17.442.991"}
+      coPeritoCiv="281014"
+      coPeritoInpre="174820"
+      coPeritoCargo="Especialista en Análisis de Señales de Audio"
+      peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
+      peritoCedula={caso.perito_cedula || "V-18.999.001"}
+      peritoCiv={caso.perito_civ || "299410"}
+      peritoInpre={caso.perito_inpre || "184920"}
+      peritoCargo={caso.perito_cargo || "Perito Informático Forense"}
       rolIso="DES (Digital Evidence Specialist) · ISO 27042"
       modo={modo}
     />
