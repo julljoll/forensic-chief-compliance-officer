@@ -1,8 +1,9 @@
 /**
  * SHA256.US — Estilos Canónicos de Planilla Folio Oficial (216mm x 330mm)
+ * Estándar Federal Forense (NIST SP 800-86 · FBI FD-1004 · OMB Control Standard)
  * Formato: Folio / Oficio Judicial (216mm x 330mm).
- * Paleta: Blanco y Negro Puro (Monocromático de Alto Contraste para Impresión Láser).
- * Márgenes Judiciales: 25mm Izquierdo (costura/perforación), 12mm Derecho, 15mm Superior, 15mm Inferior.
+ * Paleta: Monocromático Federal de Alto Contraste con Acentos #112E51 y #E8EEF4 para Impresión Láser.
+ * Márgenes Judiciales: 30mm Izquierdo (costura / perforación de 3 agujeros), 15mm Derecho, 15mm Superior, 15mm Inferior.
  */
 
 /* 1. Definición Canónica de Paged Media */
@@ -31,7 +32,8 @@
   .usa-nav,
   .planilla-actions-bar,
   header.usa-header,
-  nav.usa-sidenav {
+  nav.usa-sidenav,
+  footer.usa-footer {
     display: none !important;
     visibility: hidden !important;
     height: 0 !important;
@@ -54,7 +56,7 @@
     max-width: 216mm !important;
     height: 330mm !important;
     max-height: 330mm !important;
-    padding: 15mm 12mm 15mm 25mm !important;
+    padding: 15mm 15mm 15mm 30mm !important; /* 30mm margen izquierdo para encuadernación */
     box-sizing: border-box !important;
     page-break-after: always !important;
     break-after: page !important;
@@ -67,8 +69,14 @@
     color: #000000 !important;
   }
 
+  /* REGLA CRÍTICA: La última página de cada planilla NO genera salto de página fantasma */
+  .folio-forense-aislado .page:last-child {
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
   .folio-forense-aislado .watermark {
-    opacity: 0.03 !important;
+    opacity: 0.025 !important;
     color: #000000 !important;
   }
 }
@@ -96,11 +104,11 @@
   max-width: 216mm;
   height: 330mm;
   max-height: 330mm;
-  padding: 15mm 12mm 15mm 25mm;
+  padding: 15mm 15mm 15mm 30mm; /* 30mm margen de encuadernación */
   margin: 20px auto 30px auto;
   background: #FFFFFF !important;
   color: #000000 !important;
-  border: 1px solid #000000;
+  border: 1.25pt solid #000000;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   box-sizing: border-box;
   position: relative;
@@ -110,11 +118,11 @@
   justify-content: space-between;
 }
 
-/* 4. Encabezado Oficial Monocromático Unificado */
+/* 4. Encabezado Oficial Monocromático Unificado (Estilo Federal / FBI) */
 .folio-forense-aislado .canonical-header {
-  border-bottom: 2px solid #000000;
-  padding-bottom: 6px;
-  margin-bottom: 8px;
+  border-bottom: 1.5pt solid #000000;
+  padding-bottom: 5px;
+  margin-bottom: 6px;
   flex-shrink: 0;
 }
 
@@ -123,7 +131,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  border-bottom: 1px solid #000000;
+  border-bottom: 0.75pt solid #000000;
   padding-bottom: 4px;
 }
 
@@ -134,10 +142,10 @@
 }
 
 .folio-forense-aislado .header-logo {
-  width: 32px;
-  height: 32px;
-  filter: grayscale(100%) contrast(150%);
+  width: 36px;
+  height: 36px;
   object-fit: contain;
+  flex-shrink: 0;
 }
 
 .folio-forense-aislado .header-rep-text {
@@ -147,83 +155,114 @@
 }
 
 .folio-forense-aislado .header-rep-country {
-  font-size: 7.5pt;
+  font-size: 7pt;
   font-weight: 800;
   letter-spacing: 0.05em;
   text-transform: uppercase;
 }
 
 .folio-forense-aislado .header-rep-lab {
-  font-size: 9pt;
-  font-weight: 800;
+  font-size: 8.5pt;
+  font-weight: 900;
   letter-spacing: -0.01em;
   text-transform: uppercase;
 }
 
 .folio-forense-aislado .header-rep-sub {
-  font-size: 6.5pt;
+  font-size: 6pt;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.03em;
+  color: #333333;
 }
 
-.folio-forense-aislado .header-badge-legal {
-  text-align: right;
-  font-size: 6.5pt;
-  font-weight: 700;
-  font-family: 'Roboto Mono Web', monospace;
+/* FBI / OMB Federal Control Box */
+.folio-forense-aislado .header-control-box {
+  border: 1.25pt solid #000000;
+  background-color: #F8F9FA;
+  padding: 2px 6px;
+  font-size: 6pt;
   line-height: 1.25;
+  text-align: right;
+  min-width: 130px;
 }
 
-.folio-forense-aislado .header-title-box {
-  margin-top: 6px;
+.folio-forense-aislado .control-box-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.folio-forense-aislado .control-box-lbl {
+  font-weight: 700;
+  color: #444444;
+}
+
+.folio-forense-aislado .control-box-val {
+  font-weight: 800;
+  color: #000000;
+}
+
+/* Banda de Título Federal de Alto Contraste (#1B1B1B) */
+.folio-forense-aislado .header-title-box {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  background-color: #1B1B1B;
+  color: #FFFFFF;
+  padding: 4px 8px;
+  border: 1.25pt solid #1B1B1B;
   text-align: center;
 }
 
 .folio-forense-aislado .canonical-doc-title {
-  font-size: 11pt;
+  font-family: 'Merriweather Web', Georgia, serif;
+  font-size: 10pt;
   font-weight: 900;
   text-transform: uppercase;
   margin: 0;
   letter-spacing: 0.03em;
   line-height: 1.2;
+  color: #FFFFFF !important;
 }
 
 .folio-forense-aislado .canonical-doc-norm {
-  font-size: 7pt;
+  font-family: 'Roboto Mono Web', monospace;
+  font-size: 6.5pt;
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   margin-top: 2px;
+  color: #E2E8F0 !important;
 }
 
+/* Tabla de Metadatos de Cabecera */
 .folio-forense-aislado .header-meta-table {
   width: 100%;
-  margin-top: 6px;
+  margin-top: 4px;
   border-collapse: collapse;
-  font-size: 7.5pt;
+  font-size: 7pt;
+  border: 1.25pt solid #000000;
 }
 
 .folio-forense-aislado .header-meta-table td {
-  border: 1px solid #000000;
-  padding: 2px 6px;
+  border: 0.6pt solid #000000;
+  padding: 2px 5px;
   vertical-align: middle;
 }
 
 .folio-forense-aislado .header-meta-label {
   font-weight: 800;
   text-transform: uppercase;
-  background-color: #F0F0F0;
-  width: 18%;
+  background-color: #F0F4F8;
+  color: #112E51;
+  width: 20%;
+  font-size: 6.5pt;
 }
 
 .folio-forense-aislado .header-meta-val {
   font-family: 'Roboto Mono Web', monospace;
   font-weight: 700;
-  width: 32%;
+  width: 30%;
 }
 
 /* 5. Contenido Pericial Central */
@@ -231,36 +270,39 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  min-height: 0; /* Permite scroll o ajuste fino en flexbox */
+  gap: 5px;
+  min-height: 0;
 }
 
 .folio-forense-aislado .section-block {
-  border: 1px solid #000000;
+  border: 1.25pt solid #000000;
   padding: 4px 6px;
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   background: #FFFFFF;
 }
 
+/* Bandas de Sección con Acento Federal #E8EEF4 y Barra 3pt #112E51 */
 .folio-forense-aislado .section-heading {
-  font-size: 8pt;
+  font-size: 7.5pt;
   font-weight: 900;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  border-bottom: 1.5px solid #000000;
-  padding-bottom: 2px;
-  margin-bottom: 4px;
-  background: #F0F0F0;
-  padding: 2px 4px;
+  background-color: #E8EEF4;
+  color: #112E51;
+  border-left: 3pt solid #112E51;
+  border-bottom: 0.6pt solid #CBD5E1;
+  padding: 2px 5px;
+  margin-bottom: 3px;
 }
 
 .folio-forense-aislado .legal-clause {
-  font-size: 7.5pt;
+  font-size: 7pt;
   line-height: 1.35;
   text-align: justify;
-  border: 1px solid #000000;
-  padding: 4px 8px;
-  margin-bottom: 4px;
+  border: 1.25pt solid #000000;
+  padding: 4px 6px;
+  margin-bottom: 2px;
+  background-color: #FAFAFA;
 }
 
 /* 6. Cuadrículas y Formatos de Captura */
@@ -283,16 +325,16 @@
 }
 
 .folio-forense-aislado .field-label {
-  font-size: 7pt;
+  font-size: 6.8pt;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.02em;
 }
 
 .folio-forense-aislado .field-value {
-  font-size: 8pt;
-  min-height: 18px;
-  border-bottom: 1px solid #000000;
+  font-size: 7.5pt;
+  min-height: 16px;
+  border-bottom: 0.75pt solid #000000;
   padding: 1px 2px;
   word-break: break-word;
 }
@@ -301,31 +343,31 @@
 .folio-forense-aislado .forense-cell-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 7.2pt;
-  border: 1px solid #000000;
-  margin-bottom: 4px;
+  font-size: 7pt;
+  border: 1.25pt solid #000000;
+  margin-bottom: 2px;
 }
 
 .folio-forense-aislado .forense-cell-table td,
 .folio-forense-aislado .forense-cell-table th {
-  border: 1px solid #000000;
-  padding: 2.5px 5px;
+  border: 0.6pt solid #000000;
+  padding: 2px 4px;
   vertical-align: middle;
 }
 
 .folio-forense-aislado .forense-cell-label {
-  background-color: #F0F0F0;
+  background-color: #F0F4F8;
   font-weight: 800;
-  font-size: 6.8pt;
+  font-size: 6.5pt;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  color: #000000;
+  color: #112E51;
   white-space: nowrap;
 }
 
 .folio-forense-aislado .forense-cell-value {
   background-color: #FFFFFF;
-  font-size: 7.5pt;
+  font-size: 7.2pt;
   color: #000000;
   word-break: break-word;
 }
@@ -333,68 +375,62 @@
 /* Líneas continuas para escritura a mano (Modo Blanco) */
 .folio-forense-aislado .linea-manual {
   display: block;
-  border-bottom: 1px solid #000000;
-  min-height: 20px;
+  border-bottom: 0.75pt solid #000000;
+  min-height: 16px;
   width: 100%;
 }
 
 .folio-forense-aislado .lineas-pautadas-2 {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   padding: 2px 0;
 }
 
 .folio-forense-aislado .lineas-pautadas-3 {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
   padding: 2px 0;
 }
 
 .folio-forense-aislado .renglon-manual {
   display: block;
-  border-bottom: 1px solid #000000;
-  height: 20px;
-  width: 100%;
-}
-
-.folio-forense-aislado .linea-punteada {
-  display: block;
-  border-bottom: 1px dashed #555555;
-  min-height: 18px;
+  border-bottom: 0.75pt solid #000000;
+  height: 16px;
   width: 100%;
 }
 
 .folio-forense-aislado .casilla-check {
   font-family: 'Roboto Mono Web', monospace;
   font-weight: 700;
-  font-size: 8pt;
+  font-size: 7.5pt;
 }
 
 /* 7. Tablas Forenses Canónicas en B&W */
 .folio-forense-aislado table.forense-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 7pt;
-  border: 1px solid #000000;
-  margin-bottom: 4px;
+  font-size: 6.8pt;
+  border: 1.25pt solid #000000;
+  margin-bottom: 2px;
 }
 
 .folio-forense-aislado table.forense-table th {
-  background-color: #F0F0F0;
+  background-color: #E8EEF4;
+  color: #112E51;
   font-weight: 800;
   text-transform: uppercase;
   letter-spacing: 0.02em;
-  border: 1px solid #000000;
-  padding: 3px 4px;
+  border: 0.6pt solid #000000;
+  padding: 2.5px 4px;
   text-align: center;
-  font-size: 6.8pt;
+  font-size: 6.5pt;
 }
 
 .folio-forense-aislado table.forense-table td {
-  border: 1px solid #000000;
-  padding: 2.5px 4px;
+  border: 0.6pt solid #000000;
+  padding: 2px 4px;
   vertical-align: middle;
 }
 
@@ -408,50 +444,52 @@
 }
 
 .folio-forense-aislado .sig-box {
-  border: 1px solid #000000;
+  border: 1.25pt solid #000000;
   padding: 4px 6px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  background-color: #FFFFFF;
 }
 
 .folio-forense-aislado .sig-box-title {
-  font-size: 7.5pt;
+  font-size: 7pt;
   font-weight: 900;
   text-transform: uppercase;
   text-align: center;
-  border-bottom: 1px solid #000000;
+  border-bottom: 1pt solid #000000;
   padding-bottom: 2px;
-  margin-bottom: 4px;
-  background-color: #F0F0F0;
+  margin-bottom: 3px;
+  background-color: #E8EEF4;
+  color: #112E51;
 }
 
 .folio-forense-aislado .sig-data-row {
-  font-size: 7pt;
-  line-height: 1.4;
-  margin-bottom: 2px;
+  font-size: 6.8pt;
+  line-height: 1.35;
+  margin-bottom: 1.5px;
 }
 
 .folio-forense-aislado .sig-line-solid {
-  border-bottom: 1.5px solid #000000;
-  margin-top: 14px;
+  border-bottom: 1.25pt solid #000000;
+  margin-top: 12px;
   margin-bottom: 2px;
 }
 
 .folio-forense-aislado .sig-legend {
-  font-size: 6.5pt;
+  font-size: 6pt;
   font-weight: 700;
   text-transform: uppercase;
   text-align: center;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .folio-forense-aislado .fingerprint-container {
   display: flex;
   justify-content: space-around;
-  margin-top: 4px;
+  margin-top: 3px;
   padding-top: 2px;
-  border-top: 1px dashed #888888;
+  border-top: 0.75pt dashed #888888;
 }
 
 .folio-forense-aislado .fingerprint-item {
@@ -462,31 +500,31 @@
 }
 
 .folio-forense-aislado .thumb-box-canonical {
-  width: 18mm;
-  min-width: 18mm;
-  max-width: 18mm;
-  height: 24mm;
-  min-height: 24mm;
-  max-height: 24mm;
-  border: 1.5px solid #000000;
+  width: 17mm;
+  min-width: 17mm;
+  max-width: 17mm;
+  height: 22mm;
+  min-height: 22mm;
+  max-height: 22mm;
+  border: 1.25pt solid #000000;
   background-color: #FFFFFF;
   flex-shrink: 0;
   box-sizing: border-box;
 }
 
 .folio-forense-aislado .thumb-box-label {
-  font-size: 6pt;
+  font-size: 5.8pt;
   font-weight: 800;
   text-transform: uppercase;
 }
 
-/* 9. Pie de Página Canónico Unificado */
+/* 9. Pie de Página Canónico Unificado (Cero Estilos Inline) */
 .folio-forense-aislado .canonical-footer {
-  border-top: 1.5px solid #000000;
+  border-top: 1.5pt solid #000000;
   padding-top: 3px;
-  margin-top: 6px;
-  font-size: 6.5pt;
-  line-height: 1.25;
+  margin-top: 4px;
+  font-size: 6.2pt;
+  line-height: 1.2;
   flex-shrink: 0;
 }
 
@@ -494,7 +532,38 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.folio-forense-aislado .footer-legal-tag {
+  letter-spacing: 0.02em;
+}
+
+.folio-forense-aislado .footer-folio-tag {
+  font-weight: 900;
+}
+
+.folio-forense-aislado .footer-crypto-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 4px;
+  margin-top: 1px;
+}
+
+.folio-forense-aislado .footer-crypto-label {
+  font-weight: 800;
+  white-space: nowrap;
+  font-size: 5.8pt;
+  letter-spacing: 0.01em;
+}
+
+.folio-forense-aislado .footer-crypto-hash {
+  font-family: 'Roboto Mono Web', Menlo, Monaco, Consolas, monospace !important;
+  font-size: 5.8pt;
+  overflow-wrap: break-word !important;
+  word-break: break-all !important;
+  letter-spacing: -0.01em;
 }
 
 .folio-forense-aislado .footer-address-line {
@@ -502,6 +571,8 @@
   margin-top: 1px;
   font-style: normal;
   letter-spacing: 0.01em;
+  font-size: 5.5pt;
+  color: #333333;
 }
 
 /* 10. Watermark Oficial */
@@ -510,9 +581,9 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%) rotate(-35deg);
-  font-size: 46pt;
+  font-size: 44pt;
   font-weight: 900;
-  color: rgba(0, 0, 0, 0.04);
+  color: rgba(0, 0, 0, 0.035);
   pointer-events: none;
   user-select: none;
   white-space: nowrap;
@@ -524,7 +595,7 @@
 .folio-forense-aislado .font-mono,
 .folio-forense-aislado code {
   font-family: 'Roboto Mono Web', Menlo, Monaco, Consolas, monospace !important;
-  font-size: 7.5pt;
+  font-size: 7pt;
   overflow-wrap: break-word !important;
   word-break: break-all !important;
 }

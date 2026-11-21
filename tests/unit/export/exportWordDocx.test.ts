@@ -107,7 +107,7 @@ describe('exportWordDocx — Pre-procesamiento y Exportación a Microsoft Word (
     const template = buildWordDocxHtmlTemplate('<p>Cuerpo</p>', 'Documento Oficial');
     expect(template).toContain("urn:schemas-microsoft-com:office:word");
     expect(template).toContain("216mm 330mm");
-    expect(template).toContain("margin: 15mm 12mm 15mm 25mm");
+    expect(template).toContain("margin: 15mm 15mm 15mm 30mm");
     expect(template).toContain("<p>Cuerpo</p>");
   });
 

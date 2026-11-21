@@ -1,0 +1,103 @@
+---
+/**
+ * SHA256.US — Componente Canónico de Casilla de Verificación Forense (PlanillaCheck)
+ * Reemplaza los caracteres en texto plano `[   ]` y `[ X ]` por casillas vectoriales
+ * de alta definición con estándar federal estadounidense (NIST / FBI / USWDS).
+ */
+interface Props {
+  checked?: boolean;
+  label?: string;
+  inline?: boolean;
+  value?: string;
+}
+
+const {
+  checked = false,
+  label = '',
+  inline = true,
+  value = '',
+} = Astro.props;
+---
+
+<span class:list={['forense-check-wrapper', { 'forense-check-inline': inline }]}>
+  <span class:list={['forense-check-box', { 'is-checked': checked }]}>
+    {checked && (
+      <svg
+        class="forense-check-icon"
+        viewBox="0 0 12 12"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
+      >
+        <path
+          d="M2.5 6.5L4.8 8.8L9.5 3.5"
+          stroke="#000000"
+          stroke-width="1.8"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+    )}
+  </span>
+  {label && <span class="forense-check-label">{label}</span>}
+  {value && <strong class="forense-check-val">{value}</strong>}
+</span>
+
+<style>
+  .forense-check-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 7pt;
+    line-height: 1.2;
+    vertical-align: middle;
+  }
+
+  .forense-check-inline {
+    margin-right: 6px;
+  }
+
+  .forense-check-box {
+    width: 10px;
+    height: 10px;
+    min-width: 10px;
+    min-height: 10px;
+    border: 1.25pt solid #000000;
+    background-color: #FFFFFF;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    flex-shrink: 0;
+  }
+
+  .forense-check-box.is-checked {
+    background-color: #FFFFFF;
+  }
+
+  .forense-check-icon {
+    width: 8px;
+    height: 8px;
+    display: block;
+  }
+
+  .forense-check-label {
+    font-size: 7pt;
+    color: #000000;
+    font-weight: 500;
+  }
+
+  .forense-check-val {
+    font-size: 7pt;
+    color: #000000;
+    font-weight: 800;
+  }
+
+  @media print {
+    .forense-check-box {
+      border: 1.2pt solid #000000 !important;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+  }
+</style>
