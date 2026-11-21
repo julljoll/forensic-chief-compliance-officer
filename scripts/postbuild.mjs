@@ -32,4 +32,12 @@ if (fs.existsSync(publicHtaccess)) {
   console.log('✅ dist/.htaccess verificado y sincronizado');
 }
 
+// 3. Asegurar que gatekeeper.php existe en dist/
+const publicGatekeeper = path.resolve(rootDir, 'public/gatekeeper.php');
+const distGatekeeper = path.resolve(distDir, 'gatekeeper.php');
+if (fs.existsSync(publicGatekeeper)) {
+  fs.copyFileSync(publicGatekeeper, distGatekeeper);
+  console.log('✅ dist/gatekeeper.php verificado y sincronizado');
+}
+
 console.log('✨ Postbuild finalizado con éxito.');

@@ -16,7 +16,7 @@ interface Props {
 const { title = 'Forensic Chief Compliance Officer — SHA256.US', activeNav = '' } = Astro.props;
 ---
 <!doctype html>
-<html lang="es">
+<html lang="es" class="fcco-auth-loading">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -24,6 +24,24 @@ const { title = 'Forensic Chief Compliance Officer — SHA256.US', activeNav = '
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css?v=3.14.0" />
     <script is:inline src="/assets/uswds/js/uswds-init.min.js"></script>
+
+    <!-- Guardia Sincrónico de Acceso: Previene flash y bloquea acceso no autenticado -->
+    <script is:inline>
+      (function() {
+        var p = window.location.pathname;
+        var isPublic = p === '/' || p.endsWith('/index.html') || p === '';
+        if (!isPublic) {
+          if (sessionStorage.getItem('fcco_auth_active') !== '1') {
+            window.location.replace('/?msg=sesion_requerida');
+          }
+        }
+      })();
+    </script>
+    <style id="fcco-auth-cloak">
+      html.fcco-auth-loading body {
+        display: none !important;
+      }
+    </style>
   </head>
   <body class="bg-base-lightest display-flex flex-column minh-viewport">
     <a class="usa-skipnav" href="#main-content">Saltar al contenido principal</a>
