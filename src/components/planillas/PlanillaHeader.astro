@@ -30,7 +30,7 @@ const {
   totalHojas = 1,
 } = Astro.props;
 
-const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
+const isBlanco = true;
 ---
 
 <header class="canonical-header">
@@ -72,43 +72,27 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
     <div class="canonical-doc-norm">{norma}</div>
   </div>
 
-  <!-- Grid Micro-Label de Metadatos de la Causa (ISO/IEC 27037 §7.1 · NIST SP 800-86) -->
+  <!-- Grid Micro-Label de Metadatos de la Causa (Celdas en blanco sin líneas interiores para llenado a mano) -->
   <table class="header-meta-table">
     <tbody>
       <tr>
         <td class="header-meta-label">EXPEDIENTE / CASE N°:</td>
         <td class="header-meta-val">
-          {isBlanco ? (
-            <span class="linea-manual" data-field="numeroCaso" data-default="MP-01-2026-WA"></span>
-          ) : (
-            <span data-field="numeroCaso">{numeroCaso || '_________________________'}</span>
-          )}
+          {isBlanco && <span class="linea-manual" data-field="numeroCaso" data-default="MP-01-2026-WA"></span>}
         </td>
         <td class="header-meta-label">FECHA DE ACTUACIÓN:</td>
         <td class="header-meta-val">
-          {isBlanco ? (
-            <span class="linea-manual" data-field="fecha" data-default={new Date().toLocaleDateString('es-VE')}></span>
-          ) : (
-            <span data-field="fecha">{fecha || new Date().toLocaleDateString('es-VE')}</span>
-          )}
+          {isBlanco && <span class="linea-manual" data-field="fecha" data-default=""></span>}
         </td>
       </tr>
       <tr>
         <td class="header-meta-label">REGISTRO PRCC N°:</td>
         <td class="header-meta-val">
-          {isBlanco ? (
-            <span class="linea-manual" data-field="numero_prcc" data-default="PRCC-2026-001"></span>
-          ) : (
-            <span data-field="numero_prcc">{numeroPRCC || '_________________________'}</span>
-          )}
+          {isBlanco && <span class="linea-manual" data-field="numero_prcc" data-default="PRCC-2026-001"></span>}
         </td>
         <td class="header-meta-label">HORA / SEDE FORENSE:</td>
         <td class="header-meta-val">
-          {isBlanco ? (
-            <span class="linea-manual" data-field="hora_sede" data-default="10:00 VET · SEDE PRINCIPAL QUÍBOR"></span>
-          ) : (
-            <span data-field="hora_sede">{hora || '10:00 VET · SEDE PRINCIPAL QUÍBOR'}</span>
-          )}
+          {isBlanco && <span class="linea-manual" data-field="hora_sede" data-default=""></span>}
         </td>
       </tr>
     </tbody>

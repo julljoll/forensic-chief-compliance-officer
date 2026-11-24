@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { caso = {}, modo = 'blanco' } = Astro.props;
-const isBlanco = modo === 'blanco' || !caso.numeroCaso;
+const isBlanco = true;
 ---
 
 <div class="folio-forense-aislado">
@@ -100,7 +100,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
               <td>¿Suministra voluntariamente el PIN, patrón o contraseña de desbloqueo del móvil o medio consignado?</td>
               <td>
                 {isBlanco ? (
-                  <span data-default="[ X ] SÍ — Suministrado voluntariamente en sobre lacrado para acceso pericial">[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; Credencial: <span class="linea-manual" style="display:inline-block; width:45%; min-height:16px;"></span></span>
+                  <span data-default="[ X ] SÍ — Suministrado voluntariamente en sobre lacrado para acceso pericial">[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; Credencial:</span>
                 ) : (
                   <span>[ X ] Suministrado voluntariamente en sobre lacrado</span>
                 )}
@@ -122,7 +122,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
               <td>¿El dispositivo móvil, aplicación o medio digital sufrió desinstalaciones, caídas, formateo o manipulación?</td>
               <td>
                 {isBlanco ? (
-                  <span data-default="[ X ] NO — Sistema operativo, almacenamiento y bases de datos íntegros">[&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] SÍ &nbsp;&nbsp; Observación: <span class="linea-manual" style="display:inline-block; width:42%; min-height:16px;"></span></span>
+                  <span data-default="[ X ] NO — Sistema operativo, almacenamiento y bases de datos íntegros">[&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] SÍ &nbsp;&nbsp; Observación:</span>
                 ) : (
                   <span>[ X ] Negativo; sistema operativo y base de datos íntegros</span>
                 )}

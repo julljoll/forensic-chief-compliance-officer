@@ -56,38 +56,10 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
     <script>
       import { exportCurrentPlanillaToWordDocx } from '../lib/export/exportWordDocx';
 
-      // Sincronizar el estado del selector con la URL
       const urlParams = new URLSearchParams(window.location.search);
-      const modoActual = urlParams.get('modo') || (urlParams.get('casoId') ? 'datos' : 'blanco');
-      const btnBlanco = document.getElementById('btn-modo-blanco');
-      const btnDatos = document.getElementById('btn-modo-datos');
       const btnWord = document.getElementById('btn-descargar-word');
       const txtWord = document.getElementById('txt-btn-word');
       const btnImprimir = document.getElementById('btn-imprimir-folio');
-
-      function updateActiveBtn(modo: string) {
-        if (modo === 'datos') {
-          btnDatos?.classList.remove('usa-button--outline');
-          btnBlanco?.classList.add('usa-button--outline');
-        } else {
-          btnBlanco?.classList.remove('usa-button--outline');
-          btnDatos?.classList.add('usa-button--outline');
-        }
-      }
-
-      updateActiveBtn(modoActual);
-
-      btnBlanco?.addEventListener('click', () => {
-        const u = new URL(window.location.href);
-        u.searchParams.set('modo', 'blanco');
-        window.location.href = u.toString();
-      });
-
-      btnDatos?.addEventListener('click', () => {
-        const u = new URL(window.location.href);
-        u.searchParams.set('modo', 'datos');
-        window.location.href = u.toString();
-      });
 
       btnImprimir?.addEventListener('click', () => {
         window.print();

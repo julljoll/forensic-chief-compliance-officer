@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { caso = {}, modo = 'blanco' } = Astro.props;
-const isBlanco = modo === 'blanco' || !caso.numeroCaso;
+const isBlanco = true;
 
 const dispositivoDesc = caso.dispositivo_marca
   ? `${caso.dispositivo_marca} ${caso.dispositivo_modelo || ''}`

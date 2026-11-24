@@ -644,14 +644,11 @@ import { FASES_ISO } from '../../lib/domain/gating';
           </div>
 
           <div class="display-flex grid-gap-05 flex-wrap border-top-1px border-base-lightest padding-top-1">
-            <a href="/planillas/${p.slug}?casoId=${casoActual?.id}&modo=datos" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
-              Ver Folio con Datos
+            <a href="/planillas/${p.slug}?modo=blanco" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
+              Ver Planilla en Blanco
             </a>
-            <a href="/planillas/${p.slug}?casoId=${casoActual?.id}&modo=blanco" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
-              Formato en Blanco
-            </a>
-            <a href="/planillas/${p.slug}?casoId=${casoActual?.id}&modo=datos&imprimir=1" target="_blank" class="usa-button font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
-              Imprimir
+            <a href="/planillas/${p.slug}?modo=blanco&imprimir=1" target="_blank" class="usa-button font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
+              Imprimir en Blanco
             </a>
             <button type="button" class="usa-button usa-button--base font-sans-3xs padding-x-1 padding-y-05 width-full margin-top-05 text-center btn-docx-fase" data-slug="${p.slug}" data-titulo="${p.titulo}">
               Descargar Word (.docx)
@@ -669,7 +666,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
         if (slug) {
           target.textContent = 'Generando Word...';
           try {
-            await descargarPlanillaPorSlug(slug, 'datos', casoActual?.id, tit);
+            await descargarPlanillaPorSlug(slug, 'blanco', undefined, tit);
           } finally {
             target.textContent = 'Descargar Word (.docx)';
           }

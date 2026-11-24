@@ -18,10 +18,7 @@ const {
   modo = 'blanco',
 } = Astro.props;
 
-const isBlanco = modo === 'blanco' || !hashSha256;
-const displayHash = isBlanco
-  ? '________________________________________________________________'
-  : hashSha256;
+const displayHash = '';
 ---
 
 <footer class="canonical-footer">
@@ -36,7 +33,7 @@ const displayHash = isBlanco
 
   <div class="footer-crypto-line">
     <span class="footer-crypto-label">SELLO CRIPTOGRÁFICO DE AUDITORÍA SHA-256 (RFC 8785):</span>
-    <span class="footer-crypto-hash font-mono" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e">{displayHash}</span>
+    <span class="footer-crypto-hash font-mono" data-field="hashSHA256" data-default="">{displayHash}</span>
   </div>
 
   <address class="footer-address-line">

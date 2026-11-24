@@ -131,19 +131,14 @@ const PLANILLAS = [
 
 <PageHeader
   title="Catálogo de Planillas Oficiales en Folio (216mm × 330mm)"
-  subtitle="13 instrumentos periciales con aspecto judicial federal americano, membrete oficial, dactiloscopía bilateral y cierre formal."
+  subtitle="13 instrumentos periciales con aspecto judicial federal americano, membrete oficial, celdas limpias sin líneas internas, dactiloscopía bilateral y cierre formal."
   tag="13 Planillas Folio"
   tagColor="bg-primary-darker"
 >
-  <div slot="actions" style="min-width: 280px;">
-    <label class="usa-label margin-top-0 font-sans-3xs text-bold" for="select-caso-planillas">
-      Modo de Emisión (Blanco / Con Datos):
-    </label>
-    <select class="usa-select font-sans-xs margin-top-05" id="select-caso-planillas">
-      <option value="blanco" selected>
-        Formato en Blanco (Llenado Manual con Bolígrafo)
-      </option>
-    </select>
+  <div slot="actions">
+    <span class="usa-tag bg-primary-darker text-white font-mono-3xs padding-x-105 padding-y-1">
+      FORMATO OFICIAL EN BLANCO (LLENADO A MANO)
+    </span>
   </div>
 </PageHeader>
 
@@ -249,60 +244,10 @@ const PLANILLAS = [
 </ul>
 
 <script>
-  import { idbGetAll } from '../../lib/data/idb';
-  import { phpApi } from '../../lib/data/phpApi';
   import { descargarPlanillaPorSlug } from '../../lib/export/exportWordDocx';
-  import type { CasoCMS } from '../../lib/domain/types';
 
-  const select = document.getElementById('select-caso-planillas') as HTMLSelectElement;
-
-  async function initCatalogo() {
-    let casos: CasoCMS[] = [];
-    try {
-      casos = await phpApi.listarCasos();
-    } catch {
-      casos = await idbGetAll<CasoCMS>('casos');
-    }
-
-    casos = (casos || []).filter((c) => !c.id.startsWith('caso-mock-'));
-
-    if (select) {
-      select.innerHTML = '';
-      
-      // Opción 1: Plantilla en blanco
-      const optBlanco = document.createElement('option');
-      optBlanco.value = 'blanco';
-      optBlanco.textContent = 'Formato en Blanco (Llenado Manual con Bolígrafo)';
-      optBlanco.selected = true;
-      select.appendChild(optBlanco);
-
-      if (casos.length > 0) {
-        // Grupo con casos reales sincronizados
-        const optGroup = document.createElement('optgroup');
-        optGroup.label = 'Expedientes Sincronizados en MySQL:';
-        casos.forEach((c) => {
-          const opt = document.createElement('option');
-          opt.value = c.id;
-          opt.textContent = `${c.numeroCaso} — ${c.evidenciaMarca} (${c.estado})`;
-          optGroup.appendChild(opt);
-        });
-        select.appendChild(optGroup);
-      }
-
-      const params = new URLSearchParams(window.location.search);
-      const paramId = params.get('casoId');
-      if (paramId && (paramId === 'blanco' || casos.some((x) => x.id === paramId))) {
-        select.value = paramId;
-      }
-
-      actualizarLinks(select.value);
-
-      select.addEventListener('change', () => {
-        actualizarLinks(select.value);
-      });
-    }
-
-    // Configurar listeners de descarga directa Microsoft Word (.docx)
+  function initCatalogo() {
+    // Configurar listeners de descarga directa Microsoft Word (.docx) siempre en blanco
     document.querySelectorAll('.btn-descargar-docx').forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.preventDefault();
@@ -310,19 +255,12 @@ const PLANILLAS = [
         const slug = button.getAttribute('data-slug') || '';
         const titulo = button.getAttribute('data-titulo') || '';
         const spanTxt = button.querySelector('.txt-descargar-docx');
-        const valorCaso = select?.value || 'blanco';
-        const isBlanco = valorCaso === 'blanco';
 
         if (spanTxt) spanTxt.textContent = 'Generando...';
         button.disabled = true;
 
         try {
-          await descargarPlanillaPorSlug(
-            slug,
-            isBlanco ? 'blanco' : 'datos',
-            isBlanco ? undefined : valorCaso,
-            titulo
-          );
+          await descargarPlanillaPorSlug(slug, 'blanco', undefined, titulo);
         } catch (err) {
           console.error('Error al descargar Word:', err);
           alert('Hubo un inconveniente al generar la planilla en formato Word.');
@@ -351,34 +289,6 @@ const PLANILLAS = [
           }
         });
       });
-    });
-  }
-
-  function actualizarLinks(valor: string) {
-    const isBlanco = valor === 'blanco';
-
-    document.querySelectorAll('.link-abrir-planilla').forEach((a) => {
-      const slug = a.getAttribute('data-slug');
-      const anchor = a as HTMLAnchorElement;
-      if (isBlanco) {
-        anchor.href = `/planillas/${slug}?modo=blanco`;
-        anchor.textContent = 'Ver Formato';
-      } else {
-        anchor.href = `/planillas/${slug}?casoId=${valor}&modo=datos`;
-        anchor.textContent = 'Ver con Datos';
-      }
-    });
-
-    document.querySelectorAll('.link-imprimir-planilla').forEach((a) => {
-      const slug = a.getAttribute('data-slug');
-      const anchor = a as HTMLAnchorElement;
-      if (isBlanco) {
-        anchor.href = `/planillas/${slug}?modo=blanco&imprimir=1`;
-        anchor.textContent = 'Imprimir';
-      } else {
-        anchor.href = `/planillas/${slug}?casoId=${valor}&modo=datos&imprimir=1`;
-        anchor.textContent = 'Imprimir';
-      }
     });
   }
 

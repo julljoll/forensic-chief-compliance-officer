@@ -250,8 +250,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     const civPerito = c.perito_civ || c.peritoLiderCiv || 'CIV-299410';
 
     if (casoTit) casoTit.textContent = `${c.numeroCaso} — ${c.titulo}`;
-    if (btnPrcc) btnPrcc.href = `/planillas/planilla-prcc?casoId=${c.id}&modo=datos`;
-    if (btnDesp) btnDesp.href = `/planillas/acta-desprecintado?casoId=${c.id}&modo=datos`;
+    if (btnPrcc) btnPrcc.href = `/planillas/planilla-prcc?modo=blanco`;
+    if (btnDesp) btnDesp.href = `/planillas/acta-desprecintado?modo=blanco`;
     if (prccEl) prccEl.textContent = prcc;
     if (precintoEl) precintoEl.textContent = precinto;
     if (aislamientoEl) {

@@ -246,7 +246,8 @@
 
 .folio-forense-aislado .header-meta-table td {
   border: 0.6pt solid #000000;
-  padding: 2px 5px;
+  padding: 3px 5px;
+  height: 19px;
   vertical-align: middle;
 }
 
@@ -263,6 +264,7 @@
   font-family: 'Roboto Mono Web', monospace;
   font-weight: 700;
   width: 30%;
+  background-color: #FFFFFF;
 }
 
 /* 5. Contenido Pericial Central */
@@ -333,13 +335,14 @@
 
 .folio-forense-aislado .field-value {
   font-size: 7.5pt;
-  min-height: 16px;
-  border-bottom: 0.75pt solid #000000;
-  padding: 1px 2px;
+  min-height: 18px;
+  border: 0.6pt solid #000000;
+  background-color: #FFFFFF;
+  padding: 2px 4px;
   word-break: break-word;
 }
 
-/* 6.1 Celdas Tabulares Cerradas Canónicas (Estructura Blindada) */
+/* 6.1 Celdas Tabulares Cerradas Canónicas (Estructura Blindada sin líneas internas) */
 .folio-forense-aislado .forense-cell-table {
   width: 100%;
   border-collapse: collapse;
@@ -351,7 +354,8 @@
 .folio-forense-aislado .forense-cell-table td,
 .folio-forense-aislado .forense-cell-table th {
   border: 0.6pt solid #000000;
-  padding: 2px 4px;
+  padding: 3px 5px;
+  height: 19px;
   vertical-align: middle;
 }
 
@@ -372,10 +376,11 @@
   word-break: break-word;
 }
 
-/* Líneas continuas para escritura a mano (Modo Blanco) */
+/* Espacios en blanco limpios para escritura a mano (SIN líneas en el interior de las celdas) */
 .folio-forense-aislado .linea-manual {
   display: block;
-  border-bottom: 0.75pt solid #000000;
+  border: none !important;
+  border-bottom: none !important;
   min-height: 16px;
   width: 100%;
 }
@@ -385,6 +390,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 2px 0;
+  min-height: 32px;
 }
 
 .folio-forense-aislado .lineas-pautadas-3 {
@@ -392,11 +398,13 @@
   flex-direction: column;
   gap: 4px;
   padding: 2px 0;
+  min-height: 48px;
 }
 
 .folio-forense-aislado .renglon-manual {
   display: block;
-  border-bottom: 0.75pt solid #000000;
+  border: none !important;
+  border-bottom: none !important;
   height: 16px;
   width: 100%;
 }
@@ -430,7 +438,8 @@
 
 .folio-forense-aislado table.forense-table td {
   border: 0.6pt solid #000000;
-  padding: 2px 4px;
+  padding: 3px 5px;
+  height: 19px;
   vertical-align: middle;
 }
 
@@ -467,12 +476,16 @@
 .folio-forense-aislado .sig-data-row {
   font-size: 6.8pt;
   line-height: 1.35;
-  margin-bottom: 1.5px;
+  margin-bottom: 2px;
+  border: 0.6pt solid #000000;
+  padding: 2px 4px;
+  min-height: 17px;
+  background-color: #FFFFFF;
 }
 
 .folio-forense-aislado .sig-line-solid {
-  border-bottom: 1.25pt solid #000000;
-  margin-top: 12px;
+  border-bottom: 1pt solid #000000;
+  margin-top: 14px;
   margin-bottom: 2px;
 }
 

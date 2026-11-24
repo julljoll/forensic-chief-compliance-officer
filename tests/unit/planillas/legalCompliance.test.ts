@@ -127,8 +127,27 @@ describe('Verificación de Cumplimiento Legal y Estructural de Planillas (Etapa 
 
     for (const file of allPlanillas) {
       const content = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas', file), 'utf8');
-      expect(content, `${file} debe incluir atributos data-default para Modo Datos`).toContain('data-default=');
+      expect(content, `${file} debe incluir atributos data-default`).toContain('data-default=');
+      expect(content, `${file} debe mostrarse e imprimirse únicamente en blanco`).toContain('const isBlanco = true;');
     }
   });
+
+  it('FED-02: Las celdas no tienen líneas en el interior y las planillas se muestran e imprimen únicamente en blanco sin rellenar', () => {
+    const css = fs.readFileSync(path.resolve(process.cwd(), 'src/styles/folio-aislado.css'), 'utf8');
+    expect(css).toMatch(/\.linea-manual\s*\{[\s\S]*?border-bottom:\s*none\s*!important;/);
+    expect(css).toMatch(/\.renglon-manual\s*\{[\s\S]*?border-bottom:\s*none\s*!important;/);
+
+    const firmas = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas/PlanillaFirmasBilaterales.astro'), 'utf8');
+    expect(firmas).not.toContain('border-bottom: 1px solid #000');
+    expect(firmas).toContain('const isBlanco = true;');
+
+    const header = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas/PlanillaHeader.astro'), 'utf8');
+    expect(header).toContain('const isBlanco = true;');
+    expect(header).not.toContain('_________________________');
+
+    const binder = fs.readFileSync(path.resolve(process.cwd(), 'src/lib/data/bindPlanilla.ts'), 'utf8');
+    expect(binder).toContain("el.textContent = '';");
+  });
 });
+
 

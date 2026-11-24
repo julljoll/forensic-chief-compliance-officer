@@ -15,7 +15,7 @@ interface Props {
 }
 
 const { caso = {}, modo = 'blanco' } = Astro.props;
-const isBlanco = modo === 'blanco' || !caso.numeroCaso;
+const isBlanco = true;
 
 const DEFAULT_LOGS = [
   { seq: 1, ts: '13/11/2026 09:30', fase: 'F0 · CONSIGNACIÓN_CONSENTIMIENTO', usuario: caso.peritoLider || 'Ing. Perito', hash: caso.hashSHA256 || '8356ac69d28eea6eeb1537a95127cda66a961a60b7acf9c9ebe19e9fce009663' },

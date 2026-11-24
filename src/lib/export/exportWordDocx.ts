@@ -107,14 +107,14 @@ export function transformPlanillaHtmlForWord(element: HTMLElement, _docTitle: st
     });
   });
 
-  // 7. Líneas para escritura manual en modo blanco
+  // 7. Espacios en blanco para escritura manual (sin líneas interiores en las celdas)
   clone.querySelectorAll('.linea-manual').forEach((lm) => {
     const el = lm as HTMLElement;
     const content = el.textContent?.trim() || '';
     if (content) {
       el.setAttribute('style', 'font-family: Arial, sans-serif; font-size: 7.5pt; color: #000000;');
     } else {
-      el.setAttribute('style', 'border-bottom: 1px solid #000000; min-height: 16px; display: block; width: 100%;');
+      el.setAttribute('style', 'border: none; min-height: 16px; display: block; width: 100%;');
       el.innerHTML = '&nbsp;';
     }
   });
@@ -122,7 +122,7 @@ export function transformPlanillaHtmlForWord(element: HTMLElement, _docTitle: st
   clone.querySelectorAll('.lineas-pautadas-2, .lineas-pautadas-3').forEach((lp) => {
     lp.querySelectorAll('.renglon-manual').forEach((rm) => {
       const el = rm as HTMLElement;
-      el.setAttribute('style', 'border-bottom: 1px solid #000000; height: 18px; display: block; width: 100%; margin-bottom: 4px;');
+      el.setAttribute('style', 'border: none; height: 18px; display: block; width: 100%; margin-bottom: 4px;');
       el.innerHTML = '&nbsp;';
     });
   });
@@ -357,8 +357,6 @@ export async function exportCurrentPlanillaToWordDocx(titleOverride?: string): P
     return;
   }
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const modo = urlParams.get('modo') || (urlParams.get('casoId') ? 'datos' : 'blanco');
   const slug = container.getAttribute('data-slug') || window.location.pathname.split('/').pop() || 'planilla';
 
   // Buscar título formal en la planilla
@@ -366,21 +364,19 @@ export async function exportCurrentPlanillaToWordDocx(titleOverride?: string): P
   const rawTitle = titleOverride || titleEl?.textContent?.trim() || slug;
   const cleanTitle = rawTitle.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]/g, '_');
 
-  const casoId = urlParams.get('casoId');
-  const sufijoModo = modo === 'blanco' ? 'blanco' : `Caso_${(casoId || 'datos').replace(/[^a-zA-Z0-9_-]/g, '_')}`;
-  const fileName = `${cleanTitle}_${sufijoModo}.docx`;
+  const fileName = `${cleanTitle}_blanco.docx`;
 
   await exportPlanillaElementToWordDocx(container as HTMLElement, fileName, rawTitle);
 }
 
 /**
  * Descarga cualquier planilla por su slug directamente desde el catálogo /planillas,
- * sin necesidad de navegar a la vista de detalle.
+ * siempre en blanco sin rellenar para llenado a mano.
  */
 export async function descargarPlanillaPorSlug(
   slug: string,
-  modo: 'blanco' | 'datos' = 'blanco',
-  casoId?: string,
+  _modo: 'blanco' | 'datos' = 'blanco',
+  _casoId?: string,
   titulo?: string
 ): Promise<void> {
   if (typeof window === 'undefined') return;
@@ -403,38 +399,14 @@ export async function descargarPlanillaPorSlug(
       throw new Error(`No se encontró el contenedor de la planilla en ${url}`);
     }
 
-    // Modo Blanco: limpiar placeholders [ ... ]
-    if (modo === 'blanco' || !casoId) {
-      container.querySelectorAll<HTMLElement>('[data-field]').forEach((el) => {
-        const txt = el.textContent?.trim() || '';
-        if (txt.startsWith('[') && txt.endsWith(']')) {
-          el.textContent = '';
-        }
-      });
-    } else {
-      // Modo Datos: inyectar los datos reales del caso seleccionado
-      let caso: CasoCMS | undefined;
-      try {
-        caso = await phpApi.obtenerCaso(casoId);
-      } catch {
-        const casos = await idbGetAll<CasoCMS>('casos');
-        caso = casos.find((c) => c.id === casoId);
-      }
-
-      if (caso) {
-        container.querySelectorAll<HTMLElement>('[data-field]').forEach((el) => {
-          const field = el.getAttribute('data-field') as keyof CasoCMS;
-          if (field && caso && (caso as any)[field] !== undefined && (caso as any)[field] !== null) {
-            el.textContent = String((caso as any)[field]);
-          }
-        });
-      }
-    }
+    // Siempre en blanco sin rellenar para escritura a mano
+    container.querySelectorAll<HTMLElement>('[data-field]').forEach((el) => {
+      el.textContent = '';
+    });
 
     const rawTitle = titulo || doc.querySelector('.canonical-doc-title')?.textContent?.trim() || slug;
     const cleanTitle = rawTitle.replace(/[^a-zA-Z0-9áéíóúÁÉÍÓÚñÑ_-]/g, '_');
-    const sufijoModo = modo === 'blanco' ? 'blanco' : `Caso_${(casoId || 'datos').replace(/[^a-zA-Z0-9_-]/g, '_')}`;
-    const fileName = `${cleanTitle}_${sufijoModo}.docx`;
+    const fileName = `${cleanTitle}_blanco.docx`;
 
     await exportPlanillaElementToWordDocx(container as HTMLElement, fileName, rawTitle);
   } catch (err: any) {
