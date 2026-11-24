@@ -42,15 +42,15 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <th style="width: 28%;">Archivo de Audio / Nota:</th>
-              <td style="width: 72%;">{isBlanco ? <span class="linea-manual"></span> : <span>AUD_WHATSAPP_NOTA_VOZ.opus (Flujo nativo extraído de msgstore.db)</span>}</td>
+              <td style="width: 72%;">{isBlanco ? <span class="linea-manual" data-default="AUD_WHATSAPP_NOTA_VOZ.opus (Nota de Voz / Audio extraído de Móvil o Medio Digital Consignado)"></span> : <span>AUD_WHATSAPP_NOTA_VOZ.opus (Flujo nativo extraído de msgstore.db)</span>}</td>
             </tr>
             <tr>
               <th>Hash SHA-256 del Audio:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
             </tr>
             <tr>
               <th>Frecuencia / Formato:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>Opus Interactive Audio Codec (RFC 6716) @ 48,000 Hz · 16-bit Mono</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="Opus Interactive Audio Codec (RFC 6716) @ 48,000 Hz · 16-bit Mono"></span> : <span>Opus Interactive Audio Codec (RFC 6716) @ 48,000 Hz · 16-bit Mono</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -70,23 +70,23 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td>Formantes Vocálicos (F1, F2, F3)</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : 'F1: 520 Hz · F2: 1740 Hz · F3: 2600 Hz'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Continuidad armónica sin cortes abruptos ni empalmes.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="F1: 520 Hz · F2: 1740 Hz · F3: 2600 Hz"></span> : 'F1: 520 Hz · F2: 1740 Hz · F3: 2600 Hz'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Continuidad armónica sin cortes abruptos ni empalmes."></span> : <span>Continuidad armónica sin cortes abruptos ni empalmes.</span>}</td>
             </tr>
             <tr>
               <td>Piso de Ruido Acústico (Noise Floor)</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : '-54 dBFS a -48 dBFS (Constante)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Ausencia de inserciones o empalmes de tomas ajenas.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="-54 dBFS a -48 dBFS (Constante)"></span> : '-54 dBFS a -48 dBFS (Constante)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Ausencia de inserciones o empalmes de tomas ajenas."></span> : <span>Ausencia de inserciones o empalmes de tomas ajenas.</span>}</td>
             </tr>
             <tr>
               <td>Traza de Red Eléctrica (ENF 60 Hz)</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : 'Frecuencia continua 59.98 Hz ± 0.02 Hz'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Continuidad temporal ininterrumpida comprobada.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="Frecuencia continua 59.98 Hz ± 0.02 Hz"></span> : 'Frecuencia continua 59.98 Hz ± 0.02 Hz'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Continuidad temporal ininterrumpida comprobada."></span> : <span>Continuidad temporal ininterrumpida comprobada.</span>}</td>
             </tr>
             <tr>
               <td>Biometría Vocal Anti-Deepfake</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : 'Algoritmo YIN (Pitch F0 biológico)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Voz humana auténtica; sin síntesis por IA generativa.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="Algoritmo YIN (Pitch F0 biológico)"></span> : 'Algoritmo YIN (Pitch F0 biológico)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Voz humana auténtica; sin síntesis por IA generativa."></span> : <span>Voz humana auténtica; sin síntesis por IA generativa.</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -97,7 +97,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         <div class="section-heading">3.0 RESULTADOS PARTICULARES Y REPRODUCIBILIDAD CIENTÍFICA (COPP ART. 225 NUM. 2 · DAUBERT)</div>
         <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
           {isBlanco ? (
-            <div class="lineas-pautadas-2">
+            <div class="lineas-pautadas-2" data-default="El cotejo espectrográfico realizado mediante FFT (Fast Fourier Transform, ventana Hanning 2048 pts) demuestra la plena coherencia acústica de la señal. Los formantes vocálicos presentan micro-temblores y fluctuaciones de jitter/shimmer propios de la emisión laríngea humana biológica no reproducible mediante modelos sintéticos TTS o clonación neuronal de voz.">
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
             </div>
@@ -109,19 +109,20 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225.3) -->
       <div class="legal-clause">
-        <strong>4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225 NUM. 3):</strong> Con arreglo a los principios de la acústica forense y el método científico colegiado (COPP Art. 223), los peritos dictaminan categóricamente que la nota de voz peritada es <strong>AUTÉNTICA, ÍNTEGRA Y NO MANIPULADA</strong>, satisfaciendo el estándar de original de los Arts. 4 y 7 de la LMDFE y habiendo sido aportada por el interlocutor legítimo sin violar la privacidad de terceros (Art. 21 LEDCI).
+        <strong>4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225 NUM. 3):</strong> Con arreglo a los principios de la acústica forense y el método científico colegiado (COPP Art. 223), los peritos dictaminan categóricamente que la nota de voz o grabación de audio peritada es <strong>AUTÉNTICA, ÍNTEGRA Y NO MANIPULADA</strong>, satisfaciendo el estándar de original de los Arts. 4 y 7 de la LMDFE y habiendo sido aportada por el interlocutor o titular legítimo sin violar la privacidad de terceros (Art. 21 LEDCI).
       </div>
     </div>
 
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
       leftRole="perito"
+      coPeritoTitulo="PERITO EN ACÚSTICA FORENSE (CO-PERITO)"
       consignanteTitulo="PERITO EN ACÚSTICA FORENSE (CO-PERITO)"
       peritoTitulo="PERITO PRINCIPAL / COORDINADOR FORENSE"
-      coPeritoNombre={caso.co_perito_nombre || caso.perito_coadyuvante || "Ing. Perito Acústico"}
-      coPeritoCedula={caso.co_perito_cedula || caso.perito_coadyuvante_cedula || "V-19.888.777"}
-      coPeritoCiv="291034"
-      coPeritoInpre="180211"
+      coPeritoNombre={caso.co_perito_nombre || caso.perito_coadyuvante || "Ing. SHA256 Adquisición"}
+      coPeritoCedula={caso.co_perito_cedula || caso.perito_coadyuvante_cedula || "V-15.816.003"}
+      coPeritoCiv="310520"
+      coPeritoInpre="201450"
       coPeritoCargo="Especialista en Acústica Forense"
       peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
       peritoCedula={caso.perito_cedula || "V-18.999.001"}

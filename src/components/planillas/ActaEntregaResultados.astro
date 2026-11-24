@@ -42,18 +42,18 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Lugar del Acto:</td>
               <td class="forense-cell-value" style="width: 35%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>Sede Laboratorio Forense SHA256.US · Quíbor, Estado Lara</span>}
+                {isBlanco ? <span class="linea-manual" data-default="Sede Laboratorio Forense SHA256.US · Quíbor, Estado Lara"></span> : <span>Sede Laboratorio Forense SHA256.US · Quíbor, Estado Lara</span>}
               </td>
               <td class="forense-cell-label" style="width: 20%;">Fecha y Hora:</td>
               <td class="forense-cell-value font-mono" style="width: 20%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>{new Date().toLocaleDateString('es-VE')} · 12:00 VET</span>}
+                {isBlanco ? <span class="linea-manual" data-field="fecha" data-default={`${new Date().toLocaleDateString('es-VE')} · 12:00 VET`}></span> : <span>{new Date().toLocaleDateString('es-VE')} · 12:00 VET</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Destino / Disposición:</td>
               <td class="forense-cell-value" colspan="3" style="font-size: 6.8pt; line-height: 1.4;">
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px;">
-                  <span>{isBlanco ? '[   ]' : '[ X ]'} <strong>a) Devolución formal al Titular o Interlocutor Legítimo</strong></span>
+                  <span><span data-default="[ X ]">{isBlanco ? '[   ]' : '[ X ]'}</span> <strong>a) Devolución formal al Titular o Interlocutor Legítimo</strong></span>
                   <span>[&nbsp;&nbsp;] <strong>b) Remisión a Sede Fiscal o Tribunal de Control</strong></span>
                   <span>[&nbsp;&nbsp;] <strong>c) Depósito en Bóveda de Resguardo / Sala de Evidencias</strong></span>
                   <span>[&nbsp;&nbsp;] <strong>d) Destrucción / Desincorporación Autorizada Judicialmente</strong></span>
@@ -72,17 +72,17 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Nombre y Apellido:</td>
               <td class="forense-cell-value" style="width: 35%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre || caso.receptor_nombre}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre" data-default="Insp. Jefe Luis Ortega"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre || caso.receptor_nombre}</span>}
               </td>
               <td class="forense-cell-label" style="width: 20%;">C.I. / RIF:</td>
               <td class="forense-cell-value font-mono" style="width: 20%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula || caso.receptor_cedula}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula" data-default="V-12.345.678"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula || caso.receptor_cedula}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Carácter del Receptor:</td>
               <td class="forense-cell-value" colspan="3">
-                {isBlanco ? <span>[&nbsp;&nbsp;] Titular Consignante Original &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] Apoderado Legal con Poder</span> : <span>[ X ] Titular Consignante Original</span>}
+                {isBlanco ? <span data-default="[ X ] Titular Consignante Original">[&nbsp;&nbsp;] Titular Consignante Original &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] Apoderado Legal con Poder</span> : <span>[ X ] Titular Consignante Original</span>}
               </td>
             </tr>
           </tbody>
@@ -91,7 +91,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 3.0 RELACIÓN DE ENTREGABLES -->
       <div class="section-block">
-        <div class="section-heading">3.0 RELACIÓN DE DOCUMENTOS, DISPOSITIVOS Y COPIAS MASTER ENTREGADAS</div>
+        <div class="section-heading">3.0 RELACIÓN DE DOCUMENTOS, DISPOSITIVOS, MEDIOS DIGITALES Y COPIAS MASTER ENTREGADAS</div>
         <table class="forense-table">
           <thead>
             <tr>
@@ -103,23 +103,23 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td style="text-align: center; font-weight: bold;">01</td>
-              <td>Dictamen Pericial Oficial Impreso en Papel Folio (Original Colegiado)</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] RECIBIDO SELLADO</span> : <span>[ X ] Rubricado y Sellado</span>}</td>
+              <td>Dictamen Pericial Oficial Impreso en Papel Folio (Original Colegiado para Tribunales)</td>
+              <td>{isBlanco ? <span data-default="[ X ] Rubricado y Sellado">[&nbsp;&nbsp;] RECIBIDO SELLADO</span> : <span>[ X ] Rubricado y Sellado</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">02</td>
-              <td>Copia Forense Digital Inmutable (Soporte Digital con Extracción Lógica)</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] HASH VERIFICADO</span> : <span>[ X ] Hash Validado</span>}</td>
+              <td>Copia Forense Digital Inmutable (Soporte con Extracción de Imágenes, Redes, Audios, Capturas)</td>
+              <td>{isBlanco ? <span data-default="[ X ] Hash Validado">[&nbsp;&nbsp;] HASH VERIFICADO</span> : <span>[ X ] Hash Validado</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">03</td>
-              <td>Dispositivo Smartphone Peritado (Devolución en su embalaje de seguridad)</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] PRECINTO ÍNTEGRO</span> : <span>[ X ] Precinto de Resguardo Intacto</span>}</td>
+              <td>Dispositivo Móvil Smartphone / Medio Digital Consignado (CD, Disco, Reloj, PC, Servidor, Cámara)</td>
+              <td>{isBlanco ? <span data-default="[ X ] Precinto de Resguardo Intacto">[&nbsp;&nbsp;] PRECINTO ÍNTEGRO</span> : <span>[ X ] Precinto de Resguardo Intacto</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">04</td>
               <td>Hash SHA-256 de Cierre de Custodia:</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente'}</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -127,7 +127,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 4.0 CLÁUSULA DE CONFORMIDAD -->
       <div class="legal-clause">
-        <strong>4.0 DECLARACIÓN DE RECEPCIÓN Y CONFORMIDAD (MUCC-2017 · COPP ART. 187):</strong> El consignante titular declara recibir los elementos supra descritos a su entera satisfacción, certificando la indemnidad del teléfono celular devuelto, la integridad del precinto de resguardo y los recaudos periciales emitidos por el laboratorio, dándose por concluido el proceso de custodia conforme al ordenamiento jurídico venezolano.
+        <strong>4.0 DECLARACIÓN DE RECEPCIÓN Y CONFORMIDAD (MUCC-2017 · COPP ART. 187):</strong> El consignante titular declara recibir los elementos supra descritos a su entera satisfacción, certificando la indemnidad del teléfono celular o medio digital devuelto, la integridad del precinto de resguardo y los recaudos periciales emitidos por el laboratorio, dándose por concluido el proceso de custodia conforme al ordenamiento jurídico venezolano.
       </div>
     </div>
 

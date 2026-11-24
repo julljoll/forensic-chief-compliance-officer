@@ -45,15 +45,19 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
       </div>
     </div>
 
-    <!-- FBI FD-1004 / OMB Federal Form Control Box -->
+    <!-- FBI FD-1004 / DoD DC3 / OMB Federal Form Control Box -->
     <div class="header-control-box">
       <div class="control-box-row">
         <span class="control-box-lbl">FORM CODE:</span>
         <strong class="control-box-val font-mono">{codigoDoc}</strong>
       </div>
       <div class="control-box-row">
+        <span class="control-box-lbl">PROCEDURE:</span>
+        <span class="control-box-val">CONSIGNACIÓN (MUCC-2017)</span>
+      </div>
+      <div class="control-box-row">
         <span class="control-box-lbl">JURISDICTION:</span>
-        <span class="control-box-val">COPP ART. 187 / 223</span>
+        <span class="control-box-val">COPP ART. 187 / 223 · LMDFE</span>
       </div>
       <div class="control-box-row">
         <span class="control-box-lbl">FOLIO:</span>
@@ -68,14 +72,14 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
     <div class="canonical-doc-norm">{norma}</div>
   </div>
 
-  <!-- Grid Micro-Label de Metadatos de la Causa (ISO/IEC 27037 §7.1) -->
+  <!-- Grid Micro-Label de Metadatos de la Causa (ISO/IEC 27037 §7.1 · NIST SP 800-86) -->
   <table class="header-meta-table">
     <tbody>
       <tr>
-        <td class="header-meta-label">EXPEDIENTE N°:</td>
+        <td class="header-meta-label">EXPEDIENTE / CASE N°:</td>
         <td class="header-meta-val">
           {isBlanco ? (
-            <span class="linea-manual" data-field="numeroCaso"></span>
+            <span class="linea-manual" data-field="numeroCaso" data-default="MP-01-2026-WA"></span>
           ) : (
             <span data-field="numeroCaso">{numeroCaso || '_________________________'}</span>
           )}
@@ -83,7 +87,7 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
         <td class="header-meta-label">FECHA DE ACTUACIÓN:</td>
         <td class="header-meta-val">
           {isBlanco ? (
-            <span class="linea-manual" data-field="fecha"></span>
+            <span class="linea-manual" data-field="fecha" data-default={new Date().toLocaleDateString('es-VE')}></span>
           ) : (
             <span data-field="fecha">{fecha || new Date().toLocaleDateString('es-VE')}</span>
           )}
@@ -93,7 +97,7 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
         <td class="header-meta-label">REGISTRO PRCC N°:</td>
         <td class="header-meta-val">
           {isBlanco ? (
-            <span class="linea-manual" data-field="numero_prcc"></span>
+            <span class="linea-manual" data-field="numero_prcc" data-default="PRCC-2026-001"></span>
           ) : (
             <span data-field="numero_prcc">{numeroPRCC || '_________________________'}</span>
           )}
@@ -101,9 +105,9 @@ const isBlanco = modo === 'blanco' || (!numeroCaso && !numeroPRCC);
         <td class="header-meta-label">HORA / SEDE FORENSE:</td>
         <td class="header-meta-val">
           {isBlanco ? (
-            <span class="linea-manual"></span>
+            <span class="linea-manual" data-field="hora_sede" data-default="10:00 VET · SEDE PRINCIPAL QUÍBOR"></span>
           ) : (
-            <span>{hora || '10:00 VET · SEDE PRINCIPAL QUÍBOR'}</span>
+            <span data-field="hora_sede">{hora || '10:00 VET · SEDE PRINCIPAL QUÍBOR'}</span>
           )}
         </td>
       </tr>

@@ -45,23 +45,23 @@ const DEFAULT_LOGS = [
     <div class="planilla-body">
       <!-- 1.0 IDENTIFICACIÓN Y ESTADO DE LA CADENA -->
       <div class="section-block">
-        <div class="section-heading">1.0 ESTADO DE INTEGRIDAD DE LA CADENA DE BLOQUES FORENSE (LMDFE ART. 7)</div>
+        <div class="section-heading">1.0 ESTADO DE INTEGRIDAD DE LA CADENA DE BLOQUES FORENSE (LMDFE ART. 7 · UNE 71505)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Expediente Asignado:</td>
               <td class="forense-cell-value font-mono" style="width: 35%;">
-                {isBlanco ? <span class="linea-manual" data-field="numeroCaso"></span> : <span data-field="numeroCaso">{caso.numeroCaso}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="numeroCaso" data-default="MP-01-2026-WA"></span> : <span data-field="numeroCaso">{caso.numeroCaso}</span>}
               </td>
               <td class="forense-cell-label" style="width: 20%;">Total de Fases:</td>
               <td class="forense-cell-value" style="width: 20%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>6 Fases (F0 - F5)</span>}
+                {isBlanco ? <span class="linea-manual" data-default="6 Fases (F0 - F5)"></span> : <span>6 Fases (F0 - F5)</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Verificación Hash-Chain:</td>
               <td class="forense-cell-value" colspan="3" style="font-weight: 700;">
-                {isBlanco ? <span>[&nbsp;&nbsp;] 100% CONFORME (CADENA ÍNTEGRA) &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] DISCREPANCIA (ALERTA)</span> : <span>[ X ] 100% CONFORME · CADENA CRIPTOGRÁFICA ÍNTEGRA Y SIN ALTERACIONES</span>}
+                {isBlanco ? <span data-default="[ X ] 100% CONFORME · CADENA CRIPTOGRÁFICA ÍNTEGRA Y SIN ALTERACIONES">[&nbsp;&nbsp;] 100% CONFORME (CADENA ÍNTEGRA) &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] DISCREPANCIA (ALERTA)</span> : <span>[ X ] 100% CONFORME · CADENA CRIPTOGRÁFICA ÍNTEGRA Y SIN ALTERACIONES</span>}
               </td>
             </tr>
           </tbody>
@@ -83,13 +83,13 @@ const DEFAULT_LOGS = [
           </thead>
           <tbody>
             {isBlanco ? (
-              [1, 2, 3, 4, 5, 6].map((num) => (
+              DEFAULT_LOGS.map((l) => (
                 <tr style="height: 20px;">
-                  <td style="text-align: center; font-weight: bold;">{num}</td>
-                  <td><span class="linea-manual"></span></td>
-                  <td><span class="linea-manual"></span></td>
-                  <td><span class="linea-manual"></span></td>
-                  <td><span class="linea-manual"></span></td>
+                  <td style="text-align: center; font-weight: bold;">{l.seq}</td>
+                  <td class="font-mono" style="font-size: 6.5pt;"><span class="linea-manual" data-default={l.ts}></span></td>
+                  <td style="font-weight: bold; font-size: 6.5pt;"><span class="linea-manual" data-default={l.fase}></span></td>
+                  <td style="font-size: 6.5pt;"><span class="linea-manual" data-field="peritoLider" data-default={l.usuario}></span></td>
+                  <td class="font-mono" style="font-size: 6pt; word-break: break-all;"><span class="linea-manual" data-default={l.hash}></span></td>
                 </tr>
               ))
             ) : (
@@ -112,7 +112,7 @@ const DEFAULT_LOGS = [
         <div class="section-heading">3.0 CERTIFICACIÓN DE NO REPUDIO Y CONTINUIDAD CRIPTOGRÁFICA (LMDFE ART. 16)</div>
         <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
           {isBlanco ? (
-            <div class="lineas-pautadas-2">
+            <div class="lineas-pautadas-2" data-default="Se certifica de manera fehaciente que cada transacción registrada en este expediente por consignación generó un sello SHA-256 matemáticamente dependiente del evento anterior conforme a RFC 8785 (JSON Canonicalization Scheme). Esta arquitectura garantiza la imposibilidad material de alterar, suprimir o intercalar evidencias en la línea temporal pericial sin quebrar la cadena de integridad, satisfaciendo el Art. 7 de la LMDFE.">
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
             </div>
@@ -131,6 +131,7 @@ const DEFAULT_LOGS = [
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES -->
     <PlanillaFirmasBilaterales
       leftRole="perito"
+      coPeritoTitulo="PERITO AUDITOR FORENSE"
       consignanteTitulo="PERITO AUDITOR FORENSE"
       peritoTitulo="OFICIAL DE COMPLIANCE FORENSE"
       coPeritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
@@ -138,10 +139,10 @@ const DEFAULT_LOGS = [
       coPeritoCiv={caso.perito_civ || "299410"}
       coPeritoInpre={caso.perito_inpre || "184920"}
       coPeritoCargo={caso.perito_cargo || "Perito Informático Forense"}
-      peritoNombre="Oficial de Cumplimiento FCCO"
-      peritoCedula="V-20.111.222"
-      peritoCiv="299841"
-      peritoInpre="184510"
+      peritoNombre="Ing. SHA256 Adquisición (FCCO)"
+      peritoCedula="V-15.816.003"
+      peritoCiv="310520"
+      peritoInpre="201450"
       peritoCargo="Chief Compliance Officer"
       rolIso="CIA (Certified Information Security Auditor) · ISO 37301"
       modo={modo}

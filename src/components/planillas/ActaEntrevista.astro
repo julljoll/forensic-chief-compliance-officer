@@ -36,27 +36,27 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <div class="planilla-body">
       <!-- 1.0 DATOS DE IDENTIFICACIÓN -->
       <div class="section-block">
-        <div class="section-heading">1.0 IDENTIFICACIÓN DEL CONSIGNANTE Y NOTIFICACIÓN CONSTITUCIONAL</div>
+        <div class="section-heading">1.0 IDENTIFICACIÓN DEL CONSIGNANTE Y NOTIFICACIÓN CONSTITUCIONAL (CONSIGNACIÓN)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
               <td class="forense-cell-label" style="width: 22%;">Apellidos y Nombres:</td>
               <td class="forense-cell-value" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre" data-default="Insp. Jefe Luis Ortega"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre}</span>}
               </td>
               <td class="forense-cell-label" style="width: 22%;">Cédula de Identidad / RIF:</td>
               <td class="forense-cell-value font-mono" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula" data-default="V-12.345.678"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Teléfono de Contacto:</td>
               <td class="forense-cell-value font-mono">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_telefono"></span> : <span data-field="solicitante_telefono">{caso.solicitante_telefono}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_telefono" data-default="+58 412-5551234"></span> : <span data-field="solicitante_telefono">{caso.solicitante_telefono}</span>}
               </td>
               <td class="forense-cell-label">Dirección de Habitación:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion"></span> : <span data-field="solicitante_direccion">{caso.solicitante_direccion}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion" data-default="Domicilio Procesal / Sede"></span> : <span data-field="solicitante_direccion">{caso.solicitante_direccion}</span>}
               </td>
             </tr>
             <tr>
@@ -71,7 +71,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 2.0 CUESTIONARIO FORENSE ESTRUCTURADO -->
       <div class="section-block">
-        <div class="section-heading">2.0 CUESTIONARIO TÉCNICO DIRIGIDO A LA EXTRACCIÓN LÓGICA (ISO/IEC 27042)</div>
+        <div class="section-heading">2.0 CUESTIONARIO TÉCNICO DIRIGIDO A LA EXTRACCIÓN Y VALIDACIÓN JUDICIAL (ISO/IEC 27042 · NIST 800-101 / 800-86)</div>
         <table class="forense-table">
           <thead>
             <tr>
@@ -83,24 +83,24 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td style="text-align: center; font-weight: 700;">1</td>
-              <td>¿Cuál es el objeto pericial y qué chats, audios o números son de interés?</td>
+              <td>¿Cuál es el objeto pericial y qué pruebas (imágenes, redes sociales, chats, notas de voz, capturas de pantalla o medios: móvil, CD, disco duro, reloj, PC, servidor, cámara) son de interés?</td>
               <td>
                 {isBlanco ? (
-                  <div class="lineas-pautadas-2">
+                  <div class="lineas-pautadas-2" data-field="descripcion" data-default="Extracción y validación judicial de autenticidad de imágenes, redes sociales, capturas de pantalla, chats y notas de voz en el dispositivo o medio digital consignado.">
                     <span class="renglon-manual"></span>
                     <span class="renglon-manual"></span>
                   </div>
                 ) : (
-                  <span>{caso.descripcion || 'Extracción y validación de autenticidad de chats y audios WhatsApp'}</span>
+                  <span data-field="descripcion">{caso.descripcion || 'Extracción y validación de autenticidad de chats y audios WhatsApp'}</span>
                 )}
               </td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">2</td>
-              <td>¿Suministra voluntariamente el PIN, patrón o contraseña de desbloqueo?</td>
+              <td>¿Suministra voluntariamente el PIN, patrón o contraseña de desbloqueo del móvil o medio consignado?</td>
               <td>
                 {isBlanco ? (
-                  <span>[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; Credencial: <span class="linea-manual" style="display:inline-block; width:45%; min-height:16px;"></span></span>
+                  <span data-default="[ X ] SÍ — Suministrado voluntariamente en sobre lacrado para acceso pericial">[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; Credencial: <span class="linea-manual" style="display:inline-block; width:45%; min-height:16px;"></span></span>
                 ) : (
                   <span>[ X ] Suministrado voluntariamente en sobre lacrado</span>
                 )}
@@ -108,10 +108,10 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">3</td>
-              <td>¿Cuál es el rango de fechas y horas aproximadas de las comunicaciones?</td>
+              <td>¿Cuál es el rango de fechas, horas aproximadas y cuentas/interlocutores de las comunicaciones o registros?</td>
               <td>
                 {isBlanco ? (
-                  <span class="linea-manual"></span>
+                  <span class="linea-manual" data-default="Rango cronológico activo delimitado en el encargo pericial por consignación"></span>
                 ) : (
                   <span>Rango activo delimitado en el encargo pericial</span>
                 )}
@@ -119,10 +119,10 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">4</td>
-              <td>¿El dispositivo o la app sufrieron desinstalaciones, caídas o manipulación?</td>
+              <td>¿El dispositivo móvil, aplicación o medio digital sufrió desinstalaciones, caídas, formateo o manipulación?</td>
               <td>
                 {isBlanco ? (
-                  <span>[&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] SÍ &nbsp;&nbsp; Observación: <span class="linea-manual" style="display:inline-block; width:42%; min-height:16px;"></span></span>
+                  <span data-default="[ X ] NO — Sistema operativo, almacenamiento y bases de datos íntegros">[&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] SÍ &nbsp;&nbsp; Observación: <span class="linea-manual" style="display:inline-block; width:42%; min-height:16px;"></span></span>
                 ) : (
                   <span>[ X ] Negativo; sistema operativo y base de datos íntegros</span>
                 )}
@@ -130,10 +130,10 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">5</td>
-              <td>¿Autoriza la preservación lógica y generación de copia forense de los chats?</td>
+              <td>¿Autoriza la preservación forense y generación de copia con Hash SHA-256 para validación en tribunales?</td>
               <td>
                 {isBlanco ? (
-                  <span>[&nbsp;&nbsp;] SÍ AUTORIZO &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] NO AUTORIZO</span>
+                  <span data-default="[ X ] SÍ AUTORIZA (Adquisición Forense NIST SP 800-101 / 800-86 · LMDFE Art. 7)">[&nbsp;&nbsp;] SÍ AUTORIZO &nbsp;&nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] NO AUTORIZO</span>
                 ) : (
                   <span>[ X ] SÍ AUTORIZA (Extracción Lógica NIST Nivel 2)</span>
                 )}

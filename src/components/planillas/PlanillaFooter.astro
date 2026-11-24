@@ -27,7 +27,7 @@ const displayHash = isBlanco
 <footer class="canonical-footer">
   <div class="footer-top-line">
     <span class="footer-legal-tag">
-      DOCUMENTO PERICIAL JUDICIAL · VALIDEZ COPP ARTS. 187 / 223–225 · ISO/IEC 27037 · NIST SP 800-86
+      DOCUMENTO PERICIAL JUDICIAL · VALIDEZ COPP ARTS. 187 / 223–225 · LMDFE ARTS. 4, 7 · MUCC-2017 · ISO/IEC 27037 / 27042 · NIST SP 800-86 / 800-101
     </span>
     <span class="footer-folio-tag font-mono">
       HOJA {hojaActual} DE {totalHojas}
@@ -36,7 +36,7 @@ const displayHash = isBlanco
 
   <div class="footer-crypto-line">
     <span class="footer-crypto-label">SELLO CRIPTOGRÁFICO DE AUDITORÍA SHA-256 (RFC 8785):</span>
-    <span class="footer-crypto-hash font-mono">{displayHash}</span>
+    <span class="footer-crypto-hash font-mono" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e">{displayHash}</span>
   </div>
 
   <address class="footer-address-line">

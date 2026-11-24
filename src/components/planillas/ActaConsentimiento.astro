@@ -43,52 +43,68 @@ const dispositivoDesc = caso.dispositivo_marca
     <div class="planilla-body">
       <!-- 1.0 DECLARACIÓN DE LEGITIMACIÓN Y CALIDAD DE INTERLOCUTOR -->
       <div class="section-block">
-        <div class="section-heading">1.0 DECLARACIÓN DE LEGITIMACIÓN, TITULARIDAD Y CALIDAD DE INTERLOCUTOR</div>
+        <div class="section-heading">1.0 DECLARACIÓN DE LEGITIMACIÓN, TITULARIDAD Y CALIDAD DE INTERLOCUTOR (CONSIGNACIÓN)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
               <td class="forense-cell-label" style="width: 22%;">Apellidos y Nombres:</td>
               <td class="forense-cell-value" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre" data-default="Insp. Jefe Luis Ortega"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre}</span>}
               </td>
               <td class="forense-cell-label" style="width: 22%;">Cédula de Identidad / RIF:</td>
               <td class="forense-cell-value font-mono" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula" data-default="V-12.345.678"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Carácter Jurídico:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual"></span> : <span>Titular Legítimo / Interlocutor Directo</span>}
+                {isBlanco ? <span class="linea-manual" data-field="condicion_juridica" data-default="Titular Legítimo / Interlocutor Directo (Consignante)"></span> : <span data-field="condicion_juridica">Titular Legítimo / Interlocutor Directo</span>}
               </td>
               <td class="forense-cell-label">Línea Móvil / WhatsApp:</td>
               <td class="forense-cell-value font-mono">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_telefono"></span> : <span data-field="solicitante_telefono">{caso.solicitante_telefono || 'Cuenta WhatsApp Asociada'}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_telefono" data-default="+58 412-5551234"></span> : <span data-field="solicitante_telefono">{caso.solicitante_telefono || 'Cuenta WhatsApp Asociada'}</span>}
               </td>
             </tr>
           </tbody>
         </table>
       </div>
 
-      <!-- 2.0 AUTORIZACIÓN EXPRESA DE ADQUISICIÓN LÓGICA -->
+      <!-- 2.0 AUTORIZACIÓN EXPRESA DE ADQUISICIÓN LÓGICA Y MEDIOS CONSIGNADOS -->
       <div class="section-block">
-        <div class="section-heading">2.0 AUTORIZACIÓN EXPRESA DE ADQUISICIÓN LÓGICA FORENSE (NIST SP 800-101)</div>
+        <div class="section-heading">2.0 AUTORIZACIÓN EXPRESA DE ADQUISICIÓN FORENSE POR CONSIGNACIÓN (NIST SP 800-101 · NIST SP 800-86)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
-              <td class="forense-cell-label" style="width: 22%;">Dispositivo Consignado:</td>
+              <td class="forense-cell-label" style="width: 22%;">Dispositivo / Medio Consignado:</td>
               <td class="forense-cell-value" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>{dispositivoDesc || 'Smartphone consignado voluntariamente'}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="dispositivo_descripcion" data-default="Smartphone Samsung Galaxy A54"></span> : <span data-field="dispositivo_descripcion">{dispositivoDesc || 'Smartphone consignado voluntariamente'}</span>}
               </td>
-              <td class="forense-cell-label" style="width: 22%;">Serial Físico / IMEI:</td>
+              <td class="forense-cell-label" style="width: 22%;">Serial Físico / IMEI / MAC:</td>
               <td class="forense-cell-value font-mono" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="dispositivo_imei"></span> : <span data-field="dispositivo_imei">{caso.dispositivo_imei || caso.discoduro_serial}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="dispositivo_imei" data-default="354928110948271"></span> : <span data-field="dispositivo_imei">{caso.dispositivo_imei || caso.discoduro_serial}</span>}
+              </td>
+            </tr>
+            <tr>
+              <td class="forense-cell-label">Taxonomía del Soporte:</td>
+              <td class="forense-cell-value" colspan="3" style="font-size: 6.7pt; font-weight: 700;">
+                <span data-default="[ X ] Móvil / Smartphone   [   ] Disco Duro / SSD / USB   [   ] Computadora / Servidor   [   ] CD / DVD   [   ] Reloj / Wearable   [   ] Cámara DVR / CCTV">
+                  [&nbsp;&nbsp;] Móvil / Smartphone &nbsp;&nbsp; [&nbsp;&nbsp;] Disco Duro / SSD / USB &nbsp;&nbsp; [&nbsp;&nbsp;] Computadora / Servidor &nbsp;&nbsp; [&nbsp;&nbsp;] CD / DVD &nbsp;&nbsp; [&nbsp;&nbsp;] Reloj / Wearable &nbsp;&nbsp; [&nbsp;&nbsp;] Cámara DVR / CCTV
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <td class="forense-cell-label">Evidencia a Validar:</td>
+              <td class="forense-cell-value" colspan="3" style="font-size: 6.7pt; font-weight: 700;">
+                <span data-default="[ X ] Imágenes / Fotos   [ X ] Redes Sociales / Mensajería   [ X ] Notas de Voz / Audios   [ X ] Capturas de Pantalla   [   ] Videos / Otros">
+                  [&nbsp;&nbsp;] Imágenes / Fotos &nbsp;&nbsp; [&nbsp;&nbsp;] Redes Sociales / Mensajería &nbsp;&nbsp; [&nbsp;&nbsp;] Notas de Voz / Audios &nbsp;&nbsp; [&nbsp;&nbsp;] Capturas de Pantalla &nbsp;&nbsp; [&nbsp;&nbsp;] Videos / Otros
+                </span>
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Alcance Técnico:</td>
-              <td class="forense-cell-value" colspan="3" style="font-size: 7pt; line-height: 1.25;">
-                Adquisición lógica forense (NIST SP 800-101 Nivel 2 · ISO/IEC 27037 §5.4.4 / §7.1.3) del sistema de archivos y bases de datos SQLite de mensajería (WhatsApp/Telegram: msgstore.db, wa.db), notas de voz, adjuntos multimedia y metadatos cronológicos UTC, con cálculo inmutable de Hash SHA-256.
+              <td class="forense-cell-value" colspan="3" style="font-size: 6.9pt; line-height: 1.25;">
+                Adquisición lógica forense (NIST SP 800-101 Nivel 2 · NIST SP 800-86 · ISO/IEC 27037 §5.4.4 / §7.1.3) del sistema de archivos y bases de datos SQLite de mensajería y redes sociales (WhatsApp/Telegram/Instagram/Facebook: msgstore.db, wa.db), imágenes, notas de voz, capturas de pantalla, adjuntos multimedia y metadatos cronológicos UTC en dispositivos móviles o medios digitales consignados (CD, disco duro, reloj, computador, servidor, cámara DVR/CCTV), con cálculo inmutable de Hash SHA-256 para su validación judicial ante tribunales (LMDFE Arts. 4 y 7).
               </td>
             </tr>
           </tbody>

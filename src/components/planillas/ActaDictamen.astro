@@ -45,15 +45,15 @@ const dispositivoDesc = caso.dispositivo_marca
     <div class="planilla-body">
       <!-- 1.0 MARCO NORMATIVO Y FUNDAMENTACIÓN JURÍDICA -->
       <div class="section-block">
-        <div class="section-heading">1.0 MARCO NORMATIVO Y FUNDAMENTACIÓN JURÍDICA VENEZOLANA</div>
+        <div class="section-heading">1.0 MARCO NORMATIVO Y FUNDAMENTACIÓN JURÍDICA VENEZOLANA E INTERNACIONAL</div>
         <table class="forense-table">
           <tbody>
             <tr>
               <th style="width: 28%;">COPP Arts. 187, 223, 225:</th>
-              <td style="width: 72%;">Cadena de custodia, designación y juramento de dos peritos y dictamen científico motivado.</td>
+              <td style="width: 72%;">Cadena de custodia por consignación (MUCC-2017), designación y juramento de dos peritos y dictamen científico motivado.</td>
             </tr>
             <tr>
-              <th>LMDFE Arts. 4 y 7:</th>
+              <th>LMDFE Arts. 4 y 7 · LEDCI:</th>
               <td>Plena eficacia probatoria de mensajes de datos y valor de documento original por integridad demostrada con Hash SHA-256.</td>
             </tr>
             <tr>
@@ -61,8 +61,8 @@ const dispositivoDesc = caso.dispositivo_marca
               <td>Uso obligatorio de mecanismos, técnicas y herramientas forenses ampliamente conocidas, probadas y aceptadas (Art. 2.1).</td>
             </tr>
             <tr>
-              <th>NIST SP 800-101 &amp; ISO 27037 §5.4.4 / §7.1.3:</th>
-              <td>Estándar internacional para la adquisición lógica forense de mensajería (WhatsApp SQLite msgstore.db) y repetibilidad científica.</td>
+              <th>NIST SP 800-101 / 800-86 &amp; ISO 27037 §5.4.4 / §7.1.3:</th>
+              <td>Estándar internacional para la adquisición forense de dispositivos móviles y medios digitales, análisis ISO/IEC 27042 y repetibilidad científica (UNE 197010).</td>
             </tr>
           </tbody>
         </table>
@@ -74,24 +74,24 @@ const dispositivoDesc = caso.dispositivo_marca
         <table class="forense-table">
           <tbody>
             <tr>
-              <th style="width: 28%;">Dispositivo Peritado:</th>
-              <td style="width: 72%;">{isBlanco ? <span class="linea-manual"></span> : <span>{dispositivoDesc || 'Smartphone'} · IMEI/Serial: <span class="font-mono">{caso.dispositivo_imei || caso.discoduro_serial || 'N/A'}</span></span>}</td>
+              <th style="width: 28%;">Dispositivo / Medio Peritado:</th>
+              <td style="width: 72%;">{isBlanco ? <span class="linea-manual" data-field="dispositivo_descripcion" data-default="Smartphone Samsung Galaxy A54 · IMEI/Serial: 354928110948271"></span> : <span>{dispositivoDesc || 'Smartphone'} · IMEI/Serial: <span class="font-mono">{caso.dispositivo_imei || caso.discoduro_serial || 'N/A'}</span></span>}</td>
             </tr>
             <tr>
               <th>PRCC y Precinto de Consignación:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="numero_prcc"></span> : <span>PRCC: <span data-field="numero_prcc">{caso.numero_prcc || caso.numeroPRCC}</span> · Precinto: <span data-field="precinto_numero">{caso.precinto_numero}</span></span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="numero_prcc" data-default="PRCC: PRCC-2026-001 · Precinto: PREC-2026-991"></span> : <span>PRCC: <span data-field="numero_prcc">{caso.numero_prcc || caso.numeroPRCC}</span> · Precinto: <span data-field="precinto_numero">{caso.precinto_numero}</span></span>}</td>
             </tr>
             <tr>
-              <th>Base de Datos WhatsApp Extraída:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>msgstore.db (Contenedor SQLite con esquema nativo)</span>}</td>
+              <th>Artefactos / Contenedor Extraído:</th>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="msgstore.db (SQLite WhatsApp/Redes Sociales), Imágenes, Notas de Voz, Capturas de Pantalla / Archivos"></span> : <span>msgstore.db (Contenedor SQLite con esquema nativo)</span>}</td>
             </tr>
             <tr>
               <th>Hash SHA-256 de Extracción Lógica:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
             </tr>
             <tr>
               <th>Certificación de Integridad:</th>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] MATCH VERIFICADO &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] MISMATCH</span> : <span>[&nbsp;X&nbsp;] MATCH VERIFICADO — 100% INALTERADO (ART. 7 LMDFE)</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="[ X ] MATCH VERIFICADO — 100% INALTERADO (ART. 7 LMDFE)">[&nbsp;&nbsp;] MATCH VERIFICADO &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] MISMATCH</span> : <span>[&nbsp;X&nbsp;] MATCH VERIFICADO — 100% INALTERADO (ART. 7 LMDFE)</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -100,9 +100,9 @@ const dispositivoDesc = caso.dispositivo_marca
       <!-- 3.0 METODOLOGÍA CIENTÍFICA APLICADA -->
       <div class="section-block">
         <div class="section-heading">3.0 METODOLOGÍA FORENSE Y PROCEDIMIENTO TÉCNICO APLICADO</div>
-        <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
+        <div style="font-size: 7.1pt; line-height: 1.33; padding: 2px;">
           {isBlanco ? (
-            <div class="lineas-pautadas-2">
+            <div class="lineas-pautadas-2" data-default="Se ejecutó Adquisición Lógica y/o Física Forense (NIST SP 800-101 Nivel 2 · NIST SP 800-86 · ISO/IEC 27037 §5.4.4 / §7.1.3) preservando el dispositivo móvil o medio digital consignado (CD, disco duro, reloj, computador, servidor, cámara DVR) en medio aislado. Se extrajo la base de datos msgstore.db, redes sociales, imágenes, notas de voz y capturas de pantalla mediante herramientas validadas por NIST y CENIF (ALEAPP / Avilla Forensics / Autopsy). El análisis se practicó exclusivamente sobre copia de trabajo certificada, asegurando repetibilidad total (Estándar Daubert / FRE 702).">
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
             </div>
@@ -139,10 +139,10 @@ const dispositivoDesc = caso.dispositivo_marca
     <div class="planilla-body">
       <!-- 4.0 HALLAZGOS PERICIALES -->
       <div class="section-block">
-        <div class="section-heading">4.0 HALLAZGOS PERICIALES, CHATS Y COMUNICACIONES EXTRAÍDAS</div>
-        <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
+        <div class="section-heading">4.0 HALLAZGOS PERICIALES: PRUEBAS MÓVILES, REDES SOCIALES, IMÁGENES, AUDIOS Y MEDIOS</div>
+        <div style="font-size: 7.1pt; line-height: 1.33; padding: 2px;">
           {isBlanco ? (
-            <div class="lineas-pautadas-3">
+            <div class="lineas-pautadas-3" data-default="Se extrajeron y decodificaron las conversaciones, publicaciones en redes sociales, imágenes, capturas de pantalla y archivos de interés contenidos en la base de datos msgstore.db o medio digital consignado, constatando los identificadores JID de los interlocutores, el contenido íntegro de los mensajes, las notas de voz en formato Opus 48 kHz y sus marcas temporales UTC nativas, no evidenciándose indicios de forjamiento, alteración de registros SQLite ni empalme artificial de datos.">
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
@@ -155,7 +155,7 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 5.0 CONCLUSIONES Y DICTAMEN MOTIVADO -->
       <div class="legal-clause">
-        <strong>5.0 DICTAMEN MOTIVADO (COPP ART. 225 · LMDFE ART. 7):</strong> Concluimos de manera unánime, objetiva e indubitada, fundamentados en el método científico, que los mensajes de datos y notas de voz analizados son <strong>AUTÉNTICOS, ÍNTEGROS Y ORIGINALES</strong>. La cadena de custodia por consignación se mantuvo ininterrumpida (Art. 187 COPP y MUCC-2017), gozando el presente dictamen de plena validez y eficacia probatoria judicial conforme al Artículo 4 de la Ley sobre Mensajes de Datos y Firmas Electrónicas.
+        <strong>5.0 DICTAMEN MOTIVADO (COPP ART. 225 · LMDFE ART. 7):</strong> Concluimos de manera unánime, objetiva e indubitada, fundamentados en el método científico, que los mensajes de datos, imágenes, capturas de pantalla, publicaciones de redes sociales y notas de voz analizados son <strong>AUTÉNTICOS, ÍNTEGROS Y ORIGINALES</strong>. La cadena de custodia por consignación se mantuvo ininterrumpida (Art. 187 COPP y MUCC-2017), gozando el presente dictamen de plena validez y eficacia probatoria judicial ante los tribunales de la República conforme al Artículo 4 de la Ley sobre Mensajes de Datos y Firmas Electrónicas.
       </div>
 
       <!-- 6.0 JURAMENTO DE LEY -->
@@ -173,7 +173,7 @@ const dispositivoDesc = caso.dispositivo_marca
       coPeritoCedula={caso.perito_cedula || 'V-18.999.001'}
       coPeritoCiv={caso.perito_civ || '299410'}
       coPeritoCargo="Perito Informático Forense Colegiado"
-      peritoNombre={caso.perito_coadyuvante || 'Ing. Christopher V. Vance'}
+      peritoNombre={caso.perito_coadyuvante || 'Ing. SHA256 Adquisición'}
       peritoCedula="V-15.816.003"
       peritoCiv="CIV-310520"
       peritoInpre="INPRE-201450"

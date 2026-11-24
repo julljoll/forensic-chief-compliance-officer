@@ -50,31 +50,31 @@ const dispositivoDesc = caso.dispositivo_marca
             <tr>
               <td class="forense-cell-label" style="width: 25%;">N° Expediente / Causa:</td>
               <td class="forense-cell-value font-mono" style="width: 25%;">
-                {isBlanco ? <span class="linea-manual" data-field="numeroCaso"></span> : <span data-field="numeroCaso">{caso.numeroCaso}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="numeroCaso" data-default="MP-01-2026-WA"></span> : <span data-field="numeroCaso">{caso.numeroCaso}</span>}
               </td>
               <td class="forense-cell-label" style="width: 25%;">N° Registro PRCC:</td>
               <td class="forense-cell-value font-mono" style="width: 25%;">
-                {isBlanco ? <span class="linea-manual" data-field="numero_prcc"></span> : <span data-field="numero_prcc">{prccNum}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="numero_prcc" data-default="PRCC-2026-001"></span> : <span data-field="numero_prcc">{prccNum}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">N° Oficio / Memorando:</td>
               <td class="forense-cell-value font-mono">
-                {isBlanco ? <span class="linea-manual"></span> : <span>OFIC-2026-F11-094</span>}
+                {isBlanco ? <span class="linea-manual" data-field="numero_comunicacion" data-default="OFIC-2026-F11-094"></span> : <span>OFIC-2026-F11-094</span>}
               </td>
               <td class="forense-cell-label">Despacho / Fiscalía:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="despachoFiscal"></span> : <span data-field="despachoFiscal">{caso.despachoFiscal || 'Fiscalía Décima Primera del MP'}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="despachoFiscal" data-default="Fiscalía / Tribunal de Control"></span> : <span data-field="despachoFiscal">{caso.despachoFiscal || 'Fiscalía Décima Primera del MP'}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Organismo que Apertura:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="organismoOrdenante"></span> : <span data-field="organismoOrdenante">Laboratorio Forense SHA256.US</span>}
+                {isBlanco ? <span class="linea-manual" data-field="organismoOrdenante" data-default="Laboratorio Forense SHA256.US"></span> : <span data-field="organismoOrdenante">Laboratorio Forense SHA256.US</span>}
               </td>
               <td class="forense-cell-label">Sede de Obtención:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion"></span> : <span data-field="solicitante_direccion">Sede Central Forense SHA256.US</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion" data-default="Sede Central Forense SHA256.US"></span> : <span data-field="solicitante_direccion">Sede Central Forense SHA256.US</span>}
               </td>
             </tr>
           </tbody>
@@ -87,7 +87,7 @@ const dispositivoDesc = caso.dispositivo_marca
         <div style="display: flex; justify-content: space-around; font-size: 7.5pt; padding: 3px 0; font-weight: 700;">
           <span>[&nbsp;&nbsp;] 1. Técnica</span>
           <span>[&nbsp;&nbsp;] 2. Aseguramiento</span>
-          <span>{isBlanco ? '[   ] 3. Consignación' : '[ X ] 3. Consignación'}</span>
+          <span data-default="[ X ] 3. Consignación">{isBlanco ? '[   ] 3. Consignación' : '[ X ] 3. Consignación'}</span>
           <span>[&nbsp;&nbsp;] 4. Derivación</span>
         </div>
       </div>
@@ -103,11 +103,11 @@ const dispositivoDesc = caso.dispositivo_marca
             </div>
             <div class="field-row">
               <span class="field-label">Nombres y Apellidos:</span>
-              <div class="field-value">{isBlanco ? <span class="linea-manual"></span> : <span>{caso.peritoLider || 'Perito Oficial'}</span>}</div>
+              <div class="field-value">{isBlanco ? <span class="linea-manual" data-field="peritoLider" data-default="Jull Joll (Perito Principal)"></span> : <span>{caso.peritoLider || 'Perito Oficial'}</span>}</div>
             </div>
             <div class="field-row">
               <span class="field-label">C.I. / Credencial N°:</span>
-              <div class="field-value font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>{caso.perito_cedula || 'V-18.999.001'}</span>}</div>
+              <div class="field-value font-mono">{isBlanco ? <span class="linea-manual" data-field="perito_cedula" data-default="V-18.999.001 · CIV-299410"></span> : <span>{caso.perito_cedula || 'V-18.999.001'}</span>}</div>
             </div>
             <div class="sig-line-solid sig-line" style="margin-top: 10px;"></div>
             <div style="font-size: 6pt; text-align: center; font-weight: 700;">Firma de Fijación</div>
@@ -120,11 +120,11 @@ const dispositivoDesc = caso.dispositivo_marca
             </div>
             <div class="field-row">
               <span class="field-label">Nombres y Apellidos:</span>
-              <div class="field-value">{isBlanco ? <span class="linea-manual"></span> : <span>{caso.peritoLider || 'Perito Oficial'}</span>}</div>
+              <div class="field-value">{isBlanco ? <span class="linea-manual" data-field="peritoLider" data-default="Jull Joll (Perito Principal)"></span> : <span>{caso.peritoLider || 'Perito Oficial'}</span>}</div>
             </div>
             <div class="field-row">
               <span class="field-label">C.I. / Credencial N°:</span>
-              <div class="field-value font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>{caso.perito_cedula || 'V-18.999.001'}</span>}</div>
+              <div class="field-value font-mono">{isBlanco ? <span class="linea-manual" data-field="perito_cedula" data-default="V-18.999.001 · CIV-299410"></span> : <span>{caso.perito_cedula || 'V-18.999.001'}</span>}</div>
             </div>
             <div class="sig-line-solid sig-line" style="margin-top: 10px;"></div>
             <div style="font-size: 6pt; text-align: center; font-weight: 700;">Firma de Recepción</div>
@@ -138,20 +138,20 @@ const dispositivoDesc = caso.dispositivo_marca
         <table class="forense-table">
           <tbody>
             <tr>
-              <th style="width: 25%;">Dispositivo Consignado:</th>
-              <td style="width: 75%;">{isBlanco ? <span class="linea-manual"></span> : <span>{dispositivoDesc || 'Smartphone'} · IMEI: <span class="font-mono">{caso.dispositivo_imei || caso.discoduro_serial || 'N/A'}</span></span>}</td>
+              <th style="width: 25%;">Dispositivo / Medio Consignado:</th>
+              <td style="width: 75%;">{isBlanco ? <span class="linea-manual" data-field="dispositivo_descripcion" data-default="Smartphone Samsung Galaxy A54 · S/N o IMEI: 354928110948271"></span> : <span>{dispositivoDesc || 'Smartphone'} · IMEI: <span class="font-mono">{caso.dispositivo_imei || caso.discoduro_serial || 'N/A'}</span></span>}</td>
             </tr>
             <tr>
               <th>Tipo de Evidencia:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>[ X ] Evidencia Física Principal (Teléfono) &nbsp;&nbsp;&nbsp; [ X ] Evidencia Lógica Derivada (SQLite msgstore.db)</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="[ X ] Evidencia Física (Móvil / CD / Disco / Reloj / PC / Servidor / Cámara)   [ X ] Evidencia Lógica (Redes / Imágenes / Audios / Capturas / SQLite)"></span> : <span>[ X ] Evidencia Física Principal (Teléfono) &nbsp;&nbsp;&nbsp; [ X ] Evidencia Lógica Derivada (SQLite msgstore.db)</span>}</td>
             </tr>
             <tr>
               <th>Bolsa Faraday y Precinto:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="precinto_numero"></span> : <span>Bolsa: <span data-field="bolsa_faraday_numero">{caso.bolsa_faraday_numero || 'FARADAY-01'}</span> · Precinto: <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-991'}</span></span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="precinto_numero" data-default="Bolsa: FARADAY-2026-001 · Precinto: PREC-2026-991"></span> : <span>Bolsa: <span data-field="bolsa_faraday_numero">{caso.bolsa_faraday_numero || 'FARADAY-01'}</span> · Precinto: <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-991'}</span></span>}</td>
             </tr>
             <tr>
               <th>Hash SHA-256 de Extracción Lógica:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo en extracción F2'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo en extracción F2'}</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -199,11 +199,11 @@ const dispositivoDesc = caso.dispositivo_marca
           <tbody>
             <tr>
               <td style="text-align: center; font-weight: 700;">1</td>
-              <td class="font-mono">{isBlanco ? '' : new Date().toLocaleDateString('es-VE')}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>{caso.solicitante_nombre || 'Consignante'} (C.I. {caso.solicitante_cedula || ''})</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>{caso.peritoLider || 'Perito SHA256.US'} (CIV {caso.perito_civ || '299410'})</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Consignación e ingreso a laboratorio</span>}</td>
-              <td class="font-mono">{isBlanco ? '' : `N° ${caso.precinto_numero || 'PREC-991'} [X] Intacto`}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default={new Date().toLocaleDateString('es-VE')}></span> : new Date().toLocaleDateString('es-VE')}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-field="solicitante_nombre" data-default="Insp. Jefe Luis Ortega (Consignante)"></span> : <span>{caso.solicitante_nombre || 'Consignante'} (C.I. {caso.solicitante_cedula || ''})</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-field="peritoLider" data-default="Jull Joll (CIV 299410 · SHA256.US)"></span> : <span>{caso.peritoLider || 'Perito SHA256.US'} (CIV {caso.perito_civ || '299410'})</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Consignación e ingreso a laboratorio"></span> : <span>Consignación e ingreso a laboratorio</span>}</td>
+              <td class="font-mono">{isBlanco ? <span data-default="N° PREC-991 [X] Intacto">[&nbsp;&nbsp;] Intacto [&nbsp;&nbsp;] Reemp.</span> : `N° ${caso.precinto_numero || 'PREC-991'} [X] Intacto`}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: 700;">2</td>
@@ -243,7 +243,7 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- VI. OBSERVACIONES Y DISPOSICIÓN FINAL -->
       <div class="legal-clause">
-        <strong>VI. DISPOSICIÓN FINAL Y CONDICIÓN DE RESGUARDO (MUCC-2017 §DISPOSICIÓN FINAL):</strong> El teléfono inteligente y los contenedores lógicos extraídos quedan preservados en condiciones controladas de laboratorio. Todo cambio de precinto por desprecintado pericial o reembalaje debe registrarse en la tabla supra para garantizar la trazabilidad ininterrumpida exigida por el Art. 187 del COPP.
+        <strong>VI. DISPOSICIÓN FINAL Y CONDICIÓN DE RESGUARDO (MUCC-2017 §DISPOSICIÓN FINAL):</strong> El teléfono inteligente o medio digital consignado y los contenedores lógicos extraídos quedan preservados en condiciones controladas de laboratorio. Todo cambio de precinto por desprecintado pericial o reembalaje debe registrarse en la tabla supra para garantizar la trazabilidad ininterrumpida exigida por el Art. 187 del COPP.
       </div>
     </div>
 

@@ -36,17 +36,17 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <div class="planilla-body">
       <!-- 1.0 SISTEMA EVALUADO -->
       <div class="section-block">
-        <div class="section-heading">1.0 APLICACIÓN EVALUADA Y ENTORNO DE EJECUCIÓN (WHATSAPP / SO MÓVIL)</div>
+        <div class="section-heading">1.0 APLICACIÓN, RED SOCIAL Y ENTORNO DE EJECUCIÓN (MÓVIL / MEDIO DIGITAL CONSIGNADO)</div>
         <table class="forense-cell-table">
           <tbody>
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Software / Plataforma:</td>
               <td class="forense-cell-value" style="width: 35%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>WhatsApp Messenger / Meta Platforms Inc.</span>}
+                {isBlanco ? <span class="linea-manual" data-default="WhatsApp / Redes Sociales / Interfaz de Sistema (Móvil, PC, Reloj, DVR)"></span> : <span>WhatsApp Messenger / Meta Platforms Inc.</span>}
               </td>
               <td class="forense-cell-label" style="width: 20%;">Versión / Sistema:</td>
               <td class="forense-cell-value font-mono" style="width: 20%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>WhatsApp v2.24.x · OS nativo</span>}
+                {isBlanco ? <span class="linea-manual" data-default="WhatsApp v2.24.x · OS Nativo / SQLite"></span> : <span>WhatsApp v2.24.x · OS nativo</span>}
               </td>
             </tr>
           </tbody>
@@ -55,7 +55,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 2.0 MATRIZ HEURÍSTICA FORENSE -->
       <div class="section-block">
-        <div class="section-heading">2.0 MATRIZ DE COTEJO FORENSE: INTERFAZ EN PANTALLA VS REGISTROS SQLITE</div>
+        <div class="section-heading">2.0 MATRIZ DE COTEJO FORENSE: INTERFAZ / CAPTURAS DE PANTALLA VS REGISTROS SQLITE / LOGS</div>
         <table class="forense-table">
           <thead>
             <tr>
@@ -67,28 +67,28 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td>Sincronía de Sellos Temporales (Timestamps)</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] MATCH &nbsp; [&nbsp;&nbsp;] DISCREP.</span> : 'CONFORME (100% MATCH)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Hora visual coincide con época UNIX en msgstore.db.</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="CONFORME (100% MATCH)">[&nbsp;&nbsp;] MATCH &nbsp; [&nbsp;&nbsp;] DISCREP.</span> : 'CONFORME (100% MATCH)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Hora visual coincide con época UNIX en msgstore.db / metadatos."></span> : <span>Hora visual coincide con época UNIX en msgstore.db.</span>}</td>
             </tr>
             <tr>
-              <td>Estados de Envío (Ticks / Checks)</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] MATCH &nbsp; [&nbsp;&nbsp;] DISCREP.</span> : 'CONFORME (AUTÉNTICO)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Estados de entrega/lectura corroborados en status flag.</span>}</td>
+              <td>Estados de Envío (Ticks / Checks / Logs)</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="CONFORME (AUTÉNTICO)">[&nbsp;&nbsp;] MATCH &nbsp; [&nbsp;&nbsp;] DISCREP.</span> : 'CONFORME (AUTÉNTICO)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Estados de entrega/lectura corroborados en status flag."></span> : <span>Estados de entrega/lectura corroborados en status flag.</span>}</td>
             </tr>
             <tr>
-              <td>Identificación de Remitente (JID)</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] MATCH &nbsp; [&nbsp;&nbsp;] DISCREP.</span> : 'CONFORME (VERIFICADO)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Número de abonado internacional fijado en key_remote_jid.</span>}</td>
+              <td>Identificación de Remitente (JID / Cuenta)</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="CONFORME (VERIFICADO)">[&nbsp;&nbsp;] MATCH &nbsp; [&nbsp;&nbsp;] DISCREP.</span> : 'CONFORME (VERIFICADO)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Número de abonado o identificador fijado en key_remote_jid."></span> : <span>Número de abonado internacional fijado en key_remote_jid.</span>}</td>
             </tr>
             <tr>
               <td>Detección de Falsificaciones de Pantalla</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] NEGATIVO &nbsp; [&nbsp;&nbsp;] SIMULACIÓN</span> : 'DESCARTE NEGATIVO'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Ausencia de generadores de chat falso (WhatsFake / clonados).</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="DESCARTE NEGATIVO">[&nbsp;&nbsp;] NEGATIVO &nbsp; [&nbsp;&nbsp;] SIMULACIÓN</span> : 'DESCARTE NEGATIVO'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Ausencia de generadores de chat falso o capturas adulteradas."></span> : <span>Ausencia de generadores de chat falso (WhatsFake / clonados).</span>}</td>
             </tr>
             <tr>
               <td>No Repudio de Contenido</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] PLENO &nbsp; [&nbsp;&nbsp;] INCONSIST.</span> : 'CONFORME (PLENA EFICACIA)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Correspondencia entre el texto en pantalla y registro en base.</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="CONFORME (PLENA EFICACIA)">[&nbsp;&nbsp;] PLENO &nbsp; [&nbsp;&nbsp;] INCONSIST.</span> : 'CONFORME (PLENA EFICACIA)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Correspondencia entre interfaz/captura y registro en base de datos."></span> : <span>Correspondencia entre el texto en pantalla y registro en base.</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -96,19 +96,20 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 3.0 DICTAMEN DE CONFORMIDAD -->
       <div class="legal-clause">
-        <strong>3.0 DICTAMEN DE CONFORMIDAD DE SOFTWARE:</strong> Se concluye que la visualización gráfica de los chats en pantalla corresponde de forma fidedigna y unívoca con los registros crudos extraídos de la base de datos nativa SQLite, sin que existan indicios de simulación, emulación maliciosa ni captura editada, gozando de plena eficacia técnica conforme al Art. 4 de la LMDFE.
+        <strong>3.0 DICTAMEN DE CONFORMIDAD DE SOFTWARE:</strong> Se concluye que la visualización gráfica de los chats, redes sociales y capturas de pantalla corresponde de forma fidedigna y unívoca con los registros crudos extraídos de la base de datos nativa SQLite o sistema de archivos del medio consignado, sin que existan indicios de simulación, emulación maliciosa ni captura editada, gozando de plena eficacia técnica conforme al Art. 4 de la LMDFE.
       </div>
     </div>
 
     <!-- 4.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
       leftRole="perito"
+      coPeritoTitulo="PERITO EVALUADOR DE SOFTWARE (CO-PERITO)"
       consignanteTitulo="PERITO EVALUADOR DE SOFTWARE (CO-PERITO)"
       peritoTitulo="PERITO PRINCIPAL / COORDINADOR DE CALIDAD"
-      coPeritoNombre={caso.co_perito_nombre || "Ing. Perito de Software"}
-      coPeritoCedula={caso.co_perito_cedula || "V-16.904.312"}
-      coPeritoCiv="274190"
-      coPeritoInpre="165219"
+      coPeritoNombre={caso.co_perito_nombre || "Ing. SHA256 Adquisición"}
+      coPeritoCedula={caso.co_perito_cedula || "V-15.816.003"}
+      coPeritoCiv="310520"
+      coPeritoInpre="201450"
       coPeritoCargo="Especialista en Evaluación de Software y UX"
       peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
       peritoCedula={caso.perito_cedula || "V-18.999.001"}

@@ -48,11 +48,11 @@ const dispositivoDesc = caso.dispositivo_marca
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Lugar de Apertura:</td>
               <td class="forense-cell-value" style="width: 35%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>Área Pericial Aislada — Laboratorio SHA256.US</span>}
+                {isBlanco ? <span class="linea-manual" data-default="Área Pericial Aislada — Laboratorio SHA256.US"></span> : <span>Área Pericial Aislada — Laboratorio SHA256.US</span>}
               </td>
               <td class="forense-cell-label" style="width: 20%;">Fecha y Hora:</td>
               <td class="forense-cell-value font-mono" style="width: 20%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>{new Date().toLocaleDateString('es-VE')} · 11:30 VET</span>}
+                {isBlanco ? <span class="linea-manual" data-field="fecha" data-default={`${new Date().toLocaleDateString('es-VE')} · 11:30 VET`}></span> : <span>{new Date().toLocaleDateString('es-VE')} · 11:30 VET</span>}
               </td>
             </tr>
           </tbody>
@@ -65,20 +65,20 @@ const dispositivoDesc = caso.dispositivo_marca
         <table class="forense-table">
           <tbody>
             <tr>
-              <th style="width: 28%;">Dispositivo Móvil:</th>
-              <td style="width: 72%;">{isBlanco ? <span class="linea-manual"></span> : <span>{dispositivoDesc || 'Smartphone'} (S/N o IMEI: {caso.dispositivo_imei || caso.discoduro_serial || 'N/A'})</span>}</td>
+              <th style="width: 28%;">Dispositivo Móvil / Medio Digital:</th>
+              <td style="width: 72%;">{isBlanco ? <span class="linea-manual" data-field="dispositivo_descripcion" data-default="Smartphone Samsung Galaxy A54 (S/N o IMEI: 354928110948271)"></span> : <span>{dispositivoDesc || 'Smartphone'} (S/N o IMEI: {caso.dispositivo_imei || caso.discoduro_serial || 'N/A'})</span>}</td>
             </tr>
             <tr>
               <th>Precinto Inicial Roto N°:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="precinto_numero"></span> : <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-2026-991'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="precinto_numero" data-default="PREC-2026-991"></span> : <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-2026-991'}</span>}</td>
             </tr>
             <tr>
               <th>Estado Físico del Precinto:</th>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] Íntegro sin apertura previa &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] Dañado / Violado</span> : <span>[&nbsp;X&nbsp;] ÍNTEGRO, SIN SIGNOS DE APERTURA PREVIA NI ADULTERACIÓN</span>}</td>
+              <td>{isBlanco ? <span data-default="[ X ] ÍNTEGRO, SIN SIGNOS DE APERTURA PREVIA NI ADULTERACIÓN">[&nbsp;&nbsp;] Íntegro sin apertura previa &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] Dañado / Violado</span> : <span>[&nbsp;X&nbsp;] ÍNTEGRO, SIN SIGNOS DE APERTURA PREVIA NI ADULTERACIÓN</span>}</td>
             </tr>
             <tr>
               <th>Nuevo Precinto de Reembalaje N°:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>PREC-REEMB-2026-992 (Asignado tras extracción)</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="PREC-REEMB-2026-992 (Asignado tras extracción)"></span> : <span>PREC-REEMB-2026-992 (Asignado tras extracción)</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -86,28 +86,28 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 3.0 PROCEDIMIENTO DE ADQUISICIÓN LÓGICA Y HASH -->
       <div class="section-block">
-        <div class="section-heading">3.0 ADQUISICIÓN LÓGICA FORENSE Y CÁLCULO DE HASH (NIST SP 800-101)</div>
+        <div class="section-heading">3.0 ADQUISICIÓN LÓGICA / BIT-A-BIT FORENSE Y CÁLCULO DE HASH (NIST SP 800-101 · NIST SP 800-86)</div>
         <table class="forense-table">
           <tbody>
             <tr>
               <th style="width: 32%;">Modalidad de Adquisición:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Extracción Lógica de Contenedor y Bases de Datos SQLite (NIST Nivel 2)</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Extracción Lógica Móvil (NIST 800-101 Nivel 2) / Adquisición con Bloqueo de Escritura (NIST 800-86)"></span> : <span>Extracción Lógica de Contenedor y Bases de Datos SQLite (NIST Nivel 2)</span>}</td>
             </tr>
             <tr>
               <th>Herramienta Forense Empleada:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>ALEAPP CLI / Andriller / Protocolo de Respaldo Lógico Auditado</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="ALEAPP CLI / Andriller / Avilla Forensics / FTK Imager (Validadas CENIF G.O. 39.847)"></span> : <span>ALEAPP CLI / Andriller / Protocolo de Respaldo Lógico Auditado</span>}</td>
             </tr>
             <tr>
-              <th>Base de Datos Extraída:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>msgstore.db / wa.db (Comunicaciones de WhatsApp)</span>}</td>
+              <th>Base de Datos / Medio Extraído:</th>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="msgstore.db / wa.db (WhatsApp/Redes), Imágenes, Notas de Voz, Capturas o Contenedor (.E01/.RAW)"></span> : <span>msgstore.db / wa.db (Comunicaciones de WhatsApp)</span>}</td>
             </tr>
             <tr>
-              <th>Hash SHA-256 de la Base de Datos:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
+              <th>Hash SHA-256 de la Evidencia:</th>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
             </tr>
             <tr>
               <th>Verificación de Integridad:</th>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] MATCH (100% ÍNTEGRO) &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] MISMATCH (ALERTA)</span> : <span>[&nbsp;X&nbsp;] MATCH (100% ÍNTEGRO — VALIDEZ DE ORIGINAL ART. 7 LMDFE)</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="[ X ] MATCH (100% ÍNTEGRO — VALIDEZ DE ORIGINAL ART. 7 LMDFE)">[&nbsp;&nbsp;] MATCH (100% ÍNTEGRO) &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] MISMATCH (ALERTA)</span> : <span>[&nbsp;X&nbsp;] MATCH (100% ÍNTEGRO — VALIDEZ DE ORIGINAL ART. 7 LMDFE)</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -115,7 +115,7 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 4.0 REEMBALAJE Y RESGUARDO -->
       <div class="legal-clause">
-        <strong>4.0 CONSTANCIA DE REEMBALAJE Y RESGUARDO (MUCC-2017):</strong> Culminada con éxito la extracción lógica forense de la base de datos de mensajería y calculado su Hash SHA-256, se reembaló el teléfono celular original en bolsa Faraday y se le aplicó el Nuevo Precinto de Seguridad supra registrado, garantizando su indemnidad para posterior cotejo o devolución formal.
+        <strong>4.0 CONSTANCIA DE REEMBALAJE Y RESGUARDO (MUCC-2017):</strong> Culminada con éxito la extracción lógica forense de la base de datos de mensajería o contenedor del medio digital consignado y calculado su Hash SHA-256, se reembaló el teléfono celular o soporte original en bolsa Faraday / empaque de seguridad y se le aplicó el Nuevo Precinto de Seguridad supra registrado, garantizando su indemnidad para posterior cotejo o devolución formal.
       </div>
     </div>
 

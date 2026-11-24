@@ -49,11 +49,11 @@ const dispositivoDesc = caso.dispositivo_marca
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Lugar de Recepción:</td>
               <td class="forense-cell-value" style="width: 35%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>Sede Laboratorio Forense SHA256.US · Quíbor, Estado Lara</span>}
+                {isBlanco ? <span class="linea-manual" data-default="Sede Laboratorio Forense SHA256.US · Quíbor, Estado Lara"></span> : <span>Sede Laboratorio Forense SHA256.US · Quíbor, Estado Lara</span>}
               </td>
               <td class="forense-cell-label" style="width: 20%;">Fecha y Hora:</td>
               <td class="forense-cell-value font-mono" style="width: 20%;">
-                {isBlanco ? <span class="linea-manual"></span> : <span>{new Date().toLocaleDateString('es-VE')} · 10:00 VET</span>}
+                {isBlanco ? <span class="linea-manual" data-field="fecha" data-default={`${new Date().toLocaleDateString('es-VE')} · 10:00 VET`}></span> : <span>{new Date().toLocaleDateString('es-VE')} · 10:00 VET</span>}
               </td>
             </tr>
           </tbody>
@@ -68,21 +68,21 @@ const dispositivoDesc = caso.dispositivo_marca
             <tr>
               <td class="forense-cell-label" style="width: 22%;">Apellidos y Nombres:</td>
               <td class="forense-cell-value" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_nombre" data-default="Insp. Jefe Luis Ortega"></span> : <span data-field="solicitante_nombre">{caso.solicitante_nombre}</span>}
               </td>
               <td class="forense-cell-label" style="width: 22%;">Cédula de Identidad / RIF:</td>
               <td class="forense-cell-value font-mono" style="width: 28%;">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_cedula" data-default="V-12.345.678"></span> : <span data-field="solicitante_cedula">{caso.solicitante_cedula}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Línea Móvil / WhatsApp:</td>
               <td class="forense-cell-value font-mono">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_telefono"></span> : <span data-field="solicitante_telefono">{caso.solicitante_telefono}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_telefono" data-default="+58 412-5551234"></span> : <span data-field="solicitante_telefono">{caso.solicitante_telefono}</span>}
               </td>
               <td class="forense-cell-label">Dirección de Habitación:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion"></span> : <span data-field="solicitante_direccion">{caso.solicitante_direccion}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="solicitante_direccion" data-default="Domicilio Procesal / Sede"></span> : <span data-field="solicitante_direccion">{caso.solicitante_direccion}</span>}
               </td>
             </tr>
           </tbody>
@@ -91,28 +91,36 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 3.0 IDENTIFICACIÓN TÉCNICA DE LA EVIDENCIA DIGITAL -->
       <div class="section-block">
-        <div class="section-heading">3.0 IDENTIFICACIÓN TÉCNICA DEL DISPOSITIVO MÓVIL (ISO/IEC 27037 §5.4.2 / §5.4.3)</div>
+        <div class="section-heading">3.0 IDENTIFICACIÓN TÉCNICA DEL DISPOSITIVO MÓVIL Y MEDIO DIGITAL (ISO/IEC 27037 §5.4.2 / §5.4.3 · RFC 3227)</div>
         <table class="forense-table">
           <tbody>
             <tr>
-              <th style="width: 25%;">Dispositivo Consignado:</th>
-              <td style="width: 75%;">{isBlanco ? <span class="linea-manual"></span> : <span>{dispositivoDesc || 'Teléfono Inteligente (Smartphone)'}</span>}</td>
+              <th style="width: 25%;">Taxonomía del Medio:</th>
+              <td style="width: 75%; font-weight: 700; font-size: 6.6pt;">
+                <span data-default="[ X ] Móvil / Smartphone   [   ] Disco Duro / SSD / USB   [   ] Computadora / Servidor   [   ] CD / DVD   [   ] Reloj / Wearable   [   ] Cámara DVR / CCTV">
+                  [&nbsp;&nbsp;] Móvil / Smartphone &nbsp;&nbsp; [&nbsp;&nbsp;] Disco Duro / SSD / USB &nbsp;&nbsp; [&nbsp;&nbsp;] Computadora / Servidor &nbsp;&nbsp; [&nbsp;&nbsp;] CD / DVD &nbsp;&nbsp; [&nbsp;&nbsp;] Reloj / Wearable &nbsp;&nbsp; [&nbsp;&nbsp;] Cámara DVR / CCTV
+                </span>
+              </td>
+            </tr>
+            <tr>
+              <th>Dispositivo Consignado:</th>
+              <td>{isBlanco ? <span class="linea-manual" data-field="evidencia_tipo" data-default="Teléfono Inteligente (Smartphone)"></span> : <span data-field="evidencia_tipo">{dispositivoDesc || 'Teléfono Inteligente (Smartphone)'}</span>}</td>
             </tr>
             <tr>
               <th>Marca, Modelo y Color:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>{dispositivoDesc || 'N/A'}</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-field="dispositivo_descripcion" data-default="Samsung Galaxy A54 · Negro Phantom"></span> : <span data-field="dispositivo_descripcion">{dispositivoDesc || 'N/A'}</span>}</td>
             </tr>
             <tr>
               <th>Código IMEI / Serial Físico:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="dispositivo_imei"></span> : <span data-field="dispositivo_imei">{caso.dispositivo_imei || caso.discoduro_serial}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="dispositivo_imei" data-default="354928110948271"></span> : <span data-field="dispositivo_imei">{caso.dispositivo_imei || caso.discoduro_serial}</span>}</td>
             </tr>
             <tr>
-              <th>Operadora / Tarjeta SIM:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Línea activa con cuenta de WhatsApp configurada</span>}</td>
+              <th>Operadora / SIM / Capacidad:</th>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Línea activa con cuenta de WhatsApp, redes sociales y almacenamiento interno"></span> : <span>Línea activa con cuenta de WhatsApp configurada</span>}</td>
             </tr>
             <tr>
               <th>Estado Físico al Consignar:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Pantalla y carcasa íntegras, encendido operativo, sin daño físico aparente.</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-field="dispositivo_estado_fisico" data-default="Pantalla y carcasa íntegras, encendido operativo, sin daño físico aparente."></span> : <span data-field="dispositivo_estado_fisico">Pantalla y carcasa íntegras, encendido operativo, sin daño físico aparente.</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -120,16 +128,16 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 4.0 OBJETO DEL ENCARGO PERICIAL -->
       <div class="section-block">
-        <div class="section-heading">4.0 OBJETO DEL ENCARGO: ADQUISICIÓN LÓGICA DE MENSAJERÍA (COPP ART. 223)</div>
-        <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
+        <div class="section-heading">4.0 OBJETO DEL ENCARGO: ADQUISICIÓN FORENSE POR CONSIGNACIÓN (COPP ART. 223 · LMDFE ART. 7)</div>
+        <div style="font-size: 7pt; line-height: 1.32; padding: 2px;">
           {isBlanco ? (
-            <div class="lineas-pautadas-3">
+            <div class="lineas-pautadas-3" data-field="descripcion" data-default="Adquisición lógica y/o física forense (NIST SP 800-101 Nivel 2 · NIST SP 800-86) de bases de datos de mensajería y redes sociales (WhatsApp msgstore.db), verificación de autenticidad de imágenes, capturas de pantalla, chats y notas de voz en el dispositivo móvil o medio digital consignado, sellado criptográfico SHA-256 e informe pericial colegiado para fines probatorios judiciales.">
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
             </div>
           ) : (
-            <span>{caso.descripcion || 'Adquisición lógica forense (NIST SP 800-101 Nivel 2) de bases de datos de mensajería WhatsApp (msgstore.db), verificación de autenticidad de chats y notas de voz, sellado criptográfico SHA-256 e informe pericial colegiado para fines probatorios judiciales.'}</span>
+            <span data-field="descripcion">{caso.descripcion || 'Adquisición lógica forense (NIST SP 800-101 Nivel 2) de bases de datos de mensajería WhatsApp (msgstore.db), verificación de autenticidad de chats y notas de voz, sellado criptográfico SHA-256 e informe pericial colegiado para fines probatorios judiciales.'}</span>
           )}
         </div>
       </div>
@@ -167,31 +175,31 @@ const dispositivoDesc = caso.dispositivo_marca
             <tr>
               <td class="forense-cell-label" style="width: 25%;">Bolsa Faraday N° (RF Shield):</td>
               <td class="forense-cell-value font-mono" style="width: 25%;">
-                {isBlanco ? <span class="linea-manual" data-field="bolsa_faraday_numero"></span> : <span data-field="bolsa_faraday_numero">{caso.bolsa_faraday_numero || 'FARADAY-2026-001'}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="bolsa_faraday_numero" data-default="FARADAY-2026-001"></span> : <span data-field="bolsa_faraday_numero">{caso.bolsa_faraday_numero || 'FARADAY-2026-001'}</span>}
               </td>
               <td class="forense-cell-label" style="width: 25%;">Precinto de Seguridad N°:</td>
               <td class="forense-cell-value font-mono" style="width: 25%;">
-                {isBlanco ? <span class="linea-manual" data-field="precinto_numero"></span> : <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-2026-991'}</span>}
+                {isBlanco ? <span class="linea-manual" data-field="precinto_numero" data-default="PREC-2026-991"></span> : <span data-field="precinto_numero">{caso.precinto_numero || 'PREC-2026-991'}</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Modo Avión Activado:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span>[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] APAGADO</span> : <span>[&nbsp;X&nbsp;] SÍ (Modo Avión Forzado)</span>}
+                {isBlanco ? <span data-default="[ X ] SÍ (Modo Avión / Aislamiento RF)">[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO &nbsp;&nbsp; [&nbsp;&nbsp;] APAGADO</span> : <span>[&nbsp;X&nbsp;] SÍ (Modo Avión Forzado)</span>}
               </td>
               <td class="forense-cell-label">Bloqueo WiFi / BT / Celular / NFC:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span>[&nbsp;&nbsp;] VERIFICADO &nbsp;&nbsp; [&nbsp;&nbsp;] N/A</span> : <span>[&nbsp;X&nbsp;] VERIFICADO / AISLADO (0 dBm)</span>}
+                {isBlanco ? <span data-default="[ X ] VERIFICADO / AISLADO (0 dBm)">[&nbsp;&nbsp;] VERIFICADO &nbsp;&nbsp; [&nbsp;&nbsp;] N/A</span> : <span>[&nbsp;X&nbsp;] VERIFICADO / AISLADO (0 dBm)</span>}
               </td>
             </tr>
             <tr>
               <td class="forense-cell-label">Fijación Fotográfica 360°:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span>[&nbsp;&nbsp;] CONFORME (6 vistas) &nbsp; [&nbsp;&nbsp;] PENDIENTE</span> : <span>[&nbsp;X&nbsp;] CONFORME (6 vistas macro registradas)</span>}
+                {isBlanco ? <span data-default="[ X ] CONFORME (6 vistas macro registradas)">[&nbsp;&nbsp;] CONFORME (6 vistas) &nbsp; [&nbsp;&nbsp;] PENDIENTE</span> : <span>[&nbsp;X&nbsp;] CONFORME (6 vistas macro registradas)</span>}
               </td>
               <td class="forense-cell-label">Condición Embalaje / Precinto:</td>
               <td class="forense-cell-value">
-                {isBlanco ? <span>[&nbsp;&nbsp;] INTACTO &nbsp;&nbsp; [&nbsp;&nbsp;] OBSERVADO</span> : <span>[&nbsp;X&nbsp;] INTACTO / SIN VIOLACIÓN</span>}
+                {isBlanco ? <span data-default="[ X ] INTACTO / SIN VIOLACIÓN">[&nbsp;&nbsp;] INTACTO &nbsp;&nbsp; [&nbsp;&nbsp;] OBSERVADO</span> : <span>[&nbsp;X&nbsp;] INTACTO / SIN VIOLACIÓN</span>}
               </td>
             </tr>
           </tbody>
@@ -200,46 +208,46 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 5.1 INVENTARIO DE ELEMENTOS Y ACCESORIOS CONSIGNADOS -->
       <div class="section-block">
-        <div class="section-heading">5.1 INVENTARIO DE ELEMENTOS Y ACCESORIOS RECIBIDOS (MUCC-2017)</div>
+        <div class="section-heading">5.1 INVENTARIO DE ELEMENTOS, MEDIOS DIGITALES Y ACCESORIOS RECIBIDOS (MUCC-2017)</div>
         <table class="forense-table">
           <thead>
             <tr>
               <th style="width: 8%;">Item</th>
-              <th style="width: 42%;">Elemento o Accesorio Acompañante</th>
-              <th style="width: 25%;">Estado de Recepción</th>
+              <th style="width: 44%;">Elemento, Medio Digital o Accesorio Acompañante</th>
+              <th style="width: 23%;">Estado de Recepción</th>
               <th style="width: 25%;">Observaciones</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td style="text-align: center; font-weight: bold;">01</td>
-              <td>Teléfono Móvil Inteligente</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] CONFORME</span> : 'CONFORME'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Encendido, pantalla íntegra</span>}</td>
+              <td>Teléfono Móvil Inteligente / Medio Digital Principal (CD, Disco, Reloj, PC, Servidor, Cámara)</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="[ X ] CONFORME">[&nbsp;&nbsp;] CONFORME</span> : 'CONFORME'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Encendido / Operativo, íntegro"></span> : <span>Encendido, pantalla íntegra</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">02</td>
-              <td>Cable USB de Carga y Sincronización</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO</span> : <span>[ X ] Consignado original</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Tipo C a USB-A</span>}</td>
+              <td>Cable USB de Carga y Sincronización / Fuente de Alimentación</td>
+              <td>{isBlanco ? <span data-default="[ X ] Consignado original">[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO</span> : <span>[ X ] Consignado original</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Tipo C a USB-A / Interfaz Datos"></span> : <span>Tipo C a USB-A</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">03</td>
-              <td>Tarjeta SIM / Chip Telefónico</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] PRESENTE &nbsp; [&nbsp;&nbsp;] SIN SIM</span> : <span>[ X ] Instalada bandeja 1</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Línea activa con WhatsApp</span>}</td>
+              <td>Tarjeta SIM / Chip Telefónico / Módulo de Red</td>
+              <td>{isBlanco ? <span data-default="[ X ] Instalada bandeja 1">[&nbsp;&nbsp;] PRESENTE &nbsp; [&nbsp;&nbsp;] SIN SIM</span> : <span>[ X ] Instalada bandeja 1</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Línea activa con WhatsApp / Redes"></span> : <span>Línea activa con WhatsApp</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">04</td>
-              <td>Tarjeta de Memoria MicroSD Externa</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] PRESENTE &nbsp; [&nbsp;&nbsp;] NO POSEE</span> : <span>[&nbsp;&nbsp;] No posee ranura externa</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Almacenamiento interno</span>}</td>
+              <td>Tarjeta MicroSD Externa / Memoria USB / Disco Duro / CD-DVD</td>
+              <td>{isBlanco ? <span data-default="[   ] Almacenamiento interno del equipo">[&nbsp;&nbsp;] PRESENTE &nbsp; [&nbsp;&nbsp;] NO POSEE</span> : <span>[&nbsp;&nbsp;] No posee ranura externa</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Memoria interna / Soporte verificado"></span> : <span>Almacenamiento interno</span>}</td>
             </tr>
             <tr>
               <td style="text-align: center; font-weight: bold;">05</td>
-              <td>Funda, Forro o Estuche Protector</td>
-              <td>{isBlanco ? <span>[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO</span> : <span>[ X ] Consignado protector</span>}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Silicón transparente</span>}</td>
+              <td>Funda, Forro, Carcasa o Estuche Protector de Transporte</td>
+              <td>{isBlanco ? <span data-default="[ X ] Consignado protector">[&nbsp;&nbsp;] SÍ &nbsp;&nbsp; [&nbsp;&nbsp;] NO</span> : <span>[ X ] Consignado protector</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Protector físico verificado"></span> : <span>Silicón transparente</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -247,7 +255,7 @@ const dispositivoDesc = caso.dispositivo_marca
 
       <!-- 6.0 DECLARACIÓN JURADA DE CONSIGNACIÓN -->
       <div class="legal-clause">
-        <strong>6.0 DECLARACIÓN JURADA DE CONSIGNACIÓN Y APERTURA DE CADENA (COPP ART. 187 · MUCC-2017):</strong> El consignante hace entrega física formal y voluntaria del teléfono inteligente supra descrito al perito receptor del Laboratorio SHA256.US. Se certifica el estado del equipo, la fijación fotográfica y el sellado en bolsa Faraday bajo precinto numerado, procediendo a abrir formalmente la Planilla de Registro de Cadena de Custodia (PRCC) bajo responsabilidad legal de los actuantes.
+        <strong>6.0 DECLARACIÓN JURADA DE CONSIGNACIÓN Y APERTURA DE CADENA (COPP ART. 187 · MUCC-2017):</strong> El consignante hace entrega física formal y voluntaria del teléfono inteligente o medio digital supra descrito al perito receptor del Laboratorio SHA256.US. Se certifica el estado del equipo, la fijación fotográfica y el sellado en bolsa Faraday / embalaje técnico bajo precinto numerado, procediendo a abrir formalmente la Planilla de Registro de Cadena de Custodia (PRCC) bajo responsabilidad legal de los actuantes.
       </div>
     </div>
 

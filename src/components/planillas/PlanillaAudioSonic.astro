@@ -36,20 +36,20 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
     <div class="planilla-body">
       <!-- 1.0 IDENTIFICACIÓN DEL ARCHIVO -->
       <div class="section-block">
-        <div class="section-heading">1.0 IDENTIFICACIÓN DE LA NOTA DE VOZ DE WHATSAPP Y HASH SHA-256</div>
+        <div class="section-heading">1.0 IDENTIFICACIÓN DE LA NOTA DE VOZ / ARCHIVO DE AUDIO Y HASH SHA-256</div>
         <table class="forense-table">
           <tbody>
             <tr>
-              <th style="width: 25%;">Nombre de Archivo:</th>
-              <td style="width: 75%;">{isBlanco ? <span class="linea-manual"></span> : <span>AUD_WHATSAPP_NOTA_VOZ.opus (Flujo Nativo Opus en Ogg)</span>}</td>
+              <th style="width: 25%;">Nombre de Archivo / Origen:</th>
+              <td style="width: 75%;">{isBlanco ? <span class="linea-manual" data-default="AUD_WHATSAPP_NOTA_VOZ.opus (Flujo Nativo Opus en Móvil / Medio Digital Consignado)"></span> : <span>AUD_WHATSAPP_NOTA_VOZ.opus (Flujo Nativo Opus en Ogg)</span>}</td>
             </tr>
             <tr>
               <th>Hash SHA-256 del Audio:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
             </tr>
             <tr>
               <th>Herramienta Utilizada:</th>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Sonic Visualiser v5.0.1 / Praat Phonetics (Algoritmos FFT &amp; YIN de Pitch)</span>}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Sonic Visualiser v5.0.1 / Praat Phonetics (Algoritmos FFT & YIN de Pitch · CENIF G.O. 39.847)"></span> : <span>Sonic Visualiser v5.0.1 / Praat Phonetics (Algoritmos FFT &amp; YIN de Pitch)</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -62,19 +62,19 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td class="forense-cell-label" style="width: 17%;">Frecuencia:</td>
-              <td class="forense-cell-value font-mono" style="width: 16%;">{isBlanco ? <span class="linea-manual"></span> : <span>48.000 Hz</span>}</td>
+              <td class="forense-cell-value font-mono" style="width: 16%;">{isBlanco ? <span class="linea-manual" data-default="48.000 Hz"></span> : <span>48.000 Hz</span>}</td>
               <td class="forense-cell-label" style="width: 17%;">Canales:</td>
-              <td class="forense-cell-value" style="width: 16%;">{isBlanco ? <span class="linea-manual"></span> : <span>1 Canal (Mono)</span>}</td>
+              <td class="forense-cell-value" style="width: 16%;">{isBlanco ? <span class="linea-manual" data-default="1 Canal (Mono)"></span> : <span>1 Canal (Mono)</span>}</td>
               <td class="forense-cell-label" style="width: 17%;">Profundidad:</td>
-              <td class="forense-cell-value font-mono" style="width: 17%;">{isBlanco ? <span class="linea-manual"></span> : <span>16 bits / VBR</span>}</td>
+              <td class="forense-cell-value font-mono" style="width: 17%;">{isBlanco ? <span class="linea-manual" data-default="16 bits / VBR"></span> : <span>16 bits / VBR</span>}</td>
             </tr>
             <tr>
               <td class="forense-cell-label">Duración:</td>
-              <td class="forense-cell-value font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>00:01:42.850</span>}</td>
+              <td class="forense-cell-value font-mono">{isBlanco ? <span class="linea-manual" data-default="00:01:42.850"></span> : <span>00:01:42.850</span>}</td>
               <td class="forense-cell-label">Formato / Códec:</td>
-              <td class="forense-cell-value">{isBlanco ? <span class="linea-manual"></span> : <span>Opus (RFC 6716)</span>}</td>
+              <td class="forense-cell-value">{isBlanco ? <span class="linea-manual" data-default="Opus (RFC 6716) / PCM"></span> : <span>Opus (RFC 6716)</span>}</td>
               <td class="forense-cell-label">Contenedor:</td>
-              <td class="forense-cell-value">{isBlanco ? <span class="linea-manual"></span> : <span>Ogg (.opus)</span>}</td>
+              <td class="forense-cell-value">{isBlanco ? <span class="linea-manual" data-default="Ogg (.opus) / Multimedia"></span> : <span>Ogg (.opus)</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -94,23 +94,23 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td>Continuidad de Ruido de Fondo (Noise Floor)</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] CONTINUO &nbsp; [&nbsp;&nbsp;] DISCONT.</span> : 'CONTINUO (SIN CORTES)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Piso de ruido acústico homogéneo a -54 dBFS sin saltos.</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="CONTINUO (SIN CORTES)">[&nbsp;&nbsp;] CONTINUO &nbsp; [&nbsp;&nbsp;] DISCONT.</span> : 'CONTINUO (SIN CORTES)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Piso de ruido acústico homogéneo a -54 dBFS sin saltos."></span> : <span>Piso de ruido acústico homogéneo a -54 dBFS sin saltos.</span>}</td>
             </tr>
             <tr>
               <td>Formantes Vocálicos Laríngeos (F1-F4)</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] HUMANO &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] SINTÉTICO</span> : 'VOZ BIOLÓGICA AUTÉNTICA'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Micro-temblores y jitter propios de emisión humana natural.</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="VOZ BIOLÓGICA AUTÉNTICA">[&nbsp;&nbsp;] HUMANO &nbsp;&nbsp;&nbsp; [&nbsp;&nbsp;] SINTÉTICO</span> : 'VOZ BIOLÓGICA AUTÉNTICA'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Micro-temblores y jitter propios de emisión humana natural."></span> : <span>Micro-temblores y jitter propios de emisión humana natural.</span>}</td>
             </tr>
             <tr>
               <td>Detección de Edición o Manipulación</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] SIN EDICIÓN &nbsp; [&nbsp;&nbsp;] EDITADO</span> : 'SIN VESTIGIOS DE EDICIÓN'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Ausencia de cortes, empalmes o transcodificaciones anómalas.</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="SIN VESTIGIOS DE EDICIÓN">[&nbsp;&nbsp;] SIN EDICIÓN &nbsp; [&nbsp;&nbsp;] EDITADO</span> : 'SIN VESTIGIOS DE EDICIÓN'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Ausencia de cortes, empalmes o transcodificaciones anómalas."></span> : <span>Ausencia de cortes, empalmes o transcodificaciones anómalas.</span>}</td>
             </tr>
             <tr>
               <td>Frecuencia Eléctrica de Red (ENF 60 Hz)</td>
-              <td style="font-weight: 700;">{isBlanco ? <span>[&nbsp;&nbsp;] TRAZA 60 Hz &nbsp; [&nbsp;&nbsp;] NO DETECT.</span> : 'TRAZA DE 60 Hz DETECTADA'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Coherente con el suministro eléctrico nacional venezolano.</span>}</td>
+              <td style="font-weight: 700;">{isBlanco ? <span data-default="TRAZA DE 60 Hz DETECTADA">[&nbsp;&nbsp;] TRAZA 60 Hz &nbsp; [&nbsp;&nbsp;] NO DETECT.</span> : 'TRAZA DE 60 Hz DETECTADA'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Coherente con el suministro eléctrico nacional venezolano."></span> : <span>Coherente con el suministro eléctrico nacional venezolano.</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -118,19 +118,20 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 4.0 CONCLUSIONES ACÚSTICAS -->
       <div class="legal-clause">
-        <strong>4.0 CONCLUSIONES DEL PERITAJE DE AUDIO:</strong> La nota de voz peritada es <strong>AUTÉNTICA E ÍNTEGRA</strong>. Cumple con los requisitos de mensaje de datos original conforme al Art. 7 de la LMDFE, habiendo sido aportada por el interlocutor legítimo sin vulnerar la privacidad de terceros (Art. 2 Ley sobre Protección a la Privacidad de las Comunicaciones).
+        <strong>4.0 CONCLUSIONES DEL PERITAJE DE AUDIO:</strong> La nota de voz o grabación de audio peritada es <strong>AUTÉNTICA E ÍNTEGRA</strong>. Cumple con los requisitos de mensaje de datos original conforme al Art. 7 de la LMDFE, habiendo sido aportada por el interlocutor o titular legítimo bajo procedimiento de consignación sin vulnerar la privacidad de terceros (Art. 2 Ley sobre Protección a la Privacidad de las Comunicaciones).
       </div>
     </div>
 
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
       leftRole="perito"
+      coPeritoTitulo="PERITO EN ACÚSTICA FORENSE (CO-PERITO)"
       consignanteTitulo="PERITO EN ACÚSTICA FORENSE (CO-PERITO)"
       peritoTitulo="PERITO PRINCIPAL / COORDINADOR REVISOR"
-      coPeritoNombre={caso.co_perito_nombre || "Ing. Perito Acústico"}
-      coPeritoCedula={caso.co_perito_cedula || "V-17.442.991"}
-      coPeritoCiv="281014"
-      coPeritoInpre="174820"
+      coPeritoNombre={caso.co_perito_nombre || "Ing. SHA256 Adquisición"}
+      coPeritoCedula={caso.co_perito_cedula || "V-15.816.003"}
+      coPeritoCiv="310520"
+      coPeritoInpre="201450"
       coPeritoCargo="Especialista en Análisis de Señales de Audio"
       peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
       peritoCedula={caso.perito_cedula || "V-18.999.001"}

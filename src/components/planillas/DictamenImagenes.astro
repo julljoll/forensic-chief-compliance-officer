@@ -40,16 +40,16 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         <table class="forense-table">
           <tbody>
             <tr>
-              <th style="width: 28%;">Archivo de Imagen:</th>
-              <td style="width: 72%;">{isBlanco ? <span class="linea-manual"></span> : <span>IMG_EVIDENCIA_WHATSAPP_01.jpg (Mensaje de Datos Adjunto)</span>}</td>
+              <th style="width: 28%;">Archivo de Imagen / Captura:</th>
+              <td style="width: 72%;">{isBlanco ? <span class="linea-manual" data-default="IMG_EVIDENCIA_WHATSAPP_01.jpg (Fotografía / Captura de Pantalla / Red Social / Fotograma DVR)"></span> : <span>IMG_EVIDENCIA_WHATSAPP_01.jpg (Mensaje de Datos Adjunto)</span>}</td>
             </tr>
             <tr>
               <th>Hash SHA-256 de la Imagen:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-field="hashSHA256" data-default="b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e"></span> : <span data-field="hashSHA256">{caso.hashSHA256 || 'Pendiente por cálculo'}</span>}</td>
             </tr>
             <tr>
               <th>Resolución y Dimensiones:</th>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : <span>4032 × 3024 píxeles (12.2 MP) · Profundidad de Color: 24 bits sRGB</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="4032 × 3024 píxeles (12.2 MP) · Profundidad de Color: 24 bits sRGB"></span> : <span>4032 × 3024 píxeles (12.2 MP) · Profundidad de Color: 24 bits sRGB</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -57,11 +57,11 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 2.0 OPERACIONES TÉCNICAS: EXTRACCIÓN Y COTEJO EXIF (COPP ART. 225.2) -->
       <div class="section-block">
-        <div class="section-heading">2.0 OPERACIONES TÉCNICAS PRACTICADAS: ANÁLISIS EXIF (COPP ART. 225 NUM. 2)</div>
+        <div class="section-heading">2.0 OPERACIONES TÉCNICAS PRACTICADAS: ANÁLISIS EXIF Y METADATOS (COPP ART. 225 NUM. 2)</div>
         <table class="forense-table">
           <thead>
             <tr>
-              <th style="width: 30%;">Etiqueta EXIF</th>
+              <th style="width: 30%;">Etiqueta EXIF / Metadato</th>
               <th style="width: 35%;">Valor Extraído</th>
               <th style="width: 35%;">Conclusión Forense</th>
             </tr>
@@ -69,23 +69,23 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
           <tbody>
             <tr>
               <td>Marca y Modelo de Captura</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : 'Sensor Nativo del Dispositivo Consignado'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Coincide con el teléfono peritado.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="Sensor Nativo del Dispositivo / Medio Consignado"></span> : 'Sensor Nativo del Dispositivo Consignado'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Coincide con el equipo peritado."></span> : <span>Coincide con el teléfono peritado.</span>}</td>
             </tr>
             <tr>
               <td>Fecha/Hora Original (DateTimeOriginal)</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : '2026:11:10 14:22:15 UTC'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Marca temporal coherente con el chat.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="2026:11:10 14:22:15 UTC"></span> : '2026:11:10 14:22:15 UTC'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Marca temporal coherente con el registro."></span> : <span>Marca temporal coherente con el chat.</span>}</td>
             </tr>
             <tr>
-              <td>Geolocalización GPS</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : '09°55\'41.2"N 69°37\'12.5"W'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Coordenadas fijadas en el metadato.</span>}</td>
+              <td>Geolocalización GPS / Origen</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="09°55'41.2&quot;N 69°37'12.5&quot;W"></span> : '09°55\'41.2"N 69°37\'12.5"W'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Coordenadas fijadas en el metadato."></span> : <span>Coordenadas fijadas en el metadato.</span>}</td>
             </tr>
             <tr>
               <td>Software de Edición (Software Tag)</td>
-              <td class="font-mono">{isBlanco ? <span class="linea-manual"></span> : 'None (Firmware de Cámara Original)'}</td>
-              <td>{isBlanco ? <span class="linea-manual"></span> : <span>Ausencia de software de retoque o edición.</span>}</td>
+              <td class="font-mono">{isBlanco ? <span class="linea-manual" data-default="None (Firmware Original / Sin Edición)"></span> : 'None (Firmware de Cámara Original)'}</td>
+              <td>{isBlanco ? <span class="linea-manual" data-default="Ausencia de software de retoque o edición."></span> : <span>Ausencia de software de retoque o edición.</span>}</td>
             </tr>
           </tbody>
         </table>
@@ -96,7 +96,7 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
         <div class="section-heading">3.0 OPERACIONES TÉCNICAS: ANÁLISIS DE ERROR DE COMPRESIÓN (ELA) Y PÍXELES</div>
         <div style="font-size: 7.2pt; line-height: 1.35; padding: 2px;">
           {isBlanco ? (
-            <div class="lineas-pautadas-2">
+            <div class="lineas-pautadas-2" data-default="El análisis ELA demuestra niveles de tasa de compresión uniformes en toda la superficie de la imagen o captura de pantalla. No se observan discrepancias cromáticas, artefactos de clonado de píxeles ni inconsistencias lumínicas que sugieran fotomontaje o alteración digital.">
               <span class="renglon-manual"></span>
               <span class="renglon-manual"></span>
             </div>
@@ -108,19 +108,20 @@ const isBlanco = modo === 'blanco' || !caso.numeroCaso;
 
       <!-- 4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225.3) -->
       <div class="legal-clause">
-        <strong>4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225 NUM. 3):</strong> Con arreglo a los principios de la informática forense y el método científico, los peritos actuantes dictaminan categóricamente que la fotografía analizada es <strong>AUTÉNTICA E INALTERADA</strong>, conservando su integridad de origen como mensaje de datos conforme al Art. 7 de la Ley sobre Mensajes de Datos y Firmas Electrónicas y Arts. 223 al 225 del COPP.
+        <strong>4.0 CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225 NUM. 3):</strong> Con arreglo a los principios de la informática forense y el método científico, los peritos actuantes dictaminan categóricamente que la fotografía, imagen o captura de pantalla analizada es <strong>AUTÉNTICA E INALTERADA</strong>, conservando su integridad de origen como mensaje de datos conforme al Art. 7 de la Ley sobre Mensajes de Datos y Firmas Electrónicas y Arts. 223 al 225 del COPP.
       </div>
     </div>
 
     <!-- 5.0 CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES (COPP ART. 223 - DOS PERITOS) -->
     <PlanillaFirmasBilaterales
       leftRole="perito"
+      coPeritoTitulo="PERITO EN ANÁLISIS DE IMÁGENES (CO-PERITO)"
       consignanteTitulo="PERITO EN ANÁLISIS DE IMÁGENES (CO-PERITO)"
       peritoTitulo="PERITO PRINCIPAL / COORDINADOR FORENSE"
-      coPeritoNombre={caso.co_perito_nombre || "Ing. Perito de Imágenes"}
-      coPeritoCedula={caso.co_perito_cedula || "V-18.114.908"}
-      coPeritoCiv="289410"
-      coPeritoInpre="179420"
+      coPeritoNombre={caso.co_perito_nombre || "Ing. SHA256 Adquisición"}
+      coPeritoCedula={caso.co_perito_cedula || "V-15.816.003"}
+      coPeritoCiv="310520"
+      coPeritoInpre="201450"
       coPeritoCargo="Especialista en Fotografía y Análisis de Imagen Forense"
       peritoNombre={caso.peritoLider || "Jull Joll (Perito Principal)"}
       peritoCedula={caso.perito_cedula || "V-18.999.001"}

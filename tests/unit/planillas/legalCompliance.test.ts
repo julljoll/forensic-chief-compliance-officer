@@ -90,4 +90,45 @@ describe('Verificación de Cumplimiento Legal y Estructural de Planillas (Etapa 
     expect(posDer).toBeGreaterThan(-1);
     expect(posIzq).toBeLessThan(posDer);
   });
+
+  it('FED-01: Todas las 13 planillas verifican el procedimiento por consignación multimedio y móvil con bloque federal e hidratación data-default', () => {
+    const header = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas/PlanillaHeader.astro'), 'utf8');
+    expect(header).toContain('PROCEDURE:');
+    expect(header).toContain('CONSIGNACIÓN (MUCC-2017)');
+    expect(header).toContain('FORM CODE:');
+    expect(header).toContain('JURISDICTION:');
+
+    const consent = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas/ActaConsentimiento.astro'), 'utf8');
+    expect(consent).toContain('Móvil / Smartphone');
+    expect(consent).toContain('Disco Duro');
+    expect(consent).toContain('CD / DVD');
+    expect(consent).toContain('Reloj / Wearable');
+    expect(consent).toContain('Cámara DVR / CCTV');
+    expect(consent).toContain('Imágenes / Fotos');
+    expect(consent).toContain('Redes Sociales / Mensajería');
+    expect(consent).toContain('Notas de Voz / Audios');
+    expect(consent).toContain('Capturas de Pantalla');
+
+    const allPlanillas = [
+      'ActaConsentimiento.astro',
+      'ActaEntrevista.astro',
+      'ActaObtencion.astro',
+      'PlanillaPRCC.astro',
+      'ActaDesprecintado.astro',
+      'PlanillaAudioSonic.astro',
+      'PlanillaEvaluacionUX.astro',
+      'ActaDictamen.astro',
+      'DictamenImagenes.astro',
+      'DictamenAudios.astro',
+      'ActaEntregaResultados.astro',
+      'ActaSanitizacion.astro',
+      'ActaAuditoriaTimeline.astro',
+    ];
+
+    for (const file of allPlanillas) {
+      const content = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas', file), 'utf8');
+      expect(content, `${file} debe incluir atributos data-default para Modo Datos`).toContain('data-default=');
+    }
+  });
 });
+
