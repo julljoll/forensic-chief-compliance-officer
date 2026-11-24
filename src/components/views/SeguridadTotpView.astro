@@ -3,18 +3,16 @@
  * SHA256.US — Vista de Configuración de Seguridad y MFA Google Authenticator (RFC 6238)
  * Cumplimiento: NIST SP 800-63B (AAL2) · ISO/IEC 27001 A.9.4.2 · RFC 6238 TOTP
  */
+import PageHeader from '../uswds/PageHeader.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
 ---
 
-<!-- Encabezado de Página -->
-<div class="margin-bottom-3">
-  <h1 class="margin-top-0 margin-bottom-1">
-    Seguridad y Autenticación en Dos Pasos (MFA / 2FA)
-  </h1>
-  <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
-    Gestión de autenticación robusta mediante Google Authenticator (RFC 6238) y protección criptográfica para peritos del laboratorio.
-  </p>
-</div>
+<PageHeader
+  title="Seguridad y Autenticación en Dos Pasos (MFA / 2FA)"
+  subtitle="Gestión de autenticación robusta mediante Google Authenticator (RFC 6238) y protección criptográfica para peritos del laboratorio."
+  tag="NIST SP 800-63B AAL2"
+  tagColor="bg-primary-darker"
+/>
 
 <!-- Resumen del Estado de Seguridad Actual -->
 <div class="margin-bottom-3">

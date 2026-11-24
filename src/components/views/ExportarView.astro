@@ -3,18 +3,22 @@
  * SHA256.US — Vista Hub de Exportación y Empaquetado de Expedientes Forenses
  * Genera el paquete ZIP con documentos independientes HTML, JSON canónico y reporte SHA-256.
  */
+import PageHeader from '../uswds/PageHeader.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
 ---
 
-<!-- Encabezado de Página -->
-<div class="margin-bottom-3">
-  <h1 class="margin-top-0 margin-bottom-1">
-    Exportación y Empaquetado Oficial del Expediente
-  </h1>
-  <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
-    Generación de entregables judiciales en formato comprimido (.ZIP) con sellos de verificación criptográfica.
-  </p>
-</div>
+<PageHeader
+  title="Exportación y Empaquetado Oficial del Expediente"
+  subtitle="Generación de entregables judiciales en formato comprimido (.ZIP) con planillas Folio y manifiesto criptográfico SHA-256."
+  tag="Paquete Judicial ZIP"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions">
+    <a href="/planillas" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+      Catálogo de Planillas (13)
+    </a>
+  </div>
+</PageHeader>
 
 <!-- USWDS: Summary box | https://designsystem.digital.gov/components/summary-box/ -->
 <div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="exportar-caso-titulo">

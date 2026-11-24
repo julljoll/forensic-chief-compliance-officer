@@ -64,10 +64,15 @@
       sessionStorage.setItem('fcco_auth_active', '1');
       if (authRes.data?.user) {
         sessionStorage.setItem('fcco_auth_user', JSON.stringify(authRes.data.user));
+        const u = authRes.data.user;
         const userEl = document.getElementById('user-name');
         if (userEl) {
-          const u = authRes.data.user;
-          userEl.textContent = `Perito: ${u.nombre || u.email} (FCCO)`;
+          const fullName = [u.nombre, u.apellido].filter(Boolean).join(' ') || u.email;
+          userEl.textContent = `Perito: ${fullName} (FCCO)`;
+        }
+        const civEl = document.getElementById('user-civ-badge');
+        if (civEl && u.civ) {
+          civEl.textContent = String(u.civ);
         }
       }
 

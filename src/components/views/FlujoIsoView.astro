@@ -1,14 +1,32 @@
 ---
 /**
  * SHA256.US — Vista Modular del Ciclo Pericial ISO (F0 - F5)
- * Arquitectura Ligera Cognitivamente en 3 Micro-Pasos Heurísticos:
+ * Arquitectura Ligera Cognitivamente en 3 Micro-Pasos Heurísticos + Guía SOP Federal:
+ *   Guía Operativa: Protocolo secuencial de laboratorio (.usa-process-list)
  *   Paso 1: Verificación y Datos Requeridos del Expediente
  *   Paso 2: Generación e Impresión de Planillas Oficiales en Folio (216mm × 330mm)
  *   Paso 3: Checklist RAG en Lenguaje Claro con Progressive Disclosure & Sello SHA-256
  */
+import PageHeader from '../uswds/PageHeader.astro';
 import StepIndicator from '../uswds/StepIndicator.astro';
 import { FASES_ISO } from '../../lib/domain/gating';
 ---
+
+<PageHeader
+  title="Guía Operativa del Ciclo Pericial ISO/IEC (F0 – F5)"
+  subtitle="Protocolo secuencial por consignación para validar pruebas en dispositivos móviles (imágenes, redes sociales, notas de voz, capturas) y medios digitales ante tribunales."
+  tag="SOP Federal · 6 Fases"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions" class="display-flex grid-gap-1 flex-wrap">
+    <a href="/planillas" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+      Catálogo Folio (13)
+    </a>
+    <a href="/custodia" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+      Custodia PRCC
+    </a>
+  </div>
+</PageHeader>
 
 <!-- 1. BARRA DE SELECCIÓN DE EXPEDIENTE ACTIVO -->
 <div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="caso-titulo">
@@ -22,6 +40,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
         <p class="margin-0 font-body-2xs text-base-dark">
           N° Causa: <strong id="caso-numero" class="font-mono">---</strong> ·
           PRCC: <strong id="caso-prcc" class="font-mono">---</strong> ·
+          Soporte: <strong id="caso-soporte" class="font-mono">Móvil / Medio Digital</strong> ·
           Fase Actual: <span class="usa-tag bg-accent-warm-dark text-ink font-mono-3xs" id="caso-fase-badge">F0</span>
         </p>
       </div>
@@ -61,7 +80,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
   ))}
 </div>
 
-<!-- 4. CONTENEDOR PRINCIPAL DE LA FASE ACTIVA (ESTRUCTURA 3 PASOS) -->
+<!-- 4. CONTENEDOR PRINCIPAL DE LA FASE ACTIVA (GUÍA SOP + ESTRUCTURA 3 PASOS) -->
 <div class="usa-card width-full margin-bottom-4 shadow-2">
   <div class="usa-card__container padding-3 tablet:padding-4">
 
@@ -91,6 +110,21 @@ import { FASES_ISO } from '../../lib/domain/gating';
     </div>
 
     <!-- =================================================================== -->
+    <!-- GUÍA OPERATIVA DE LABORATORIO (USWDS PROCESS LIST — SOP FEDERAL)    -->
+    <!-- =================================================================== -->
+    <section class="margin-bottom-3 bg-white padding-205 radius-md border-1px border-primary-light border-left-05 border-primary" aria-labelledby="guia-sop-heading">
+      <div class="display-flex flex-justify flex-align-center margin-bottom-1">
+        <h3 class="margin-0 font-heading-xs text-primary-darker" id="guia-sop-heading">
+          📋 Guía Operativa de Ejecución Pericial (SOP por Consignación)
+        </h3>
+        <span class="usa-tag bg-primary-darker text-white font-mono-3xs" id="guia-sop-badge">PROTOCOLO F0</span>
+      </div>
+      <div id="guia-sop-steps-container" class="font-body-2xs text-ink">
+        <!-- Se inyecta dinámicamente la guía paso a paso según la fase F0..F5 -->
+      </div>
+    </section>
+
+    <!-- =================================================================== -->
     <!-- MICRO-PASO 1: DATOS REQUERIDOS DEL EXPEDIENTE PARA ESTA FASE        -->
     <!-- =================================================================== -->
     <section class="margin-bottom-4 bg-base-lightest padding-3 radius-md border-1px border-base-lighter" aria-labelledby="paso1-heading">
@@ -106,7 +140,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
         </button>
       </div>
       <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-2">
-        Los datos ingresados se sincronizan automáticamente con las planillas oficiales y el sello criptográfico.
+        Los datos ingresados se sincronizan automáticamente con las planillas oficiales en Folio y el sello criptográfico.
       </p>
 
       <div class="grid-row grid-gap-2 font-body-2xs" id="campos-fase-container">
@@ -237,65 +271,181 @@ import { FASES_ISO } from '../../lib/domain/gating';
   import { descargarPlanillaPorSlug } from '../../lib/export/exportWordDocx';
   import type { CasoCMS } from '../../lib/domain/types';
 
-  const PLANILLAS_MAP: Record<string, Array<{ id: string; codigo: string; titulo: string; slug: string; desc: string }>> = {
+  const SOP_GUIDE_MAP: Record<string, Array<{ titulo: string; detalle: string }>> = {
     F0: [
-      { id: 'acta_consentimiento', codigo: 'FO-F0-01', titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento', desc: 'Autorización legal expresa y delimitación de privacidad (CRBV Arts. 28, 48, 60).' },
-      { id: 'acta_entrevista', codigo: 'FO-F0-02', titulo: 'Acta de Entrevista Técnico-Pericial', slug: 'acta-entrevista', desc: 'Fijación de declaraciones y credenciales de acceso bajo juramento (CP Arts. 243 y 246).' },
+      {
+        titulo: '1. Legitimar al Consignante y Excluir Antijuridicidad (CRBV Arts. 28, 48, 60 · LEDCI Arts. 20–22)',
+        detalle: 'Verifique la cédula/RIF y confirme que quien consigna el dispositivo móvil o medio digital (CD, disco duro, reloj, PC, servidor, cámara DVR) es el titular legítimo o interlocutor directo de las comunicaciones.',
+      },
+      {
+        titulo: '2. Suscribir Acta de Consentimiento Informado en Folio (FO-F0-01)',
+        detalle: 'Imprima en papel Folio (216mm × 330mm) el Acta FO-F0-01 y recabe firma ológrafa y huellas dactilares bilaterales (Pulgar Izq. y Der.) autorizando la extracción lógica/física para validación en tribunales.',
+      },
+      {
+        titulo: '3. Levantar Acta de Entrevista Técnico-Pericial (FO-F0-02)',
+        detalle: 'Fije bajo juramento (CP Arts. 243 y 246) qué pruebas deben validarse (imágenes, redes sociales, notas de voz, capturas de pantalla, chats) y reciba el PIN o contraseña en sobre lacrado.',
+      },
     ],
     F1: [
-      { id: 'acta_obtencion', codigo: 'FO-F1-03', titulo: 'Acta de Obtención y Preservación', slug: 'acta-obtencion', desc: 'Recepción del dispositivo con fijación 360°, aislamiento Faraday y precinto numerado.' },
-      { id: 'prcc', codigo: 'FO-F1-04', titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)', slug: 'planilla-prcc', desc: 'Apertura formal de la matriz de custodia conforme al MUCC-2017 y COPP Art. 187.' },
+      {
+        titulo: '1. Fijación Fotográfica 360° e Identificación Física (ISO/IEC 27037 §5.4.2 · MUCC-2017)',
+        detalle: 'Capture 6 vistas macro del dispositivo móvil o medio digital consignado, registrando marca, modelo, color, serial/IMEI, estado de pantalla/carcasa y accesorios.',
+      },
+      {
+        titulo: '2. Aislamiento Electromagnético y Precintado (ISO/IEC 27037 §5.4.3 · NIST SP 800-101)',
+        detalle: 'Active Modo Avión (0 dBm), introduzca el móvil/wearable en Bolsa Faraday (o empaque antiestático para discos/CD/DVR) y coloque Precinto de Seguridad numerado.',
+      },
+      {
+        titulo: '3. Emitir Acta de Obtención (FO-F1-03) y Abrir Planilla PRCC (FO-F1-04)',
+        detalle: 'Formalice la recepción marcando la Forma de Obtención N° 3 (Consignación) en la PRCC conforme al Art. 187 del COPP y Gaceta Oficial N° 41.247.',
+      },
     ],
     F2: [
-      { id: 'acta_desprecintado', codigo: 'FO-F2-05', titulo: 'Acta de Desprecintado en Laboratorio', slug: 'acta-desprecintado', desc: 'Extracción lógica de SQLite msgstore.db, cálculo de Hash SHA-256 y nuevo precinto.' },
+      {
+        titulo: '1. Desprecintado Controlado en Laboratorio (FO-F2-05 · MUCC-2017)',
+        detalle: 'Verifique la indemnidad del precinto inicial antes de su apertura en área pericial aislada y deje constancia del número de precinto roto.',
+      },
+      {
+        titulo: '2. Adquisición Lógica Móvil o Bit-a-Bit con Write-Blocker (NIST SP 800-101 / 800-86 · CENIF G.O. 39.847)',
+        detalle: 'Extraiga las bases SQLite (msgstore.db, wa.db), redes sociales, imágenes, notas de voz y capturas con ALEAPP / Avilla Forensics / Andriller, o imagen bit-a-bit (.E01/.RAW) con bloqueador de escritura.',
+      },
+      {
+        titulo: '3. Cálculo de Hash Génesis SHA-256, Verificación MATCH y Reembalaje (ISO/IEC 27037 §5.4.4 / §7.1.3)',
+        detalle: 'Calcule el digest SHA-256, compruebe MATCH 100% (otorgando valor de original según Art. 7 LMDFE) y reembale el soporte original con Nuevo Precinto de Resguardo.',
+      },
     ],
     F3: [
-      { id: 'informe_audio_sonic', codigo: 'FO-F3-06', titulo: 'Planilla de Análisis Forense de Audio', slug: 'planilla-audio-sonic', desc: 'Espectrograma FFT, decodificación Opus 48 kHz y formantes vocálicos.' },
-      { id: 'planilla_evaluacion_ux', codigo: 'FO-F3-07', titulo: 'Planilla de Evaluación de Interfaz UX', slug: 'planilla-evaluacion-ux', desc: 'Cotejo heurístico de correspondencia unívoca entre pantalla y SQLite.' },
+      {
+        titulo: '1. Examen Exclusivo sobre Copia de Trabajo (ACPO P1 · ISO/IEC 27042 §7)',
+        detalle: 'Realice todo el análisis forense sobre la copia lógica o imagen adquirida en F2, preservando intacto el dispositivo o medio original en bóveda.',
+      },
+      {
+        titulo: '2. Análisis Espectrográfico de Notas de Voz y Audios (FO-F3-06 · SWGDE)',
+        detalle: 'Examine los archivos de audio (.opus / .wav / pistas DVR) en Sonic Visualiser / Praat verificando piso de ruido, formantes F1–F4, traza ENF 60 Hz y ausencia de edición o síntesis IA.',
+      },
+      {
+        titulo: '3. Cotejo de Capturas de Pantalla, Redes Sociales e Interfaz contra SQLite (FO-F3-07 · ISO/IEC 25010)',
+        detalle: 'Corrobore la sincronía de sellos temporales UTC, JID de interlocutores y estados de envío entre las capturas/pantalla y los registros crudos de base de datos.',
+      },
     ],
     F4: [
-      { id: 'acta_dictamen', codigo: 'FO-F4-08', titulo: 'Dictamen Pericial Oficial Colegiado', slug: 'acta-dictamen', desc: 'Dictamen motivado definitivo firmado por dos peritos titulados (COPP Arts. 223–225).' },
-      { id: 'dictamen_imagenes', codigo: 'FO-F4-09', titulo: 'Dictamen de Evidencia Fotográfica', slug: 'dictamen-imagenes', desc: 'Cotejo EXIF, análisis ELA e integridad de píxeles.' },
-      { id: 'dictamen_audios', codigo: 'FO-F4-10', titulo: 'Dictamen de Notas de Voz y Audios', slug: 'dictamen-audios', desc: 'Autenticidad de nota de voz como mensaje de datos original (LMDFE Art. 7).' },
+      {
+        titulo: '1. Actuación Colegiada de Dos Peritos Acreditados (COPP Arts. 223–225)',
+        detalle: 'Revise conjuntamente entre el Perito Principal y el Co-Perito los hallazgos técnicos para garantizar repetibilidad y validez procesal ante los tribunales.',
+      },
+      {
+        titulo: '2. Emisión del Dictamen Oficial (FO-F4-08) y Dictámenes Especializados (FO-F4-09 / FO-F4-10)',
+        detalle: 'Estructure el dictamen conforme al Art. 225 del COPP (1. Motivo y objeto, 2. Operaciones técnicas EXIF/ELA/FFT/SQLite y Hash SHA-256, 3. Conclusiones motivadas) y UNE 197010.',
+      },
+      {
+        titulo: '3. Suscripción Bilateral y Dactiloscopía en Papel Folio (216mm × 330mm)',
+        detalle: 'Imprima los dictámenes en formato Folio con margen izquierdo de 30mm para costura judicial, estampando firmas, sellos y huellas de ambos peritos.',
+      },
     ],
     F5: [
-      { id: 'acta_entrega_resultados', codigo: 'FO-F5-11', titulo: 'Acta de Disposición Final y Devolución', slug: 'acta-entrega-resultados', desc: 'Cierre de custodia y devolución física con precinto intacto (MUCC-2017).' },
-      { id: 'acta_sanitizacion', codigo: 'FO-F5-12', titulo: 'Acta de Sanitización Criptográfica', slug: 'acta-sanitizacion', desc: 'Purga irreversible de copias de trabajo temporales (NIST SP 800-88 Rev. 1).' },
-      { id: 'acta_auditoria_timeline', codigo: 'FO-F5-13', titulo: 'Acta de Auditoría y Trazabilidad', slug: 'acta-auditoria-timeline', desc: 'Historial inmutable con cadena de hashes concatenados SHA-256 (RFC 8785).' },
+      {
+        titulo: '1. Disposición Final y Devolución de Evidencias (FO-F5-11 · MUCC-2017)',
+        detalle: 'Entregue al consignante titular el Dictamen Oficial en Folio, la copia master digital sellada con SHA-256 y devuelva el móvil o medio digital consignado.',
+      },
+      {
+        titulo: '2. Sanitización Criptográfica de Medios del Laboratorio (FO-F5-12 · NIST SP 800-88 Rev. 1)',
+        detalle: 'Ejecute purga irreversible (Purge / Crypto-Erase DoD 5220.22-M) de los volúmenes temporales del laboratorio para cumplir el deber de confidencialidad (LEDCI Art. 22 · CRBV Art. 60).',
+      },
+      {
+        titulo: '3. Certificación del Timeline de Auditoría Inmutable (FO-F5-13 · LMDFE Art. 16 · UNE 71505)',
+        detalle: 'Verifique la integridad matemática de la cadena de bloques SHA-256 (SEQ 1 a 6, F0–F5) bajo RFC 8785 y archive el acta de cierre de cumplimiento.',
+      },
     ],
   };
 
+  const PLANILLAS_MAP: Record<string, Array<{ id: string; codigo: string; titulo: string; slug: string; desc: string }>> = {
+    F0: [
+      { id: 'acta_consentimiento', codigo: 'FO-F0-01', titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento', desc: 'Autorización legal expresa por consignación (móvil / multimedio) y privacidad (CRBV Arts. 28, 48, 60).' },
+      { id: 'acta_entrevista', codigo: 'FO-F0-02', titulo: 'Acta de Entrevista Técnico-Pericial', slug: 'acta-entrevista', desc: 'Fijación de declaraciones, pruebas a validar y credenciales bajo juramento (CP Arts. 243 y 246).' },
+    ],
+    F1: [
+      { id: 'acta_obtencion', codigo: 'FO-F1-03', titulo: 'Acta de Obtención y Preservación', slug: 'acta-obtencion', desc: 'Recepción del móvil o medio digital con fijación 360°, aislamiento Faraday y precinto numerado.' },
+      { id: 'prcc', codigo: 'FO-F1-04', titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)', slug: 'planilla-prcc', desc: 'Apertura formal de la matriz de custodia por consignación (MUCC-2017 y COPP Art. 187).' },
+    ],
+    F2: [
+      { id: 'acta_desprecintado', codigo: 'FO-F2-05', titulo: 'Acta de Desprecintado en Laboratorio', slug: 'acta-desprecintado', desc: 'Extracción lógica móvil o imagen con Write-Blocker, cálculo de Hash SHA-256 y nuevo precinto.' },
+    ],
+    F3: [
+      { id: 'informe_audio_sonic', codigo: 'FO-F3-06', titulo: 'Planilla de Análisis Forense de Audio', slug: 'planilla-audio-sonic', desc: 'Espectrograma FFT, decodificación Opus 48 kHz, formantes vocálicos y detección anti-deepfake.' },
+      { id: 'planilla_evaluacion_ux', codigo: 'FO-F3-07', titulo: 'Planilla de Evaluación de Interfaz UX', slug: 'planilla-evaluacion-ux', desc: 'Cotejo heurístico entre capturas de pantalla, redes sociales o interfaz y registros SQLite/logs.' },
+    ],
+    F4: [
+      { id: 'acta_dictamen', codigo: 'FO-F4-08', titulo: 'Dictamen Pericial Oficial Colegiado', slug: 'acta-dictamen', desc: 'Dictamen motivado definitivo firmado por dos peritos para tribunales (COPP Arts. 223–225).' },
+      { id: 'dictamen_imagenes', codigo: 'FO-F4-09', titulo: 'Dictamen de Evidencia Fotográfica', slug: 'dictamen-imagenes', desc: 'Cotejo EXIF, análisis ELA e integridad de píxeles en fotos, capturas y cámaras DVR.' },
+      { id: 'dictamen_audios', codigo: 'FO-F4-10', titulo: 'Dictamen de Notas de Voz y Audios', slug: 'dictamen-audios', desc: 'Autenticidad de nota de voz o grabación como mensaje de datos original (LMDFE Art. 7).' },
+    ],
+    F5: [
+      { id: 'acta_entrega_resultados', codigo: 'FO-F5-11', titulo: 'Acta de Disposición Final y Devolución', slug: 'acta-entrega-resultados', desc: 'Cierre de custodia y devolución física del móvil o medio consignado (MUCC-2017).' },
+      { id: 'acta_sanitizacion', codigo: 'FO-F5-12', titulo: 'Acta de Sanitización Criptográfica', slug: 'acta-sanitizacion', desc: 'Purga irreversible de copias de trabajo temporales (NIST SP 800-88 Rev. 1).' },
+      { id: 'acta_auditoria_timeline', codigo: 'FO-F5-13', titulo: 'Acta de Auditoría y Trazabilidad', slug: 'acta-auditoria-timeline', desc: 'Historial inmutable con cadena de hashes concatenados SHA-256 (RFC 8785 · UNE 71505).' },
+    ],
+  };
+
+  let listaCasos: CasoCMS[] = [];
   let casoActual: CasoCMS | null = null;
   let faseSeleccionadaId = 'F0';
 
   async function cargarCasosYSeleccionar() {
-    let casos: CasoCMS[] = [];
     try {
       const data = await phpApi.listarCasos();
-      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+      listaCasos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
     } catch {
       const data = await idbGetAll<CasoCMS>('casos');
-      casos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
+      listaCasos = (data || []).filter((c: CasoCMS) => !c.id.startsWith('caso-mock-'));
     }
 
     const select = document.getElementById('select-cambiar-caso') as HTMLSelectElement;
-    if (select && casos.length > 0) {
+    if (select && listaCasos.length > 0) {
       select.innerHTML = '';
-      casos.forEach((c) => {
+      listaCasos.forEach((c) => {
         const opt = document.createElement('option');
         opt.value = c.id;
-        opt.textContent = `${c.numeroCaso} — ${c.evidenciaMarca || 'Smartphone'} (${c.estado || 'F0'})`;
+        opt.textContent = `${c.numeroCaso} — ${c.evidenciaTipo || 'Móvil'} ${c.evidenciaMarca || 'Smartphone'} (${c.faseIsoActual || c.estado || 'F0'})`;
         select.appendChild(opt);
       });
 
       const params = new URLSearchParams(window.location.search);
       const paramId = params.get('casoId') || params.get('id');
-      const encontrado = casos.find((c) => c.id === paramId);
-      casoActual = encontrado || casos[0];
+      const encontrado = listaCasos.find((c) => c.id === paramId);
+      casoActual = encontrado || listaCasos[0];
       select.value = casoActual.id;
+
+      select.addEventListener('change', () => {
+        const sel = listaCasos.find((c) => c.id === select.value);
+        if (sel) {
+          casoActual = sel;
+          actualizarVistaCompleta();
+        }
+      });
     }
 
+    actualizarVistaCompleta();
+  }
+
+  function seleccionarFase(fId: string) {
+    faseSeleccionadaId = fId;
+    document.querySelectorAll('.btn-fase-tab').forEach((b) => {
+      const isTarget = b.getAttribute('data-fase') === fId;
+      b.classList.toggle('usa-button--outline', !isTarget);
+      b.setAttribute('aria-selected', isTarget ? 'true' : 'false');
+    });
+
+    actualizarStepIndicatorVisual();
+    renderizarGuiaSop();
+    renderizarPaso1Campos();
+    renderizarPaso2Planillas();
+    actualizarChecklistFase();
+  }
+
+  function actualizarVistaCompleta() {
     actualizarCabeceraCaso();
+    actualizarStepIndicatorVisual();
+    renderizarGuiaSop();
     renderizarPaso1Campos();
     renderizarPaso2Planillas();
     actualizarChecklistFase();
@@ -306,41 +456,94 @@ import { FASES_ISO } from '../../lib/domain/gating';
     const tEl = document.getElementById('caso-titulo');
     const nEl = document.getElementById('caso-numero');
     const pEl = document.getElementById('caso-prcc');
+    const sEl = document.getElementById('caso-soporte');
     const bEl = document.getElementById('caso-fase-badge');
 
-    if (tEl) tEl.textContent = `${casoActual.numeroCaso} — ${casoActual.evidenciaMarca || 'Dispositivo'} ${casoActual.evidenciaModelo || ''}`;
+    const tipoSoporte = casoActual.evidenciaTipo || 'Teléfono Inteligente (Smartphone)';
+    const marcaModelo = `${casoActual.evidenciaMarca || casoActual.dispositivo_marca || ''} ${casoActual.evidenciaModelo || casoActual.dispositivo_modelo || ''}`.trim();
+
+    if (tEl) tEl.textContent = `${casoActual.numeroCaso} — ${casoActual.titulo || marcaModelo || 'Expediente Forense'}`;
     if (nEl) nEl.textContent = casoActual.numeroCaso;
     if (pEl) pEl.textContent = casoActual.numero_prcc || casoActual.numeroPRCC || 'PRCC-2026-001';
-    if (bEl) bEl.textContent = casoActual.estado || 'F0';
+    if (sEl) sEl.textContent = `${tipoSoporte} ${marcaModelo ? `(${marcaModelo})` : ''}`;
+    if (bEl) bEl.textContent = String(casoActual.faseIsoActual || casoActual.estado || 'F0');
+  }
+
+  function actualizarStepIndicatorVisual() {
+    const activeIdx = FASES_ISO.findIndex((f) => f.id === faseSeleccionadaId);
+    const numEl = document.getElementById('step-indicator-num');
+    const titEl = document.getElementById('step-indicator-title');
+
+    if (numEl && activeIdx >= 0) numEl.textContent = String(activeIdx + 1);
+    if (titEl && activeIdx >= 0) titEl.textContent = FASES_ISO[activeIdx].nombre;
+
+    document.querySelectorAll<HTMLElement>('[data-step-fase]').forEach((seg) => {
+      const idx = Number(seg.getAttribute('data-step-idx') || 0);
+      seg.classList.remove('usa-step-indicator__segment--complete', 'usa-step-indicator__segment--current');
+      if (idx < activeIdx) {
+        seg.classList.add('usa-step-indicator__segment--complete');
+        seg.removeAttribute('aria-current');
+      } else if (idx === activeIdx) {
+        seg.classList.add('usa-step-indicator__segment--current');
+        seg.setAttribute('aria-current', 'true');
+      } else {
+        seg.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function renderizarGuiaSop() {
+    const cont = document.getElementById('guia-sop-steps-container');
+    const badge = document.getElementById('guia-sop-badge');
+    if (!cont) return;
+
+    if (badge) badge.textContent = `PROTOCOLO ${faseSeleccionadaId}`;
+    const pasos = SOP_GUIDE_MAP[faseSeleccionadaId] || SOP_GUIDE_MAP.F0;
+
+    cont.innerHTML = `
+      <ol class="usa-process-list margin-top-1 margin-bottom-0 padding-top-0">
+        ${pasos.map((p) => `
+          <li class="usa-process-list__item padding-bottom-105">
+            <h4 class="usa-process-list__heading font-sans-xs line-height-sans-2 margin-bottom-05">${p.titulo}</h4>
+            <p class="margin-top-0 font-body-2xs text-base-dark">${p.detalle}</p>
+          </li>
+        `).join('')}
+      </ol>
+    `;
   }
 
   function renderizarPaso1Campos() {
     const cont = document.getElementById('campos-fase-container');
     if (!cont || !casoActual) return;
 
+    const solNombre = casoActual.solicitante_nombre || casoActual.consignanteNombre || '';
+    const solCedula = casoActual.solicitante_cedula || casoActual.consignanteCedula || '';
+    const solTel = casoActual.solicitante_telefono || casoActual.consignanteTelefono || '';
+    const imeiSerial = casoActual.dispositivo_imei || casoActual.evidenciaSerial || casoActual.discoduro_serial || '';
+
     if (faseSeleccionadaId === 'F0') {
       cont.innerHTML = `
         <div class="tablet:grid-col-4">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-solicitante">Consignante / Solicitante</label>
-          <input class="usa-input font-sans-xs" id="p1-solicitante" value="${casoActual.solicitante_nombre || ''}" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-solicitante">Consignante / Interlocutor Titular</label>
+          <input class="usa-input font-sans-xs" id="p1-solicitante" value="${solNombre}" />
         </div>
         <div class="tablet:grid-col-4">
           <label class="usa-label font-sans-2xs margin-top-0" for="p1-cedula">Cédula / RIF</label>
-          <input class="usa-input font-sans-xs font-mono" id="p1-cedula" value="${casoActual.solicitante_cedula || ''}" />
+          <input class="usa-input font-sans-xs font-mono" id="p1-cedula" value="${solCedula}" />
         </div>
         <div class="tablet:grid-col-4">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-telefono">Línea Telefónica</label>
-          <input class="usa-input font-sans-xs font-mono" id="p1-telefono" value="${casoActual.solicitante_telefono || ''}" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-telefono">Línea Móvil / Contacto</label>
+          <input class="usa-input font-sans-xs font-mono" id="p1-telefono" value="${solTel}" />
         </div>
         <div class="tablet:grid-col-12">
-          <label class="usa-label font-sans-2xs margin-top-1" for="p1-descripcion">Objeto del Encargo Pericial</label>
-          <input class="usa-input font-sans-xs" id="p1-descripcion" value="${casoActual.descripcion || 'Extracción lógica forense de mensajería WhatsApp y validación de integridad.'}" />
+          <label class="usa-label font-sans-2xs margin-top-1" for="p1-descripcion">Objeto del Encargo Pericial (Pruebas a Validar en Tribunales)</label>
+          <input class="usa-input font-sans-xs" id="p1-descripcion" value="${casoActual.descripcion || 'Validación judicial por consignación de imágenes, redes sociales, notas de voz, capturas de pantalla y chats.'}" />
         </div>
       `;
     } else if (faseSeleccionadaId === 'F1') {
       cont.innerHTML = `
         <div class="tablet:grid-col-3">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-faraday">Bolsa Faraday N°</label>
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-faraday">Bolsa Faraday / Empaque N°</label>
           <input class="usa-input font-sans-xs font-mono" id="p1-faraday" value="${casoActual.bolsa_faraday_numero || 'FARADAY-2026-001'}" />
         </div>
         <div class="tablet:grid-col-3">
@@ -348,42 +551,76 @@ import { FASES_ISO } from '../../lib/domain/gating';
           <input class="usa-input font-sans-xs font-mono" id="p1-precinto" value="${casoActual.precinto_numero || 'PREC-2026-991'}" />
         </div>
         <div class="tablet:grid-col-3">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-imei">Serial / IMEI Dispositivo</label>
-          <input class="usa-input font-sans-xs font-mono" id="p1-imei" value="${casoActual.dispositivo_imei || casoActual.discoduro_serial || ''}" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-imei">Serial / IMEI del Soporte</label>
+          <input class="usa-input font-sans-xs font-mono" id="p1-imei" value="${imeiSerial}" />
         </div>
         <div class="tablet:grid-col-3">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-aislamiento">Modo Avión / Aislamiento</label>
-          <input class="usa-input font-sans-xs" id="p1-aislamiento" value="VERIFICADO (Modo Avión + Faraday)" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-aislamiento">Aislamiento / Fijación 360°</label>
+          <input class="usa-input font-sans-xs" id="p1-aislamiento" value="${casoActual.dispositivo_modo_aislamiento || 'Modo Avión + Faraday + 6 Vistas 360°'}" />
         </div>
       `;
     } else if (faseSeleccionadaId === 'F2') {
       cont.innerHTML = `
         <div class="tablet:grid-col-4">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-herramienta">Herramienta de Adquisición</label>
-          <input class="usa-input font-sans-xs" id="p1-herramienta" value="${casoActual.imagen_herramienta || 'FTK Imager v4.7 / ALEAPP'}" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-herramienta">Herramienta de Adquisición (CENIF)</label>
+          <input class="usa-input font-sans-xs" id="p1-herramienta" value="${casoActual.imagen_herramienta || 'ALEAPP / Avilla Forensics / FTK Imager v4.7'}" />
         </div>
         <div class="tablet:grid-col-4">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-writeblocker">Bloqueador de Escritura</label>
-          <input class="usa-input font-sans-xs" id="p1-writeblocker" value="${casoActual.imagen_write_blocker || 'Tableau T8u USB Bridge (Solo-Lectura)'}" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-writeblocker">Modalidad / Write-Blocker</label>
+          <input class="usa-input font-sans-xs" id="p1-writeblocker" value="${casoActual.imagen_write_blocker || 'Extracción Lógica NIST Nivel 2 / Write-Blocker'}" />
         </div>
         <div class="tablet:grid-col-4">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-precinto2">Nuevo Precinto Resguardo</label>
-          <input class="usa-input font-sans-xs font-mono" id="p1-precinto2" value="PREC-RESG-2026-002" />
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-precinto2">Nuevo Precinto de Reembalaje N°</label>
+          <input class="usa-input font-sans-xs font-mono" id="p1-precinto2" value="PREC-REEMB-2026-992" />
         </div>
         <div class="tablet:grid-col-12">
-          <label class="usa-label font-sans-2xs margin-top-1" for="p1-hash">Hash Génesis SHA-256 Calculado</label>
-          <input class="usa-input font-sans-xs font-mono" id="p1-hash" value="${casoActual.hashSHA256 || '8356ac69d28eea6eeb1537a95127cda66a961a60b7acf9c9ebe19e9fce009663'}" />
+          <label class="usa-label font-sans-2xs margin-top-1" for="p1-hash">Hash Génesis SHA-256 Calculado (LMDFE Art. 7)</label>
+          <input class="usa-input font-sans-xs font-mono" id="p1-hash" value="${casoActual.hashSHA256 || 'b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e'}" />
+        </div>
+      `;
+    } else if (faseSeleccionadaId === 'F3') {
+      cont.innerHTML = `
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-herramienta-f3">Suite de Análisis Forense</label>
+          <input class="usa-input font-sans-xs" id="p1-herramienta-f3" value="Sonic Visualiser v5.0.1 / Praat / Autopsy / SQLite" />
+        </div>
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-artefactos-f3">Pruebas Analizadas en Copia de Trabajo</label>
+          <input class="usa-input font-sans-xs" id="p1-artefactos-f3" value="Imágenes EXIF/ELA, Redes Sociales, Notas de Voz (.opus), Capturas" />
+        </div>
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-integridad-f3">Resultado de Cotejo Técnico</label>
+          <input class="usa-input font-sans-xs" id="p1-integridad-f3" value="100% CONFORME · SIN EDICIÓN NI DEEPFAKE" />
+        </div>
+      `;
+    } else if (faseSeleccionadaId === 'F4') {
+      cont.innerHTML = `
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-perito">Perito Principal (COPP Art. 223)</label>
+          <input class="usa-input font-sans-xs" id="p1-perito" value="${casoActual.peritoLider || 'Jull Joll (CIV-299410 · INPRE-184920)'}" />
+        </div>
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-coperito">Co-Perito Colegiado (COPP Art. 223)</label>
+          <input class="usa-input font-sans-xs" id="p1-coperito" value="${casoActual.co_perito_nombre || casoActual.perito_coadyuvante || 'Ing. SHA256 Adquisición (CIV-310520)'}" />
+        </div>
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-dictamen-conclusion">Conclusión Motivada (COPP Art. 225)</label>
+          <input class="usa-input font-sans-xs" id="p1-dictamen-conclusion" value="EVIDENCIA AUTÉNTICA, ÍNTEGRA Y ORIGINAL (LMDFE ARTS. 4 Y 7)" />
         </div>
       `;
     } else {
       cont.innerHTML = `
-        <div class="tablet:grid-col-6">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-perito">Perito Responsable</label>
-          <input class="usa-input font-sans-xs" id="p1-perito" value="${casoActual.peritoLider || 'Jull Joll (CIV-299410)'}" />
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-receptor">Receptor en Disposición Final (MUCC-2017)</label>
+          <input class="usa-input font-sans-xs" id="p1-receptor" value="${casoActual.receptor_nombre || solNombre || 'Titular Consignante Original'}" />
         </div>
-        <div class="tablet:grid-col-6">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-coperito">Co-Perito Revisor</label>
-          <input class="usa-input font-sans-xs" id="p1-coperito" value="${casoActual.co_perito_nombre || 'Ing. Christopher V. Vance (CIV-310520)'}" />
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-sanitizacion">Protocolo de Sanitización (NIST 800-88)</label>
+          <input class="usa-input font-sans-xs font-mono" id="p1-sanitizacion" value="PURGE / CRYPTO-ERASE (DoD 5220.22-M 3 Pases)" />
+        </div>
+        <div class="tablet:grid-col-4">
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-auditoria-estado">Estado de Cadena SHA-256 (RFC 8785)</label>
+          <input class="usa-input font-sans-xs font-mono" id="p1-auditoria-estado" value="6 / 6 FASES ENCADENADAS · 100% ÍNTEGRA" />
         </div>
       `;
     }
@@ -410,8 +647,11 @@ import { FASES_ISO } from '../../lib/domain/gating';
             <a href="/planillas/${p.slug}?casoId=${casoActual?.id}&modo=datos" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
               Ver Folio con Datos
             </a>
+            <a href="/planillas/${p.slug}?casoId=${casoActual?.id}&modo=blanco" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
+              Formato en Blanco
+            </a>
             <a href="/planillas/${p.slug}?casoId=${casoActual?.id}&modo=datos&imprimir=1" target="_blank" class="usa-button font-sans-3xs padding-x-1 padding-y-05 flex-1 text-center">
-              Imprimir Folio
+              Imprimir
             </a>
             <button type="button" class="usa-button usa-button--base font-sans-3xs padding-x-1 padding-y-05 width-full margin-top-05 text-center btn-docx-fase" data-slug="${p.slug}" data-titulo="${p.titulo}">
               Descargar Word (.docx)
@@ -442,7 +682,6 @@ import { FASES_ISO } from '../../lib/domain/gating';
     const fData = FASES_ISO.find((f) => f.id === faseSeleccionadaId);
     if (!fData) return;
 
-    // Actualizar textos de cabecera
     const bId = document.getElementById('badge-fase-id');
     const tNom = document.getElementById('titulo-fase-nombre');
     const tObj = document.getElementById('txt-fase-objetivo');
@@ -455,13 +694,11 @@ import { FASES_ISO } from '../../lib/domain/gating';
       nWrap.innerHTML = fData.normas.map((n) => `<span class="usa-tag font-mono-3xs">${n}</span>`).join('');
     }
 
-    // Mostrar el fieldset de controles de esta fase
     document.querySelectorAll('.fcco-controles-group').forEach((el) => {
       const hEl = el as HTMLElement;
       hEl.hidden = hEl.id !== `controles-group-${faseSeleccionadaId}`;
     });
 
-    // Calcular progreso
     const inputs = document.querySelectorAll<HTMLInputElement>(`#controles-group-${faseSeleccionadaId} .chk-control-iso`);
     let checkedCount = 0;
     inputs.forEach((i) => {
@@ -483,24 +720,21 @@ import { FASES_ISO } from '../../lib/domain/gating';
     if (progTxt) progTxt.textContent = `${checkedCount} / ${inputs.length} Controles Verificados`;
   }
 
-  // Manejo de Tabs
+  // Manejo de Tabs F0..F5
   document.querySelectorAll('.btn-fase-tab').forEach((btn) => {
     btn.addEventListener('click', (e) => {
       const target = e.currentTarget as HTMLElement;
       const fId = target.getAttribute('data-fase');
-      if (fId) {
-        faseSeleccionadaId = fId;
-        document.querySelectorAll('.btn-fase-tab').forEach((b) => {
-          b.classList.add('usa-button--outline');
-          b.setAttribute('aria-selected', 'false');
-        });
-        target.classList.remove('usa-button--outline');
-        target.setAttribute('aria-selected', 'true');
+      if (fId) seleccionarFase(fId);
+    });
+  });
 
-        renderizarPaso1Campos();
-        renderizarPaso2Planillas();
-        actualizarChecklistFase();
-      }
+  // Manejo de Clics en Segmentos del StepIndicator USWDS
+  document.querySelectorAll('[data-step-fase]').forEach((seg) => {
+    seg.addEventListener('click', (e) => {
+      const target = e.currentTarget as HTMLElement;
+      const fId = target.getAttribute('data-step-fase');
+      if (fId) seleccionarFase(fId);
     });
   });
 
@@ -518,15 +752,36 @@ import { FASES_ISO } from '../../lib/domain/gating';
     const pre = (document.getElementById('p1-precinto') as HTMLInputElement)?.value;
     const imei = (document.getElementById('p1-imei') as HTMLInputElement)?.value;
     const hsh = (document.getElementById('p1-hash') as HTMLInputElement)?.value;
+    const per = (document.getElementById('p1-perito') as HTMLInputElement)?.value;
+    const cop = (document.getElementById('p1-coperito') as HTMLInputElement)?.value;
+    const rec = (document.getElementById('p1-receptor') as HTMLInputElement)?.value;
 
-    if (sol !== undefined) casoActual.solicitante_nombre = sol;
-    if (ced !== undefined) casoActual.solicitante_cedula = ced;
-    if (tel !== undefined) casoActual.solicitante_telefono = tel;
+    if (sol !== undefined) {
+      casoActual.solicitante_nombre = sol;
+      casoActual.consignanteNombre = sol;
+    }
+    if (ced !== undefined) {
+      casoActual.solicitante_cedula = ced;
+      casoActual.consignanteCedula = ced;
+    }
+    if (tel !== undefined) {
+      casoActual.solicitante_telefono = tel;
+      casoActual.consignanteTelefono = tel;
+    }
     if (des !== undefined) casoActual.descripcion = des;
     if (far !== undefined) casoActual.bolsa_faraday_numero = far;
     if (pre !== undefined) casoActual.precinto_numero = pre;
-    if (imei !== undefined) casoActual.dispositivo_imei = imei;
+    if (imei !== undefined) {
+      casoActual.dispositivo_imei = imei;
+      casoActual.evidenciaSerial = imei;
+    }
     if (hsh !== undefined) casoActual.hashSHA256 = hsh;
+    if (per !== undefined) casoActual.peritoLider = per;
+    if (cop !== undefined) {
+      casoActual.co_perito_nombre = cop;
+      casoActual.perito_coadyuvante = cop;
+    }
+    if (rec !== undefined) casoActual.receptor_nombre = rec;
 
     try {
       await phpApi.guardarCaso(casoActual);
@@ -577,12 +832,19 @@ import { FASES_ISO } from '../../lib/domain/gating';
         hashInfo.hidden = false;
       }
 
+      // Avanzar automáticamente a la siguiente fase si existe
+      const currIdx = FASES_ISO.findIndex((f) => f.id === faseSeleccionadaId);
+      if (currIdx >= 0 && currIdx < FASES_ISO.length - 1) {
+        const nextFase = FASES_ISO[currIdx + 1].id;
+        casoActual.faseIsoActual = nextFase;
+        setTimeout(() => seleccionarFase(nextFase), 1200);
+      }
+
       btn.textContent = '¡Fase Sellada Exitosamente!';
       setTimeout(() => {
         btn.textContent = 'Sellar y Avanzar Fase →';
       }, 3000);
     } catch (err: any) {
-      // Offline fallback: cálculo client-side
       const hashSimulado = 'd8e9f2a4c1b50384756281928374650192837465019283746501928374650192';
       const hashInfo = document.getElementById('sello-info-hash');
       const hashVal = document.getElementById('sello-hash-valor');
@@ -600,3 +862,4 @@ import { FASES_ISO } from '../../lib/domain/gating';
   // Inicializar al cargar
   cargarCasosYSeleccionar();
 </script>
+

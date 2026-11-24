@@ -3,6 +3,7 @@
  * SHA256.US — Vista Base Normativa Forense RAG (77 Normas y Estándares)
  * Compendio de directrices ISO/IEC, NIST, MUCC-2017 y legislación procesal penal.
  */
+import PageHeader from '../uswds/PageHeader.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
 import { NORMATIVAS_INICIALES } from '../../lib/data/seed';
 
@@ -106,15 +107,18 @@ const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ co
 };
 ---
 
-<!-- Encabezado de Página -->
-<div class="margin-bottom-3">
-  <h1 class="margin-top-0 margin-bottom-1">
-    Base de Conocimiento Normativo RAG
-  </h1>
-  <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
-    Compendio legal y técnico internacional que fundamenta los dictámenes periciales y garantiza la licitud probatoria.
-  </p>
-</div>
+<PageHeader
+  title="Base de Conocimiento Normativo RAG"
+  subtitle="Compendio legal y técnico internacional (Informatica/) que fundamenta los dictámenes periciales y garantiza la licitud probatoria."
+  tag="ISO / NIST / Leyes VE"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions">
+    <a href="/flujo" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+      Ir al Ciclo Pericial ISO →
+    </a>
+  </div>
+</PageHeader>
 
 <!-- Resumen de Jerarquía Normativa -->
 <div class="margin-bottom-3">

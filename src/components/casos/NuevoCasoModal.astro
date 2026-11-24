@@ -45,21 +45,21 @@
           <div class="grid-row grid-gap">
             <div class="tablet:grid-col-6">
               <label class="usa-label" for="nuevo-tipoProyecto">
-                Tipología Forense <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                Tipología Forense (Pruebas a Validar) <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
               </label>
               <select class="usa-select" id="nuevo-tipoProyecto" name="tipoProyecto" required>
-                <option value="forense_whatsapp">WhatsApp Forense (msgstore.db)</option>
-                <option value="forense_email">Email Forense (SMTP/RFC 3227)</option>
-                <option value="forense_discoduro">Disco Duro (Clonado E01/DD)</option>
-                <option value="forense_imagen">Adquisición Imagen (ISO 27037)</option>
+                <option value="forense_whatsapp">Móvil / Mensajería, Redes Sociales, Notas de Voz y Capturas</option>
+                <option value="forense_imagen">Imágenes, Fotografías, Capturas y Video DVR/CCTV (EXIF/ELA)</option>
+                <option value="forense_discoduro">Medios de Almacenamiento (Disco Duro, CD/DVD, PC, Servidor, Reloj)</option>
+                <option value="forense_email">Correos Electrónicos y Evidencia en Red (RFC 3227)</option>
               </select>
             </div>
             <div class="tablet:grid-col-6">
               <label class="usa-label" for="nuevo-prioridad">Prioridad Procesal</label>
               <select class="usa-select" id="nuevo-prioridad" name="prioridad">
-                <option value="media">Media (Estándar)</option>
-                <option value="alta">Alta (Flagrancia / Notitia Criminis)</option>
-                <option value="urgente">Urgente (Riesgo de Destrucción)</option>
+                <option value="alta">Alta (Validación Judicial para Tribunales)</option>
+                <option value="media">Media (Estándar por Consignación)</option>
+                <option value="critica">Crítica (Riesgo de Pérdida / Flagrancia)</option>
               </select>
             </div>
           </div>
@@ -67,16 +67,16 @@
           <label class="usa-label" for="nuevo-titulo">
             Título o Asunto del Peritaje <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
           </label>
-          <input class="usa-input" id="nuevo-titulo" name="titulo" required />
+          <input class="usa-input" id="nuevo-titulo" name="titulo" placeholder="Ej: Validación de imágenes, notas de voz y chats por consignación" required />
 
-          <label class="usa-label" for="nuevo-descripcion">Objeto de la Peritación y Alcance</label>
-          <textarea class="usa-textarea" id="nuevo-descripcion" name="descripcion" rows="2"></textarea>
+          <label class="usa-label" for="nuevo-descripcion">Objeto de la Peritación y Pruebas a Validar</label>
+          <textarea class="usa-textarea" id="nuevo-descripcion" name="descripcion" rows="2" placeholder="Detalle las pruebas (imágenes, redes sociales, notas de voz, capturas de pantalla, archivos) y el propósito judicial..."></textarea>
         </fieldset>
 
         <!-- Sección 2: Consignante / Solicitante -->
         <fieldset class="usa-fieldset margin-top-3">
           <legend class="usa-legend text-bold">
-            2. Datos del Consignante / Solicitante
+            2. Datos del Consignante / Interlocutor Titular (MUCC-2017)
           </legend>
           <div class="grid-row grid-gap">
             <div class="tablet:grid-col-8">
@@ -87,15 +87,15 @@
             </div>
             <div class="tablet:grid-col-4">
               <label class="usa-label" for="nuevo-consignanteCedula">
-                Cédula de Identidad <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+                Cédula de Identidad / RIF <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
               </label>
-              <input class="usa-input" id="nuevo-consignanteCedula" name="consignanteCedula" required />
+              <input class="usa-input" id="nuevo-consignanteCedula" name="consignanteCedula" placeholder="V-12.345.678" required />
             </div>
           </div>
 
           <div class="grid-row grid-gap">
             <div class="tablet:grid-col-6">
-              <label class="usa-label" for="nuevo-consignanteTelefono">Teléfono de Contacto</label>
+              <label class="usa-label" for="nuevo-consignanteTelefono">Teléfono de Contacto / WhatsApp</label>
               <input class="usa-input" id="nuevo-consignanteTelefono" name="consignanteTelefono" />
             </div>
             <div class="tablet:grid-col-6">
@@ -104,19 +104,27 @@
             </div>
           </div>
 
-          <label class="usa-label" for="nuevo-consignanteDireccion">Dirección de Residencia / Despacho</label>
+          <label class="usa-label" for="nuevo-consignanteDireccion">Dirección de Residencia / Despacho Judicial</label>
           <input class="usa-input" id="nuevo-consignanteDireccion" name="consignanteDireccion" />
         </fieldset>
 
         <!-- Sección 3: Evidencia Digital -->
         <fieldset class="usa-fieldset margin-top-3">
           <legend class="usa-legend text-bold">
-            3. Registro Técnico de la Evidencia Digital
+            3. Registro Técnico del Dispositivo Móvil o Medio Digital Consignado
           </legend>
           <div class="grid-row grid-gap">
             <div class="tablet:grid-col-4">
-              <label class="usa-label" for="nuevo-evidenciaTipo">Tipo Dispositivo</label>
-              <input class="usa-input" id="nuevo-evidenciaTipo" name="evidenciaTipo" />
+              <label class="usa-label" for="nuevo-evidenciaTipo">Medio Digital Consignado</label>
+              <select class="usa-select" id="nuevo-evidenciaTipo" name="evidenciaTipo">
+                <option value="Teléfono Inteligente (Smartphone)">Teléfono Inteligente (Smartphone)</option>
+                <option value="Disco Duro / SSD / Memoria USB">Disco Duro / SSD / Memoria USB</option>
+                <option value="Computadora / Laptop">Computadora / Laptop</option>
+                <option value="Servidor / Unidad NAS">Servidor / Unidad NAS</option>
+                <option value="Cámara de Seguridad (DVR / NVR / CCTV)">Cámara de Seguridad (DVR / NVR / CCTV)</option>
+                <option value="Reloj Inteligente (Smartwatch / Wearable)">Reloj Inteligente (Smartwatch / Wearable)</option>
+                <option value="Medio Óptico (CD / DVD)">Medio Óptico (CD / DVD)</option>
+              </select>
             </div>
             <div class="tablet:grid-col-4">
               <label class="usa-label" for="nuevo-evidenciaMarca">

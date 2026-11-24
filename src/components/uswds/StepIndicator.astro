@@ -16,7 +16,7 @@ const currentIdx = FASES_ISO.findIndex(f => f.id === faseActual);
 ---
 
 <!-- USWDS: Step indicator | https://designsystem.digital.gov/components/step-indicator/ -->
-<div class="usa-step-indicator" aria-label="Progreso del Ciclo Pericial ISO">
+<div class="usa-step-indicator" aria-label="Progreso del Ciclo Pericial ISO" id="uswds-step-indicator">
   <ol class="usa-step-indicator__segments">
     {FASES_ISO.map((fase, idx) => {
       const isComplete = fasesCompletadas[fase.id] === true || idx < currentIdx;
@@ -26,7 +26,14 @@ const currentIdx = FASES_ISO.findIndex(f => f.id === faseActual);
       if (isCurrent) statusClass += ' usa-step-indicator__segment--current';
 
       return (
-        <li class={statusClass} aria-current={isCurrent ? 'true' : undefined}>
+        <li
+          class={statusClass}
+          aria-current={isCurrent ? 'true' : undefined}
+          data-step-fase={fase.id}
+          data-step-idx={idx}
+          style="cursor: pointer;"
+          title={`Ir a ${fase.id}: ${fase.nombre}`}
+        >
           <span class="usa-step-indicator__segment-label">
             {fase.id}: {fase.corto}
             {isComplete && <span class="usa-sr-only">completada</span>}
@@ -40,10 +47,10 @@ const currentIdx = FASES_ISO.findIndex(f => f.id === faseActual);
     <h2 class="usa-step-indicator__heading">
       <span class="usa-step-indicator__heading-counter">
         <span class="usa-sr-only">Fase</span>
-        <span class="usa-step-indicator__current-step">{currentIdx + 1}</span>
+        <span class="usa-step-indicator__current-step" id="step-indicator-num">{currentIdx + 1}</span>
         <span class="usa-step-indicator__total-steps"> de 6</span>
       </span>
-      <span class="usa-step-indicator__heading-text">
+      <span class="usa-step-indicator__heading-text" id="step-indicator-title">
         {FASES_ISO[currentIdx]?.nombre || 'Ciclo Pericial'}
       </span>
     </h2>

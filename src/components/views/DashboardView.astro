@@ -101,21 +101,57 @@ import Alert from '../uswds/Alert.astro';
 </div>
 
 <SummaryBox
-  heading="Control de Calidad Pericial — Ciclo ISO 6 Fases (F0 - F5)"
+  heading="Guía Operativa del Procedimiento por Consignación — Ciclo Pericial ISO 6 Fases (F0 – F5)"
   headingId="summary-ciclo-iso"
   className="margin-bottom-3"
 >
   <p class="margin-top-0 margin-bottom-1 font-body-2xs">
-    El CMS opera bajo un flujo determinista cerrado: ninguna etapa puede cerrarse sin que el perito
-    adjunte los requisitos de fijación, adquiera la imagen forense con hardware de bloqueo de escritura
-    y selle criptográficamente el hash génesis.
+    Este CMS guía paso a paso la validación judicial para tribunales de pruebas en <strong>dispositivos móviles</strong> (imágenes, redes sociales, notas de voz, capturas de pantalla, WhatsApp/Telegram) y <strong>medios digitales consignados</strong> (CD/DVD, disco duro, reloj inteligente, computadora, servidor, cámara de seguridad DVR/CCTV):
   </p>
-  <div class="display-flex flex-wrap grid-gap-05 margin-top-1">
+  <div class="grid-row grid-gap-1 margin-top-105 margin-bottom-1">
+    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F0 · APERTURA</strong>
+        <span class="display-block font-body-3xs text-base-dark">Consentimiento (FO-F0-01) y Entrevista (FO-F0-02)</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F1 · RECOLECCIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Fijación 360°, Faraday (FO-F1-03) y PRCC (FO-F1-04)</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F2 · ADQUISICIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Desprecintado, Extracción y Hash SHA-256 (FO-F2-05)</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F3 · ANÁLISIS</strong>
+        <span class="display-block font-body-3xs text-base-dark">Audio FFT (FO-F3-06) y Capturas vs SQLite (FO-F3-07)</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F4 · DICTAMEN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Colegiado 2 Peritos (FO-F4-08, FO-F4-09, FO-F4-10)</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F5 · CIERRE</strong>
+        <span class="display-block font-body-3xs text-base-dark">Devolución, Sanitización y Auditoría (FO-F5-11..13)</span>
+      </a>
+    </div>
+  </div>
+  <div class="display-flex flex-wrap grid-gap-05 margin-top-05">
     <span class="usa-tag bg-primary-darker text-white font-mono-3xs">ISO/IEC 27037:2012</span>
     <span class="usa-tag bg-primary-darker text-white font-mono-3xs">ISO/IEC 27042:2015</span>
-    <span class="usa-tag bg-primary text-white font-mono-3xs">NIST SP 800-86</span>
-    <span class="usa-tag bg-accent-warm-dark text-ink text-bold font-mono-3xs">MUCC-2017</span>
-    <span class="usa-tag bg-success text-white font-mono-3xs">COPP Art. 187</span>
+    <span class="usa-tag bg-primary text-white font-mono-3xs">NIST SP 800-101 / 800-86</span>
+    <span class="usa-tag bg-accent-warm-dark text-ink text-bold font-mono-3xs">MUCC-2017 (Consignación)</span>
+    <span class="usa-tag bg-success text-white font-mono-3xs">COPP Arts. 187, 223–225 · LMDFE Arts. 4, 7</span>
   </div>
 </SummaryBox>
 

@@ -234,46 +234,84 @@ import NuevoCasoModal from '../casos/NuevoCasoModal.astro';
       const formData = new FormData(form);
 
       const nuevoId = 'caso-' + Date.now();
+      let peritoNombre = 'Jull Joll';
+      let peritoCi = 'V-18.999.001';
+      let peritoCiv = 'CIV-299410';
+      try {
+        const rawUser = sessionStorage.getItem('fcco_auth_user');
+        if (rawUser) {
+          const u = JSON.parse(rawUser);
+          peritoNombre = [u.nombre, u.apellido].filter(Boolean).join(' ') || peritoNombre;
+          peritoCi = u.ci || peritoCi;
+          peritoCiv = u.civ || peritoCiv;
+        }
+      } catch {}
+
+      const consNom = String(formData.get('consignanteNombre') || '');
+      const consCed = String(formData.get('consignanteCedula') || '');
+      const consTel = String(formData.get('consignanteTelefono') || '');
+      const consEml = String(formData.get('consignanteEmail') || '');
+      const consDir = String(formData.get('consignanteDireccion') || '');
+      const evTipo = String(formData.get('evidenciaTipo') || 'Teléfono Inteligente (Smartphone)');
+      const evMarca = String(formData.get('evidenciaMarca') || '');
+      const evModelo = String(formData.get('evidenciaModelo') || '');
+      const evSerial = String(formData.get('evidenciaSerial') || '');
+      const evColor = String(formData.get('evidenciaColor') || '');
+      const evEstado = String(formData.get('evidenciaEstado') || 'Operativo');
+
       const nuevoCaso: CasoCMS = {
         id: nuevoId,
         numeroCaso: String(formData.get('numeroCaso') || ''),
         expediente: String(formData.get('expediente') || ''),
+        numero_prcc: `PRCC-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}`,
         tipoProyecto: (formData.get('tipoProyecto') as any) || 'forense_whatsapp',
         titulo: String(formData.get('titulo') || ''),
         descripcion: String(formData.get('descripcion') || ''),
-        prioridad: (formData.get('prioridad') as any) || 'media',
+        prioridad: (formData.get('prioridad') as any) || 'alta',
         estado: 'iniciado',
         faseIsoActual: 'F0',
         fechaCreacion: new Date().toISOString(),
         fechaUltimaActualizacion: new Date().toISOString(),
-        peritoLider: 'Jull Joll',
-        normativasAplicadas: ['ISO/IEC 27037:2012', 'MUCC-2017', 'COPP-187'],
+        peritoLider: peritoNombre,
+        perito_cedula: peritoCi,
+        perito_civ: peritoCiv,
+        normativasAplicadas: ['ISO/IEC 27037:2012', 'ISO/IEC 27042:2015', 'NIST SP 800-101', 'MUCC-2017', 'COPP-187', 'LMDFE-4-7'],
         fasesCompletadas: 0,
         totalFases: 6,
         porcentajeCompletado: 0,
         totalEvidencias: 1,
         nivelCumplimientoGeneral: 'conforme',
-        etiquetas: ['Forense'],
+        etiquetas: ['Consignación'],
         notas: '',
 
-        consignanteNombre: String(formData.get('consignanteNombre') || ''),
-        consignanteCedula: String(formData.get('consignanteCedula') || ''),
-        consignanteTelefono: String(formData.get('consignanteTelefono') || ''),
-        consignanteEmail: String(formData.get('consignanteEmail') || ''),
-        consignanteDireccion: String(formData.get('consignanteDireccion') || ''),
+        solicitante_nombre: consNom,
+        solicitante_cedula: consCed,
+        solicitante_telefono: consTel,
+        solicitante_email: consEml,
+        solicitante_direccion: consDir,
+        consignanteNombre: consNom,
+        consignanteCedula: consCed,
+        consignanteTelefono: consTel,
+        consignanteEmail: consEml,
+        consignanteDireccion: consDir,
 
-        evidenciaTipo: String(formData.get('evidenciaTipo') || 'Dispositivo'),
-        evidenciaMarca: String(formData.get('evidenciaMarca') || ''),
-        evidenciaModelo: String(formData.get('evidenciaModelo') || ''),
-        evidenciaSerial: String(formData.get('evidenciaSerial') || ''),
-        evidenciaColor: String(formData.get('evidenciaColor') || ''),
-        evidenciaEstado: String(formData.get('evidenciaEstado') || 'Operativo'),
+        evidenciaTipo: evTipo,
+        evidenciaMarca: evMarca,
+        evidenciaModelo: evModelo,
+        evidenciaSerial: evSerial,
+        evidenciaColor: evColor,
+        evidenciaEstado: evEstado,
         evidenciaAislamientoRF: formData.get('evidenciaAislamientoRF') === 'on',
+        dispositivo_marca: evMarca,
+        dispositivo_modelo: evModelo,
+        dispositivo_imei: evSerial,
+        dispositivo_color: evColor,
+        dispositivo_estado_fisico: evEstado,
 
-        fiscaliaTribunal: 'Ministerio Público / Tribunal de Control',
-        peritoLiderNombre: 'Jull Joll',
-        peritoLiderCedula: 'V-15.890.123',
-        peritoLiderCiv: 'CIV-284910',
+        fiscaliaTribunal: 'Ministerio Público / Tribunal de la Causa',
+        peritoLiderNombre: peritoNombre,
+        peritoLiderCedula: peritoCi,
+        peritoLiderCiv: peritoCiv,
       };
 
       try {

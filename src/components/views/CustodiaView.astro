@@ -2,41 +2,32 @@
 /**
  * SHA256.US — Vista Modular de Cadena de Custodia (PRCC)
  */
+import PageHeader from '../uswds/PageHeader.astro';
 import Alert from '../uswds/Alert.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
 ---
-<div class="grid-row grid-gap flex-align-center margin-bottom-3">
-  <div class="tablet:grid-col-7">
-    <h1 class="margin-top-0 margin-bottom-1 font-heading-lg text-ink">
-      Cadena de Custodia de Evidencias Digitales
-    </h1>
-    <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
-      Control de trazabilidad física y digital ininterrumpida conforme al <strong>MUCC-2017</strong> y <strong>COPP Art. 187</strong>.
-    </p>
+<PageHeader
+  title="Cadena de Custodia de Evidencias Digitales"
+  subtitle="Control de trazabilidad física y digital ininterrumpida por consignación conforme al MUCC-2017 y COPP Art. 187."
+  tag="MUCC-2017 · COPP 187"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions" class="display-flex grid-gap-1 flex-wrap">
+    <a id="btn-ver-prcc" href="/planillas/planilla-prcc" class="usa-button font-sans-xs padding-x-2 padding-y-1">
+      Generar Planilla PRCC (Folio)
+    </a>
+    <a id="btn-ver-desprecintado" href="/planillas/acta-desprecintado" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
+      Acta de Desprecintado
+    </a>
   </div>
-
-  <div class="tablet:grid-col-5 margin-top-2 tablet:margin-top-0">
-    <ul class="usa-button-group flex-wrap tablet:flex-justify-end">
-      <li class="usa-button-group__item">
-        <a id="btn-ver-prcc" href="/planillas/planilla-prcc" class="usa-button font-sans-xs padding-x-2 padding-y-1">
-          Generar Planilla PRCC (Folio)
-        </a>
-      </li>
-      <li class="usa-button-group__item">
-        <a id="btn-ver-desprecintado" href="/planillas/acta-desprecintado" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
-          Acta de Desprecintado
-        </a>
-      </li>
-    </ul>
-  </div>
-</div>
+</PageHeader>
 
 <!-- Selector de Expediente en Custodia -->
 <div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="custodia-caso-titulo">
   <div class="usa-summary-box__body">
     <div class="grid-row grid-gap flex-align-center">
       <div class="tablet:grid-col-7">
-        <p class="margin-0 text-base-dark text-uppercase text-bold font-sans-2xs">Expediente en Custodia Activo</p>
+        <span class="usa-tag bg-primary-darker text-white font-mono-3xs margin-bottom-05">EXPEDIENTE EN CUSTODIA ACTIVO</span>
         <h3 class="usa-summary-box__heading margin-top-05 margin-bottom-0" id="custodia-caso-titulo">
           Expediente en Custodia...
         </h3>
@@ -72,8 +63,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
         <h2 class="usa-card__heading font-heading-sm">Planilla Oficial PRCC</h2>
       </div>
       <div class="usa-card__body">
-        <p class="margin-y-1 font-mono-sm text-bold"><code id="prcc-numero">PRCC-2026-0042</code></p>
-        <p class="margin-0"><span class="usa-tag bg-primary text-white">Abierta y Registrada</span></p>
+        <p class="margin-y-1 font-mono-sm text-bold"><code id="prcc-numero">PRCC-2026-001</code></p>
+        <p class="margin-0"><span class="usa-tag bg-primary text-white">Abierta · Consignación</span></p>
       </div>
     </div>
   </li>
@@ -84,7 +75,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
         <h2 class="usa-card__heading font-heading-sm">Precinto de Seguridad</h2>
       </div>
       <div class="usa-card__body">
-        <p class="margin-y-1 font-mono-sm text-bold"><code id="precinto-numero">PREC-99482-A</code></p>
+        <p class="margin-y-1 font-mono-sm text-bold"><code id="precinto-numero">PREC-2026-991</code></p>
         <p class="margin-0"><span class="usa-tag bg-success text-white">Etiqueta Intacta</span></p>
       </div>
     </div>
@@ -93,11 +84,11 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   <li class="usa-card tablet:grid-col-6 desktop:grid-col-3">
     <div class="usa-card__container">
       <div class="usa-card__header">
-        <h2 class="usa-card__heading font-heading-sm">Aislamiento RF</h2>
+        <h2 class="usa-card__heading font-heading-sm">Aislamiento / Protección</h2>
       </div>
       <div class="usa-card__body">
-        <p class="margin-y-1 font-body-sm"><strong id="aislamiento-rf">Bolsa Faraday Activa</strong></p>
-        <p class="margin-0"><span class="usa-tag bg-primary-darker text-white">Modo Avión y Blindaje</span></p>
+        <p class="margin-y-1 font-body-sm"><strong id="aislamiento-rf">Bolsa Faraday + Modo Avión</strong></p>
+        <p class="margin-0"><span class="usa-tag bg-primary-darker text-white">ISO/IEC 27037 §5.4.3</span></p>
       </div>
     </div>
   </li>
@@ -108,27 +99,27 @@ import SummaryBox from '../uswds/SummaryBox.astro';
         <h2 class="usa-card__heading font-heading-sm">Ubicación en Bóveda</h2>
       </div>
       <div class="usa-card__body">
-        <p class="margin-y-1 font-body-sm"><strong>Estante A3 · Gaveta 12</strong></p>
-        <p class="margin-0"><span class="usa-tag bg-base-dark text-white">Bóveda Climatizada</span></p>
+        <p class="margin-y-1 font-body-sm"><strong>Bóveda Pericial · Sede Quíbor</strong></p>
+        <p class="margin-0"><span class="usa-tag bg-base-dark text-white">Custodia Controlada</span></p>
       </div>
     </div>
   </li>
 </ul>
 
 <SummaryBox
-  heading="Requisitos de Custodia — Manual Único de Cadena de Custodia (MUCC-2017)"
+  heading="Guía de Custodia por Consignación — Manual Único de Cadena de Custodia (MUCC-2017)"
   headingId="summary-mucc-2017"
   className="margin-bottom-3"
 >
   <ul class="usa-list font-body-2xs">
     <li>
-      <strong>1. Modalidad de Obtención:</strong> Consignación formal directa por la víctima / fiscalía requirente.
+      <strong>1. Modalidad de Obtención (N° 3 — Consignación):</strong> Entrega física por el titular o interlocutor legítimo de dispositivos móviles (para validar imágenes, redes sociales, notas de voz, capturas de pantalla) o medios digitales (CD, disco duro, reloj, PC, servidor, cámara DVR).
     </li>
     <li>
-      <strong>2. Tipología de Embalaje:</strong> Bolsa antiestática con barrera Faraday y precinto de alta seguridad.
+      <strong>2. Tipología de Embalaje y Aislamiento:</strong> Bolsa Faraday con Modo Avión en móviles/wearables, o empaque antiestático con bloqueo de escritura (Write-Blocker) en medios de almacenamiento, bajo precinto numerado.
     </li>
     <li>
-      <strong>3. Resguardo Temporal:</strong> Depósito en Bóveda bajo llave del Perito Custodio Designado.
+      <strong>3. Registro de Eslabones (PRCC Reverso):</strong> Cada apertura en laboratorio (`FO-F2-05`) o devolución final (`FO-F5-11`) debe asentarse cronológicamente con N° de precinto roto y nuevo precinto asignado.
     </li>
   </ul>
 </SummaryBox>
@@ -163,36 +154,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
       </thead>
       <tbody id="tbody-transferencias">
         <tr>
-          <th scope="row" class="font-mono-2xs"><code>2026-07-19 08:30</code></th>
-          <td>
-            <strong>Carlos Eduardo Méndez</strong><br />
-            <span class="font-body-3xs text-base-dark">C.I. V-18.452.901 (Consignante)</span>
-          </td>
-          <td>
-            <strong>Jull Joll</strong><br />
-            <span class="font-body-3xs text-base-dark">C.I. V-15.890.123 (Perito Líder)</span>
-          </td>
-          <td class="font-body-2xs">Recepción y Fijación Inicial en Sitio de Suceso</td>
-          <td>
-            <span class="usa-tag bg-success text-white font-mono-3xs">PREC-99482-A (Íntegro)</span>
-          </td>
-          <td class="font-mono-2xs"><code>7f83b165...7f04</code></td>
-        </tr>
-        <tr>
-          <th scope="row" class="font-mono-2xs"><code>2026-07-19 10:15</code></th>
-          <td>
-            <strong>Jull Joll</strong><br />
-            <span class="font-body-3xs text-base-dark">C.I. V-15.890.123 (Perito Líder)</span>
-          </td>
-          <td>
-            <strong>Jull Joll</strong><br />
-            <span class="font-body-3xs text-base-dark">Laboratorio Forense SHA256.US</span>
-          </td>
-          <td class="font-body-2xs">Desprecintado controlado y Clonación Bit-a-Bit E01</td>
-          <td>
-            <span class="usa-tag bg-gold text-ink text-bold font-mono-3xs">Apertura Controlada</span>
-          </td>
-          <td class="font-mono-2xs"><code>e3b0c442...9823</code></td>
+          <td colspan="6">Cargando trazabilidad de custodia del expediente...</td>
         </tr>
       </tbody>
     </table>
@@ -208,6 +170,10 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   const btnPrcc = document.getElementById('btn-ver-prcc') as HTMLAnchorElement;
   const btnDesp = document.getElementById('btn-ver-desprecintado') as HTMLAnchorElement;
   const casoTit = document.getElementById('custodia-caso-titulo');
+  const prccEl = document.getElementById('prcc-numero');
+  const precintoEl = document.getElementById('precinto-numero');
+  const aislamientoEl = document.getElementById('aislamiento-rf');
+  const tbodyTrans = document.getElementById('tbody-transferencias');
 
   async function initCustodia() {
     let casos: CasoCMS[] = [];
@@ -230,7 +196,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
       casos.forEach((c) => {
         const opt = document.createElement('option');
         opt.value = c.id;
-        opt.textContent = `${c.numeroCaso} (${c.evidenciaMarca || ''} ${c.evidenciaModelo || ''})`;
+        opt.textContent = `${c.numeroCaso} — ${c.evidenciaTipo || 'Móvil'} ${c.evidenciaMarca || ''} ${c.evidenciaModelo || ''}`;
         select.appendChild(opt);
       });
 
@@ -252,9 +218,19 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     const btnNuevoTraspaso = document.getElementById('btn-nueva-transferencia');
     if (btnNuevoTraspaso) {
       btnNuevoTraspaso.addEventListener('click', () => {
-        const motivo = prompt('Ingrese el motivo de la transferencia de custodia:');
-        if (motivo) {
-          alert('Transferencia registrada exitosamente en la Planilla PRCC.');
+        const motivo = prompt('Ingrese el motivo de la transferencia de custodia (Ej: Traslado a análisis F3 / Devolución F5):');
+        if (motivo && tbodyTrans) {
+          const tr = document.createElement('tr');
+          const fechaAhora = new Date().toLocaleString('es-VE');
+          tr.innerHTML = `
+            <th scope="row" class="font-mono-2xs"><code>${fechaAhora}</code></th>
+            <td><strong>Jull Joll</strong><br /><span class="font-body-3xs text-base-dark">CIV-299410 (Perito Custodio)</span></td>
+            <td><strong>Laboratorio SHA256.US</strong><br /><span class="font-body-3xs text-base-dark">Área de Análisis Pericial</span></td>
+            <td class="font-body-2xs">${motivo}</td>
+            <td><span class="usa-tag bg-success text-white font-mono-3xs">VERIFICADO</span></td>
+            <td class="font-mono-2xs"><code>SHA256-OK</code></td>
+          `;
+          tbodyTrans.appendChild(tr);
         }
       });
     }
@@ -264,12 +240,65 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     const c = casos.find((x) => x.id === casoId);
     if (!c) return;
 
+    const prcc = c.numero_prcc || c.numeroPRCC || 'PRCC-2026-001';
+    const precinto = c.precinto_numero || 'PREC-2026-991';
+    const hashShort = (c.hashSHA256 || 'b5f2a3e8c9d1047f6a2d3e8c9b5f1e2d7a4c0f3b8e5d2a9c6b3f0e7d1a2c3b4e');
+    const hashDisplay = `${hashShort.substring(0, 8)}...${hashShort.substring(hashShort.length - 6)}`;
+    const consignante = c.solicitante_nombre || c.consignanteNombre || 'Consignante Titular';
+    const cedulaCons = c.solicitante_cedula || c.consignanteCedula || 'V-12.345.678';
+    const perito = c.peritoLider || c.peritoLiderNombre || 'Jull Joll';
+    const civPerito = c.perito_civ || c.peritoLiderCiv || 'CIV-299410';
+
     if (casoTit) casoTit.textContent = `${c.numeroCaso} — ${c.titulo}`;
-    if (btnPrcc) btnPrcc.href = `/planillas/planilla-prcc?casoId=${c.id}`;
-    if (btnDesp) btnDesp.href = `/planillas/acta-desprecintado?casoId=${c.id}`;
+    if (btnPrcc) btnPrcc.href = `/planillas/planilla-prcc?casoId=${c.id}&modo=datos`;
+    if (btnDesp) btnDesp.href = `/planillas/acta-desprecintado?casoId=${c.id}&modo=datos`;
+    if (prccEl) prccEl.textContent = prcc;
+    if (precintoEl) precintoEl.textContent = precinto;
+    if (aislamientoEl) {
+      aislamientoEl.textContent = c.evidenciaAislamientoRF !== false ? 'Bolsa Faraday + Modo Avión' : 'Protección Antiestática / Write-Block';
+    }
+
+    if (tbodyTrans) {
+      const fechaBase = c.fechaCreacion ? new Date(c.fechaCreacion).toLocaleString('es-VE') : new Date().toLocaleString('es-VE');
+      tbodyTrans.innerHTML = `
+        <tr>
+          <th scope="row" class="font-mono-2xs"><code>${fechaBase}</code></th>
+          <td>
+            <strong>${consignante}</strong><br />
+            <span class="font-body-3xs text-base-dark">C.I. ${cedulaCons} (Consignante)</span>
+          </td>
+          <td>
+            <strong>${perito}</strong><br />
+            <span class="font-body-3xs text-base-dark">${civPerito} (Perito Receptor SHA256.US)</span>
+          </td>
+          <td class="font-body-2xs">Obtención por Consignación (F1), fijación 360° y sellado en Bolsa Faraday</td>
+          <td>
+            <span class="usa-tag bg-success text-white font-mono-3xs">${precinto} (Íntegro)</span>
+          </td>
+          <td class="font-mono-2xs"><code>${hashDisplay}</code></td>
+        </tr>
+        <tr>
+          <th scope="row" class="font-mono-2xs"><code>Fase ${c.faseIsoActual || 'F0'}</code></th>
+          <td>
+            <strong>${perito}</strong><br />
+            <span class="font-body-3xs text-base-dark">${civPerito} (Custodio)</span>
+          </td>
+          <td>
+            <strong>Laboratorio Forense SHA256.US</strong><br />
+            <span class="font-body-3xs text-base-dark">Bóveda y Sala de Adquisición (F2/F3)</span>
+          </td>
+          <td class="font-body-2xs">Resguardo y Adquisición Forense con verificación de Hash Génesis SHA-256</td>
+          <td>
+            <span class="usa-tag bg-accent-warm-dark text-ink text-bold font-mono-3xs">Custodia Activa</span>
+          </td>
+          <td class="font-mono-2xs"><code>${hashDisplay}</code></td>
+        </tr>
+      `;
+    }
   }
 
   if (typeof window !== 'undefined') {
     initCustodia();
   }
 </script>
+

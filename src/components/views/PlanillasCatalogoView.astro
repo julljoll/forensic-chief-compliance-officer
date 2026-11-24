@@ -2,9 +2,10 @@
 /**
  * SHA256.US — Componente de Vista del Catálogo Canónico de las 13 Planillas Oficiales en Folio (216mm × 330mm)
  * Formato físico reglamentario para documentos legales en Venezuela (Oficio).
- * Modelo Operativo: Consignación Voluntaria y Adquisición Lógica de Mensajería Digital.
+ * Modelo Operativo: Consignación Voluntaria y Adquisición Forense de Dispositivos Móviles y Medios Digitales.
  * Monocromático B&W puro · Encabezado y pie unificados · Modo Plantilla en Blanco para llenado manual.
  */
+import PageHeader from '../uswds/PageHeader.astro';
 import Alert from '../uswds/Alert.astro';
 
 const PLANILLAS = [
@@ -14,7 +15,7 @@ const PLANILLAS = [
     fase: 'F0',
     titulo: 'Acta de Consentimiento Informado y Autorización',
     norma: 'CRBV Arts. 28, 48, 60 · LEDCI Arts. 20, 21 · ISO 27037',
-    descripcion: 'Autorización legal expresa del titular o interlocutor legítimo para la extracción lógica forense de mensajería y exclusión de antijuridicidad.',
+    descripcion: 'Autorización legal expresa del titular o interlocutor legítimo para la adquisición forense de móviles o medios digitales y exclusión de antijuridicidad.',
     hojas: '1 Hoja Folio',
   },
   {
@@ -32,7 +33,7 @@ const PLANILLAS = [
     fase: 'F1',
     titulo: 'Acta de Obtención por Consignación y Preservación',
     norma: 'MUCC-2017 (G.O. 41.247) · COPP Art. 187 · ISO/IEC 27037 §5.4.2/§5.4.3',
-    descripcion: 'Recepción física y técnica del teléfono inteligente con fijación fotográfica 360°, aislamiento Faraday y precintado numerado.',
+    descripcion: 'Recepción física y técnica del dispositivo móvil o medio digital (CD, disco, reloj, PC, servidor, cámara) con fijación 360°, Faraday y precinto.',
     hojas: '2 Hojas Folio',
   },
   {
@@ -41,16 +42,16 @@ const PLANILLAS = [
     fase: 'F1',
     titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)',
     norma: 'COPP Art. 187 · MUCC-2017 §I-V · LMDFE Art. 7',
-    descripcion: 'Instrumento matriz de trazabilidad ininterrumpida del dispositivo consignado y contenedores lógicos derivados.',
+    descripcion: 'Instrumento matriz de trazabilidad ininterrumpida del dispositivo o soporte consignado y contenedores lógicos derivados.',
     hojas: '2 Hojas Folio',
   },
   {
     codigo: 'FO-F2-05',
     slug: 'acta-desprecintado',
     fase: 'F2',
-    titulo: 'Acta de Desprecintado y Adquisición Lógica',
-    norma: 'NIST SP 800-101 Nivel 2 · ISO/IEC 27037 §5.4.4 / §7.1.3 · COPP 187',
-    descripcion: 'Constancia de apertura en laboratorio, extracción lógica de SQLite msgstore.db, Hash SHA-256 y Nuevo Precinto de Resguardo.',
+    titulo: 'Acta de Desprecintado y Adquisición en Laboratorio',
+    norma: 'NIST SP 800-101 / 800-86 · ISO/IEC 27037 §5.4.4 / §7.1.3 · COPP 187',
+    descripcion: 'Constancia de apertura en laboratorio, extracción lógica móvil o imagen con Write-Blocker, Hash SHA-256 y Nuevo Precinto.',
     hojas: '1 Hoja Folio',
   },
   {
@@ -68,7 +69,7 @@ const PLANILLAS = [
     fase: 'F3',
     titulo: 'Planilla de Evaluación de Interfaz UX y Software',
     norma: 'ISO/IEC 25010 · ISO/IEC 27042 §8 · LMDFE Art. 4',
-    descripcion: 'Cotejo heurístico de coincidencia unívoca entre la interfaz visual en pantalla y los registros crudos en SQLite msgstore.db.',
+    descripcion: 'Cotejo heurístico de coincidencia unívoca entre capturas de pantalla, redes sociales o interfaz y registros crudos en SQLite/logs.',
     hojas: '1 Hoja Folio',
   },
   {
@@ -77,7 +78,7 @@ const PLANILLAS = [
     fase: 'F4',
     titulo: 'Dictamen Pericial Oficial de Informática Forense',
     norma: 'COPP Arts. 187, 223–225 · LMDFE 4, 7 · CENIF G.O. 39.847',
-    descripcion: 'Informe científico motivado colegiado por dos peritos titulados y juramentados, con plena eficacia probatoria judicial.',
+    descripcion: 'Informe científico motivado colegiado por dos peritos titulados y juramentados para validar pruebas ante tribunales.',
     hojas: '2 Hojas Folio',
   },
   {
@@ -86,7 +87,7 @@ const PLANILLAS = [
     fase: 'F4',
     titulo: 'Dictamen Especializado en Evidencia Fotográfica',
     norma: 'COPP Arts. 223–225 · LMDFE Arts. 4 y 7 · ISO 27042',
-    descripcion: 'Análisis de metadatos EXIF, ELA (Error Level Analysis), integridad de píxeles y descarte de fotomontajes.',
+    descripcion: 'Análisis de metadatos EXIF, ELA (Error Level Analysis), integridad de píxeles en imágenes, capturas de pantalla y cámaras DVR.',
     hojas: '1 Hoja Folio',
   },
   {
@@ -104,7 +105,7 @@ const PLANILLAS = [
     fase: 'F5',
     titulo: 'Acta de Disposición Final y Devolución al Titular',
     norma: 'MUCC-2017 Disposición Final (G.O. 41.247) · COPP 187',
-    descripcion: 'Constancia formal de remisión del dictamen pericial colegiado en Folio y devolución física del smartphone con precinto intacto.',
+    descripcion: 'Constancia formal de remisión del dictamen pericial colegiado en Folio y devolución física del móvil o medio con precinto intacto.',
     hojas: '1 Hoja Folio',
   },
   {
@@ -128,34 +129,28 @@ const PLANILLAS = [
 ];
 ---
 
-<!-- Encabezado de Página -->
-<div class="grid-row grid-gap flex-align-end flex-justify margin-bottom-3">
-  <div class="tablet:grid-col-7">
-    <h1 class="margin-top-0 margin-bottom-1">
-      Catálogo de Planillas Oficiales en Folio (216mm × 330mm)
-    </h1>
-    <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
-      13 instrumentos periciales de informática forense con estándar canónico B&amp;W, membrete unificado de la República, dactiloscopía bilateral y cierre formal.
-    </p>
-  </div>
-
-  <!-- Selector de Modo / Expediente -->
-  <div class="tablet:grid-col-5 margin-top-2 tablet:margin-top-0">
-    <label class="usa-label margin-top-0" for="select-caso-planillas">
-      Modo de Emisión
+<PageHeader
+  title="Catálogo de Planillas Oficiales en Folio (216mm × 330mm)"
+  subtitle="13 instrumentos periciales con aspecto judicial federal americano, membrete oficial, dactiloscopía bilateral y cierre formal."
+  tag="13 Planillas Folio"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions" style="min-width: 280px;">
+    <label class="usa-label margin-top-0 font-sans-3xs text-bold" for="select-caso-planillas">
+      Modo de Emisión (Blanco / Con Datos):
     </label>
-    <select class="usa-select" id="select-caso-planillas">
+    <select class="usa-select font-sans-xs margin-top-05" id="select-caso-planillas">
       <option value="blanco" selected>
         Formato en Blanco (Llenado Manual con Bolígrafo)
       </option>
     </select>
   </div>
-</div>
+</PageHeader>
 
 <!-- Alerta de Especificaciones de Impresión Folio -->
 <div class="margin-bottom-3">
-  <Alert type="info" heading="Consignación Privada y Adquisición Lógica (NIST SP 800-101 Nivel 2 · LMDFE Arts. 4 y 7)">
-    Este catálogo opera bajo el modelo de <strong>Consignación Voluntaria y Adquisición Lógica Forense</strong> de dispositivos móviles y mensajería (WhatsApp SQLite <code>msgstore.db</code>). Todas las planillas están estrictamente adaptadas al <strong>Manual Único de Cadena de Custodia (MUCC-2017)</strong> y a la <strong>Ley sobre Mensajes de Datos y Firmas Electrónicas</strong>, imprimiéndose por defecto en <strong>Modo Plantilla en Blanco</strong> en hojas tamaño Folio (216mm × 330mm) en Blanco y Negro puro con 30mm de margen de encuadernación.
+  <Alert type="info" heading="Procedimiento de Análisis por Consignación (NIST SP 800-101 / 800-86 · MUCC-2017 · LMDFE Arts. 4 y 7)">
+    Este catálogo guía la validación judicial para tribunales de pruebas en <strong>dispositivos móviles</strong> (imágenes, redes sociales, notas de voz, capturas de pantalla, WhatsApp/Telegram) y <strong>medios digitales consignados</strong> (CD/DVD, disco duro, reloj inteligente, computadora, servidor, cámara de seguridad DVR/CCTV), imprimiéndose en hojas tamaño Folio (<code>216mm × 330mm</code>) con <code>30mm</code> de margen izquierdo de encuadernación.
   </Alert>
 </div>
 
