@@ -129,6 +129,7 @@ describe('Verificación de Cumplimiento Legal y Estructural de Planillas (Etapa 
       const content = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas', file), 'utf8');
       expect(content, `${file} debe incluir atributos data-default`).toContain('data-default=');
       expect(content, `${file} debe mostrarse e imprimirse únicamente en blanco`).toContain('const isBlanco = true;');
+      expect(content, `${file} debe incluir SHA256.US en su marca de agua`).toMatch(/<div class="watermark">[^<]*SHA256\.US<\/div>/);
     }
   });
 
