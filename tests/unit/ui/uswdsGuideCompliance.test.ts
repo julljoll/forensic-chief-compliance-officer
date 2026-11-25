@@ -76,9 +76,14 @@ describe('Cumplimiento Visual USWDS (DC3 Federal Theme) y Guía Operativa Perici
     expect(sidebar).toContain('user-civ-badge-sidebar');
     expect(sidebar).toContain('user-name-sidebar');
     expect(sidebar).toContain('fcco-side-panel');
+    expect(sidebar).toContain("import Icon from '../uswds/Icon.astro'");
+    expect(sidebar).toContain('fcco-nav-icon');
+    // Verifica que no haya emojis en los items del menú
+    expect(sidebar).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
 
     const scss = fs.readFileSync(path.resolve(process.cwd(), 'src/styles/uswds-theme.scss'), 'utf8');
     expect(scss).toContain('.fcco-side-panel');
     expect(scss).toContain('.sticky-side-panel');
+    expect(scss).toContain('.fcco-nav-icon');
   });
 });

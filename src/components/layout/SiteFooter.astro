@@ -1,9 +1,5 @@
 ---
-/**
- * SHA256.US — Componente Oficial USWDS Footer Minimalista para CMS de Cumplimiento
- * Aplica Leyes de Gestalt (Proximidad, Región Común y Simplicidad)
- * https://designsystem.digital.gov/components/footer/
- */
+import Icon from '../uswds/Icon.astro';
 ---
 <footer class="usa-footer usa-footer--slim fcco-footer" role="contentinfo">
   <div class="grid-container-widescreen">
@@ -51,8 +47,9 @@
       <!-- Cluster 3 (Proximidad: Integridad Criptográfica y Contacto Institucional) -->
       <div class="grid-col-12 tablet:grid-col-3 text-right">
         <div class="display-inline-flex flex-column flex-align-end">
-          <span class="usa-tag bg-success-dark text-white font-mono-3xs text-bold padding-x-1 padding-y-2px radius-pill">
-            🔒 Inmutabilidad SHA-256 (RFC 8785)
+          <span class="usa-tag bg-success-dark text-white font-mono-3xs text-bold padding-x-1 padding-y-2px radius-pill display-inline-flex flex-align-center">
+            <Icon name="lock" className="margin-right-05 text-white" />
+            <span>Inmutabilidad SHA-256 (RFC 8785)</span>
           </span>
           <span class="font-sans-3xs text-base-dark margin-top-05">
             Soporte: <a href="mailto:custodia@sha256.us" class="usa-link text-base-darker">custodia@sha256.us</a> · <span class="font-mono-3xs">v1.0.0</span>

@@ -2,8 +2,11 @@
 /**
  * SHA256.US — Panel de Control Lateral Izquierdo (Compliance Officer CMS Side Panel)
  * Componente canónico USWDS (.usa-sidenav) adaptado para panel pericial ejecutivo de 2 columnas.
+ * Iconografía oficial: Sistema de Diseño USWDS (@uswds/uswds / sprite.svg)
  * Color y Tipografía Oficial: Public Sans Web / USWDS 3.14+
  */
+import Icon from '../uswds/Icon.astro';
+
 interface Props {
   activeNav?: string;
 }
@@ -11,21 +14,21 @@ interface Props {
 const { activeNav = '' } = Astro.props;
 
 const operacionItems = [
-  { href: '/dashboard', label: 'Panel General', icon: '📊', key: 'dashboard' },
-  { href: '/casos', label: 'Expedientes Periciales', icon: '📁', key: 'casos' },
-  { href: '/flujo', label: 'Ciclo Pericial ISO', icon: '🔄', key: 'flujo' },
-  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', icon: '📦', key: 'custodia' },
+  { href: '/dashboard', label: 'Panel General', iconName: 'assessment', key: 'dashboard' },
+  { href: '/casos', label: 'Expedientes Periciales', iconName: 'folder', key: 'casos' },
+  { href: '/flujo', label: 'Ciclo Pericial ISO', iconName: 'autorenew', key: 'flujo' },
+  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', iconName: 'verified_user', key: 'custodia' },
 ];
 
 const dictamenItems = [
-  { href: '/planillas', label: 'Planillas Folio (13)', icon: '📜', key: 'planillas' },
-  { href: '/normativa', label: 'Base Normativa RAG', icon: '⚖️', key: 'normativa' },
-  { href: '/auditoria', label: 'Auditoría SHA-256', icon: '🔗', key: 'auditoria' },
-  { href: '/exportar', label: 'Exportación de Caso', icon: '📤', key: 'exportar' },
+  { href: '/planillas', label: 'Planillas Folio (13)', iconName: 'file_present', key: 'planillas' },
+  { href: '/normativa', label: 'Base Normativa RAG', iconName: 'account_balance', key: 'normativa' },
+  { href: '/auditoria', label: 'Auditoría SHA-256', iconName: 'fingerprint', key: 'auditoria' },
+  { href: '/exportar', label: 'Exportación de Caso', iconName: 'file_download', key: 'exportar' },
 ];
 
 const sistemaItems = [
-  { href: '/seguridad', label: 'Seguridad & MFA / TOTP', icon: '🔒', key: 'seguridad' },
+  { href: '/seguridad', label: 'Seguridad & MFA / TOTP', iconName: 'lock', key: 'seguridad' },
 ];
 ---
 
@@ -61,7 +64,7 @@ const sistemaItems = [
             href={item.href}
             class={activeNav === item.key ? 'usa-current' : ''}
           >
-            <span class="margin-right-1">{item.icon}</span>
+            <Icon name={item.iconName} className="fcco-nav-icon margin-right-1" />
             <span>{item.label}</span>
           </a>
         </li>
@@ -79,7 +82,7 @@ const sistemaItems = [
             href={item.href}
             class={activeNav === item.key ? 'usa-current' : ''}
           >
-            <span class="margin-right-1">{item.icon}</span>
+            <Icon name={item.iconName} className="fcco-nav-icon margin-right-1" />
             <span>{item.label}</span>
           </a>
         </li>
@@ -97,7 +100,7 @@ const sistemaItems = [
             href={item.href}
             class={activeNav === item.key ? 'usa-current' : ''}
           >
-            <span class="margin-right-1">{item.icon}</span>
+            <Icon name={item.iconName} className="fcco-nav-icon margin-right-1" />
             <span>{item.label}</span>
           </a>
         </li>
@@ -114,10 +117,11 @@ const sistemaItems = [
     <button
       type="button"
       id="btn-logout"
-      class="usa-button usa-button--outline width-full font-sans-2xs text-bold padding-1 text-center btn-logout"
+      class="usa-button usa-button--outline width-full font-sans-2xs text-bold padding-1 display-flex flex-align-center flex-justify-center btn-logout"
       style="cursor: pointer;"
     >
-      Cerrar Sesión
+      <Icon name="logout" className="fcco-nav-icon margin-right-1" />
+      <span>Cerrar Sesión</span>
     </button>
   </div>
 </div>

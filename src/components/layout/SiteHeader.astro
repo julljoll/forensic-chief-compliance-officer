@@ -3,6 +3,8 @@
  * SHA256.US — Componente Oficial USWDS Header (Menú Superior del CMS)
  * https://designsystem.digital.gov/components/header/
  */
+import Icon from '../uswds/Icon.astro';
+
 interface Props {
   activeNav?: string;
 }
@@ -64,13 +66,15 @@ const navItems = [
             </a>
           </li>
           <li class="usa-nav__secondary-item">
-            <a href="/seguridad" class="font-sans-2xs text-primary" title="Autenticación en 2 Pasos (Google Authenticator)">
-              🔒 MFA / TOTP
+            <a href="/seguridad" class="font-sans-2xs text-primary display-flex flex-align-center" title="Autenticación en 2 Pasos (Google Authenticator)">
+              <Icon name="lock" className="margin-right-05" />
+              <span>MFA / TOTP</span>
             </a>
           </li>
           <li class="usa-nav__secondary-item">
-            <button type="button" id="btn-logout" class="usa-button usa-button--unstyled font-sans-2xs text-secondary text-bold" style="cursor: pointer;">
-              Cerrar Sesión
+            <button type="button" id="btn-logout" class="usa-button usa-button--unstyled font-sans-2xs text-secondary text-bold display-flex flex-align-center" style="cursor: pointer;">
+              <Icon name="logout" className="margin-right-05" />
+              <span>Cerrar Sesión</span>
             </button>
           </li>
         </ul>
