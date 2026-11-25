@@ -15,9 +15,14 @@ use Sha256\Db\Database;
 use Sha256\Auth\Session;
 use Sha256\Crypto\Canonical;
 
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+
+$user = Session::requireUser();
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if (in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'], true)) {
+    Session::requireCsrf();
+}
 $pdo = Database::getConnection();
-$user = Session::getUser();
-$method = $_SERVER['REQUEST_METHOD'];
 
 // GET: Listar o consultar caso
 if ($method === 'GET') {
@@ -96,8 +101,8 @@ if ($method === 'GET') {
     }
 }
 
-// Para mutaciones (POST, PUT, DELETE) requerimos usuario autenticado si hay sesión activa
-$usuarioEmail = $user ? $user['email'] : 'perito@sha256.us';
+// Usuario autenticado obligatorio (verificado al inicio vía Session::requireUser() + CSRF)
+$usuarioEmail = (string)$user['email'];
 
 // POST: Crear nuevo caso
 if ($method === 'POST') {

@@ -15,8 +15,14 @@ use Sha256\Db\Database;
 use Sha256\Auth\Session;
 use Sha256\Crypto\Canonical;
 
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+
+$user = Session::requireUser();
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+if (in_array($method, ['POST', 'PUT', 'DELETE', 'PATCH'], true)) {
+    Session::requireCsrf();
+}
 $pdo = Database::getConnection();
-$method = $_SERVER['REQUEST_METHOD'];
 
 if ($method === 'GET') {
     // Si se solicita verificación criptográfica completa de la cadena
@@ -102,8 +108,7 @@ if ($method === 'GET') {
 }
 
 if ($method === 'POST') {
-    $user = Session::getUser();
-    $usuarioEmail = $user ? $user['email'] : 'perito@sha256.us';
+    $usuarioEmail = (string)$user['email'];
 
     $input = json_decode(file_get_contents('php://input'), true) ?? [];
     $accion = trim((string)($input['accion'] ?? ''));

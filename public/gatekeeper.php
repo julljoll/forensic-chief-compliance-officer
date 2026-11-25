@@ -11,10 +11,13 @@ require_once __DIR__ . '/api/lib/auth.php';
 
 use Sha256\Auth\Session;
 
-// 1. Verificar sesión activa de perito en PHP
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+header('Pragma: no-cache');
+
+// 1. Verificar sesión activa de perito en PHP (Google OIDC + TOTP verificado; pending_mfa retorna null)
 $user = Session::getUser();
 if (!$user) {
-    // Si no está autenticado, redirigir inmediatamente a la página de login con 302
+    // Si no está autenticado con MFA completo, redirigir inmediatamente a la página de login con 302
     header('Location: /?msg=sesion_requerida', true, 302);
     exit;
 }

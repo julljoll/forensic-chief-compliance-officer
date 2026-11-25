@@ -28,8 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$user = Session::getUser();
-$usuarioEmail = $user ? $user['email'] : 'perito@sha256.us';
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+
+$user = Session::requireUser();
+Session::requireCsrf();
+$usuarioEmail = (string)$user['email'];
 
 $input = json_decode(file_get_contents('php://input'), true) ?? [];
 $casoId = (string)($input['casoId'] ?? '');
