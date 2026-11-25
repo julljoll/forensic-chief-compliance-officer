@@ -11,7 +11,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     if (!fs.existsSync(distDir) || !fs.existsSync(path.resolve(distDir, 'index.html'))) {
       execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
     }
-  });
+  }, 60000);
 
   it('debe existir el archivo database.sql con esquema relacional e inmutabilidad', () => {
     const sqlPath = path.resolve(rootDir, 'database.sql');

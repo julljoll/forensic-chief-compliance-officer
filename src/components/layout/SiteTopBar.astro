@@ -1,0 +1,65 @@
+---
+/**
+ * SHA256.US — Barra Superior Ejecutiva para el Área de Trabajo (Content Area Topbar)
+ * Muestra el toggle móvil del sidebar, estado normativo y accesos periciales directos.
+ */
+interface Props {
+  activeNav?: string;
+}
+
+const { activeNav = '' } = Astro.props;
+
+const navTitles: Record<string, string> = {
+  dashboard: 'Panel General de Cumplimiento',
+  casos: 'Expedientes Periciales',
+  flujo: 'Ciclo Pericial ISO (F0–F5)',
+  custodia: 'Cadena de Custodia (PRCC)',
+  planillas: 'Catálogo de Planillas Folio',
+  normativa: 'Base Normativa RAG',
+  auditoria: 'Auditoría Inmutable SHA-256',
+  exportar: 'Exportación de Caso',
+  seguridad: 'Seguridad MFA / TOTP',
+};
+
+const currentTitle = navTitles[activeNav] || 'Panel de Control CMS';
+---
+
+<header class="fcco-topbar">
+  <div class="fcco-topbar__left">
+    <button
+      type="button"
+      class="fcco-topbar__toggle"
+      id="fcco-sidebar-toggle"
+      aria-label="Abrir panel lateral de navegación"
+    >
+      <span aria-hidden="true">☰</span>
+      <span>Menú FCCO</span>
+    </button>
+
+    <div class="display-flex flex-align-center grid-gap-1">
+      <span class="fcco-topbar__status text-bold font-sans-2xs text-ink">
+        {currentTitle}
+      </span>
+      <span class="usa-tag bg-primary-darker text-white font-mono-3xs text-bold display-none tablet:display-inline-block">
+        ISO/IEC 27037 · MUCC-2017
+      </span>
+    </div>
+  </div>
+
+  <div class="fcco-topbar__right">
+    <a
+      href="/casos?nuevo=1"
+      class="usa-button usa-button--sm font-sans-3xs padding-x-105 padding-y-05 text-bold"
+      title="Aperturar un nuevo expediente pericial"
+    >
+      + Nuevo Expediente
+    </a>
+    <a
+      href="/seguridad"
+      class="usa-button usa-button--outline usa-button--sm font-sans-3xs padding-x-1 padding-y-05 text-bold display-none tablet:display-inline-block"
+      title="Configuración de seguridad MFA"
+    >
+      🔒 MFA Activo
+    </a>
+  </div>
+</header>

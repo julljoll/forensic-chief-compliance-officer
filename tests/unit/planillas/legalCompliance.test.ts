@@ -149,6 +149,39 @@ describe('Verificación de Cumplimiento Legal y Estructural de Planillas (Etapa 
     const binder = fs.readFileSync(path.resolve(process.cwd(), 'src/lib/data/bindPlanilla.ts'), 'utf8');
     expect(binder).toContain("el.textContent = '';");
   });
+
+  it('FED-03: Formato Institucional Federal de Estados Unidos (NIST / USWDS / OMB / FBI FD-1004)', () => {
+    const css = fs.readFileSync(path.resolve(process.cwd(), 'src/styles/folio-aislado.css'), 'utf8');
+
+    // 1. Tipografías oficiales del gobierno federal de EE.UU. (USWDS)
+    expect(css).toContain("'Public Sans Web'");
+    expect(css).toContain("'Merriweather Web'");
+    expect(css).toContain("'Roboto Mono Web'");
+
+    // 2. Bloque de control federal estilo OMB / FBI FD-1004
+    expect(css).toContain('.header-control-box');
+    expect(css).toContain('.canonical-doc-title');
+    expect(css).toContain('.header-title-box');
+
+    // 3. Colores federales USWDS (Navy #112E51, Cool Gray #F0F4F8, Alto Contraste #1B1B1B)
+    expect(css).toContain('#112E51');
+    expect(css).toContain('#F0F4F8');
+    expect(css).toContain('#1B1B1B');
+
+    // 4. Margen federal de encuadernación de 3 anillas / judicial (30mm izquierdo)
+    expect(css).toContain('padding: 15mm 15mm 15mm 30mm');
+
+    // 5. Cajas dactiloscópicas canónicas bilaterales estilo FBI
+    expect(css).toContain('.thumb-box-canonical');
+
+    // 6. Citación de estándares NIST en Footer y Header
+    const footer = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas/PlanillaFooter.astro'), 'utf8');
+    expect(footer).toContain('NIST SP 800-86');
+    expect(footer).toContain('RFC 8785');
+
+    const sanitizacion = fs.readFileSync(path.resolve(process.cwd(), 'src/components/planillas/ActaSanitizacion.astro'), 'utf8');
+    expect(sanitizacion).toContain('NIST SP 800-88 REV. 1');
+  });
 });
 
 

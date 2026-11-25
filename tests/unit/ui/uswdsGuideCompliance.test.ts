@@ -58,4 +58,26 @@ describe('Cumplimiento Visual USWDS (DC3 Federal Theme) y Guía Operativa Perici
     expect(modal).toContain('Reloj Inteligente (Smartwatch / Wearable)');
     expect(modal).toContain('Medio Óptico (CD / DVD)');
   });
+
+  it('USWDS-05: El CMS implementa el panel de control con navbar lateral izquierdo (.usa-sidenav)', () => {
+    const layout = fs.readFileSync(path.resolve(process.cwd(), 'src/layouts/AppLayout.astro'), 'utf8');
+    expect(layout).toContain('<SiteSidebar');
+    expect(layout).toContain('<SiteTopBar');
+    expect(layout).toContain('fcco-dashboard-shell');
+
+    const sidebar = fs.readFileSync(
+      path.resolve(process.cwd(), 'src/components/layout/SiteSidebar.astro'),
+      'utf8'
+    );
+    expect(sidebar).toContain('usa-sidenav');
+    expect(sidebar).toContain('fcco-sidebar');
+    expect(sidebar).toContain('user-civ-badge');
+    expect(sidebar).toContain('user-name');
+    expect(sidebar).toContain('btn-logout');
+
+    const scss = fs.readFileSync(path.resolve(process.cwd(), 'src/styles/uswds-theme.scss'), 'utf8');
+    expect(scss).toContain('.fcco-sidebar');
+    expect(scss).toContain('#112e51'); // Dark Navy Ink 90v federal
+    expect(scss).toContain('.fcco-dashboard-shell');
+  });
 });

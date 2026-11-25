@@ -1,0 +1,137 @@
+---
+/**
+ * SHA256.US — Panel de Control Lateral Izquierdo (Compliance Officer CMS Sidebar)
+ * Componente canónico USWDS (.usa-sidenav) adaptado para panel pericial ejecutivo.
+ * Color canónico: Dark Navy Ink 90v (#112E51).
+ */
+interface Props {
+  activeNav?: string;
+}
+
+const { activeNav = '' } = Astro.props;
+
+const operacionItems = [
+  { href: '/dashboard', label: 'Panel General', icon: '📊', key: 'dashboard' },
+  { href: '/casos', label: 'Expedientes Periciales', icon: '📁', key: 'casos' },
+  { href: '/flujo', label: 'Ciclo Pericial ISO', icon: '🔄', key: 'flujo' },
+  { href: '/custodia', label: 'Cadena de Custodia (PRCC)', icon: '📦', key: 'custodia' },
+];
+
+const dictamenItems = [
+  { href: '/planillas', label: 'Planillas Folio (13)', icon: '📜', key: 'planillas' },
+  { href: '/normativa', label: 'Base Normativa RAG', icon: '⚖️', key: 'normativa' },
+  { href: '/auditoria', label: 'Auditoría SHA-256', icon: '🔗', key: 'auditoria' },
+  { href: '/exportar', label: 'Exportación de Caso', icon: '📤', key: 'exportar' },
+];
+
+const sistemaItems = [
+  { href: '/seguridad', label: 'Seguridad & MFA / TOTP', icon: '🔒', key: 'seguridad' },
+];
+---
+
+<aside class="fcco-sidebar" id="fcco-sidebar" aria-label="Panel de Control CMS Compliance Officer">
+  <!-- Cabecera Institucional del Sidebar -->
+  <div class="fcco-sidebar__header">
+    <a href="/dashboard" class="fcco-sidebar__brand" title="Inicio FCCO — SHA256.US">
+      <img src="/logo.png?v=2" alt="Logo SHA256.US" class="fcco-sidebar__logo" width="36" height="36" />
+      <div>
+        <div class="fcco-sidebar__title">SHA256.US</div>
+        <div class="fcco-sidebar__subtitle">CHIEF COMPLIANCE OFFICER</div>
+      </div>
+    </a>
+    <button type="button" class="fcco-sidebar__close-btn" id="fcco-sidebar-close" aria-label="Cerrar panel lateral">
+      ✕
+    </button>
+  </div>
+
+  <!-- Tarjeta de Identificación y Acreditación del Perito -->
+  <div class="fcco-sidebar__officer-box">
+    <div class="fcco-sidebar__officer-header">
+      <span class="usa-tag bg-primary text-white font-mono-3xs text-bold" id="user-civ-badge">
+        CIV-299410
+      </span>
+      <span class="usa-tag bg-success-dark text-white font-mono-3xs text-bold padding-x-1 padding-y-2px radius-pill">
+        AUDITORÍA ACTIVA
+      </span>
+    </div>
+    <div class="fcco-sidebar__officer-name" id="user-name">
+      Perito: Jull Joll (FCCO)
+    </div>
+    <div class="fcco-sidebar__officer-role">
+      Oficial Jefe de Cumplimiento Pericial
+    </div>
+  </div>
+
+  <!-- Menú de Navegación Vertical USWDS (.usa-sidenav) -->
+  <div class="fcco-sidebar__nav-container">
+    <!-- Grupo 1: Operación Pericial -->
+    <div class="fcco-sidebar__section-title">OPERACIÓN PERICIAL</div>
+    <nav aria-label="Operación pericial">
+      <ul class="usa-sidenav">
+        {operacionItems.map((item) => (
+          <li class="usa-sidenav__item">
+            <a
+              href={item.href}
+              class={activeNav === item.key ? 'usa-current' : ''}
+            >
+              <span class="fcco-nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Grupo 2: Dictámenes & Compliance -->
+    <div class="fcco-sidebar__section-title margin-top-1">DICTÁMENES &amp; AUDITORÍA</div>
+    <nav aria-label="Dictámenes y auditoría">
+      <ul class="usa-sidenav">
+        {dictamenItems.map((item) => (
+          <li class="usa-sidenav__item">
+            <a
+              href={item.href}
+              class={activeNav === item.key ? 'usa-current' : ''}
+            >
+              <span class="fcco-nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+
+    <!-- Grupo 3: Sistema & Seguridad -->
+    <div class="fcco-sidebar__section-title margin-top-1">CONTROL &amp; SEGURIDAD</div>
+    <nav aria-label="Control y seguridad">
+      <ul class="usa-sidenav">
+        {sistemaItems.map((item) => (
+          <li class="usa-sidenav__item">
+            <a
+              href={item.href}
+              class={activeNav === item.key ? 'usa-current' : ''}
+            >
+              <span class="fcco-nav-icon">{item.icon}</span>
+              <span>{item.label}</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  </div>
+
+  <!-- Pie del Sidebar con Inmutabilidad y Cierre de Sesión -->
+  <div class="fcco-sidebar__footer">
+    <div class="display-flex flex-justify-between flex-align-center margin-bottom-1 font-mono-3xs text-base-light">
+      <span>RFC 8785 · Inmutable</span>
+      <span>v1.0.0</span>
+    </div>
+    <button
+      type="button"
+      id="btn-logout"
+      class="usa-button usa-button--secondary width-full font-sans-2xs text-bold padding-1 text-center"
+      style="cursor: pointer;"
+    >
+      Cerrar Sesión
+    </button>
+  </div>
+</aside>

@@ -1,4 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
+import fs from 'node:fs';
+import path from 'node:path';
+import { execSync } from 'node:child_process';
 import {
   transformPlanillaHtmlForWord,
   buildWordDocxHtmlTemplate,
@@ -7,6 +10,13 @@ import {
 import { LOGO_PNG_BASE64 } from '../../../src/lib/export/logoBase64';
 
 describe('exportWordDocx — Pre-procesamiento y Exportación a Microsoft Word (.docx)', () => {
+  const distPlanillasDir = path.resolve(process.cwd(), 'dist/planillas');
+
+  beforeAll(() => {
+    if (!fs.existsSync(distPlanillasDir) || !fs.existsSync(path.resolve(distPlanillasDir, 'acta-consentimiento.html'))) {
+      execSync('npm run build', { cwd: process.cwd(), stdio: 'inherit' });
+    }
+  }, 60000);
   it('transformPlanillaHtmlForWord convierte el membrete a tabla de 2 columnas con logo base64', () => {
     const div = document.createElement('div');
     div.innerHTML = `
