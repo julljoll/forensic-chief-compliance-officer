@@ -78,6 +78,13 @@ class Session
         }
 
         if (session_status() === PHP_SESSION_NONE) {
+            if (PHP_SAPI === 'cli' && headers_sent()) {
+                if (!isset($_SESSION) || !is_array($_SESSION)) {
+                    $_SESSION = [];
+                }
+                return;
+            }
+
             $sCfg = $config['session'];
             $absoluteTimeout = (int)($sCfg['absolute_timeout'] ?? $sCfg['lifetime'] ?? 28800);
             $sameSite = (string)($sCfg['samesite'] ?? 'Lax');

@@ -6,8 +6,8 @@
  * - PUT  (Autenticado + CSRF): Actualiza automáticamente en MySQL (`usuarios`) los datos editables
  *   del perito (nombre, apellido, C.I., cargo, CIV, INPRE, organismo, despacho, teléfono, dirección,
  *   especialidad), refresca `$_SESSION['usuario']` y registra asiento inmutable en `auditoria`.
- * - POST (Autenticado + CSRF, action=cambiar_password): Permite actualizar la contraseña verificando
- *   la contraseña actual con `password_verify()`.
+ * - POST (Autenticado + CSRF, action=cambiar_password): Bloqueado permanentemente con HTTP 403
+ *   (`password_login_enabled = false`; acceso exclusivo Google OIDC + Google Authenticator).
  */
 
 declare(strict_types=1);
