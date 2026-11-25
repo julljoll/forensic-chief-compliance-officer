@@ -59,25 +59,26 @@ describe('Cumplimiento Visual USWDS (DC3 Federal Theme) y Guía Operativa Perici
     expect(modal).toContain('Medio Óptico (CD / DVD)');
   });
 
-  it('USWDS-05: El CMS implementa el panel de control con navbar lateral izquierdo (.usa-sidenav)', () => {
+  it('USWDS-05: El CMS implementa el panel de control con navbar lateral izquierdo (.usa-sidenav) en cuadrícula de 2 columnas', () => {
     const layout = fs.readFileSync(path.resolve(process.cwd(), 'src/layouts/AppLayout.astro'), 'utf8');
     expect(layout).toContain('<SiteSidebar');
-    expect(layout).toContain('<SiteTopBar');
-    expect(layout).toContain('fcco-dashboard-shell');
+    expect(layout).toContain('<SiteHeader');
+    expect(layout).toContain('grid-container-widescreen');
+    expect(layout).toContain('desktop:grid-col-3');
+    expect(layout).toContain('desktop:grid-col-9');
 
     const sidebar = fs.readFileSync(
       path.resolve(process.cwd(), 'src/components/layout/SiteSidebar.astro'),
       'utf8'
     );
     expect(sidebar).toContain('usa-sidenav');
-    expect(sidebar).toContain('fcco-sidebar');
-    expect(sidebar).toContain('user-civ-badge');
-    expect(sidebar).toContain('user-name');
     expect(sidebar).toContain('btn-logout');
+    expect(sidebar).toContain('user-civ-badge-sidebar');
+    expect(sidebar).toContain('user-name-sidebar');
+    expect(sidebar).toContain('fcco-side-panel');
 
     const scss = fs.readFileSync(path.resolve(process.cwd(), 'src/styles/uswds-theme.scss'), 'utf8');
-    expect(scss).toContain('.fcco-sidebar');
-    expect(scss).toContain('#112e51'); // Dark Navy Ink 90v federal
-    expect(scss).toContain('.fcco-dashboard-shell');
+    expect(scss).toContain('.fcco-side-panel');
+    expect(scss).toContain('.sticky-side-panel');
   });
 });

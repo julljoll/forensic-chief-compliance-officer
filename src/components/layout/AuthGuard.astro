@@ -65,14 +65,19 @@
       if (authRes.data?.user) {
         sessionStorage.setItem('fcco_auth_user', JSON.stringify(authRes.data.user));
         const u = authRes.data.user;
-        const userEl = document.getElementById('user-name');
-        if (userEl) {
-          const fullName = [u.nombre, u.apellido].filter(Boolean).join(' ') || u.email;
-          userEl.textContent = `Perito: ${fullName} (FCCO)`;
-        }
-        const civEl = document.getElementById('user-civ-badge');
-        if (civEl && u.civ) {
-          civEl.textContent = String(u.civ);
+        const fullName = [u.nombre, u.apellido].filter(Boolean).join(' ') || u.email;
+        const peritoStr = `Perito: ${fullName} (FCCO)`;
+
+        const userEls = document.querySelectorAll('#user-name, #user-name-sidebar');
+        userEls.forEach((el) => {
+          el.textContent = peritoStr;
+        });
+
+        if (u.civ) {
+          const civEls = document.querySelectorAll('#user-civ-badge, #user-civ-badge-sidebar');
+          civEls.forEach((el) => {
+            el.textContent = String(u.civ);
+          });
         }
       }
 
@@ -91,10 +96,10 @@
     }
   }
 
-  // Vincular botón de cerrar sesión
+  // Vincular botones de cerrar sesión
   function bindLogout() {
-    const btn = document.getElementById('btn-logout');
-    if (btn) {
+    const btns = document.querySelectorAll('#btn-logout, #btn-logout-sidebar, .btn-logout');
+    btns.forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.preventDefault();
         sessionStorage.removeItem('fcco_auth_active');
@@ -106,7 +111,7 @@
         }
         window.location.replace('/?msg=sesion_cerrada');
       });
-    }
+    });
   }
 
   if (typeof window !== 'undefined') {

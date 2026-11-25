@@ -2,11 +2,11 @@
 /**
  * SHA256.US — Layout Principal del CMS de Cumplimiento Forense (Astro Modular)
  * Stack: Astro ('output: static') + USWDS 3.14 + PHP/MySQL (cPanel)
- * Arquitectura: Panel de Control Compliance Officer con Navbar al Lado Izquierdo (.usa-sidenav)
+ * Arquitectura Canónica USWDS: Banner Federal + Header Oficial + Layout 2 Columnas (.usa-sidenav)
  */
 import SiteBanner from '../components/layout/SiteBanner.astro';
+import SiteHeader from '../components/layout/SiteHeader.astro';
 import SiteSidebar from '../components/layout/SiteSidebar.astro';
-import SiteTopBar from '../components/layout/SiteTopBar.astro';
 import SiteFooter from '../components/layout/SiteFooter.astro';
 import AuthGuard from '../components/layout/AuthGuard.astro';
 
@@ -47,46 +47,29 @@ const { title = 'Forensic Chief Compliance Officer — SHA256.US', activeNav = '
   </head>
   <body class="bg-base-lightest display-flex flex-column minh-viewport">
     <a class="usa-skipnav" href="#main-content">Saltar al contenido principal</a>
-    <div class="fcco-overlay" id="fcco-overlay"></div>
+    <div class="usa-overlay"></div>
     <SiteBanner />
+    <SiteHeader activeNav={activeNav} />
 
-    <!-- Estructura del Panel de Control CMS: Navbar al Lado Izquierdo + Área de Trabajo a la Derecha -->
-    <div class="fcco-dashboard-shell">
-      <SiteSidebar activeNav={activeNav} />
+    <!-- Área Principal de Trabajo con Cuadrícula Canónica de 2 Columnas -->
+    <main class="usa-section padding-top-3 padding-bottom-6 flex-1" id="main-content">
+      <div class="grid-container-widescreen">
+        <div class="grid-row grid-gap-4">
+          <!-- Columna Izquierda: Panel de Control Pericial CMS (.usa-sidenav) -->
+          <aside class="desktop:grid-col-3 tablet:grid-col-4 margin-bottom-3" aria-label="Navegación del Panel de Control Compliance">
+            <SiteSidebar activeNav={activeNav} />
+          </aside>
 
-      <div class="fcco-main-wrapper">
-        <SiteTopBar activeNav={activeNav} />
-        <main class="fcco-content-area" id="main-content">
-          <slot />
-        </main>
-        <SiteFooter />
+          <!-- Columna Derecha: Área de Contenido y Flujo Procesal -->
+          <div class="desktop:grid-col-9 tablet:grid-col-8 minw-0">
+            <slot />
+          </div>
+        </div>
       </div>
-    </div>
+    </main>
 
+    <SiteFooter />
     <AuthGuard />
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
-    <script is:inline>
-      // Toggle interactivo del Sidebar en tabletas y móviles
-      (function() {
-        var toggleBtn = document.getElementById('fcco-sidebar-toggle');
-        var closeBtn = document.getElementById('fcco-sidebar-close');
-        var sidebar = document.getElementById('fcco-sidebar');
-        var overlay = document.getElementById('fcco-overlay');
-
-        function openSidebar() {
-          if (sidebar) sidebar.classList.add('is-open');
-          if (overlay) overlay.classList.add('is-visible');
-        }
-
-        function closeSidebar() {
-          if (sidebar) sidebar.classList.remove('is-open');
-          if (overlay) overlay.classList.remove('is-visible');
-        }
-
-        if (toggleBtn) toggleBtn.addEventListener('click', openSidebar);
-        if (closeBtn) closeBtn.addEventListener('click', closeSidebar);
-        if (overlay) overlay.addEventListener('click', closeSidebar);
-      })();
-    </script>
   </body>
 </html>
