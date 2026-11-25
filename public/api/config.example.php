@@ -39,7 +39,7 @@ return [
         'from_name'       => 'SHA256.US — Bóveda Pericial',
         'app_url'         => 'https://sha256.us',
         // Datos de cuenta de correo creada en cPanel -> Cuentas de correo electrónico
-        'smtp_host'       => 'mail.sha256.us',
+        'smtp_host'       => 'sha256.us',
         'smtp_port'       => 465,
         'smtp_encryption' => 'ssl', // 'ssl' (puerto 465) o 'tls' (puerto 587)
         'smtp_user'       => 'no-reply@sha256.us',
