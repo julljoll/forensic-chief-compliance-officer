@@ -24,6 +24,8 @@ CREATE TABLE IF NOT EXISTS `usuarios` (
   `organismo` VARCHAR(150) NOT NULL DEFAULT 'Laboratorio Privado SHA256.US',
   `despacho` VARCHAR(150) NOT NULL DEFAULT 'División Pericial Digital',
   `telefono` VARCHAR(64) NOT NULL DEFAULT '',
+  `direccion` VARCHAR(255) NOT NULL DEFAULT '',
+  `especialidad` VARCHAR(180) NOT NULL DEFAULT 'Informática Forense y Evidencia Digital',
   `civ` VARCHAR(64) NOT NULL DEFAULT '',
   `inpre` VARCHAR(64) NOT NULL DEFAULT '',
   `activo` TINYINT(1) NOT NULL DEFAULT 1,

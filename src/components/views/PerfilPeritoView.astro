@@ -1,0 +1,529 @@
+---
+/**
+ * SHA256.US — Vista de Perfil y Credenciales del Perito (Auto-Guardado en MySQL cPanel)
+ * Permite editar nombre, apellido, C.I., cargo, CIV, INPRE, organismo, despacho, teléfono,
+ * dirección y especialidad con persistencia automática en `usuarios` y trazabilidad en `auditoria`.
+ * Iconografía 100% USWDS (@uswds/uswds).
+ */
+import PageHeader from '../uswds/PageHeader.astro';
+import Icon from '../uswds/Icon.astro';
+---
+
+<PageHeader
+  title="Perfil y Credenciales del Perito"
+  subtitle="Edite sus datos profesionales y acreditaciones periciales. Cada cambio se guarda automáticamente en la base de datos MySQL y se refleja en las planillas PDF (Adobe) y en el Popup de Verificación QR."
+  tag="ACREDITACIÓN PERICIAL · MYSQL SYNC"
+  tagColor="bg-primary-darker"
+>
+  <div slot="actions">
+    <span
+      id="perfil-sync-badge"
+      class="usa-tag bg-success-dark text-white font-mono-3xs text-bold padding-x-105 padding-y-05 display-inline-flex flex-align-center"
+    >
+      <Icon name="check_circle" className="margin-right-05 text-white" />
+      <span id="perfil-sync-text">Sincronizado con MySQL</span>
+    </span>
+  </div>
+</PageHeader>
+
+<!-- Alerta de Estado / Respuesta del Servidor -->
+<div id="perfil-alert-container" class="margin-bottom-3" hidden></div>
+
+<!-- Tarjeta de Acreditación Pericial en Vivo -->
+<section class="usa-summary-box bg-white border-1px border-base-lighter radius-md shadow-1 margin-bottom-3" aria-labelledby="preview-credencial-heading">
+  <div class="usa-summary-box__body padding-3">
+    <div class="grid-row grid-gap-2 flex-align-center">
+      <div class="tablet:grid-col-8">
+        <div class="display-flex flex-align-center margin-bottom-1">
+          <Icon name="account_circle" size="4" className="text-primary-darker margin-right-1" />
+          <div>
+            <span class="font-mono-3xs text-base-dark text-uppercase display-block">
+              Vista Previa de Acreditación Oficial (Planillas PDF &amp; Popup QR)
+            </span>
+            <h2 id="preview-credencial-heading" class="margin-0 font-heading-md text-primary-darker">
+              <span id="preview-perito-fullname">Cargando perfil...</span>
+            </h2>
+          </div>
+        </div>
+        <div class="font-sans-xs text-ink text-bold" id="preview-perito-cargo">---</div>
+        <div class="font-sans-2xs text-base-dark margin-top-05" id="preview-perito-org">---</div>
+        <div class="font-mono-3xs text-base-dark margin-top-05" id="preview-perito-contacto">---</div>
+      </div>
+
+      <div class="tablet:grid-col-4 tablet:text-right margin-top-2 tablet:margin-top-0">
+        <div class="display-inline-flex flex-column tablet:flex-align-end">
+          <span id="preview-perito-civ" class="usa-tag bg-primary-darker text-white font-mono-2xs text-bold margin-bottom-05">
+            CIV: ---
+          </span>
+          <span id="preview-perito-ci" class="usa-tag bg-base-lighter text-ink font-mono-3xs text-bold margin-bottom-05">
+            C.I.: ---
+          </span>
+          <span id="preview-perito-inpre" class="usa-tag bg-base-lighter text-ink font-mono-3xs margin-bottom-05">
+            INPRE: ---
+          </span>
+          <span id="preview-perito-rol" class="usa-tag bg-accent-warm-dark text-ink font-mono-3xs text-bold">
+            ROL: ---
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Formulario Principal de Credenciales del Perito (Auto-guardado en MySQL) -->
+<section class="bg-white padding-3 radius-md border-1px border-base-lighter shadow-1 margin-bottom-3" aria-labelledby="form-perfil-heading">
+  <div class="display-flex flex-wrap flex-justify flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-2">
+    <div class="display-flex flex-align-center">
+      <Icon name="edit" className="text-primary margin-right-1" />
+      <div>
+        <h2 id="form-perfil-heading" class="margin-0 font-heading-md text-ink">
+          Datos Identificativos y Credenciales Forenses
+        </h2>
+        <p class="margin-0 font-body-3xs text-base-dark">
+          Los cambios se guardan automáticamente en la tabla <code>usuarios</code> al dejar de escribir o al pulsar Guardar.
+        </p>
+      </div>
+    </div>
+    <div class="font-mono-3xs text-base-dark margin-top-1 tablet:margin-top-0" id="perfil-last-saved">
+      Última sincronización: --
+    </div>
+  </div>
+
+  <form id="form-perfil-perito" class="usa-form maxw-none">
+    <!-- Fila 1: Identidad -->
+    <div class="grid-row grid-gap-2">
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-nombre">
+          Nombre(s) <span class="text-secondary">*</span>
+        </label>
+        <input class="usa-input font-sans-xs" id="perfil-nombre" name="nombre" type="text" required maxlength="150" />
+      </div>
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-apellido">
+          Apellido(s)
+        </label>
+        <input class="usa-input font-sans-xs" id="perfil-apellido" name="apellido" type="text" maxlength="150" />
+      </div>
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-ci">
+          Cédula de Identidad (C.I.)
+        </label>
+        <input class="usa-input font-mono-xs" id="perfil-ci" name="ci" type="text" placeholder="Ej. V-18.999.001" maxlength="32" />
+      </div>
+    </div>
+
+    <!-- Fila 2: Credenciales Profesionales -->
+    <div class="grid-row grid-gap-2 margin-top-1">
+      <div class="tablet:grid-col-6">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-cargo">
+          Cargo Pericial / Institucional
+        </label>
+        <input class="usa-input font-sans-xs" id="perfil-cargo" name="cargo" type="text" placeholder="Ej. Perito Analizador de Datos Forenses" maxlength="120" />
+      </div>
+      <div class="tablet:grid-col-3">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-civ">
+          Registro CIV
+        </label>
+        <input class="usa-input font-mono-xs" id="perfil-civ" name="civ" type="text" placeholder="Ej. CIV-299410" maxlength="64" />
+      </div>
+      <div class="tablet:grid-col-3">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-inpre">
+          Registro INPRE / Colegiatura
+        </label>
+        <input class="usa-input font-mono-xs" id="perfil-inpre" name="inpre" type="text" placeholder="Ej. INPRE-184920" maxlength="64" />
+      </div>
+    </div>
+
+    <!-- Fila 3: Adscripción e Institución -->
+    <div class="grid-row grid-gap-2 margin-top-1">
+      <div class="tablet:grid-col-6">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-organismo">
+          Organismo / Laboratorio Forense
+        </label>
+        <input class="usa-input font-sans-xs" id="perfil-organismo" name="organismo" type="text" maxlength="150" />
+      </div>
+      <div class="tablet:grid-col-6">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-despacho">
+          Despacho / División Técnica
+        </label>
+        <input class="usa-input font-sans-xs" id="perfil-despacho" name="despacho" type="text" maxlength="150" />
+      </div>
+    </div>
+
+    <!-- Fila 4: Contacto y Especialidad -->
+    <div class="grid-row grid-gap-2 margin-top-1">
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-telefono">
+          Teléfono de Contacto Pericial
+        </label>
+        <input class="usa-input font-mono-xs" id="perfil-telefono" name="telefono" type="tel" placeholder="Ej. +58 412-0000000" maxlength="64" />
+      </div>
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-especialidad">
+          Especialidad Pericial
+        </label>
+        <input class="usa-input font-sans-xs" id="perfil-especialidad" name="especialidad" type="text" placeholder="Ej. Informática Forense y Evidencia Digital" maxlength="180" />
+      </div>
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-email-readonly">
+          Correo de Acceso (Solo Lectura)
+        </label>
+        <input class="usa-input font-mono-xs bg-base-lightest" id="perfil-email-readonly" type="email" readonly disabled />
+      </div>
+    </div>
+
+    <!-- Fila 5: Dirección Profesional (COPP Cierre Legal) -->
+    <div class="grid-row grid-gap-2 margin-top-1">
+      <div class="grid-col-12">
+        <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="perfil-direccion">
+          Dirección Profesional / Residencia (Cierre Legal COPP Arts. 187, 223–225)
+        </label>
+        <input
+          class="usa-input font-sans-xs maxw-none"
+          id="perfil-direccion"
+          name="direccion"
+          type="text"
+          placeholder="Ej. Av. Venezuela con Calle 25, Torre Profesional, Barquisimeto, Estado Lara"
+          maxlength="255"
+        />
+      </div>
+    </div>
+
+    <!-- Controles de Guardado -->
+    <div class="display-flex flex-wrap flex-justify flex-align-center margin-top-3 padding-top-2 border-top-1px border-base-lighter">
+      <div class="font-sans-3xs text-base-dark margin-bottom-1 tablet:margin-bottom-0">
+        Guardado automático activo: toda modificación genera respaldo en MySQL y asiento SHA-256 en Auditoría.
+      </div>
+      <button
+        type="submit"
+        id="btn-guardar-perfil"
+        class="usa-button font-sans-xs display-inline-flex flex-align-center"
+      >
+        <Icon name="verified_user" className="margin-right-05 text-white" />
+        <span id="txt-guardar-perfil">Guardar Cambios en Base de Datos</span>
+      </button>
+    </div>
+  </form>
+</section>
+
+<!-- Sección de Cambio de Contraseña y Enlace MFA -->
+<section class="bg-white padding-3 radius-md border-1px border-base-lighter shadow-1" aria-labelledby="form-pass-heading">
+  <div class="display-flex flex-wrap flex-justify flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-2">
+    <div class="display-flex flex-align-center">
+      <Icon name="lock" className="text-primary margin-right-1" />
+      <div>
+        <h2 id="form-pass-heading" class="margin-0 font-heading-md text-ink">
+          Seguridad de Acceso y Contraseña
+        </h2>
+        <p class="margin-0 font-body-3xs text-base-dark">
+          Actualice su contraseña con cifrado bcrypt o administre su autenticador de doble factor (Google Authenticator).
+        </p>
+      </div>
+    </div>
+    <a href="/seguridad" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-05 display-inline-flex flex-align-center margin-top-1 tablet:margin-top-0">
+      <Icon name="security" className="margin-right-05" />
+      <span>Configurar MFA / TOTP</span>
+    </a>
+  </div>
+
+  <div id="perfil-pass-alert" class="margin-bottom-2" hidden></div>
+
+  <form id="form-cambiar-password" class="usa-form maxw-none">
+    <div class="grid-row grid-gap-2">
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="pass-actual">
+          Contraseña Actual
+        </label>
+        <input class="usa-input font-sans-xs" id="pass-actual" type="password" required autocomplete="current-password" />
+      </div>
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="pass-nueva">
+          Nueva Contraseña (mín. 10 caracteres)
+        </label>
+        <input class="usa-input font-sans-xs" id="pass-nueva" type="password" required minlength="10" autocomplete="new-password" />
+      </div>
+      <div class="tablet:grid-col-4">
+        <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="pass-confirmar">
+          Confirmar Nueva Contraseña
+        </label>
+        <input class="usa-input font-sans-xs" id="pass-confirmar" type="password" required minlength="10" autocomplete="new-password" />
+      </div>
+    </div>
+
+    <div class="display-flex flex-justify-end margin-top-2">
+      <button type="submit" id="btn-cambiar-password" class="usa-button usa-button--base font-sans-2xs display-inline-flex flex-align-center">
+        <Icon name="lock" className="margin-right-05 text-white" />
+        <span>Actualizar Contraseña</span>
+      </button>
+    </div>
+  </form>
+</section>
+
+<script>
+  import { phpApi, type ActualizarPerfilPayload, type UsuarioPerfilDTO } from '../../lib/data/phpApi';
+
+  const formPerfil = document.getElementById('form-perfil-perito') as HTMLFormElement | null;
+  const formPass = document.getElementById('form-cambiar-password') as HTMLFormElement | null;
+  const syncBadge = document.getElementById('perfil-sync-badge');
+  const syncText = document.getElementById('perfil-sync-text');
+  const lastSavedEl = document.getElementById('perfil-last-saved');
+  const alertContainer = document.getElementById('perfil-alert-container');
+  const passAlert = document.getElementById('perfil-pass-alert');
+  const btnGuardar = document.getElementById('btn-guardar-perfil') as HTMLButtonElement | null;
+  const txtGuardar = document.getElementById('txt-guardar-perfil');
+
+  const fieldIds = [
+    'nombre',
+    'apellido',
+    'ci',
+    'cargo',
+    'civ',
+    'inpre',
+    'organismo',
+    'despacho',
+    'telefono',
+    'especialidad',
+    'direccion',
+  ] as const;
+
+  let autosaveTimer: ReturnType<typeof setTimeout> | null = null;
+  let isSaving = false;
+  let initialHydrated = false;
+  let currentUserRol = 'perito_lider';
+  let currentUserEmail = '';
+
+  function getInput(key: string): HTMLInputElement | null {
+    return document.getElementById(`perfil-${key}`) as HTMLInputElement | null;
+  }
+
+  function setSyncState(state: 'saved' | 'saving' | 'pending' | 'error', label: string) {
+    if (!syncBadge || !syncText) return;
+    syncText.textContent = label;
+    syncBadge.classList.remove('bg-success-dark', 'bg-accent-warm-dark', 'bg-secondary-dark', 'bg-primary');
+    if (state === 'saved') syncBadge.classList.add('bg-success-dark');
+    else if (state === 'saving') syncBadge.classList.add('bg-primary');
+    else if (state === 'pending') syncBadge.classList.add('bg-accent-warm-dark');
+    else syncBadge.classList.add('bg-secondary-dark');
+  }
+
+  function readPayloadFromForm(): ActualizarPerfilPayload {
+    return {
+      nombre: getInput('nombre')?.value.trim() || '',
+      apellido: getInput('apellido')?.value.trim() || '',
+      ci: getInput('ci')?.value.trim() || '',
+      cargo: getInput('cargo')?.value.trim() || '',
+      civ: getInput('civ')?.value.trim() || '',
+      inpre: getInput('inpre')?.value.trim() || '',
+      organismo: getInput('organismo')?.value.trim() || '',
+      despacho: getInput('despacho')?.value.trim() || '',
+      telefono: getInput('telefono')?.value.trim() || '',
+      especialidad: getInput('especialidad')?.value.trim() || '',
+      direccion: getInput('direccion')?.value.trim() || '',
+    };
+  }
+
+  function updateLivePreviewAndLayout(p: ActualizarPerfilPayload, email = currentUserEmail, rol = currentUserRol) {
+    const fullName = [p.nombre, p.apellido].filter(Boolean).join(' ') || email || 'Perito Forense';
+
+    const setTxt = (id: string, val: string) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    setTxt('preview-perito-fullname', fullName);
+    setTxt('preview-perito-cargo', `${p.cargo || 'Perito Informático Forense'} · ${p.especialidad || 'Informática Forense'}`);
+    setTxt('preview-perito-org', [p.organismo, p.despacho].filter(Boolean).join(' — ') || 'Laboratorio Privado SHA256.US');
+    setTxt(
+      'preview-perito-contacto',
+      [email, p.telefono, p.direccion].filter(Boolean).join(' · ') || 'Sin datos de contacto registrados'
+    );
+    setTxt('preview-perito-civ', p.civ || 'CIV: Sin registrar');
+    setTxt('preview-perito-ci', `C.I.: ${p.ci || '---'}`);
+    setTxt('preview-perito-inpre', p.inpre ? p.inpre : 'INPRE: ---');
+    setTxt('preview-perito-rol', `ROL: ${String(rol || 'perito').toUpperCase()}`);
+
+    // Actualizar en vivo el Header y el Sidebar del CMS sin recargar
+    const peritoStr = `Perito: ${fullName} (FCCO)`;
+    document.querySelectorAll('#user-name, #user-name-sidebar').forEach((el) => {
+      el.textContent = peritoStr;
+    });
+    if (p.civ) {
+      document.querySelectorAll('#user-civ-badge, #user-civ-badge-sidebar').forEach((el) => {
+        el.textContent = p.civ;
+      });
+    }
+    if (p.cargo) {
+      const cargoSidebar = document.getElementById('user-cargo-sidebar');
+      if (cargoSidebar) cargoSidebar.textContent = p.cargo;
+    }
+  }
+
+  function populateForm(u: Partial<UsuarioPerfilDTO>) {
+    currentUserRol = String(u.rol || 'perito_lider');
+    currentUserEmail = String(u.email || '');
+
+    const emailEl = document.getElementById('perfil-email-readonly') as HTMLInputElement | null;
+    if (emailEl) emailEl.value = currentUserEmail;
+
+    for (const k of fieldIds) {
+      const inp = getInput(k);
+      if (inp) {
+        inp.value = String((u as any)[k] ?? '');
+      }
+    }
+
+    updateLivePreviewAndLayout(readPayloadFromForm(), currentUserEmail, currentUserRol);
+    initialHydrated = true;
+  }
+
+  async function persistProfile(isManual = false) {
+    if (!initialHydrated || isSaving) return;
+    const payload = readPayloadFromForm();
+    if (!payload.nombre) {
+      setSyncState('error', 'Nombre obligatorio');
+      return;
+    }
+
+    isSaving = true;
+    setSyncState('saving', 'Guardando en MySQL...');
+    if (btnGuardar && isManual) btnGuardar.disabled = true;
+    if (txtGuardar && isManual) txtGuardar.textContent = 'Guardando...';
+
+    try {
+      const res = await phpApi.actualizarPerfil(payload);
+      if (res.ok && res.data?.user) {
+        const updated = res.data.user;
+        sessionStorage.setItem('fcco_auth_user', JSON.stringify(updated));
+        updateLivePreviewAndLayout(payload, updated.email, updated.rol);
+        setSyncState('saved', 'Sincronizado con MySQL');
+        if (lastSavedEl) {
+          lastSavedEl.textContent = `Última sincronización: ${new Date().toLocaleTimeString('es-VE')}${res.data.auditoriaSeq ? ` (Auditoría #${res.data.auditoriaSeq})` : ''}`;
+        }
+        if (isManual && alertContainer) {
+          alertContainer.hidden = false;
+          alertContainer.innerHTML = `
+            <div class="usa-alert usa-alert--success usa-alert--slim" role="status">
+              <div class="usa-alert__body">
+                <p class="usa-alert__text font-sans-2xs">
+                  <strong>Credenciales actualizadas en MySQL (cPanel).</strong> Sus nuevos datos ya se aplican automáticamente a la sesión, las planillas PDF (Adobe) y el Popup QR.
+                </p>
+              </div>
+            </div>
+          `;
+        } else if (alertContainer) {
+          alertContainer.hidden = true;
+        }
+      } else {
+        setSyncState('error', res.offline ? 'Sin conexión a cPanel' : 'Error al guardar');
+        if (alertContainer) {
+          alertContainer.hidden = false;
+          alertContainer.innerHTML = `
+            <div class="usa-alert usa-alert--warning usa-alert--slim" role="alert">
+              <div class="usa-alert__body">
+                <p class="usa-alert__text font-sans-2xs">
+                  ${res.error || 'No se pudo contactar con /api/perfil.php. Verifique la conexión con MySQL en cPanel.'}
+                </p>
+              </div>
+            </div>
+          `;
+        }
+      }
+    } finally {
+      isSaving = false;
+      if (btnGuardar) btnGuardar.disabled = false;
+      if (txtGuardar) txtGuardar.textContent = 'Guardar Cambios en Base de Datos';
+    }
+  }
+
+  function scheduleAutosave() {
+    updateLivePreviewAndLayout(readPayloadFromForm());
+    if (!initialHydrated) return;
+
+    setSyncState('pending', 'Cambios pendientes...');
+    if (autosaveTimer) clearTimeout(autosaveTimer);
+    autosaveTimer = setTimeout(() => {
+      persistProfile(false);
+    }, 800);
+  }
+
+  // Vincular auto-guardado en tiempo real a cada campo editable
+  for (const k of fieldIds) {
+    const inp = getInput(k);
+    inp?.addEventListener('input', scheduleAutosave);
+    inp?.addEventListener('change', () => {
+      if (autosaveTimer) clearTimeout(autosaveTimer);
+      persistProfile(false);
+    });
+  }
+
+  formPerfil?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (autosaveTimer) clearTimeout(autosaveTimer);
+    await persistProfile(true);
+  });
+
+  formPass?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const actual = (document.getElementById('pass-actual') as HTMLInputElement)?.value || '';
+    const nueva = (document.getElementById('pass-nueva') as HTMLInputElement)?.value || '';
+    const confirmar = (document.getElementById('pass-confirmar') as HTMLInputElement)?.value || '';
+
+    if (nueva !== confirmar) {
+      if (passAlert) {
+        passAlert.hidden = false;
+        passAlert.innerHTML = `
+          <div class="usa-alert usa-alert--error usa-alert--slim">
+            <div class="usa-alert__body"><p class="usa-alert__text font-sans-2xs">Las contraseñas nuevas no coinciden.</p></div>
+          </div>
+        `;
+      }
+      return;
+    }
+
+    const res = await phpApi.cambiarPassword(actual, nueva);
+    if (passAlert) {
+      passAlert.hidden = false;
+      if (res.ok) {
+        formPass.reset();
+        passAlert.innerHTML = `
+          <div class="usa-alert usa-alert--success usa-alert--slim">
+            <div class="usa-alert__body"><p class="usa-alert__text font-sans-2xs"><strong>Contraseña actualizada correctamente en MySQL.</strong></p></div>
+          </div>
+        `;
+      } else {
+        passAlert.innerHTML = `
+          <div class="usa-alert usa-alert--error usa-alert--slim">
+            <div class="usa-alert__body"><p class="usa-alert__text font-sans-2xs">${res.error || 'No se pudo actualizar la contraseña.'}</p></div>
+          </div>
+        `;
+      }
+    }
+  });
+
+  async function initPerfil() {
+    // 1. Pintar inmediatamente desde caché de sesión mientras consulta MySQL
+    try {
+      const raw = sessionStorage.getItem('fcco_auth_user');
+      if (raw) {
+        populateForm(JSON.parse(raw));
+      }
+    } catch {
+      // ignorar
+    }
+
+    // 2. Consultar datos autoritativos frescos desde MySQL (/api/perfil.php)
+    const res = await phpApi.obtenerPerfil();
+    if (res.ok && res.data?.user) {
+      sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+      populateForm(res.data.user);
+      setSyncState('saved', 'Sincronizado con MySQL');
+      if (lastSavedEl && res.data.user.actualizado_en) {
+        lastSavedEl.textContent = `Actualizado en BD: ${res.data.user.actualizado_en}`;
+      }
+    }
+  }
+
+  if (typeof window !== 'undefined') {
+    initPerfil();
+  }
+</script>

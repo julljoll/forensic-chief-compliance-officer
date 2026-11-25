@@ -79,6 +79,8 @@ class Database
                   `organismo` VARCHAR(150) NOT NULL DEFAULT 'Laboratorio Privado SHA256.US',
                   `despacho` VARCHAR(150) NOT NULL DEFAULT 'División Pericial Digital',
                   `telefono` VARCHAR(64) NOT NULL DEFAULT '',
+                  `direccion` VARCHAR(255) NOT NULL DEFAULT '',
+                  `especialidad` VARCHAR(180) NOT NULL DEFAULT 'Informática Forense y Evidencia Digital',
                   `civ` VARCHAR(64) NOT NULL DEFAULT '',
                   `inpre` VARCHAR(64) NOT NULL DEFAULT '',
                   `activo` TINYINT(1) NOT NULL DEFAULT 1,
@@ -89,7 +91,7 @@ class Database
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // Verificar columnas adicionales de MFA por si la tabla fue creada con una versión anterior
+            // Verificar columnas adicionales de MFA y Perfil por si la tabla fue creada con una versión anterior
             $colsStmt = $pdo->query("SHOW COLUMNS FROM `usuarios`");
             $existingCols = $colsStmt ? array_column($colsStmt->fetchAll(), 'Field') : [];
 
@@ -104,6 +106,12 @@ class Database
             }
             if (!in_array('totp_recovery_hashes', $existingCols, true)) {
                 $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_recovery_hashes` TEXT NULL DEFAULT NULL AFTER `totp_last_used_slice`");
+            }
+            if (!in_array('direccion', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `direccion` VARCHAR(255) NOT NULL DEFAULT '' AFTER `telefono`");
+            }
+            if (!in_array('especialidad', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `especialidad` VARCHAR(180) NOT NULL DEFAULT 'Informática Forense y Evidencia Digital' AFTER `direccion`");
             }
 
             // 2. Tabla login_attempts

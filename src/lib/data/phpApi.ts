@@ -307,6 +307,44 @@ export const phpApi = {
     return [];
   },
 
+  // ── Perfil y Credenciales del Perito ──
+  async obtenerPerfil(): Promise<ApiResponse<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>> {
+    const res = await request<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>('/perfil.php', {
+      method: 'GET',
+    });
+    if (res.data?.csrf_token) {
+      storeCsrf(res.data.csrf_token);
+    }
+    return res;
+  },
+
+  async actualizarPerfil(
+    payload: ActualizarPerfilPayload
+  ): Promise<ApiResponse<{ ok: boolean; user: UsuarioPerfilDTO; message?: string; auditoriaSeq?: number }>> {
+    const csrf = await ensureCsrfToken();
+    return request('/perfil.php', {
+      method: 'PUT',
+      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async cambiarPassword(
+    passwordActual: string,
+    passwordNueva: string
+  ): Promise<ApiResponse<{ ok: boolean; message?: string; auditoriaSeq?: number }>> {
+    const csrf = await ensureCsrfToken();
+    return request('/perfil.php', {
+      method: 'POST',
+      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
+      body: JSON.stringify({
+        action: 'cambiar_password',
+        passwordActual,
+        passwordNueva,
+      }),
+    });
+  },
+
   // ── Autenticación ──
   async login(email: string, pass: string = '', totpCode: string = ''): Promise<ApiResponse<any>> {
     const res = await request<any>('/auth.php', {
@@ -338,3 +376,37 @@ export const phpApi = {
     return res;
   },
 };
+
+export interface UsuarioPerfilDTO {
+  id: string;
+  email: string;
+  nombre: string;
+  apellido: string;
+  ci: string;
+  cargo: string;
+  rol: string;
+  organismo: string;
+  despacho: string;
+  telefono: string;
+  direccion: string;
+  especialidad: string;
+  civ: string;
+  inpre: string;
+  totp_enabled?: number;
+  activo?: number;
+  actualizado_en?: string;
+}
+
+export interface ActualizarPerfilPayload {
+  nombre: string;
+  apellido: string;
+  ci: string;
+  cargo: string;
+  organismo: string;
+  despacho: string;
+  telefono: string;
+  direccion: string;
+  especialidad: string;
+  civ: string;
+  inpre: string;
+}

@@ -86,6 +86,11 @@
             el.textContent = String(u.civ);
           });
         }
+
+        if (u.cargo) {
+          const cargoEl = document.getElementById('user-cargo-sidebar');
+          if (cargoEl) cargoEl.textContent = String(u.cargo);
+        }
       }
 
       revealContent();

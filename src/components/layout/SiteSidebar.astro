@@ -28,6 +28,7 @@ const dictamenItems = [
 ];
 
 const sistemaItems = [
+  { href: '/perfil', label: 'Perfil del Perito', iconName: 'account_circle', key: 'perfil' },
   { href: '/seguridad', label: 'Seguridad & MFA / TOTP', iconName: 'lock', key: 'seguridad' },
 ];
 ---
@@ -43,10 +44,10 @@ const sistemaItems = [
         AUDITORÍA ACTIVA
       </span>
     </div>
-    <div class="font-sans-xs text-bold text-ink" id="user-name-sidebar">
+    <a href="/perfil" class="font-sans-xs text-bold text-ink text-no-underline display-block" id="user-name-sidebar" title="Editar Perfil y Credenciales del Perito">
       Perito: Jull Joll (FCCO)
-    </div>
-    <div class="font-sans-3xs text-base-dark margin-top-05">
+    </a>
+    <div class="font-sans-3xs text-base-dark margin-top-05" id="user-cargo-sidebar">
       Oficial Jefe de Cumplimiento Pericial
     </div>
   </div>

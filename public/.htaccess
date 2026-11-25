@@ -82,6 +82,7 @@ DirectoryIndex index.html
     # GATEKEEPER SERVER-SIDE: Interceptar todas las vistas del CMS y planillas oficiales
     # Requiere sesión PHP activa; si no existe, gatekeeper.php redirige a /?msg=sesion_requerida
     RewriteRule ^(dashboard|casos|flujo|custodia|normativa|auditoria|exportar|seguridad|planillas)(.*)$ gatekeeper.php [QSA,L]
+    RewriteRule ^perfil(.*)$ gatekeeper.php [QSA,L]
 
     # Cualquier otro archivo físico existente (no protegido)
     RewriteCond %{REQUEST_FILENAME} -f

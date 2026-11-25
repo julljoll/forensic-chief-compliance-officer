@@ -22,6 +22,8 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `auditoria`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `login_attempts`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `planillas_emitidas`');
+    expect(sql).toContain('`direccion`');
+    expect(sql).toContain('`especialidad`');
     expect(sql).toContain('`totp_enabled`');
     expect(sql).toContain('trg_auditoria_no_update');
     expect(sql).toContain('trg_auditoria_no_delete');
@@ -37,6 +39,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(htaccess).toContain('RewriteRule ^api/lib/ - [F,L]');
     expect(htaccess).toContain('RewriteRule ^api/ - [L]');
     expect(htaccess).toContain('RewriteRule ^verificar/?$ verificar.html [QSA,L]');
+    expect(htaccess).toContain('RewriteRule ^perfil(.*)$ gatekeeper.php [QSA,L]');
     expect(htaccess).toContain('X-Frame-Options');
     expect(htaccess).toContain('X-Content-Type-Options');
     expect(htaccess).toContain('Content-Security-Policy');
@@ -48,6 +51,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'avanzar-etapa.php',
       'auditoria.php',
       'auth.php',
+      'perfil.php',
       'planillas-emitidas.php',
       'config.php',
       'config.example.php',
@@ -72,6 +76,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'normativa.html',
       'auditoria.html',
       'exportar.html',
+      'perfil.html',
       'seguridad.html',
       'planillas.html',
       'planillas/index.html',

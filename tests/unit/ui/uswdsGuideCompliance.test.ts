@@ -16,6 +16,7 @@ describe('Cumplimiento Visual USWDS (DC3 Federal Theme) y Guía Operativa Perici
       'AuditoriaView.astro',
       'ExportarView.astro',
       'SeguridadTotpView.astro',
+      'PerfilPeritoView.astro',
     ];
 
     for (const view of operationalViews) {
@@ -78,6 +79,8 @@ describe('Cumplimiento Visual USWDS (DC3 Federal Theme) y Guía Operativa Perici
     expect(sidebar).toContain('fcco-side-panel');
     expect(sidebar).toContain("import Icon from '../uswds/Icon.astro'");
     expect(sidebar).toContain('fcco-nav-icon');
+    expect(sidebar).toContain("href: '/perfil'");
+    expect(sidebar).toContain("iconName: 'account_circle'");
     // Verifica que no haya emojis en los items del menú
     expect(sidebar).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
 
@@ -85,5 +88,19 @@ describe('Cumplimiento Visual USWDS (DC3 Federal Theme) y Guía Operativa Perici
     expect(scss).toContain('.fcco-side-panel');
     expect(scss).toContain('.sticky-side-panel');
     expect(scss).toContain('.fcco-nav-icon');
+  });
+
+  it('USWDS-06: La sección de Perfil del Perito (/perfil) permite editar credenciales con persistencia automática en MySQL', () => {
+    const perfilView = fs.readFileSync(path.resolve(viewsDir, 'PerfilPeritoView.astro'), 'utf8');
+    expect(perfilView).toContain('form-perfil-perito');
+    expect(perfilView).toContain('phpApi.actualizarPerfil');
+    expect(perfilView).toContain('scheduleAutosave');
+    expect(perfilView).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
+
+    const perfilPhp = fs.readFileSync(path.resolve(process.cwd(), 'public/api/perfil.php'), 'utf8');
+    expect(perfilPhp).toContain('Session::requireUser()');
+    expect(perfilPhp).toContain('Session::requireCsrf()');
+    expect(perfilPhp).toContain('UPDATE usuarios');
+    expect(perfilPhp).toContain('ACTUALIZACION_PERFIL_PERITO');
   });
 });

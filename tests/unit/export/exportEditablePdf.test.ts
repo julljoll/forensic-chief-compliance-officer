@@ -155,4 +155,23 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     expect(phpSrc).toContain('EMISION_PDF_ADOBE');
     expect(phpSrc).toContain('planillas_emitidas');
   });
+
+  it('PDF-08: exportEditablePdf preserva paridad 1:1 con Ver Formato (iframe con CSS real, sin height: auto y mapeo DOM)', () => {
+    const engineSrc = fs.readFileSync(
+      path.resolve(process.cwd(), 'src/lib/export/exportEditablePdf.ts'),
+      'utf8'
+    );
+
+    // Nunca debe colapsar la altura física 330mm de la hoja Folio
+    expect(engineSrc).not.toContain("p.style.height = 'auto'");
+    expect(engineSrc).toContain("p.style.width = '216mm'");
+    expect(engineSrc).toContain("p.style.height = '330mm'");
+    // Usa iframe aislado con folio-aislado.css real al descargar desde /planillas
+    expect(engineSrc).toContain('loadPlanillaInStyledIframe');
+    expect(engineSrc).toContain('render_pdf=1');
+    // Mapeo dinámico de celdas reales y líneas de firma sin tapar huelleros
+    expect(engineSrc).toContain('measurePageAcroFields');
+    expect(engineSrc).toContain('measurePageSignatureBoxes');
+    expect(engineSrc).toContain('.header-control-box');
+  });
 });
