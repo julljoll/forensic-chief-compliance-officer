@@ -12,6 +12,7 @@ export async function bindPlanilla(_planillaId: string): Promise<CasoCMS | undef
   // Garantizar que todos los campos dinámicos permanezcan completamente en blanco sin rellenar
   const elements = document.querySelectorAll<HTMLElement>('[data-field]');
   elements.forEach((el) => {
+    if (el.hasAttribute('data-qr-sha256') && el.textContent?.trim()) return;
     el.textContent = '';
   });
 

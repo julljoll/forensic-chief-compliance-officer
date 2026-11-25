@@ -34,6 +34,20 @@
           <li class="usa-button-group__item">
             <button
               type="button"
+              id="btn-generar-planilla-qr"
+              class="usa-button font-sans-3xs tablet:font-sans-2xs padding-x-105 padding-y-05"
+              style="background-color: #b50909;"
+              title="Registra esta planilla en SHA256.US con el perito logueado, incrusta el Código QR Rojo verificable en la esquina superior derecha del formato oficial y abre Guardar como PDF vectorial"
+            >
+              <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                <use href="/assets/uswds/img/sprite.svg#verified_user"></use>
+              </svg>
+              <span id="txt-btn-generar-qr">Generar Planilla (QR + PDF)</span>
+            </button>
+          </li>
+          <li class="usa-button-group__item">
+            <button
+              type="button"
               id="btn-descargar-word"
               class="usa-button usa-button--base font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
               title="Descargar esta planilla oficial en formato editable Microsoft Word (.docx)"
@@ -48,8 +62,8 @@
             <button
               type="button"
               id="btn-descargar-pdf-editable"
-              class="usa-button usa-button--secondary font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
-              title="Descargar esta planilla en PDF editable con campos interactivos, código QR y firma digital para Adobe Acrobat"
+              class="usa-button usa-button--outline font-sans-3xs tablet:font-sans-2xs padding-x-1 padding-y-05"
+              title="Opciones avanzadas: asignar Co-Perito, vincular expediente y descargar PDF con campos interactivos y firma electrónica para Adobe Acrobat"
             >
               <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
                 <use href="/assets/uswds/img/sprite.svg#edit"></use>
@@ -74,3 +88,80 @@
     </div>
   </div>
 </header>
+
+<!-- Barra de Confirmación de Planilla Sellada con Código QR Rojo (No se imprime) -->
+<section
+  id="banner-planilla-sellada"
+  class="no-print"
+  aria-live="polite"
+  style="background-color: #fff5f5; border-bottom: 2px solid #b50909;"
+  hidden
+>
+  <div class="grid-container-widescreen padding-y-105">
+    <div class="grid-row grid-gap-2 flex-align-center flex-justify">
+      <div class="tablet:grid-col-auto display-flex flex-align-center">
+        <svg class="usa-icon usa-icon--size-3 margin-right-1" style="color: #b50909;" aria-hidden="true" focusable="false" role="img">
+          <use href="/assets/uswds/img/sprite.svg#verified_user"></use>
+        </svg>
+        <div>
+          <div class="display-flex flex-align-center flex-wrap" style="gap: 6px;">
+            <strong class="font-sans-2xs text-uppercase" style="color: #b50909;">
+              Planilla Sellada con QR Rojo:
+            </strong>
+            <strong id="sellada-codigo-planilla" class="font-mono-xs text-ink">PLN-2026-000001</strong>
+            <span id="sellada-modo-tag" class="usa-tag bg-success-dark text-white font-mono-3xs">
+              REGISTRADA EN SERVIDOR SHA256.US
+            </span>
+          </div>
+          <div class="font-mono-3xs text-base-dark margin-top-05">
+            <span>Perito: <strong id="sellada-perito-info" class="text-ink">--</strong></span>
+            <span class="margin-x-1">|</span>
+            <span>SHA-256: <code id="sellada-hash-sha256" class="text-ink">--</code></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tablet:grid-col-auto margin-top-1 tablet:margin-top-0">
+        <ul class="usa-button-group flex-wrap flex-align-center">
+          <li class="usa-button-group__item">
+            <button
+              type="button"
+              id="btn-sellada-imprimir"
+              class="usa-button font-sans-3xs padding-x-105 padding-y-05"
+              style="background-color: #b50909;"
+            >
+              <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                <use href="/assets/uswds/img/sprite.svg#print"></use>
+              </svg>
+              <span>Guardar PDF / Imprimir (Vectorial)</span>
+            </button>
+          </li>
+          <li class="usa-button-group__item">
+            <a
+              id="link-sellada-verificar"
+              href="/verificar"
+              target="_blank"
+              rel="noopener"
+              class="usa-button usa-button--outline font-sans-3xs padding-x-105 padding-y-05"
+            >
+              <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                <use href="/assets/uswds/img/sprite.svg#launch"></use>
+              </svg>
+              <span>Abrir Popup Verificador QR</span>
+            </a>
+          </li>
+          <li class="usa-button-group__item">
+            <button
+              type="button"
+              id="btn-sellada-nueva"
+              class="usa-button usa-button--unstyled font-sans-3xs text-base-dark padding-x-05"
+              title="Registrar un nuevo número correlativo de planilla en el servidor"
+            >
+              Emitir nuevo código
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

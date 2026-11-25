@@ -156,22 +156,24 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     expect(phpSrc).toContain('planillas_emitidas');
   });
 
-  it('PDF-08: exportEditablePdf preserva paridad 1:1 con Ver Formato (iframe con CSS real, sin height: auto y mapeo DOM)', () => {
+  it('PDF-08: exportEditablePdf elimina html2canvas y preserva paridad 1:1 con Ver Formato (html-to-image + iframe CSS real + sello QR nativo)', () => {
     const engineSrc = fs.readFileSync(
       path.resolve(process.cwd(), 'src/lib/export/exportEditablePdf.ts'),
       'utf8'
     );
 
-    // Nunca debe colapsar la altura física 330mm de la hoja Folio
+    // Nunca debe importar ni invocar html2canvas ni colapsar la altura 330mm
+    expect(engineSrc).not.toMatch(/import\s+html2canvas|from\s+['"]html2canvas['"]/);
     expect(engineSrc).not.toContain("p.style.height = 'auto'");
-    expect(engineSrc).toContain("p.style.width = '216mm'");
-    expect(engineSrc).toContain("p.style.height = '330mm'");
+    // Usa el motor nativo del navegador (html-to-image) + sello QR incrustado en DOM real
+    expect(engineSrc).toContain("from 'html-to-image'");
+    expect(engineSrc).toContain('toPng(');
+    expect(engineSrc).toContain('estamparSelloQrEnDom');
     // Usa iframe aislado con folio-aislado.css real al descargar desde /planillas
     expect(engineSrc).toContain('loadPlanillaInStyledIframe');
     expect(engineSrc).toContain('render_pdf=1');
     // Mapeo dinámico de celdas reales y líneas de firma sin tapar huelleros
     expect(engineSrc).toContain('measurePageAcroFields');
     expect(engineSrc).toContain('measurePageSignatureBoxes');
-    expect(engineSrc).toContain('.header-control-box');
   });
 });

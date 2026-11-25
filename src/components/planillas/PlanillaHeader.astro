@@ -46,22 +46,41 @@ const isBlanco = true;
     </div>
 
     <!-- FBI FD-1004 / DoD DC3 / OMB Federal Form Control Box -->
-    <div class="header-control-box">
-      <div class="control-box-row">
-        <span class="control-box-lbl">FORM CODE:</span>
-        <strong class="control-box-val font-mono">{codigoDoc}</strong>
+    <div class="header-right-cluster">
+      <div class="header-control-box">
+        <div class="control-box-row">
+          <span class="control-box-lbl">FORM CODE:</span>
+          <strong class="control-box-val font-mono">{codigoDoc}</strong>
+        </div>
+        <div class="control-box-row">
+          <span class="control-box-lbl">PROCEDURE:</span>
+          <span class="control-box-val">CONSIGNACIÓN (MUCC-2017)</span>
+        </div>
+        <div class="control-box-row">
+          <span class="control-box-lbl">JURISDICTION:</span>
+          <span class="control-box-val">COPP ART. 187 / 223 · LMDFE</span>
+        </div>
+        <div class="control-box-row">
+          <span class="control-box-lbl">FOLIO:</span>
+          <strong class="control-box-val font-mono">HOJA {hojaActual} DE {totalHojas}</strong>
+        </div>
       </div>
-      <div class="control-box-row">
-        <span class="control-box-lbl">PROCEDURE:</span>
-        <span class="control-box-val">CONSIGNACIÓN (MUCC-2017)</span>
-      </div>
-      <div class="control-box-row">
-        <span class="control-box-lbl">JURISDICTION:</span>
-        <span class="control-box-val">COPP ART. 187 / 223 · LMDFE</span>
-      </div>
-      <div class="control-box-row">
-        <span class="control-box-lbl">FOLIO:</span>
-        <strong class="control-box-val font-mono">HOJA {hojaActual} DE {totalHojas}</strong>
+
+      <!-- Sello Nativo de Verificación QR Rojo (#B50909) + Barras Code-128 (se revela al Generar Planilla) -->
+      <div
+        class="header-qr-seal"
+        data-qr-seal="1"
+        data-hoja={String(hojaActual)}
+        hidden
+      >
+        {hojaActual === 1 && (
+          <a class="header-qr-svg" data-qr-svg href="/verificar" target="_blank" rel="noopener" title="Escanear o hacer clic para corroborar esta planilla en SHA256.US"></a>
+        )}
+        <div class="header-qr-meta">
+          <span class="header-qr-badge">SHA256.US · QR</span>
+          <strong class="header-qr-code font-mono" data-qr-code>PLN-2026-000001</strong>
+          <div class="header-qr-bars" data-qr-bars></div>
+        </div>
       </div>
     </div>
   </div>

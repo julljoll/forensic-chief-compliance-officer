@@ -145,8 +145,8 @@ const PLANILLAS = [
 
 <!-- Alerta de Especificaciones de Impresión Folio -->
 <div class="margin-bottom-3">
-  <Alert type="info" heading="Procedimiento de Análisis por Consignación (NIST SP 800-101 / 800-86 · MUCC-2017 · LMDFE Arts. 4 y 7)">
-    Este catálogo guía la validación judicial para tribunales de pruebas en <strong>dispositivos móviles</strong> (imágenes, redes sociales, notas de voz, capturas de pantalla, WhatsApp/Telegram) y <strong>medios digitales consignados</strong> (CD/DVD, disco duro, reloj inteligente, computadora, servidor, cámara de seguridad DVR/CCTV), imprimiéndose en hojas tamaño Folio (<code>216mm × 330mm</code>) con <code>30mm</code> de margen izquierdo de encuadernación.
+  <Alert type="info" heading="Generación Oficial de Planillas con Código QR Rojo Verificable (NIST SP 800-101 / 800-86 · MUCC-2017 · LMDFE Arts. 4 y 7)">
+    Pulse <strong>Generar Planilla (QR + PDF)</strong> en cualquiera de los 13 instrumentos para emitir el <strong>formato oficial exacto</strong> en hoja Folio (<code>216mm × 330mm</code>, <code>30mm</code> margen izquierdo) con el <strong>Código QR Rojo (<code>#B50909</code>)</strong>, código de barras Code-128 y sello SHA-256 incrustados en la esquina superior derecha y registrados automáticamente en MySQL (cPanel) con sus credenciales de perito.
   </Alert>
 </div>
 
@@ -199,31 +199,36 @@ const PLANILLAS = [
         </div>
 
         <div class="usa-card__footer border-top-1px border-base-lighter padding-top-2">
+          <!-- Acción Principal en 1 Clic: Formato Exacto Folio + Código QR Rojo Verificable -->
+          <div class="margin-bottom-1">
+            <a
+              href={`/planillas/${p.slug}?modo=blanco&generar=1`}
+              target="_blank"
+              rel="noopener"
+              class="usa-button font-sans-2xs padding-x-105 padding-y-1 width-full text-center link-generar-planilla"
+              style="background-color: #b50909;"
+              data-slug={p.slug}
+              title="Genera el formato oficial exacto con el Código QR Rojo verificable incrustado en la esquina superior derecha y registrado en SHA256.US"
+            >
+              <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                <use href="/assets/uswds/img/sprite.svg#verified_user"></use>
+              </svg>
+              <span>Generar Planilla (QR + PDF)</span>
+            </a>
+          </div>
+
           <ul class="usa-button-group flex-wrap width-full">
             <li class="usa-button-group__item flex-1">
               <a
                 href={`/planillas/${p.slug}?modo=blanco`}
                 class="usa-button usa-button--outline font-sans-2xs padding-x-1 padding-y-05 width-full text-center link-abrir-planilla"
                 data-slug={p.slug}
+                title="Previsualizar el formato oficial Folio en pantalla"
               >
                 Ver Formato
               </a>
             </li>
             <li class="usa-button-group__item flex-1">
-              <a
-                href={`/planillas/${p.slug}?modo=blanco&imprimir=1`}
-                target="_blank"
-                class="usa-button font-sans-2xs padding-x-1 padding-y-05 width-full text-center link-imprimir-planilla"
-                data-slug={p.slug}
-                title="Imprimir directamente en Folio en blanco"
-              >
-                <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
-                  <use href="/assets/uswds/img/sprite.svg#print"></use>
-                </svg>
-                <span>Imprimir</span>
-              </a>
-            </li>
-            <li class="usa-button-group__item flex-1 margin-top-1">
               <button
                 type="button"
                 class="usa-button usa-button--base font-sans-2xs padding-x-1 padding-y-05 width-full text-center btn-descargar-docx"
@@ -237,7 +242,7 @@ const PLANILLAS = [
                 <span class="txt-descargar-docx">Word</span>
               </button>
             </li>
-            <li class="usa-button-group__item flex-1 margin-top-1">
+            <li class="usa-button-group__item flex-1">
               <button
                 type="button"
                 class="usa-button usa-button--secondary font-sans-2xs padding-x-1 padding-y-05 width-full text-center btn-descargar-pdf-editable"
@@ -245,7 +250,7 @@ const PLANILLAS = [
                 data-titulo={p.titulo}
                 data-codigo={p.codigo}
                 data-fase={p.fase}
-                title="Descargar en PDF editable con Código QR Rojo, barras Code-128, SHA-256 y campos para firma electrónica en Adobe Acrobat"
+                title="Opciones avanzadas: asignar Co-Perito, vincular expediente y descargar PDF editable con campos interactivos y firma electrónica para Adobe Acrobat"
               >
                 <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
                   <use href="/assets/uswds/img/sprite.svg#edit"></use>

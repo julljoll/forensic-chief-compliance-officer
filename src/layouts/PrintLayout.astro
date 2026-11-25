@@ -63,13 +63,107 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
     <script>
       import { exportCurrentPlanillaToWordDocx } from '../lib/export/exportWordDocx';
       import { exportCurrentPlanillaToEditablePdf } from '../lib/export/exportEditablePdf';
+      import {
+        generarPlanillaConQrNativo,
+        type GenerarPlanillaQrResult,
+      } from '../lib/export/generarPlanillaQr';
 
       const urlParams = new URLSearchParams(window.location.search);
+      const btnGenerarQr = document.getElementById('btn-generar-planilla-qr');
+      const txtGenerarQr = document.getElementById('txt-btn-generar-qr');
       const btnWord = document.getElementById('btn-descargar-word');
       const txtWord = document.getElementById('txt-btn-word');
       const btnPdfEditable = document.getElementById('btn-descargar-pdf-editable');
       const txtPdfEditable = document.getElementById('txt-btn-pdf-editable');
       const btnImprimir = document.getElementById('btn-imprimir-folio');
+
+      const bannerSellada = document.getElementById('banner-planilla-sellada');
+      const selladaCodigoEl = document.getElementById('sellada-codigo-planilla');
+      const selladaModoTag = document.getElementById('sellada-modo-tag');
+      const selladaPeritoEl = document.getElementById('sellada-perito-info');
+      const selladaHashEl = document.getElementById('sellada-hash-sha256');
+      const linkSelladaVerificar = document.getElementById('link-sellada-verificar') as HTMLAnchorElement | null;
+      const btnSelladaImprimir = document.getElementById('btn-sellada-imprimir');
+      const btnSelladaNueva = document.getElementById('btn-sellada-nueva');
+
+      let ultimaEmisionQr: GenerarPlanillaQrResult | null = null;
+      let emisionEnCurso = false;
+
+      function mostrarBannerSellada(res: GenerarPlanillaQrResult) {
+        if (!bannerSellada) return;
+        const p = res.planilla;
+        if (selladaCodigoEl) selladaCodigoEl.textContent = p.codigoPlanilla;
+        if (selladaPeritoEl) {
+          selladaPeritoEl.textContent = [p.perito?.nombre, p.perito?.civ].filter(Boolean).join(' · ') || 'Perito Autenticado';
+        }
+        if (selladaHashEl) {
+          selladaHashEl.textContent = `${p.hashEmisionSha256.slice(0, 24)}…${p.hashEmisionSha256.slice(-12)}`;
+          selladaHashEl.title = p.hashEmisionSha256;
+        }
+        if (selladaModoTag) {
+          if (res.offlineDraft) {
+            selladaModoTag.textContent = 'BORRADOR LOCAL (SIN SERVIDOR)';
+            selladaModoTag.className = 'usa-tag bg-warning-dark text-white font-mono-3xs';
+          } else {
+            selladaModoTag.textContent = 'REGISTRADA EN SERVIDOR SHA256.US';
+            selladaModoTag.className = 'usa-tag bg-success-dark text-white font-mono-3xs';
+          }
+        }
+        if (linkSelladaVerificar) {
+          linkSelladaVerificar.href = `/verificar?codigo=${encodeURIComponent(p.codigoPlanilla)}`;
+        }
+        bannerSellada.hidden = false;
+      }
+
+      async function ejecutarGeneracionQrNativa(autoPrint = true, forceNew = false) {
+        if (emisionEnCurso) return;
+
+        // Si ya fue sellada en esta sesión y no se solicitó nuevo código, imprimir directamente sin duplicar en BD
+        if (ultimaEmisionQr && !forceNew) {
+          mostrarBannerSellada(ultimaEmisionQr);
+          if (autoPrint) {
+            window.print();
+          }
+          return;
+        }
+
+        emisionEnCurso = true;
+        if (txtGenerarQr) txtGenerarQr.textContent = 'Sellando QR...';
+        btnGenerarQr?.setAttribute('disabled', 'true');
+        btnSelladaNueva?.setAttribute('disabled', 'true');
+
+        try {
+          const result = await generarPlanillaConQrNativo({
+            autoPrint,
+            casoId: urlParams.get('casoId') || null,
+            numeroCaso: urlParams.get('numeroCaso') || null,
+            numeroPRCC: urlParams.get('numeroPRCC') || null,
+          });
+          ultimaEmisionQr = result;
+          mostrarBannerSellada(result);
+          if (txtGenerarQr) txtGenerarQr.textContent = 'Guardar PDF con QR';
+        } catch (err) {
+          console.error('Error al generar planilla con QR nativo:', err);
+          alert('Hubo un inconveniente al registrar el sello QR de la planilla. Verifique su sesión e intente nuevamente.');
+          if (txtGenerarQr) txtGenerarQr.textContent = 'Generar Planilla (QR + PDF)';
+        } finally {
+          emisionEnCurso = false;
+          btnGenerarQr?.removeAttribute('disabled');
+          btnSelladaNueva?.removeAttribute('disabled');
+        }
+      }
+
+      btnGenerarQr?.addEventListener('click', () => {
+        ejecutarGeneracionQrNativa(true, false);
+      });
+
+      btnSelladaImprimir?.addEventListener('click', () => {
+        window.print();
+      });
+
+      btnSelladaNueva?.addEventListener('click', () => {
+        ejecutarGeneracionQrNativa(false, true);
+      });
 
       btnImprimir?.addEventListener('click', () => {
         window.print();
@@ -127,8 +221,12 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
         }
       });
 
-      // Descarga automática por parámetro URL ?descargar=docx o ?descargar=pdf_editable
-      if (urlParams.get('descargar') === 'docx') {
+      // Disparo automático en 1 clic: ?generar=1 (desde "Generar Planilla" en /planillas)
+      if (urlParams.get('generar') === '1' && urlParams.get('render_pdf') !== '1') {
+        setTimeout(() => {
+          ejecutarGeneracionQrNativa(true, false);
+        }, 450);
+      } else if (urlParams.get('descargar') === 'docx') {
         setTimeout(async () => {
           await exportCurrentPlanillaToWordDocx();
         }, 700);
