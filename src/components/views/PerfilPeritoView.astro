@@ -206,69 +206,43 @@ import Icon from '../uswds/Icon.astro';
   </form>
 </section>
 
-<!-- Sección de Cambio de Contraseña y Enlace MFA -->
+<!-- Sección de Seguridad de Acceso (Solo Google OIDC + Google Authenticator) -->
 <section class="bg-white padding-3 radius-md border-1px border-base-lighter shadow-1" aria-labelledby="form-pass-heading">
   <div class="display-flex flex-wrap flex-justify flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-2">
     <div class="display-flex flex-align-center">
       <Icon name="lock" className="text-primary margin-right-1" />
       <div>
         <h2 id="form-pass-heading" class="margin-0 font-heading-md text-ink">
-          Seguridad de Acceso y Contraseña
+          Seguridad de Acceso (Google OIDC + Google Authenticator)
         </h2>
         <p class="margin-0 font-body-3xs text-base-dark">
-          Actualice su contraseña con cifrado bcrypt o administre su autenticador de doble factor (Google Authenticator).
+          Las contraseñas locales están deshabilitadas permanentemente. El acceso requiere Cuenta Google autorizada (lista blanca inmutable) y TOTP RFC 6238 obligatorio.
         </p>
       </div>
     </div>
     <a href="/seguridad" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-05 display-inline-flex flex-align-center margin-top-1 tablet:margin-top-0">
       <Icon name="security" className="margin-right-05" />
-      <span>Configurar MFA / TOTP</span>
+      <span>Administrar Google OIDC y MFA / TOTP</span>
     </a>
   </div>
 
-  <div id="perfil-pass-alert" class="margin-bottom-2" hidden></div>
-
-  <form id="form-cambiar-password" class="usa-form maxw-none">
-    <div class="grid-row grid-gap-2">
-      <div class="tablet:grid-col-4">
-        <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="pass-actual">
-          Contraseña Actual
-        </label>
-        <input class="usa-input font-sans-xs" id="pass-actual" type="password" required autocomplete="current-password" />
-      </div>
-      <div class="tablet:grid-col-4">
-        <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="pass-nueva">
-          Nueva Contraseña (mín. 10 caracteres)
-        </label>
-        <input class="usa-input font-sans-xs" id="pass-nueva" type="password" required minlength="10" autocomplete="new-password" />
-      </div>
-      <div class="tablet:grid-col-4">
-        <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="pass-confirmar">
-          Confirmar Nueva Contraseña
-        </label>
-        <input class="usa-input font-sans-xs" id="pass-confirmar" type="password" required minlength="10" autocomplete="new-password" />
-      </div>
+  <div class="usa-alert usa-alert--info usa-alert--slim" role="status">
+    <div class="usa-alert__body">
+      <p class="usa-alert__text font-sans-2xs">
+        <strong>Grado Forense (Opción C):</strong> para verificar el estado de vinculación de su identificador inmutable <code>google_sub</code>, reconfigurar su autenticador QR local o regenerar sus 8 códigos de respaldo bcrypt, acceda a <a href="/seguridad" class="usa-link text-bold">Seguridad &amp; MFA / TOTP</a>.
+      </p>
     </div>
-
-    <div class="display-flex flex-justify-end margin-top-2">
-      <button type="submit" id="btn-cambiar-password" class="usa-button usa-button--base font-sans-2xs display-inline-flex flex-align-center">
-        <Icon name="lock" className="margin-right-05 text-white" />
-        <span>Actualizar Contraseña</span>
-      </button>
-    </div>
-  </form>
+  </div>
 </section>
 
 <script>
   import { phpApi, type ActualizarPerfilPayload, type UsuarioPerfilDTO } from '../../lib/data/phpApi';
 
   const formPerfil = document.getElementById('form-perfil-perito') as HTMLFormElement | null;
-  const formPass = document.getElementById('form-cambiar-password') as HTMLFormElement | null;
   const syncBadge = document.getElementById('perfil-sync-badge');
   const syncText = document.getElementById('perfil-sync-text');
   const lastSavedEl = document.getElementById('perfil-last-saved');
   const alertContainer = document.getElementById('perfil-alert-container');
-  const passAlert = document.getElementById('perfil-pass-alert');
   const btnGuardar = document.getElementById('btn-guardar-perfil') as HTMLButtonElement | null;
   const txtGuardar = document.getElementById('txt-guardar-perfil');
 
@@ -460,44 +434,6 @@ import Icon from '../uswds/Icon.astro';
     e.preventDefault();
     if (autosaveTimer) clearTimeout(autosaveTimer);
     await persistProfile(true);
-  });
-
-  formPass?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const actual = (document.getElementById('pass-actual') as HTMLInputElement)?.value || '';
-    const nueva = (document.getElementById('pass-nueva') as HTMLInputElement)?.value || '';
-    const confirmar = (document.getElementById('pass-confirmar') as HTMLInputElement)?.value || '';
-
-    if (nueva !== confirmar) {
-      if (passAlert) {
-        passAlert.hidden = false;
-        passAlert.innerHTML = `
-          <div class="usa-alert usa-alert--error usa-alert--slim">
-            <div class="usa-alert__body"><p class="usa-alert__text font-sans-2xs">Las contraseñas nuevas no coinciden.</p></div>
-          </div>
-        `;
-      }
-      return;
-    }
-
-    const res = await phpApi.cambiarPassword(actual, nueva);
-    if (passAlert) {
-      passAlert.hidden = false;
-      if (res.ok) {
-        formPass.reset();
-        passAlert.innerHTML = `
-          <div class="usa-alert usa-alert--success usa-alert--slim">
-            <div class="usa-alert__body"><p class="usa-alert__text font-sans-2xs"><strong>Contraseña actualizada correctamente en MySQL.</strong></p></div>
-          </div>
-        `;
-      } else {
-        passAlert.innerHTML = `
-          <div class="usa-alert usa-alert--error usa-alert--slim">
-            <div class="usa-alert__body"><p class="usa-alert__text font-sans-2xs">${res.error || 'No se pudo actualizar la contraseña.'}</p></div>
-          </div>
-        `;
-      }
-    }
   });
 
   async function initPerfil() {

@@ -1,89 +1,109 @@
 ---
 /**
- * SHA256.US — Vista de Configuración de Seguridad y MFA Google Authenticator (RFC 6238)
- * Cumplimiento: NIST SP 800-63B (AAL2) · ISO/IEC 27001 A.9.4.2 · RFC 6238 TOTP
+ * SHA256.US — Vista de Seguridad Pericial: Cuenta Google Vinculada, TOTP RFC 6238 y Códigos de Respaldo
+ * Cumplimiento: Opción C — Grado Forense · NIST SP 800-63B (AAL2/FAL2) · ISO/IEC 27001 A.9.4.2 · RFC 6238
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
+import Icon from '../uswds/Icon.astro';
 ---
 
 <PageHeader
-  title="Seguridad y Autenticación en Dos Pasos (MFA / 2FA)"
-  subtitle="Gestión de autenticación robusta mediante Google Authenticator (RFC 6238) y protección criptográfica para peritos del laboratorio."
-  tag="NIST SP 800-63B AAL2"
+  title="Seguridad Pericial: Google OIDC y Autenticación Multifactor (TOTP)"
+  subtitle="Estado de cuenta Google vinculada con claim inmutable google_sub, Google Authenticator obligatorio cifrado en reposo (AES-256-GCM) y gestión de códigos de respaldo."
+  tag="OPCIÓN C · GRADO FORENSE"
   tagColor="bg-primary-darker"
 />
 
-<!-- Resumen del Estado de Seguridad Actual -->
+<!-- 1. Estado de Cuenta Google Vinculada y MFA Activo -->
 <div class="margin-bottom-3">
-  <SummaryBox heading="Estado de la Autenticación Multifactor (NIST SP 800-63B)" headingId="summary-seguridad-mfa">
-    <div class="grid-row grid-gap flex-align-center">
+  <SummaryBox heading="Identidad Google OIDC Vinculada y Estado TOTP (Autoritativo desde MySQL)" headingId="summary-seguridad-mfa">
+    <div class="grid-row grid-gap flex-align-start">
       <div class="tablet:grid-col-8">
-        <p class="margin-top-0 margin-bottom-1 font-body-2xs">
-          El acceso pericial a SHA256.US requiere doble factor de autenticación para garantizar la no repudiación y la custodia legal de las actuaciones forenses.
-        </p>
-        <div class="display-flex flex-wrap flex-align-center margin-top-1">
-          <span id="badge-estado-mfa" class="usa-tag bg-green font-mono-3xs margin-right-1 margin-bottom-05">MFA ACTIVO</span>
-          <span class="usa-tag bg-primary font-mono-3xs margin-right-1 margin-bottom-05">RFC 6238 TOTP (HMAC-SHA1)</span>
-          <span class="usa-tag bg-base-lighter text-ink font-mono-3xs margin-bottom-05">VENTANA: 30 SEGUNDOS</span>
+        <div class="display-flex flex-wrap flex-align-center margin-bottom-105">
+          <span id="badge-google-linked" class="usa-tag bg-primary-darker text-white font-mono-3xs margin-right-1 margin-bottom-05">
+            GOOGLE OIDC: VERIFICANDO...
+          </span>
+          <span id="badge-estado-mfa" class="usa-tag bg-green text-white font-mono-3xs margin-right-1 margin-bottom-05">
+            TOTP ACTIVO (AES-256-GCM)
+          </span>
+          <span class="usa-tag bg-base-lighter text-ink font-mono-3xs margin-bottom-05">
+            CONTRASEÑA LOCAL: DESHABILITADA
+          </span>
         </div>
+
+        <dl class="grid-row grid-gap-1 margin-y-1 font-body-2xs">
+          <div class="tablet:grid-col-6 margin-bottom-1">
+            <dt class="text-bold text-base-dark font-sans-3xs text-uppercase">Cuenta Google Autorizada</dt>
+            <dd id="seg-google-email" class="margin-0 font-mono-xs text-ink text-bold">Cargando...</dd>
+          </div>
+          <div class="tablet:grid-col-6 margin-bottom-1">
+            <dt class="text-bold text-base-dark font-sans-3xs text-uppercase">Binding Inmutable (google_sub)</dt>
+            <dd id="seg-google-sub" class="margin-0 font-mono-xs text-ink">---</dd>
+          </div>
+          <div class="tablet:grid-col-6 margin-bottom-1">
+            <dt class="text-bold text-base-dark font-sans-3xs text-uppercase">Fecha de Enrolamiento TOTP</dt>
+            <dd id="seg-totp-enrolled-at" class="margin-0 font-mono-xs text-ink">---</dd>
+          </div>
+          <div class="tablet:grid-col-6 margin-bottom-1">
+            <dt class="text-bold text-base-dark font-sans-3xs text-uppercase">Último Acceso Verificado</dt>
+            <dd id="seg-last-login" class="margin-0 font-mono-xs text-ink">---</dd>
+          </div>
+        </dl>
       </div>
+
       <div class="tablet:grid-col-4 text-right margin-top-2 tablet:margin-top-0">
         <button
           id="btn-iniciar-config-mfa"
           type="button"
-          class="usa-button usa-button--outline font-sans-2xs padding-x-2 padding-y-1"
+          class="usa-button usa-button--outline font-sans-2xs padding-x-2 padding-y-1 display-inline-flex flex-align-center"
         >
-          Reconfigurar Autenticador
+          <Icon name="lock" className="margin-right-05" />
+          <span>Reconfigurar Autenticador</span>
         </button>
       </div>
     </div>
   </SummaryBox>
 </div>
 
-<!-- Contenedor del Flujo de Enrolamiento / Reconfiguración MFA (Oculto por defecto si ya está configurado) -->
+<!-- Alerta global de acciones de seguridad -->
+<div id="seg-global-alert" class="margin-bottom-3" hidden></div>
+
+<!-- 2. Panel de Reconfiguración MFA (QR 100 % Local + Confirmación Server-Side) -->
 <div id="panel-configuracion-mfa" class="usa-card width-full margin-bottom-4" hidden>
   <div class="usa-card__container padding-3">
     <div class="display-flex flex-justify flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-3">
       <h2 class="font-heading-lg margin-0">
-        Vincular Aplicación Google Authenticator
+        Reconfigurar Google Authenticator (QR 100 % Local)
       </h2>
       <button id="btn-cerrar-config-mfa" type="button" class="usa-button usa-button--unstyled font-sans-xs text-base-dark">
         Cancelar
       </button>
     </div>
 
-    <!-- Pasos de configuración -->
     <div class="grid-row grid-gap">
-      <!-- Columna 1: Código QR Generado Localmente -->
       <div class="tablet:grid-col-5 text-center border-right-1px border-base-lighter padding-right-2">
-        <h3 class="font-heading-sm margin-top-0 margin-bottom-1">
-          Paso 1: Escanear Código QR
-        </h3>
+        <h3 class="font-heading-sm margin-top-0 margin-bottom-1">Paso 1: Escanear Código QR</h3>
         <p class="font-body-3xs text-base-dark margin-bottom-2">
-          Abra Google Authenticator o cualquier app TOTP compatible en su dispositivo móvil y escanee el siguiente código:
+          Escanee este QR con Google Authenticator. El secreto se cifra con AES-256-GCM en el servidor al confirmar.
         </p>
         <div
           id="contenedor-qr-svg"
           class="display-inline-block bg-white padding-2 border-1px border-base-light radius-md margin-bottom-2 shadow-1"
           style="min-height: 200px; min-width: 200px;"
         >
-          <!-- SVG generado 100% en cliente sin llamadas de red externas -->
-          <div class="padding-4 font-body-3xs text-base">Generando QR seguro...</div>
+          <div class="padding-4 font-body-3xs text-base">Generando QR local...</div>
         </div>
-        <p class="font-mono-3xs text-base-dark margin-top-0 margin-bottom-0">
-          Generación criptográfica local 100% privada (sin salida a red).
+        <p class="font-mono-3xs text-base-dark margin-0">
+          Generación 100 % local en cliente (sin solicitudes a red externa).
         </p>
       </div>
 
-      <!-- Columna 2: Clave Manual y Verificación de Código -->
       <div class="tablet:grid-col-7 padding-left-2">
-        <h3 class="font-heading-sm margin-top-0 margin-bottom-1">
-          Paso 2: O ingrese la clave manualmente
-        </h3>
+        <h3 class="font-heading-sm margin-top-0 margin-bottom-1">Paso 2: Clave Manual Base32</h3>
         <div class="bg-base-lightest border-1px border-base-lighter padding-2 radius-md margin-bottom-2">
           <label class="usa-label margin-top-0 font-sans-3xs text-uppercase text-bold" for="input-secret-manual">
-            Clave Secreta en Base32 (160 bits):
+            Clave Secreta Base32 (160 bits):
           </label>
           <div class="display-flex flex-align-center margin-top-05">
             <input
@@ -97,21 +117,18 @@ import SummaryBox from '../uswds/SummaryBox.astro';
               id="btn-copiar-secret"
               type="button"
               class="usa-button usa-button--secondary font-sans-2xs padding-x-105 margin-left-1"
-              title="Copiar secreto al portapapeles"
             >
               Copiar
             </button>
           </div>
           <span id="txt-copiado-secret" class="font-body-3xs text-green text-bold margin-top-05 display-none">
-            ✓ Clave copiada al portapapeles
+            Clave copiada al portapapeles.
           </span>
         </div>
 
-        <h3 class="font-heading-sm margin-top-3 margin-bottom-1">
-          Paso 3: Validar código de 6 dígitos
-        </h3>
+        <h3 class="font-heading-sm margin-top-3 margin-bottom-1">Paso 3: Confirmar Código de 6 Dígitos</h3>
         <p class="font-body-3xs text-base-dark margin-bottom-1">
-          Ingrese el código de 6 dígitos que muestra su aplicación para confirmar la sincronización:
+          Al confirmar, se reemplazará el secreto TOTP cifrado y se emitirán 8 nuevos códigos de respaldo bcrypt.
         </p>
 
         <div class="grid-row grid-gap flex-align-end">
@@ -126,6 +143,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
                 class="usa-input font-mono-lg text-bold text-center letter-spacing-1"
                 placeholder="000000"
                 maxlength="6"
+                inputmode="numeric"
                 pattern="[0-9]{6}"
                 autocomplete="one-time-code"
               />
@@ -148,73 +166,124 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </div>
 
-<!-- Tarjeta de Códigos de Respaldo de Emergencia -->
+<!-- 3. Regeneración Segura de Códigos de Respaldo (8 Códigos Hash bcrypt) -->
 <div class="usa-card width-full margin-bottom-4">
   <div class="usa-card__container padding-3">
-    <div class="display-flex flex-justify flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-2">
+    <div class="display-flex flex-wrap flex-justify flex-align-center border-bottom-1px border-base-lighter padding-bottom-2 margin-bottom-2">
       <div>
         <h2 class="font-heading-lg margin-0">
-          Códigos de Recuperación de Emergencia
+          Códigos de Respaldo de Emergencia (8 Códigos bcrypt)
         </h2>
         <p class="font-body-2xs text-base-dark margin-top-05 margin-bottom-0">
-          Úselos en caso de extravío, daño o restablecimiento de su teléfono móvil. Cada código es de un solo uso.
+          El servidor almacena únicamente hashes bcrypt irreversibles. Al regenerar, los códigos anteriores quedan revocados de inmediato.
         </p>
       </div>
-      <div>
-        <button
-          id="btn-descargar-codigos"
-          type="button"
-          class="usa-button usa-button--outline font-sans-2xs padding-x-2 padding-y-1"
-        >
-          <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
-            <use href="/assets/uswds/img/sprite.svg#file_download"></use>
-          </svg>
-          <span>Descargar Códigos (.txt)</span>
-        </button>
+      <div class="margin-top-1 tablet:margin-top-0">
+        <span id="badge-recovery-remaining" class="usa-tag bg-primary text-white font-mono-3xs">
+          DISPONIBLES: -- / 8
+        </span>
       </div>
     </div>
 
-    <!-- Grid de códigos de recuperación -->
-    <div id="grid-codigos-recuperacion" class="grid-row grid-gap margin-top-2">
-      <!-- Se inyectan los 8 códigos -->
+    <!-- Formulario de regeneración protegida con código TOTP actual -->
+    <form id="form-regenerar-codigos" class="usa-form maxw-none">
+      <div class="grid-row grid-gap flex-align-end">
+        <div class="tablet:grid-col-6">
+          <label class="usa-label margin-top-0 font-sans-xs text-bold" for="input-regen-totp">
+            Código actual de Google Authenticator (6 dígitos) para autorizar regeneración:
+          </label>
+          <input
+            id="input-regen-totp"
+            type="text"
+            class="usa-input font-mono-md text-center letter-spacing-2"
+            placeholder="000000"
+            maxlength="6"
+            inputmode="numeric"
+            pattern="[0-9]{6}"
+            autocomplete="one-time-code"
+            required
+          />
+        </div>
+        <div class="tablet:grid-col-6 margin-top-1 tablet:margin-top-0">
+          <button
+            id="btn-regenerar-codigos"
+            type="submit"
+            class="usa-button usa-button--outline font-sans-xs width-full display-inline-flex flex-align-center flex-justify-center"
+          >
+            <Icon name="autorenew" className="margin-right-05" />
+            <span>Regenerar 8 Códigos de Respaldo</span>
+          </button>
+        </div>
+      </div>
+    </form>
+
+    <!-- Panel de visualización única de nuevos códigos generados -->
+    <div id="panel-nuevos-codigos" class="margin-top-3 border-top-1px border-base-lighter padding-top-2" hidden>
+      <div class="usa-alert usa-alert--warning usa-alert--slim margin-bottom-2" role="alert">
+        <div class="usa-alert__body">
+          <p class="usa-alert__text font-body-2xs">
+            <strong>Visualización única:</strong> descargue o copie estos 8 códigos ahora. No volverán a mostrarse al recargar la página.
+          </p>
+        </div>
+      </div>
+
+      <div id="grid-codigos-recuperacion" class="grid-row grid-gap margin-bottom-2"></div>
+
+      <div class="display-flex flex-wrap grid-gap-1">
+        <button
+          id="btn-descargar-codigos"
+          type="button"
+          class="usa-button usa-button--outline font-sans-2xs padding-x-2 padding-y-1 display-inline-flex flex-align-center"
+        >
+          <Icon name="file_download" className="margin-right-05" />
+          <span>Descargar Códigos (.txt)</span>
+        </button>
+        <button
+          id="btn-copiar-codigos"
+          type="button"
+          class="usa-button usa-button--outline font-sans-2xs padding-x-2 padding-y-1"
+        >
+          Copiar Todos
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- Políticas y Controles de Seguridad Pericial -->
+<!-- 4. Políticas Institucionales de Seguridad Forense (Opción C — Grado Forense) -->
 <div class="usa-card width-full">
   <div class="usa-card__container padding-3">
     <h2 class="font-heading-lg margin-top-0 margin-bottom-2">
-      Políticas Institucionales de Seguridad Forense
+      Controles Criptográficos Activos (Opción C — Grado Forense)
     </h2>
     <div class="grid-row grid-gap">
       <div class="tablet:grid-col-4 margin-bottom-2">
         <div class="bg-base-lightest padding-2 border-1px border-base-lighter radius-md height-full">
           <h3 class="font-heading-xs margin-top-0 margin-bottom-1 text-primary">
-            1. Protección Anti Fuerza Bruta
+            1. Google OIDC + PKCE S256 + RS256 JWKS
           </h3>
           <p class="font-body-3xs text-base-dark margin-0">
-            Bloqueo temporal automatizado (HTTP 429) tras 5 intentos fallidos consecutivos en una ventana de 15 minutos por dirección IP y usuario.
+            Flujo Authorization Code ejecutado 100 % server-to-server en PHP con lista blanca inmutable de 2 peritos y binding permanente del claim google_sub.
           </p>
         </div>
       </div>
       <div class="tablet:grid-col-4 margin-bottom-2">
         <div class="bg-base-lightest padding-2 border-1px border-base-lighter radius-md height-full">
           <h3 class="font-heading-xs margin-top-0 margin-bottom-1 text-primary">
-            2. Anti-Replay Criptográfico
+            2. AES-256-GCM + Anti-Replay + Rate-Limit
           </h3>
           <p class="font-body-3xs text-base-dark margin-0">
-            Cada slice de 30 segundos utilizado queda invalidado en el backend MySQL para evitar ataques de repetición o interceptación de tokens.
+            El secreto TOTP se cifra en reposo con AES-256-GCM, bloquea reutilización por totp_last_step y aplica bloqueo HTTP 429 (5 intentos / 15 min).
           </p>
         </div>
       </div>
       <div class="tablet:grid-col-4 margin-bottom-2">
         <div class="bg-base-lightest padding-2 border-1px border-base-lighter radius-md height-full">
           <h3 class="font-heading-xs margin-top-0 margin-bottom-1 text-primary">
-            3. Registro Inmutable de Accesos
+            3. Sesión Fail-Closed + CSRF + Auditoría SHA-256
           </h3>
           <p class="font-body-3xs text-base-dark margin-0">
-            Todo inicio de sesión, cambio de credenciales o generación de clave MFA se asienta automáticamente en la cadena de auditoría SHA-256.
+            Cookie HttpOnly/Secure/SameSite=Lax, expiración 30 min inactividad / 8 h absolutas, cabecera X-CSRF-Token en toda mutación y registro inmutable en auditoría.
           </p>
         </div>
       </div>
@@ -225,105 +294,159 @@ import SummaryBox from '../uswds/SummaryBox.astro';
 <script>
   import QRCode from 'qrcode';
   import saveAs from 'file-saver';
-  import {
-    generarSecretoBase32,
-    construirUriTotp,
-    generarCodigosRecuperacion,
-    verificarTotpCode,
-  } from '../../lib/crypto/totp';
+  import { phpApi, type UsuarioPerfilDTO } from '../../lib/data/phpApi';
 
-  const STORAGE_KEY_SECRET = 'fcco_totp_secret_provisioning';
-  const STORAGE_KEY_CODES = 'fcco_totp_backup_codes';
+  const badgeGoogleLinked = document.getElementById('badge-google-linked');
+  const badgeEstadoMfa = document.getElementById('badge-estado-mfa');
+  const segGoogleEmail = document.getElementById('seg-google-email');
+  const segGoogleSub = document.getElementById('seg-google-sub');
+  const segTotpEnrolledAt = document.getElementById('seg-totp-enrolled-at');
+  const segLastLogin = document.getElementById('seg-last-login');
+  const badgeRecoveryRemaining = document.getElementById('badge-recovery-remaining');
+  const globalAlert = document.getElementById('seg-global-alert');
 
   const btnIniciarConfig = document.getElementById('btn-iniciar-config-mfa');
   const btnCerrarConfig = document.getElementById('btn-cerrar-config-mfa');
   const panelConfig = document.getElementById('panel-configuracion-mfa');
   const contenedorQr = document.getElementById('contenedor-qr-svg');
-  const inputSecretManual = document.getElementById('input-secret-manual') as HTMLInputElement;
+  const inputSecretManual = document.getElementById('input-secret-manual') as HTMLInputElement | null;
   const btnCopiarSecret = document.getElementById('btn-copiar-secret');
   const txtCopiado = document.getElementById('txt-copiado-secret');
-  const inputCodigo = document.getElementById('input-codigo-verif-totp') as HTMLInputElement;
-  const btnConfirmar = document.getElementById('btn-confirmar-totp');
+  const inputCodigo = document.getElementById('input-codigo-verif-totp') as HTMLInputElement | null;
+  const btnConfirmar = document.getElementById('btn-confirmar-totp') as HTMLButtonElement | null;
   const msgVerif = document.getElementById('msg-verif-totp');
+
+  const formRegenerar = document.getElementById('form-regenerar-codigos') as HTMLFormElement | null;
+  const inputRegenTotp = document.getElementById('input-regen-totp') as HTMLInputElement | null;
+  const btnRegenerar = document.getElementById('btn-regenerar-codigos') as HTMLButtonElement | null;
+  const panelNuevosCodigos = document.getElementById('panel-nuevos-codigos');
   const gridCodigos = document.getElementById('grid-codigos-recuperacion');
   const btnDescargarCodigos = document.getElementById('btn-descargar-codigos');
+  const btnCopiarCodigos = document.getElementById('btn-copiar-codigos');
 
-  let secretoEnCurso = '';
-  let codigosRecuperacion: string[] = [];
+  let currentUserEmail = '';
+  let latestIssuedCodes: string[] = [];
 
-  function initSeguridad() {
-    // Cargar o inicializar códigos de recuperación
-    const guardados = localStorage.getItem(STORAGE_KEY_CODES);
-    if (guardados) {
-      try {
-        codigosRecuperacion = JSON.parse(guardados);
-      } catch {
-        codigosRecuperacion = generarCodigosRecuperacion(8);
-        localStorage.setItem(STORAGE_KEY_CODES, JSON.stringify(codigosRecuperacion));
-      }
-    } else {
-      codigosRecuperacion = generarCodigosRecuperacion(8);
-      localStorage.setItem(STORAGE_KEY_CODES, JSON.stringify(codigosRecuperacion));
+  function showGlobalAlert(msg: string, variant: 'success' | 'error' | 'warning' | 'info' = 'info') {
+    if (!globalAlert) return;
+    globalAlert.hidden = false;
+    globalAlert.innerHTML = `
+      <div class="usa-alert usa-alert--${variant} usa-alert--slim" role="status">
+        <div class="usa-alert__body">
+          <p class="usa-alert__text font-sans-2xs">${msg}</p>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderUserSecurityStatus(u: UsuarioPerfilDTO) {
+    currentUserEmail = u.email || '';
+
+    if (segGoogleEmail) segGoogleEmail.textContent = u.email || '---';
+    if (segGoogleSub) {
+      segGoogleSub.textContent = u.google_linked
+        ? `Vinculado (${u.google_sub_masked || 'sub protegido'})`
+        : 'Pendiente de vinculación';
+    }
+    if (badgeGoogleLinked) {
+      badgeGoogleLinked.textContent = u.google_linked ? 'GOOGLE OIDC VINCULADA' : 'GOOGLE PENDIENTE';
+      badgeGoogleLinked.className = u.google_linked
+        ? 'usa-tag bg-success-dark text-white font-mono-3xs margin-right-1 margin-bottom-05'
+        : 'usa-tag bg-secondary-dark text-white font-mono-3xs margin-right-1 margin-bottom-05';
     }
 
-    renderizarCodigosRecuperacion();
+    const totpActive = Number(u.totp_enabled) === 1;
+    if (badgeEstadoMfa) {
+      badgeEstadoMfa.textContent = totpActive ? 'TOTP ACTIVO (AES-256-GCM)' : 'TOTP NO ENROLADO';
+      badgeEstadoMfa.className = totpActive
+        ? 'usa-tag bg-green text-white font-mono-3xs margin-right-1 margin-bottom-05'
+        : 'usa-tag bg-secondary-dark text-white font-mono-3xs margin-right-1 margin-bottom-05';
+    }
 
-    btnIniciarConfig?.addEventListener('click', () => {
-      abrirConfiguracionMFA();
+    if (segTotpEnrolledAt) {
+      segTotpEnrolledAt.textContent = u.totp_enrolled_at ? `${u.totp_enrolled_at} UTC` : 'No registrado';
+    }
+    if (segLastLogin) {
+      segLastLogin.textContent = u.last_login_at
+        ? `${u.last_login_at} UTC · IP ${u.last_login_ip || '---'}`
+        : 'Sesión actual activa';
+    }
+
+    const remaining = typeof u.recovery_codes_remaining === 'number' ? u.recovery_codes_remaining : 0;
+    if (badgeRecoveryRemaining) {
+      badgeRecoveryRemaining.textContent = `DISPONIBLES: ${remaining} / 8`;
+      badgeRecoveryRemaining.className = remaining <= 2
+        ? 'usa-tag bg-secondary-dark text-white font-mono-3xs'
+        : 'usa-tag bg-primary text-white font-mono-3xs';
+    }
+  }
+
+  function renderizarCodigosRecuperacion(codes: string[]) {
+    latestIssuedCodes = codes;
+    if (!gridCodigos || !panelNuevosCodigos) return;
+    gridCodigos.innerHTML = '';
+
+    codes.forEach((code, i) => {
+      const col = document.createElement('div');
+      col.className = 'tablet:grid-col-3 mobile-lg:grid-col-6 margin-bottom-1';
+      col.innerHTML = `
+        <div class="bg-base-lightest border-1px border-base-light padding-1 radius-sm display-flex flex-justify flex-align-center">
+          <span class="font-mono-3xs text-base-dark">#${i + 1}</span>
+          <code class="font-mono-xs text-bold text-ink">${code}</code>
+        </div>
+      `;
+      gridCodigos.appendChild(col);
     });
 
-    btnCerrarConfig?.addEventListener('click', () => {
-      if (panelConfig) panelConfig.hidden = true;
-    });
+    panelNuevosCodigos.hidden = false;
+  }
 
-    btnCopiarSecret?.addEventListener('click', () => {
-      if (inputSecretManual && inputSecretManual.value) {
-        navigator.clipboard.writeText(inputSecretManual.value.replace(/\s+/g, ''));
-        if (txtCopiado) {
-          txtCopiado.classList.remove('display-none');
-          setTimeout(() => txtCopiado.classList.add('display-none'), 3000);
-        }
-      }
-    });
+  function descargarCodigosTxt() {
+    if (latestIssuedCodes.length === 0) return;
+    const lines = [
+      '========================================================================',
+      '        SHA256.US — CÓDIGOS DE RECUPERACIÓN DE EMERGENCIA (MFA)',
+      '========================================================================',
+      `CUENTA GOOGLE AUTORIZADA: ${currentUserEmail || 'perito@sha256.us'}`,
+      `FECHA DE EMISIÓN UTC: ${new Date().toISOString()}`,
+      'ADVERTENCIA: Cada código es de un solo uso y se almacena hasheado con bcrypt.',
+      'Guarde este archivo en un medio cifrado o impresión física en bóveda.',
+      '------------------------------------------------------------------------',
+      ...latestIssuedCodes.map((c, i) => `Código #${i + 1}: ${c}`),
+      '========================================================================',
+    ].join('\n');
 
-    btnConfirmar?.addEventListener('click', async () => {
-      await confirmarActivacionMFA();
-    });
-
-    btnDescargarCodigos?.addEventListener('click', () => {
-      descargarCodigosTxt();
-    });
+    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
+    saveAs(blob, 'sha256us_codigos_recuperacion_mfa.txt');
   }
 
   async function abrirConfiguracionMFA() {
     if (!panelConfig) return;
     panelConfig.hidden = false;
+    if (msgVerif) msgVerif.hidden = true;
 
-    // Generar nuevo secreto criptográfico seguro de 160 bits (20 bytes)
-    secretoEnCurso = generarSecretoBase32(20);
-    sessionStorage.setItem(STORAGE_KEY_SECRET, secretoEnCurso);
-
-    if (inputSecretManual) {
-      // Formatear con espacios para lectura humana amigable (grupos de 4)
-      inputSecretManual.value = secretoEnCurso.match(/.{1,4}/g)?.join(' ') || secretoEnCurso;
+    const res = await phpApi.enrollMfaStart();
+    if (!res.ok || !res.data?.uri || !res.data?.secret) {
+      showGlobalAlert(res.error || 'No se pudo iniciar la reconfiguración de Google Authenticator.', 'error');
+      panelConfig.hidden = true;
+      return;
     }
 
-    const usuario = localStorage.getItem('usuario_email') || 'perito@sha256.us';
-    const uri = construirUriTotp(usuario, secretoEnCurso, 'SHA256.US');
+    if (inputSecretManual) {
+      inputSecretManual.value = res.data.secret.match(/.{1,4}/g)?.join(' ') || res.data.secret;
+    }
 
-    // Generar código QR SVG puramente local
     if (contenedorQr) {
       try {
-        const svgString = await QRCode.toString(uri, {
+        const svgString = await QRCode.toString(res.data.uri, {
           type: 'svg',
           errorCorrectionLevel: 'M',
           margin: 1,
           width: 200,
         });
         contenedorQr.innerHTML = svgString;
-      } catch (err) {
-        console.error('Error generando QR local:', err);
-        contenedorQr.innerHTML = '<p class="text-error font-body-3xs">Error al generar QR. Utilice la clave manual.</p>';
+      } catch {
+        contenedorQr.innerHTML = '<p class="text-error font-body-3xs">Error al generar QR local. Utilice la clave manual Base32.</p>';
       }
     }
 
@@ -337,83 +460,104 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     if (!inputCodigo || !msgVerif) return;
     const codigo = inputCodigo.value.trim();
 
-    if (!codigo || codigo.length !== 6) {
+    if (!/^\d{6}$/.test(codigo)) {
       msgVerif.hidden = false;
-      msgVerif.innerHTML = '<span class="text-error font-body-2xs text-bold">Ingrese los 6 dígitos del código TOTP.</span>';
+      msgVerif.innerHTML = '<span class="text-error font-body-2xs text-bold">Ingrese los 6 dígitos numéricos del código TOTP.</span>';
       return;
     }
 
-    const valido = await verificarTotpCode(secretoEnCurso, codigo, 1);
+    if (btnConfirmar) {
+      btnConfirmar.disabled = true;
+      btnConfirmar.textContent = 'Cifrando y guardando...';
+    }
 
-    if (valido) {
-      // Guardar secreto en storage
-      localStorage.setItem('fcco_totp_secret', secretoEnCurso);
-      sessionStorage.removeItem(STORAGE_KEY_SECRET);
-
-      msgVerif.hidden = false;
-      msgVerif.innerHTML = `
-        <div class="usa-alert usa-alert--success" role="status">
-          <div class="usa-alert__body">
-            <h3 class="usa-alert__heading">Google Authenticator Sincronizado Exitosamente</h3>
-            <p class="usa-alert__text">
-              El segundo factor de autenticación ha sido validado y activado para su cuenta de perito.
-            </p>
-          </div>
-        </div>
-      `;
-
-      setTimeout(() => {
+    try {
+      const res = await phpApi.enrollMfaConfirm(codigo);
+      if (res.status === 200 && res.ok) {
+        if (res.data?.user) {
+          sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+          renderUserSecurityStatus(res.data.user);
+        }
+        if (Array.isArray(res.data?.recovery_codes) && res.data.recovery_codes.length > 0) {
+          renderizarCodigosRecuperacion(res.data.recovery_codes);
+        }
+        showGlobalAlert('Google Authenticator reconfigurado, cifrado con AES-256-GCM y 8 códigos nuevos generados.', 'success');
         if (panelConfig) panelConfig.hidden = true;
-      }, 2500);
-    } else {
-      msgVerif.hidden = false;
-      msgVerif.innerHTML = `
-        <div class="usa-alert usa-alert--error" role="alert">
-          <div class="usa-alert__body">
-            <h3 class="usa-alert__heading">Código Incorrecto o Desfasado</h3>
-            <p class="usa-alert__text">
-              El código ingresado no coincide con el algoritmo temporal. Verifique la hora de su dispositivo e intente con el siguiente código de 30 segundos.
-            </p>
+      } else {
+        msgVerif.hidden = false;
+        msgVerif.innerHTML = `
+          <div class="usa-alert usa-alert--error usa-alert--slim" role="alert">
+            <div class="usa-alert__body">
+              <p class="usa-alert__text font-body-2xs">${res.error || 'Código incorrecto o desfasado.'}</p>
+            </div>
           </div>
-        </div>
-      `;
+        `;
+      }
+    } finally {
+      if (btnConfirmar) {
+        btnConfirmar.disabled = false;
+        btnConfirmar.textContent = 'Confirmar y Activar';
+      }
     }
   }
 
-  function renderizarCodigosRecuperacion() {
-    if (!gridCodigos) return;
-    gridCodigos.innerHTML = '';
+  async function initSeguridad() {
+    const authRes = await phpApi.checkAuth();
+    if (authRes.status === 200 && authRes.ok && authRes.data?.user) {
+      renderUserSecurityStatus(authRes.data.user);
+    }
 
-    codigosRecuperacion.forEach((code, i) => {
-      const col = document.createElement('div');
-      col.className = 'tablet:grid-col-3 mobile-lg:grid-col-6 margin-bottom-1';
-      col.innerHTML = `
-        <div class="bg-base-lightest border-1px border-base-light padding-1 radius-sm display-flex flex-justify flex-align-center">
-          <span class="font-mono-3xs text-base-dark">#${i + 1}</span>
-          <code class="font-mono-xs text-bold text-ink">${code.substring(0, 4)}-${code.substring(4)}</code>
-        </div>
-      `;
-      gridCodigos.appendChild(col);
+    btnIniciarConfig?.addEventListener('click', abrirConfiguracionMFA);
+    btnCerrarConfig?.addEventListener('click', () => {
+      if (panelConfig) panelConfig.hidden = true;
     });
-  }
 
-  function descargarCodigosTxt() {
-    const usuario = localStorage.getItem('usuario_email') || 'perito@sha256.us';
-    const lines = [
-      '========================================================================',
-      '           SHA256.US — CÓDIGOS DE RECUPERACIÓN DE EMERGENCIA (MFA)',
-      '========================================================================',
-      `USUARIO: ${usuario}`,
-      `FECHA DE EMISIÓN: ${new Date().toISOString()}`,
-      'ADVERTENCIA: Cada código solo puede ser utilizado una única vez.',
-      'Guarde este archivo en un lugar seguro (unidad cifrada o impresión física).',
-      '------------------------------------------------------------------------',
-      ...codigosRecuperacion.map((c, i) => `Código #${i + 1}: ${c.substring(0, 4)}-${c.substring(4)}`),
-      '========================================================================',
-    ].join('\n');
+    btnCopiarSecret?.addEventListener('click', async () => {
+      if (inputSecretManual?.value) {
+        await navigator.clipboard.writeText(inputSecretManual.value.replace(/\s+/g, ''));
+        if (txtCopiado) {
+          txtCopiado.classList.remove('display-none');
+          setTimeout(() => txtCopiado.classList.add('display-none'), 3000);
+        }
+      }
+    });
 
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
-    saveAs(blob, 'sha256us_codigos_recuperacion_mfa.txt');
+    btnConfirmar?.addEventListener('click', confirmarActivacionMFA);
+
+    formRegenerar?.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const totpCode = (inputRegenTotp?.value || '').trim();
+      if (!/^\d{6}$/.test(totpCode)) {
+        showGlobalAlert('Ingrese un código actual válido de 6 dígitos de Google Authenticator.', 'error');
+        return;
+      }
+
+      if (btnRegenerar) btnRegenerar.disabled = true;
+      try {
+        const res = await phpApi.regenerateRecoveryCodes(totpCode);
+        if (res.status === 200 && res.ok && Array.isArray(res.data?.recovery_codes)) {
+          if (inputRegenTotp) inputRegenTotp.value = '';
+          renderizarCodigosRecuperacion(res.data.recovery_codes);
+          if (res.data.user) {
+            sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+            renderUserSecurityStatus(res.data.user);
+          }
+          showGlobalAlert('Se generaron 8 nuevos códigos de respaldo bcrypt. Los códigos anteriores fueron revocados y el evento quedó auditado.', 'success');
+        } else {
+          showGlobalAlert(res.error || 'No se pudieron regenerar los códigos de respaldo.', 'error');
+        }
+      } finally {
+        if (btnRegenerar) btnRegenerar.disabled = false;
+      }
+    });
+
+    btnDescargarCodigos?.addEventListener('click', descargarCodigosTxt);
+    btnCopiarCodigos?.addEventListener('click', async () => {
+      if (latestIssuedCodes.length > 0) {
+        await navigator.clipboard.writeText(latestIssuedCodes.join('\n'));
+        showGlobalAlert('Los 8 códigos de respaldo fueron copiados al portapapeles.', 'info');
+      }
+    });
   }
 
   if (typeof window !== 'undefined') {
