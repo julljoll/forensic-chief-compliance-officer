@@ -15,6 +15,17 @@ class Database
 {
     private static ?PDO $instance = null;
 
+    /**
+     * Inyección de conexión PDO exclusiva para pruebas unitarias en PHP CLI.
+     */
+    public static function setConnectionForTesting(?PDO $pdo): void
+    {
+        if (PHP_SAPI !== 'cli') {
+            throw new \RuntimeException('setConnectionForTesting solo está permitido en CLI');
+        }
+        self::$instance = $pdo;
+    }
+
     public static function getConnection(): PDO
     {
         if (self::$instance === null) {
@@ -56,21 +67,25 @@ class Database
     }
 
     /**
-     * Garantiza que las tablas, columnas MFA y usuarios oficiales existan en la base de datos de cPanel.
+     * Garantiza que las tablas, columnas Google OIDC / MFA AES-256-GCM y usuarios oficiales existan en cPanel.
      */
     private static function ensureSchema(PDO $pdo): void
     {
         try {
-            // 1. Tabla usuarios
+            // 1. Tabla usuarios (Google OIDC + TOTP RFC 6238, sin contraseñas locales activas)
             $pdo->exec("
                 CREATE TABLE IF NOT EXISTS `usuarios` (
                   `id` VARCHAR(64) NOT NULL,
                   `email` VARCHAR(191) NOT NULL,
-                  `password_hash` VARCHAR(255) NOT NULL,
-                  `totp_secret` VARCHAR(64) DEFAULT NULL,
+                  `google_sub` VARCHAR(64) DEFAULT NULL,
+                  `password_hash` VARCHAR(255) NOT NULL DEFAULT '!DISABLED_GOOGLE_OIDC_ONLY!',
+                  `totp_secret` VARCHAR(255) DEFAULT NULL,
                   `totp_enabled` TINYINT(1) NOT NULL DEFAULT 0,
-                  `totp_last_used_slice` BIGINT NULL DEFAULT NULL,
+                  `totp_enrolled_at` DATETIME DEFAULT NULL,
+                  `totp_last_step` BIGINT NULL DEFAULT NULL,
                   `totp_recovery_hashes` TEXT NULL DEFAULT NULL,
+                  `last_login_at` DATETIME DEFAULT NULL,
+                  `last_login_ip` VARCHAR(45) DEFAULT NULL,
                   `nombre` VARCHAR(150) NOT NULL,
                   `apellido` VARCHAR(150) NOT NULL DEFAULT '',
                   `ci` VARCHAR(32) NOT NULL DEFAULT '',
@@ -87,25 +102,57 @@ class Database
                   `creado_en` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
                   `actualizado_en` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                   PRIMARY KEY (`id`),
-                  UNIQUE KEY `uk_usuarios_email` (`email`)
+                  UNIQUE KEY `uk_usuarios_email` (`email`),
+                  UNIQUE KEY `uk_usuarios_google_sub` (`google_sub`)
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // Verificar columnas adicionales de MFA y Perfil por si la tabla fue creada con una versión anterior
+            // Verificar columnas adicionales de Google OIDC, MFA y Perfil en instalaciones existentes
             $colsStmt = $pdo->query("SHOW COLUMNS FROM `usuarios`");
-            $existingCols = $colsStmt ? array_column($colsStmt->fetchAll(), 'Field') : [];
+            $colsRows = $colsStmt ? $colsStmt->fetchAll() : [];
+            $existingCols = array_column($colsRows, 'Field');
 
-            if (!in_array('totp_secret', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_secret` VARCHAR(64) DEFAULT NULL AFTER `password_hash`");
+            if (!in_array('google_sub', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `google_sub` VARCHAR(64) DEFAULT NULL AFTER `email`");
             }
+
+            // Verificar índice único en google_sub
+            $idxStmt = $pdo->query("SHOW INDEX FROM `usuarios` WHERE Key_name = 'uk_usuarios_google_sub'");
+            if (!$idxStmt || !$idxStmt->fetch()) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD UNIQUE KEY `uk_usuarios_google_sub` (`google_sub`)");
+            }
+
+            // Ampliar totp_secret a VARCHAR(255) para AES-256-GCM si era más corto
+            if (!in_array('totp_secret', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_secret` VARCHAR(255) DEFAULT NULL AFTER `password_hash`");
+            } else {
+                foreach ($colsRows as $colInfo) {
+                    if (($colInfo['Field'] ?? '') === 'totp_secret' && stripos((string)($colInfo['Type'] ?? ''), 'varchar(64)') !== false) {
+                        $pdo->exec("ALTER TABLE `usuarios` MODIFY COLUMN `totp_secret` VARCHAR(255) DEFAULT NULL");
+                    }
+                }
+            }
+
             if (!in_array('totp_enabled', $existingCols, true)) {
                 $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_enabled` TINYINT(1) NOT NULL DEFAULT 0 AFTER `totp_secret`");
             }
-            if (!in_array('totp_last_used_slice', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_last_used_slice` BIGINT NULL DEFAULT NULL AFTER `totp_enabled`");
+            if (!in_array('totp_enrolled_at', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_enrolled_at` DATETIME DEFAULT NULL AFTER `totp_enabled`");
+            }
+            if (!in_array('totp_last_step', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_last_step` BIGINT NULL DEFAULT NULL AFTER `totp_enrolled_at`");
+                if (in_array('totp_last_used_slice', $existingCols, true)) {
+                    $pdo->exec("UPDATE `usuarios` SET `totp_last_step` = `totp_last_used_slice` WHERE `totp_last_step` IS NULL AND `totp_last_used_slice` IS NOT NULL");
+                }
             }
             if (!in_array('totp_recovery_hashes', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_recovery_hashes` TEXT NULL DEFAULT NULL AFTER `totp_last_used_slice`");
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_recovery_hashes` TEXT NULL DEFAULT NULL AFTER `totp_last_step`");
+            }
+            if (!in_array('last_login_at', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `last_login_at` DATETIME DEFAULT NULL AFTER `totp_recovery_hashes`");
+            }
+            if (!in_array('last_login_ip', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `last_login_ip` VARCHAR(45) DEFAULT NULL AFTER `last_login_at`");
             }
             if (!in_array('direccion', $existingCols, true)) {
                 $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `direccion` VARCHAR(255) NOT NULL DEFAULT '' AFTER `telefono`");
@@ -169,14 +216,15 @@ class Database
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // 3. Semilla idempotente de usuarios oficiales si no existen
+            // 3. Semilla idempotente de usuarios oficiales (sin contraseñas locales utilizables)
             $pdo->exec("
-                INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `totp_enabled`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
+                INSERT INTO `usuarios` (`id`, `email`, `google_sub`, `password_hash`, `totp_secret`, `totp_enabled`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
                 VALUES
                 (
                   'usr-jull-01',
                   'julljoll@gmail.com',
-                  '\$2y\$10\$rpiUdT4xp.mZyY9ru8Bf4u0pMTGcewPNUroJ0DFs9VBZ061oRK3wm',
+                  NULL,
+                  '!DISABLED_GOOGLE_OIDC_ONLY!',
                   NULL,
                   0,
                   'Jull',
@@ -194,7 +242,8 @@ class Database
                 (
                   'usr-sha256-02',
                   'sha256.us@gmail.com',
-                  '\$2y\$10\$DsXjrM8atz4tFHyraR1Od.HZL7kvcaBuNSm0SLvm5rhEvQ8xnto3i',
+                  NULL,
+                  '!DISABLED_GOOGLE_OIDC_ONLY!',
                   NULL,
                   0,
                   'SHA256',
@@ -210,7 +259,7 @@ class Database
                   1
                 )
                 ON DUPLICATE KEY UPDATE
-                  `password_hash` = VALUES(`password_hash`),
+                  `password_hash` = '!DISABLED_GOOGLE_OIDC_ONLY!',
                   `activo` = 1;
             ");
         } catch (\Throwable $e) {
