@@ -7,15 +7,17 @@
 SET NAMES utf8mb4;
 SET FOREIGN_KEY_CHECKS = 0;
 
--- 1. Tabla de Usuarios y Peritos
+-- 1. Tabla de Usuarios y Peritos (Acceso sin Contraseña: OTP 6 Dígitos + Enlace Mágico por Correo)
 CREATE TABLE IF NOT EXISTS `usuarios` (
   `id` VARCHAR(64) NOT NULL,
   `email` VARCHAR(191) NOT NULL,
-  `password_hash` VARCHAR(255) NOT NULL,
-  `totp_secret` VARCHAR(64) DEFAULT NULL,
-  `totp_enabled` TINYINT(1) NOT NULL DEFAULT 1,
-  `totp_last_used_slice` BIGINT NULL DEFAULT NULL,
+  `password_hash` VARCHAR(255) NOT NULL DEFAULT '!DISABLED_EMAIL_OTP_ONLY!',
+  `totp_secret` VARCHAR(255) DEFAULT NULL,
+  `totp_enabled` TINYINT(1) NOT NULL DEFAULT 0,
+  `totp_last_step` BIGINT NULL DEFAULT NULL,
   `totp_recovery_hashes` TEXT NULL DEFAULT NULL,
+  `last_login_at` DATETIME DEFAULT NULL,
+  `last_login_ip` VARCHAR(45) DEFAULT NULL,
   `nombre` VARCHAR(150) NOT NULL,
   `apellido` VARCHAR(150) NOT NULL DEFAULT '',
   `ci` VARCHAR(32) NOT NULL DEFAULT '',
@@ -135,6 +137,25 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
   KEY `idx_usuario_intentos` (`usuario`, `intentado_en`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 6b. Tabla de Códigos OTP de 6 Dígitos y Enlaces Mágicos por Correo (Solo Hashes SHA-256, TTL 5 min, Uso Único)
+CREATE TABLE IF NOT EXISTS `email_otp_tokens` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `usuario_id` VARCHAR(64) NOT NULL,
+  `email` VARCHAR(191) NOT NULL,
+  `otp_hash` CHAR(64) NOT NULL COMMENT 'SHA-256 del código OTP de 6 dígitos',
+  `magic_token_hash` CHAR(64) NOT NULL COMMENT 'SHA-256 del token de enlace mágico de 256 bits',
+  `attempts` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `max_attempts` TINYINT UNSIGNED NOT NULL DEFAULT 5,
+  `ip_solicitud` VARCHAR(45) NOT NULL DEFAULT '',
+  `expires_at` DATETIME NOT NULL,
+  `consumed_at` DATETIME DEFAULT NULL,
+  `creado_en` DATETIME NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_email_otp_magic` (`magic_token_hash`),
+  KEY `idx_email_otp_email_exp` (`email`, `expires_at`),
+  KEY `idx_email_otp_usuario` (`usuario_id`, `creado_en`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- 7. Tabla de Planillas Emitidas con Sello QR Rojo, Barras Code-128 y Hash SHA-256
 CREATE TABLE IF NOT EXISTS `planillas_emitidas` (
   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -220,13 +241,13 @@ BEGIN
 END$$
 DELIMITER ;
 
--- 8. Usuarios Oficiales del Laboratorio Forense (Contraseñas cifradas con bcrypt y MFA RFC 6238)
+-- 8. Usuarios Oficiales del Laboratorio Forense (Acceso sin contraseña: OTP 6 Dígitos + Enlace Mágico por Correo)
 -- Usuario 1: Jull Joll — Perito Analizador de Datos Forenses
 INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `totp_enabled`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
 VALUES (
   'usr-jull-01',
   'julljoll@gmail.com',
-  '$2y$10$rpiUdT4xp.mZyY9ru8Bf4u0pMTGcewPNUroJ0DFs9VBZ061oRK3wm',
+  '!DISABLED_EMAIL_OTP_ONLY!',
   NULL,
   0,
   'Jull',
@@ -240,8 +261,8 @@ VALUES (
   'CIV-299410',
   'INPRE-184920',
   1
-) ON DUPLICATE KEY UPDATE 
-  `password_hash` = VALUES(`password_hash`),
+) ON DUPLICATE KEY UPDATE
+  `password_hash` = '!DISABLED_EMAIL_OTP_ONLY!',
   `cargo` = VALUES(`cargo`),
   `despacho` = VALUES(`despacho`),
   `activo` = 1;
@@ -251,7 +272,7 @@ INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `totp_ena
 VALUES (
   'usr-sha256-02',
   'sha256.us@gmail.com',
-  '$2y$10$DsXjrM8atz4tFHyraR1Od.HZL7kvcaBuNSm0SLvm5rhEvQ8xnto3i',
+  '!DISABLED_EMAIL_OTP_ONLY!',
   NULL,
   0,
   'SHA256',
@@ -265,10 +286,8 @@ VALUES (
   'CIV-310520',
   'INPRE-201450',
   1
-) ON DUPLICATE KEY UPDATE 
-  `password_hash` = VALUES(`password_hash`),
-  `totp_secret` = VALUES(`totp_secret`),
-  `totp_enabled` = VALUES(`totp_enabled`),
+) ON DUPLICATE KEY UPDATE
+  `password_hash` = '!DISABLED_EMAIL_OTP_ONLY!',
   `cargo` = VALUES(`cargo`),
   `despacho` = VALUES(`despacho`),
   `activo` = 1;

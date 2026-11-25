@@ -1,8 +1,12 @@
 ---
 /**
- * SHA256.US — Componente de Guarda de Sesión y Sincronización Cliente
- * Valida la autenticación contra el backend PHP y actualiza el estado del perito.
- * Bloquea de forma determinante cualquier acceso no autenticado a rutas protegidas.
+ * SHA256.US — Guarda de Sesión Fail-Closed Absoluto (Acceso por Código OTP / Enlace Mágico)
+ *
+ * REGLA INQUEBRANTABLE:
+ * Ningún contenido protegido puede revelarse sin una respuesta autoritativa
+ * HTTP 200 con `authenticated === true` y `user` válido desde `/api/auth.php`.
+ * Cualquier fallo de red, respuesta 401/403/5xx o excepción destruye las
+ * credenciales de cliente y redirige inmediatamente a `/?msg=sesion_requerida`.
  */
 ---
 <script>
@@ -25,6 +29,7 @@
   function redirectLogin() {
     sessionStorage.removeItem('fcco_auth_active');
     sessionStorage.removeItem('fcco_auth_user');
+    sessionStorage.removeItem('fcco_csrf_token');
     if (!isPublicPage()) {
       window.location.replace('/?msg=sesion_requerida');
     }
@@ -41,86 +46,77 @@
       return;
     }
 
-    // 1. Verificación instantánea en almacenamiento de sesión
-    const localActive = sessionStorage.getItem('fcco_auth_active');
-    if (localActive !== '1') {
-      redirectLogin();
-      return;
-    }
-
     try {
-      // 2. Limpieza de datos mock legacy en IndexedDB
-      const locales = await idbGetAll<CasoCMS>('casos');
-      for (const c of locales) {
-        if (c.id && c.id.startsWith('caso-mock-')) {
-          await idbDelete('casos', c.id);
-        }
-      }
-
-      // 3. Comprobar sesión autoritativa en API PHP
+      // 1. Verificación autoritativa obligatoria contra /api/auth.php (sin fallback offline)
       const authRes = await phpApi.checkAuth();
-      const isAuth = authRes.ok && authRes.data?.authenticated === true && !!authRes.data?.user;
+      const isAuth =
+        authRes.status === 200 &&
+        authRes.ok &&
+        authRes.data?.authenticated === true &&
+        !!authRes.data?.user;
 
       if (!isAuth) {
-        // Si el backend no confirma autenticación, denegar inmediatamente
         redirectLogin();
         return;
       }
 
-      // 4. Usuario autenticado y confirmado: revelar contenido y actualizar UI
+      // 2. Sesión confirmada por servidor (Google OIDC + TOTP verificado): hidratar UI y revelar contenido
+      const u = authRes.data!.user!;
       sessionStorage.setItem('fcco_auth_active', '1');
-      if (authRes.data?.user) {
-        sessionStorage.setItem('fcco_auth_user', JSON.stringify(authRes.data.user));
-        const u = authRes.data.user;
-        const fullName = [u.nombre, u.apellido].filter(Boolean).join(' ') || u.email;
-        const peritoStr = `Perito: ${fullName} (FCCO)`;
+      sessionStorage.setItem('fcco_auth_user', JSON.stringify(u));
 
-        const userEls = document.querySelectorAll('#user-name, #user-name-sidebar');
-        userEls.forEach((el) => {
-          el.textContent = peritoStr;
+      const fullName = [u.nombre, u.apellido].filter(Boolean).join(' ') || u.email;
+      const peritoStr = `Perito: ${fullName} (FCCO)`;
+
+      document.querySelectorAll('#user-name, #user-name-sidebar').forEach((el) => {
+        el.textContent = peritoStr;
+      });
+
+      if (u.civ) {
+        document.querySelectorAll('#user-civ-badge, #user-civ-badge-sidebar').forEach((el) => {
+          el.textContent = String(u.civ);
         });
+      }
 
-        if (u.civ) {
-          const civEls = document.querySelectorAll('#user-civ-badge, #user-civ-badge-sidebar');
-          civEls.forEach((el) => {
-            el.textContent = String(u.civ);
-          });
-        }
-
-        if (u.cargo) {
-          const cargoEl = document.getElementById('user-cargo-sidebar');
-          if (cargoEl) cargoEl.textContent = String(u.cargo);
-        }
+      if (u.cargo) {
+        const cargoEl = document.getElementById('user-cargo-sidebar');
+        if (cargoEl) cargoEl.textContent = String(u.cargo);
       }
 
       revealContent();
 
-      // 5. Sincronizar catálogo de casos en segundo plano
-      await phpApi.listarCasos();
-    } catch (e) {
-      console.warn('FCCO AuthGuard: Verificación de sesión offline:', e);
-      // En modo offline estricto: si no hay sesión activa local confirmada, expulsar
-      if (sessionStorage.getItem('fcco_auth_active') !== '1') {
-        redirectLogin();
-      } else {
-        revealContent();
+      // 3. Tareas secundarias de sincronización (aisladas para no alterar el estado de autenticación)
+      try {
+        const locales = await idbGetAll<CasoCMS>('casos');
+        for (const c of locales) {
+          if (c.id && c.id.startsWith('caso-mock-')) {
+            await idbDelete('casos', c.id);
+          }
+        }
+        await phpApi.listarCasos();
+      } catch {
+        // Sincronización de casos secundaria omitida sin comprometer sesión verificada
       }
+    } catch {
+      // Fail-closed absoluto: ante cualquier error de red o excepción, jamás revelar contenido
+      redirectLogin();
     }
   }
 
-  // Vincular botones de cerrar sesión
+  // Vincular botones de cerrar sesión (con token CSRF)
   function bindLogout() {
     const btns = document.querySelectorAll('#btn-logout, #btn-logout-sidebar, .btn-logout');
     btns.forEach((btn) => {
       btn.addEventListener('click', async (e) => {
         e.preventDefault();
-        sessionStorage.removeItem('fcco_auth_active');
-        sessionStorage.removeItem('fcco_auth_user');
         try {
           await phpApi.logout();
         } catch {
-          // continuar con redirección
+          // continuar con limpieza local y redirección
         }
+        sessionStorage.removeItem('fcco_auth_active');
+        sessionStorage.removeItem('fcco_auth_user');
+        sessionStorage.removeItem('fcco_csrf_token');
         window.location.replace('/?msg=sesion_cerrada');
       });
     });

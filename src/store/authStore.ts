@@ -1,10 +1,9 @@
 /**
- * SHA256.US — Store de Autenticación de Peritos y Compliance Officers.
- * Cumplimiento: NIST SP 800-63B (AAL2) · RFC 6238 TOTP · OWASP ASVS
- * Toda autenticación es delegada determinísticamente al backend PHP PDO (/api/auth.php).
+ * SHA256.US — Store de Autenticación sin Contraseña (Código OTP 6 Dígitos + Enlace Mágico por Correo)
+ * Toda validación es ejecutada por el backend PHP PDO (/api/auth.php) en modo fail-closed.
  */
 
-import { phpApi } from '../lib/data/phpApi';
+import { phpApi, type UsuarioPerfilDTO } from '../lib/data/phpApi';
 
 export interface User {
   id: string;
@@ -13,9 +12,12 @@ export interface User {
   apellido?: string;
   ci?: string;
   cargo?: string;
-  rol: 'admin' | 'perito_lider' | 'perito_asistente' | 'fiscal' | 'compliance_officer';
+  rol: 'admin' | 'perito_lider' | 'perito_asistente' | 'fiscal' | 'compliance_officer' | 'coordinador';
   organismo?: string;
   despacho?: string;
+  auth_method?: string;
+  last_login_at?: string | null;
+  last_login_ip?: string | null;
   profileImage?: string;
 }
 
@@ -25,13 +27,33 @@ export interface AuthState {
   csrfToken: string | null;
   error: string | null;
   isLoading: boolean;
-  needsMfa: boolean;
+  otpSent: boolean;
   pendingEmail: string | null;
 
-  login: (email: string, pass?: string, totpCode?: string) => Promise<boolean>;
+  hydrateSession: () => Promise<boolean>;
+  requestOtp: (email: string) => Promise<boolean>;
+  verifyOtp: (email: string, code: string) => Promise<boolean>;
+  verifyMagicLink: (token: string) => Promise<boolean>;
   logout: () => void;
   updateProfileImage: (b64: string) => void;
-  setNeedsMfa: (needed: boolean, email?: string) => void;
+  resetOtpStep: () => void;
+}
+
+function toStoreUser(dto: UsuarioPerfilDTO): User {
+  return {
+    id: dto.id,
+    email: dto.email,
+    nombre: dto.nombre,
+    apellido: dto.apellido,
+    ci: dto.ci,
+    cargo: dto.cargo,
+    rol: (dto.rol as User['rol']) || 'perito_lider',
+    organismo: dto.organismo,
+    despacho: dto.despacho,
+    auth_method: dto.auth_method,
+    last_login_at: dto.last_login_at,
+    last_login_ip: dto.last_login_ip,
+  };
 }
 
 let state: AuthState = {
@@ -40,26 +62,50 @@ let state: AuthState = {
   csrfToken: null,
   error: null,
   isLoading: false,
-  needsMfa: false,
+  otpSent: false,
   pendingEmail: null,
 
-  login: async (email: string, pass: string = '', totpCode: string = '') => {
-    const trimmedEmail = (email || '').trim().toLowerCase();
-    const trimmedPass = (pass || '').trim();
-    const trimmedTotp = (totpCode || '').trim();
+  hydrateSession: async () => {
+    state.isLoading = true;
+    state.error = null;
+    notify();
 
-    if (!trimmedEmail || !trimmedEmail.includes('@')) {
-      state.error = 'Ingrese un correo electrónico válido';
+    try {
+      const res = await phpApi.checkAuth();
+
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        state.isAuthenticated = true;
+        state.user = toStoreUser(res.data.user);
+        state.csrfToken = res.data.csrf_token || null;
+        state.otpSent = false;
+        state.pendingEmail = null;
+        state.error = null;
+        state.isLoading = false;
+        notify();
+        return true;
+      }
+
       state.isAuthenticated = false;
       state.user = null;
+      state.csrfToken = res.data?.csrf_token || null;
+      state.error = null;
+      state.isLoading = false;
+      notify();
+      return false;
+    } catch (err: any) {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = err?.message || 'Error al verificar la sesión pericial';
+      state.isLoading = false;
       notify();
       return false;
     }
+  },
 
-    if (!trimmedPass && !trimmedTotp) {
-      state.error = 'Ingrese la contraseña o el código de Google Authenticator';
-      state.isAuthenticated = false;
-      state.user = null;
+  requestOtp: async (email: string) => {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      state.error = 'Ingrese un correo electrónico válido';
       notify();
       return false;
     }
@@ -69,39 +115,115 @@ let state: AuthState = {
     notify();
 
     try {
-      const res = await phpApi.login(trimmedEmail, trimmedPass, trimmedTotp);
-
-      if (res.ok && res.data?.user) {
-        state.isAuthenticated = true;
-        state.user = res.data.user;
-        state.csrfToken = res.data.csrf_token || null;
+      const res = await phpApi.requestOtp(cleanEmail);
+      if (res.status === 200 && res.ok) {
+        state.otpSent = true;
+        state.pendingEmail = cleanEmail;
         state.error = null;
-        state.needsMfa = false;
-        state.pendingEmail = null;
         state.isLoading = false;
         notify();
         return true;
       }
 
-      if (res.data?.needs_mfa || res.data?.requires_totp) {
-        state.needsMfa = true;
-        state.pendingEmail = trimmedEmail;
-        state.error = null;
-        state.isLoading = false;
-        notify();
-        return false;
-      }
-
-      state.error = res.error || 'Credenciales no autorizadas o código 2FA erróneo';
-      state.isAuthenticated = false;
-      state.user = null;
+      state.otpSent = false;
+      state.error = res.error || 'No se pudo enviar el código de acceso';
       state.isLoading = false;
       notify();
       return false;
     } catch (err: any) {
-      state.error = err?.message || 'Error al conectar con el servidor de autenticación';
+      state.otpSent = false;
+      state.error = err?.message || 'Error de conexión al solicitar código';
+      state.isLoading = false;
+      notify();
+      return false;
+    }
+  },
+
+  verifyOtp: async (email: string, code: string) => {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanCode = (code || '').replace(/\s+/g, '');
+
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      state.error = 'Correo electrónico inválido';
+      notify();
+      return false;
+    }
+    if (!/^\d{6}$/.test(cleanCode)) {
+      state.error = 'Ingrese el código de 6 dígitos enviado a su correo';
+      notify();
+      return false;
+    }
+
+    state.isLoading = true;
+    state.error = null;
+    notify();
+
+    try {
+      const res = await phpApi.verifyOtp(cleanEmail, cleanCode);
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        state.isAuthenticated = true;
+        state.user = toStoreUser(res.data.user);
+        state.csrfToken = res.data.csrf_token || state.csrfToken;
+        state.otpSent = false;
+        state.pendingEmail = null;
+        state.error = null;
+        state.isLoading = false;
+        notify();
+        return true;
+      }
+
       state.isAuthenticated = false;
       state.user = null;
+      state.error = res.error || 'Código de 6 dígitos incorrecto o expirado';
+      state.isLoading = false;
+      notify();
+      return false;
+    } catch (err: any) {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = err?.message || 'Error de conexión al verificar el código';
+      state.isLoading = false;
+      notify();
+      return false;
+    }
+  },
+
+  verifyMagicLink: async (token: string) => {
+    const cleanToken = (token || '').trim().toLowerCase();
+    if (!/^[a-f0-9]{64}$/.test(cleanToken)) {
+      state.error = 'El enlace mágico es inválido o está incompleto';
+      notify();
+      return false;
+    }
+
+    state.isLoading = true;
+    state.error = null;
+    notify();
+
+    try {
+      const res = await phpApi.verifyMagicLink(cleanToken);
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        state.isAuthenticated = true;
+        state.user = toStoreUser(res.data.user);
+        state.csrfToken = res.data.csrf_token || state.csrfToken;
+        state.otpSent = false;
+        state.pendingEmail = null;
+        state.error = null;
+        state.isLoading = false;
+        notify();
+        return true;
+      }
+
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = res.error || 'El enlace mágico expiró o ya fue utilizado';
+      state.isLoading = false;
+      notify();
+      return false;
+    } catch (err: any) {
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = err?.message || 'Error de conexión al validar el enlace mágico';
       state.isLoading = false;
       notify();
       return false;
@@ -113,7 +235,7 @@ let state: AuthState = {
     state.user = null;
     state.csrfToken = null;
     state.error = null;
-    state.needsMfa = false;
+    state.otpSent = false;
     state.pendingEmail = null;
     phpApi.logout().catch(() => {});
     notify();
@@ -126,9 +248,10 @@ let state: AuthState = {
     }
   },
 
-  setNeedsMfa: (needed: boolean, email?: string) => {
-    state.needsMfa = needed;
-    state.pendingEmail = email || null;
+  resetOtpStep: () => {
+    state.otpSent = false;
+    state.pendingEmail = null;
+    state.error = null;
     notify();
   },
 };

@@ -1,7 +1,8 @@
 <?php
 /**
  * SHA256.US — Conexión y Gestión de Base de Datos PDO (MySQL).
- * Cumplimiento: OWASP ASVS · ISO/IEC 27001 (Prevención de fuga de información de depuración).
+ * Auto-crea de forma idempotente las tablas necesarias (incluyendo `email_otp_tokens`)
+ * para un despliegue inmediato en cPanel sin migraciones manuales obligatorias.
  */
 
 declare(strict_types=1);
@@ -14,6 +15,17 @@ use PDOException;
 class Database
 {
     private static ?PDO $instance = null;
+
+    /**
+     * Inyección de conexión PDO exclusiva para pruebas unitarias en PHP CLI.
+     */
+    public static function setConnectionForTesting(?PDO $pdo): void
+    {
+        if (PHP_SAPI !== 'cli') {
+            throw new \RuntimeException('setConnectionForTesting solo está permitido en CLI');
+        }
+        self::$instance = $pdo;
+    }
 
     public static function getConnection(): PDO
     {
@@ -39,7 +51,6 @@ class Database
                 self::$instance = new PDO($dsn, $dbCfg['username'], $dbCfg['password'], $options);
                 self::ensureSchema(self::$instance);
             } catch (PDOException $e) {
-                // Registrar detalle internamente en el log del servidor web sin exponer credenciales
                 error_log('[FCCO DB Error] ' . $e->getMessage());
 
                 http_response_code(503);
@@ -56,21 +67,23 @@ class Database
     }
 
     /**
-     * Garantiza que las tablas, columnas MFA y usuarios oficiales existan en la base de datos de cPanel.
+     * Garantiza que las tablas de acceso Email OTP, auditoría y usuarios oficiales existan en cPanel.
      */
     private static function ensureSchema(PDO $pdo): void
     {
         try {
-            // 1. Tabla usuarios
+            // 1. Tabla usuarios (sin contraseñas locales utilizables)
             $pdo->exec("
                 CREATE TABLE IF NOT EXISTS `usuarios` (
                   `id` VARCHAR(64) NOT NULL,
                   `email` VARCHAR(191) NOT NULL,
-                  `password_hash` VARCHAR(255) NOT NULL,
-                  `totp_secret` VARCHAR(64) DEFAULT NULL,
+                  `password_hash` VARCHAR(255) NOT NULL DEFAULT '!DISABLED_EMAIL_OTP_ONLY!',
+                  `totp_secret` VARCHAR(255) DEFAULT NULL,
                   `totp_enabled` TINYINT(1) NOT NULL DEFAULT 0,
-                  `totp_last_used_slice` BIGINT NULL DEFAULT NULL,
+                  `totp_last_step` BIGINT NULL DEFAULT NULL,
                   `totp_recovery_hashes` TEXT NULL DEFAULT NULL,
+                  `last_login_at` DATETIME DEFAULT NULL,
+                  `last_login_ip` VARCHAR(45) DEFAULT NULL,
                   `nombre` VARCHAR(150) NOT NULL,
                   `apellido` VARCHAR(150) NOT NULL DEFAULT '',
                   `ci` VARCHAR(32) NOT NULL DEFAULT '',
@@ -91,21 +104,14 @@ class Database
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // Verificar columnas adicionales de MFA y Perfil por si la tabla fue creada con una versión anterior
             $colsStmt = $pdo->query("SHOW COLUMNS FROM `usuarios`");
             $existingCols = $colsStmt ? array_column($colsStmt->fetchAll(), 'Field') : [];
 
-            if (!in_array('totp_secret', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_secret` VARCHAR(64) DEFAULT NULL AFTER `password_hash`");
+            if (!in_array('last_login_at', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `last_login_at` DATETIME DEFAULT NULL");
             }
-            if (!in_array('totp_enabled', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_enabled` TINYINT(1) NOT NULL DEFAULT 0 AFTER `totp_secret`");
-            }
-            if (!in_array('totp_last_used_slice', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_last_used_slice` BIGINT NULL DEFAULT NULL AFTER `totp_enabled`");
-            }
-            if (!in_array('totp_recovery_hashes', $existingCols, true)) {
-                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `totp_recovery_hashes` TEXT NULL DEFAULT NULL AFTER `totp_last_used_slice`");
+            if (!in_array('last_login_ip', $existingCols, true)) {
+                $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `last_login_ip` VARCHAR(45) DEFAULT NULL");
             }
             if (!in_array('direccion', $existingCols, true)) {
                 $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `direccion` VARCHAR(255) NOT NULL DEFAULT '' AFTER `telefono`");
@@ -114,7 +120,7 @@ class Database
                 $pdo->exec("ALTER TABLE `usuarios` ADD COLUMN `especialidad` VARCHAR(180) NOT NULL DEFAULT 'Informática Forense y Evidencia Digital' AFTER `direccion`");
             }
 
-            // 2. Tabla login_attempts
+            // 2. Tabla login_attempts (Rate Limiting)
             $pdo->exec("
                 CREATE TABLE IF NOT EXISTS `login_attempts` (
                   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -128,7 +134,28 @@ class Database
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // 2b. Tabla planillas_emitidas (Sellado QR Rojo, Barras Code-128 y SHA-256)
+            // 2b. Tabla email_otp_tokens (Códigos OTP de 6 dígitos + Enlaces Mágicos por Correo)
+            $pdo->exec("
+                CREATE TABLE IF NOT EXISTS `email_otp_tokens` (
+                  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                  `usuario_id` VARCHAR(64) NOT NULL,
+                  `email` VARCHAR(191) NOT NULL,
+                  `otp_hash` CHAR(64) NOT NULL,
+                  `magic_token_hash` CHAR(64) NOT NULL,
+                  `attempts` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+                  `max_attempts` TINYINT UNSIGNED NOT NULL DEFAULT 5,
+                  `ip_solicitud` VARCHAR(45) NOT NULL DEFAULT '',
+                  `expires_at` DATETIME NOT NULL,
+                  `consumed_at` DATETIME DEFAULT NULL,
+                  `creado_en` DATETIME NOT NULL,
+                  PRIMARY KEY (`id`),
+                  UNIQUE KEY `uk_email_otp_magic` (`magic_token_hash`),
+                  KEY `idx_email_otp_email_exp` (`email`, `expires_at`),
+                  KEY `idx_email_otp_usuario` (`usuario_id`, `creado_en`)
+                ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+
+            // 2c. Tabla planillas_emitidas
             $pdo->exec("
                 CREATE TABLE IF NOT EXISTS `planillas_emitidas` (
                   `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -169,14 +196,14 @@ class Database
                 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
             ");
 
-            // 3. Semilla idempotente de usuarios oficiales si no existen
+            // 3. Semilla idempotente de los 2 peritos oficiales (sin contraseñas locales)
             $pdo->exec("
                 INSERT INTO `usuarios` (`id`, `email`, `password_hash`, `totp_secret`, `totp_enabled`, `nombre`, `apellido`, `ci`, `cargo`, `rol`, `organismo`, `despacho`, `telefono`, `civ`, `inpre`, `activo`)
                 VALUES
                 (
                   'usr-jull-01',
                   'julljoll@gmail.com',
-                  '\$2y\$10\$rpiUdT4xp.mZyY9ru8Bf4u0pMTGcewPNUroJ0DFs9VBZ061oRK3wm',
+                  '!DISABLED_EMAIL_OTP_ONLY!',
                   NULL,
                   0,
                   'Jull',
@@ -194,7 +221,7 @@ class Database
                 (
                   'usr-sha256-02',
                   'sha256.us@gmail.com',
-                  '\$2y\$10\$DsXjrM8atz4tFHyraR1Od.HZL7kvcaBuNSm0SLvm5rhEvQ8xnto3i',
+                  '!DISABLED_EMAIL_OTP_ONLY!',
                   NULL,
                   0,
                   'SHA256',
@@ -210,7 +237,7 @@ class Database
                   1
                 )
                 ON DUPLICATE KEY UPDATE
-                  `password_hash` = VALUES(`password_hash`),
+                  `password_hash` = '!DISABLED_EMAIL_OTP_ONLY!',
                   `activo` = 1;
             ");
         } catch (\Throwable $e) {

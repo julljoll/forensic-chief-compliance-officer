@@ -11,7 +11,10 @@ require_once __DIR__ . '/api/lib/auth.php';
 
 use Sha256\Auth\Session;
 
-// 1. Verificar sesión activa de perito en PHP
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+header('Pragma: no-cache');
+
+// 1. Verificar sesión activa de perito en PHP (Código OTP 6 dígitos o Enlace Mágico verificado)
 $user = Session::getUser();
 if (!$user) {
     // Si no está autenticado, redirigir inmediatamente a la página de login con 302

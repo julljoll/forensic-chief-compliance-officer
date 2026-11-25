@@ -1,6 +1,9 @@
 /**
- * SHA256.US — Cliente de API REST PHP con Respaldo Offline (IndexedDB).
- * Se conecta a los endpoints en /api/*.php y almacena en caché local.
+ * SHA256.US — Cliente de API REST PHP con Protección CSRF Global (X-CSRF-Token)
+ * y Acceso sin Contraseña por Código OTP de 6 Dígitos + Enlace Mágico por Correo.
+ *
+ * IMPORTANTE: La verificación de sesión (`checkAuth`) es estrictamente fail-closed
+ * sin fallback offline.
  */
 
 import { idbGet, idbPut, idbGetAll } from './idb';
@@ -11,30 +14,10 @@ const API_BASE = '/api';
 
 export interface ApiResponse<T> {
   ok: boolean;
+  status?: number;
   data?: T;
   error?: string;
   offline?: boolean;
-}
-
-async function request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
-  try {
-    const res = await fetch(`${API_BASE}${endpoint}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...(options.headers || {}),
-      },
-      credentials: 'same-origin',
-    });
-
-    const json = await res.json().catch(() => null);
-    if (!res.ok) {
-      return { ok: false, error: json?.error || `HTTP ${res.status}`, data: json };
-    }
-    return { ok: true, data: json };
-  } catch (err) {
-    return { ok: false, error: err instanceof Error ? err.message : 'Error de red', offline: true };
-  }
 }
 
 export type ModalidadFirmaPlanilla = 'adobe_electronica' | 'manual_autografa' | 'hibrida';
@@ -103,6 +86,80 @@ export interface EmitirPlanillaPayload {
   modalidadFirma: ModalidadFirmaPlanilla;
 }
 
+export interface UsuarioPerfilDTO {
+  id: string;
+  email: string;
+  nombre: string;
+  apellido: string;
+  ci: string;
+  cargo: string;
+  rol: string;
+  organismo: string;
+  despacho: string;
+  telefono: string;
+  direccion: string;
+  especialidad: string;
+  civ: string;
+  inpre: string;
+  auth_method?: string;
+  last_login_at?: string | null;
+  last_login_ip?: string | null;
+  activo?: number;
+  actualizado_en?: string;
+}
+
+export interface ActualizarPerfilPayload {
+  nombre: string;
+  apellido: string;
+  ci: string;
+  cargo: string;
+  organismo: string;
+  despacho: string;
+  telefono: string;
+  direccion: string;
+  especialidad: string;
+  civ: string;
+  inpre: string;
+}
+
+export interface AuthStatusDTO {
+  ok: boolean;
+  authenticated: boolean;
+  auth_method?: string;
+  mail_driver?: string;
+  password_login_enabled: boolean;
+  user: UsuarioPerfilDTO | null;
+  csrf_token?: string;
+  error?: string;
+}
+
+export interface RequestOtpResponseDTO {
+  ok: boolean;
+  email?: string;
+  expires_in?: number;
+  cooldown?: number;
+  retry_after?: number;
+  message?: string;
+  error?: string;
+}
+
+export interface VerifyAuthResponseDTO {
+  ok: boolean;
+  authenticated?: boolean;
+  auth_method?: string;
+  reason?: string;
+  user?: UsuarioPerfilDTO;
+  csrf_token?: string;
+  error?: string;
+}
+
+export interface SendTestEmailDTO {
+  ok: boolean;
+  mail_driver?: string;
+  message?: string;
+  error?: string;
+}
+
 let cachedCsrfToken: string | null = null;
 
 function readStoredCsrf(): string | null {
@@ -125,10 +182,56 @@ function storeCsrf(token?: string | null): void {
   }
 }
 
+function clearCsrf(): void {
+  cachedCsrfToken = null;
+  if (typeof window !== 'undefined') {
+    sessionStorage.removeItem('fcco_csrf_token');
+  }
+}
+
+async function rawRequest<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  try {
+    const res = await fetch(`${API_BASE}${endpoint}`, {
+      ...options,
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.headers || {}),
+      },
+      credentials: 'same-origin',
+      cache: 'no-store',
+    });
+
+    const json = await res.json().catch(() => null);
+    if (json && typeof json === 'object' && 'csrf_token' in json && typeof json.csrf_token === 'string') {
+      storeCsrf(json.csrf_token);
+    }
+
+    if (!res.ok) {
+      if (res.status === 403) {
+        clearCsrf();
+      }
+      return {
+        ok: false,
+        status: res.status,
+        error: json?.error || `HTTP ${res.status}`,
+        data: json,
+      };
+    }
+    return { ok: true, status: res.status, data: json };
+  } catch (err) {
+    return {
+      ok: false,
+      status: 0,
+      error: err instanceof Error ? err.message : 'Error de red',
+      offline: true,
+    };
+  }
+}
+
 async function ensureCsrfToken(): Promise<string | null> {
   const current = readStoredCsrf();
   if (current) return current;
-  const authRes = await request<{ csrf_token?: string }>('/auth.php', { method: 'GET' });
+  const authRes = await rawRequest<AuthStatusDTO>('/auth.php', { method: 'GET' });
   if (authRes.data?.csrf_token) {
     storeCsrf(authRes.data.csrf_token);
     return authRes.data.csrf_token;
@@ -136,18 +239,38 @@ async function ensureCsrfToken(): Promise<string | null> {
   return null;
 }
 
+async function request<T>(endpoint: string, options: RequestInit = {}): Promise<ApiResponse<T>> {
+  const method = (options.method || 'GET').toUpperCase();
+  const isMutating = method === 'POST' || method === 'PUT' || method === 'DELETE' || method === 'PATCH';
+
+  if (isMutating) {
+    const headersObj = new Headers(options.headers || {});
+    if (!headersObj.has('X-CSRF-Token')) {
+      const csrf = await ensureCsrfToken();
+      if (csrf) {
+        headersObj.set('X-CSRF-Token', csrf);
+      }
+    }
+    const mergedHeaders: Record<string, string> = {};
+    headersObj.forEach((v, k) => {
+      mergedHeaders[k] = v;
+    });
+    return rawRequest<T>(endpoint, { ...options, headers: mergedHeaders });
+  }
+
+  return rawRequest<T>(endpoint, options);
+}
+
 export const phpApi = {
   // ── Casos ──
   async listarCasos(): Promise<CasoCMS[]> {
     const res = await request<{ casos: CasoCMS[] }>('/casos.php');
     if (res.ok && res.data?.casos) {
-      // Actualizar caché IndexedDB
       for (const c of res.data.casos) {
         await idbPut('casos', c);
       }
       return res.data.casos;
     }
-    // Fallback offline
     return idbGetAll<CasoCMS>('casos');
   },
 
@@ -173,7 +296,6 @@ export const phpApi = {
       return { ok: true, version: nuevo.version };
     }
 
-    // Si falló por offline, guardar localmente con bandera de sincronización pendiente
     if (res.offline) {
       await idbPut('casos', caso);
       return { ok: true, version: caso.version, error: 'Guardado en modo offline' };
@@ -190,7 +312,14 @@ export const phpApi = {
     });
   },
 
-  async avanzarEtapa(opts: { casoId: string; fase?: string; faseOrigen?: string; etapa?: string; peritoActor?: string; controles?: Record<string, any> }): Promise<ApiResponse<any> & { hash?: string }> {
+  async avanzarEtapa(opts: {
+    casoId: string;
+    fase?: string;
+    faseOrigen?: string;
+    etapa?: string;
+    peritoActor?: string;
+    controles?: Record<string, any>;
+  }): Promise<ApiResponse<any> & { hash?: string }> {
     const res = await request<any>('/avanzar-etapa.php', {
       method: 'POST',
       body: JSON.stringify({
@@ -217,7 +346,14 @@ export const phpApi = {
     return this.listarAuditoria(casoId);
   },
 
-  async verificarCadenaAuditoria(): Promise<{ valida: boolean; total: number; motivo?: string; integra?: boolean; totalEntradas?: number; error?: string }> {
+  async verificarCadenaAuditoria(): Promise<{
+    valida: boolean;
+    total: number;
+    motivo?: string;
+    integra?: boolean;
+    totalEntradas?: number;
+    error?: string;
+  }> {
     const res = await request<any>('/auditoria.php?verificar=1');
     if (res.ok && res.data) {
       return {
@@ -229,21 +365,33 @@ export const phpApi = {
         error: res.data.error ?? res.data.motivo,
       };
     }
-    return { valida: false, total: 0, motivo: res.error || 'No se pudo conectar con el servidor', integra: false, totalEntradas: 0, error: res.error };
+    return {
+      valida: false,
+      total: 0,
+      motivo: res.error || 'No se pudo conectar con el servidor',
+      integra: false,
+      totalEntradas: 0,
+      error: res.error,
+    };
   },
 
-  async verificarAuditoria(): Promise<{ valida: boolean; total: number; motivo?: string; integra?: boolean; totalEntradas?: number; error?: string }> {
+  async verificarAuditoria(): Promise<{
+    valida: boolean;
+    total: number;
+    motivo?: string;
+    integra?: boolean;
+    totalEntradas?: number;
+    error?: string;
+  }> {
     return this.verificarCadenaAuditoria();
   },
 
-  // ── Planillas Emitidas (QR Rojo + Code-128 + SHA-256 en cPanel) ──
+  // ── Planillas Emitidas ──
   async emitirPlanilla(
     payload: EmitirPlanillaPayload
   ): Promise<ApiResponse<{ ok: boolean; qrUrl: string; planilla: PlanillaEmitidaDTO }>> {
-    const csrf = await ensureCsrfToken();
     return request('/planillas-emitidas.php', {
       method: 'POST',
-      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
       body: JSON.stringify(payload),
     });
   },
@@ -252,10 +400,8 @@ export const phpApi = {
     codigoPlanilla: string,
     hashPdfSha256: string
   ): Promise<ApiResponse<{ ok: boolean; codigoPlanilla: string; hashPdfSha256: string; actualizado: boolean }>> {
-    const csrf = await ensureCsrfToken();
     return request('/planillas-emitidas.php', {
       method: 'PUT',
-      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
       body: JSON.stringify({
         action: 'fijar_hash_pdf',
         codigoPlanilla,
@@ -269,10 +415,8 @@ export const phpApi = {
     estadoFirma: EstadoFirmaPlanilla,
     hashPdfFirmadoSha256?: string | null
   ): Promise<ApiResponse<{ ok: boolean; codigoPlanilla: string; estadoFirma: EstadoFirmaPlanilla; auditoriaSeq?: number }>> {
-    const csrf = await ensureCsrfToken();
     return request('/planillas-emitidas.php', {
       method: 'PUT',
-      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
       body: JSON.stringify({
         action: 'certificar_firma',
         codigoPlanilla,
@@ -307,106 +451,73 @@ export const phpApi = {
     return [];
   },
 
-  // ── Perfil y Credenciales del Perito ──
+  // ── Perfil del Perito ──
   async obtenerPerfil(): Promise<ApiResponse<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>> {
-    const res = await request<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>('/perfil.php', {
+    return request<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>('/perfil.php', {
       method: 'GET',
     });
-    if (res.data?.csrf_token) {
-      storeCsrf(res.data.csrf_token);
-    }
-    return res;
   },
 
   async actualizarPerfil(
     payload: ActualizarPerfilPayload
   ): Promise<ApiResponse<{ ok: boolean; user: UsuarioPerfilDTO; message?: string; auditoriaSeq?: number }>> {
-    const csrf = await ensureCsrfToken();
     return request('/perfil.php', {
       method: 'PUT',
-      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
       body: JSON.stringify(payload),
     });
   },
 
-  async cambiarPassword(
-    passwordActual: string,
-    passwordNueva: string
-  ): Promise<ApiResponse<{ ok: boolean; message?: string; auditoriaSeq?: number }>> {
-    const csrf = await ensureCsrfToken();
-    return request('/perfil.php', {
+  // ── Autenticación por Código OTP (6 dígitos) + Enlace Mágico por Correo ──
+  async checkAuth(): Promise<ApiResponse<AuthStatusDTO>> {
+    return rawRequest<AuthStatusDTO>('/auth.php', { method: 'GET' });
+  },
+
+  async requestOtp(email: string): Promise<ApiResponse<RequestOtpResponseDTO>> {
+    return request<RequestOtpResponseDTO>('/auth.php', {
       method: 'POST',
-      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
       body: JSON.stringify({
-        action: 'cambiar_password',
-        passwordActual,
-        passwordNueva,
+        action: 'request_otp',
+        email: email.trim().toLowerCase(),
       }),
     });
   },
 
-  // ── Autenticación ──
-  async login(email: string, pass: string = '', totpCode: string = ''): Promise<ApiResponse<any>> {
-    const res = await request<any>('/auth.php', {
+  async verifyOtp(email: string, code: string): Promise<ApiResponse<VerifyAuthResponseDTO>> {
+    return request<VerifyAuthResponseDTO>('/auth.php', {
       method: 'POST',
-      body: JSON.stringify({ action: 'login', email, password: pass, totp_code: totpCode }),
+      body: JSON.stringify({
+        action: 'verify_otp',
+        email: email.trim().toLowerCase(),
+        code: code.trim(),
+      }),
     });
-    if (res.ok && res.data?.csrf_token) {
-      storeCsrf(res.data.csrf_token);
-    }
-    return res;
+  },
+
+  async verifyMagicLink(token: string): Promise<ApiResponse<VerifyAuthResponseDTO>> {
+    return request<VerifyAuthResponseDTO>('/auth.php', {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'verify_magic_link',
+        token: token.trim(),
+      }),
+    });
+  },
+
+  async sendTestEmail(): Promise<ApiResponse<SendTestEmailDTO>> {
+    return request<SendTestEmailDTO>('/auth.php', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'send_test_email' }),
+    });
   },
 
   async logout(): Promise<void> {
-    cachedCsrfToken = null;
-    if (typeof window !== 'undefined') {
-      sessionStorage.removeItem('fcco_csrf_token');
+    try {
+      await request('/auth.php', {
+        method: 'POST',
+        body: JSON.stringify({ action: 'logout' }),
+      });
+    } finally {
+      clearCsrf();
     }
-    await request('/auth.php', {
-      method: 'POST',
-      body: JSON.stringify({ action: 'logout' }),
-    });
-  },
-
-  async checkAuth(): Promise<ApiResponse<any>> {
-    const res = await request<any>('/auth.php', { method: 'GET' });
-    if (res.data?.csrf_token) {
-      storeCsrf(res.data.csrf_token);
-    }
-    return res;
   },
 };
-
-export interface UsuarioPerfilDTO {
-  id: string;
-  email: string;
-  nombre: string;
-  apellido: string;
-  ci: string;
-  cargo: string;
-  rol: string;
-  organismo: string;
-  despacho: string;
-  telefono: string;
-  direccion: string;
-  especialidad: string;
-  civ: string;
-  inpre: string;
-  totp_enabled?: number;
-  activo?: number;
-  actualizado_en?: string;
-}
-
-export interface ActualizarPerfilPayload {
-  nombre: string;
-  apellido: string;
-  ci: string;
-  cargo: string;
-  organismo: string;
-  despacho: string;
-  telefono: string;
-  direccion: string;
-  especialidad: string;
-  civ: string;
-  inpre: string;
-}

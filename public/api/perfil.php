@@ -6,8 +6,8 @@
  * - PUT  (Autenticado + CSRF): Actualiza automáticamente en MySQL (`usuarios`) los datos editables
  *   del perito (nombre, apellido, C.I., cargo, CIV, INPRE, organismo, despacho, teléfono, dirección,
  *   especialidad), refresca `$_SESSION['usuario']` y registra asiento inmutable en `auditoria`.
- * - POST (Autenticado + CSRF, action=cambiar_password): Permite actualizar la contraseña verificando
- *   la contraseña actual con `password_verify()`.
+ * - POST (Autenticado + CSRF, action=cambiar_password): Bloqueado permanentemente con HTTP 403
+ *   (`password_login_enabled = false`; acceso sin contraseña vía Código OTP 6 dígitos / Enlace Mágico por correo).
  */
 
 declare(strict_types=1);
@@ -18,22 +18,24 @@ require_once __DIR__ . '/lib/db.php';
 require_once __DIR__ . '/lib/auth.php';
 require_once __DIR__ . '/lib/canonical.php';
 
+require_once __DIR__ . '/lib/audit.php';
+
+use Sha256\Audit\AuditLog;
 use Sha256\Db\Database;
 use Sha256\Auth\Session;
 use Sha256\Crypto\Canonical;
 
+header('Cache-Control: no-store, no-cache, must-revalidate, private');
+
 $pdo = Database::getConnection();
-$method = $_SERVER['REQUEST_METHOD'];
+$method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
 
 /**
- * Sanea el registro de usuario eliminando hashes y secretos MFA antes de devolverlo o guardarlo en sesión.
+ * Sanea el registro de usuario delegando a Session::sanitizeUserRow (elimina secretos y hashes).
  */
 function sanitizeUserRow(array $row): array
 {
-    unset($row['password_hash'], $row['totp_secret'], $row['totp_recovery_hashes']);
-    $row['totp_enabled'] = (int)($row['totp_enabled'] ?? 0);
-    $row['activo'] = (int)($row['activo'] ?? 1);
-    return $row;
+    return Session::sanitizeUserRow($row);
 }
 
 /**
@@ -205,7 +207,7 @@ if ($method === 'PUT') {
 }
 
 // ============================================================================
-// POST: Cambio Seguro de Contraseña (action=cambiar_password)
+// POST: Cambio de Contraseña Local — DESHABILITADO (Acceso por Código OTP / Enlace Mágico)
 // ============================================================================
 if ($method === 'POST') {
     $sessionUser = Session::requireUser();
@@ -214,64 +216,26 @@ if ($method === 'POST') {
     $input = json_decode((string)file_get_contents('php://input'), true) ?? [];
     $action = (string)($input['action'] ?? '');
 
-    if ($action !== 'cambiar_password') {
-        http_response_code(400);
-        echo json_encode(['ok' => false, 'error' => 'Acción POST no soportada en perfil'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
-    $passwordActual = (string)($input['passwordActual'] ?? '');
-    $passwordNueva = (string)($input['passwordNueva'] ?? '');
-
-    if ($passwordActual === '' || strlen($passwordNueva) < 10) {
-        http_response_code(400);
-        echo json_encode([
-            'ok'    => false,
-            'error' => 'Debe indicar su contraseña actual y una nueva contraseña de al menos 10 caracteres.'
-        ], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
-    $stmt = $pdo->prepare('SELECT id, email, password_hash FROM usuarios WHERE id = :id LIMIT 1');
-    $stmt->execute(['id' => $sessionUser['id']]);
-    $row = $stmt->fetch();
-
-    if (!$row || !password_verify($passwordActual, (string)$row['password_hash'])) {
-        http_response_code(401);
-        echo json_encode(['ok' => false, 'error' => 'La contraseña actual ingresada es incorrecta.'], JSON_UNESCAPED_UNICODE);
-        exit;
-    }
-
-    $pdo->beginTransaction();
-    try {
-        $newHash = password_hash($passwordNueva, PASSWORD_BCRYPT);
-        $stmtUp = $pdo->prepare('UPDATE usuarios SET password_hash = :hash WHERE id = :id');
-        $stmtUp->execute(['hash' => $newHash, 'id' => $sessionUser['id']]);
-
-        $seqAudit = appendProfileAudit(
+    if ($action === 'cambiar_password' && !Session::isPasswordLoginEnabled()) {
+        AuditLog::appendSafe(
             $pdo,
-            (string)$row['email'],
-            'CAMBIO_PASSWORD_PERITO',
-            'Actualización de contraseña de acceso pericial verificada con credencial previa',
-            'success'
+            (string)$sessionUser['email'],
+            'LOGIN_PASSWORD_BLOQUEADO',
+            'Intento bloqueado de cambio de contraseña local (password_login_enabled=false). IP: ' . Session::getClientIp(),
+            'warning'
         );
-
-        $pdo->commit();
+        http_response_code(403);
         echo json_encode([
-            'ok'           => true,
-            'message'      => 'Contraseña actualizada exitosamente en base de datos.',
-            'auditoriaSeq' => $seqAudit,
+            'ok'                     => false,
+            'password_login_enabled' => false,
+            'error'                  => 'Las contraseñas locales están deshabilitadas permanentemente. El acceso usa códigos de 6 dígitos y enlaces mágicos por correo (/seguridad).',
         ], JSON_UNESCAPED_UNICODE);
         exit;
-    } catch (\Throwable $e) {
-        if ($pdo->inTransaction()) {
-            $pdo->rollBack();
-        }
-        error_log('[FCCO Perfil Password Error] ' . $e->getMessage());
-        http_response_code(500);
-        echo json_encode(['ok' => false, 'error' => 'Error interno al cambiar la contraseña'], JSON_UNESCAPED_UNICODE);
-        exit;
     }
+
+    http_response_code(400);
+    echo json_encode(['ok' => false, 'error' => 'Acción POST no soportada en perfil'], JSON_UNESCAPED_UNICODE);
+    exit;
 }
 
 http_response_code(405);

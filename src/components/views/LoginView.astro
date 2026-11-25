@@ -1,23 +1,37 @@
 ---
 /**
- * SHA256.US — Vista Modular de Acceso Pericial
+ * SHA256.US — Vista Oficial de Acceso Pericial (Código de 6 Dígitos + Enlace Mágico por Correo)
+ *
+ * Diseño simple, rápido y seguro (USWDS 3.14 DC3 Light Theme):
+ *  - Cero contraseñas locales, cero Google Cloud Console, cero apps autenticadoras.
+ *  - Paso 1: Ingresar correo del perito autorizado (lista blanca estricta de 2 peritos).
+ *  - Paso 2: Introducir código de 6 dígitos enviado al correo (válido 5 min, un solo uso)
+ *            o hacer clic en el Enlace Mágico de 1 clic incluido en el mismo correo.
  */
+import Icon from '../uswds/Icon.astro';
 ---
+
 <div class="grid-row flex-justify-center">
   <div class="grid-col-12 tablet:grid-col-10 desktop:grid-col-7 widescreen:grid-col-6">
     <div class="usa-card width-full bg-white shadow-2 radius-md border-1px border-base-lighter">
       <div class="usa-card__container padding-3 tablet:padding-5">
+        <!-- Encabezado Institucional -->
         <div class="text-center margin-bottom-3">
           <img src="/logo.png?v=2" alt="Logo SHA256.US" class="width-8 height-8 margin-bottom-1 display-inline-block" />
           <h1 class="margin-top-0 margin-bottom-1 font-heading-lg text-ink">
             Acceso a Bóveda Pericial
           </h1>
-          <p class="usa-intro margin-top-0 margin-bottom-0 font-body-sm text-base-dark">
+          <p class="usa-intro margin-top-0 margin-bottom-105 font-body-sm text-base-dark">
             CMS de Cumplimiento Normativo ISO/IEC 27037 y Cadena de Custodia MUCC-2017
           </p>
+          <div class="display-flex flex-wrap flex-justify-center grid-gap-1">
+            <span class="usa-tag bg-primary-darker text-white font-mono-3xs">CÓDIGO OTP 6 DÍGITOS</span>
+            <span class="usa-tag bg-primary text-white font-mono-3xs">ENLACE MÁGICO 1 CLIC</span>
+            <span class="usa-tag bg-base-lighter text-ink font-mono-3xs">SIN CONTRASEÑAS</span>
+          </div>
         </div>
 
-        <!-- Alerta de Error -->
+        <!-- Alerta de Estado / Error -->
         <div
           id="login-error-alert"
           class="usa-alert usa-alert--error usa-alert--slim margin-bottom-3 radius-md"
@@ -25,83 +39,162 @@
           hidden
         >
           <div class="usa-alert__body">
-            <p class="usa-alert__text" id="login-error-msg">Credenciales inválidas</p>
+            <p class="usa-alert__text font-sans-2xs" id="login-error-msg"></p>
           </div>
         </div>
 
-        <!-- Formulario Oficial de Acceso -->
-        <form class="usa-form width-full maxw-full" id="login-form">
-          <fieldset class="usa-fieldset">
-            <legend class="usa-sr-only">Credenciales del Operador Forense</legend>
+        <!-- ================================================================
+             ESTADO (a): Solicitar Código de 6 Dígitos / Enlace Mágico al Correo
+             ================================================================ -->
+        <section id="state-email-request" aria-labelledby="heading-email-request">
+          <h2 id="heading-email-request" class="usa-sr-only">
+            Solicitar código de acceso por correo electrónico
+          </h2>
 
-            <!-- Paso 1: Correo y Contraseña -->
-            <div id="step-1-credentials">
-              <label class="usa-label text-bold font-sans-xs" for="email">
-                Correo Electrónico Institucional <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+          <div class="usa-summary-box margin-bottom-3" role="region" aria-label="Cómo iniciar sesión">
+            <div class="usa-summary-box__body">
+              <p class="usa-summary-box__heading font-heading-xs margin-bottom-05">
+                Ingreso Rápido y Seguro Sin Contraseña
+              </p>
+              <div class="usa-summary-box__text font-body-2xs">
+                Escriba su correo de perito autorizado. Le enviaremos al instante un <strong>código de 6 dígitos</strong> y un <strong>botón de 1 clic</strong> válidos por 5 minutos (un solo uso).
+              </div>
+            </div>
+          </div>
+
+          <form id="form-request-otp" class="usa-form width-full maxw-full">
+            <fieldset class="usa-fieldset">
+              <legend class="usa-sr-only">Correo electrónico del perito autorizado</legend>
+
+              <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-email">
+                Correo Electrónico del Perito Autorizado
+                <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
               </label>
               <input
-                class="usa-input"
-                id="email"
+                class="usa-input font-mono-sm"
+                id="input-email"
                 name="email"
                 type="email"
-                autocomplete="username"
+                autocomplete="email"
                 autocapitalize="off"
                 autocorrect="off"
-                placeholder="perito@sha256.us"
+                placeholder="perito@gmail.com"
                 required
               />
 
-              <div class="margin-top-2">
-                <label class="usa-label text-bold font-sans-xs" for="password">
-                  Contraseña de Seguridad <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
-                </label>
-                <input
-                  class="usa-input"
-                  id="password"
-                  name="password"
-                  type="password"
-                  autocomplete="current-password"
-                  required
-                />
-              </div>
-
-              <!-- Campo TOTP (si está solicitado o disponible) -->
-              <div id="campo-totp-wrap" class="margin-top-2" hidden>
-                <label class="usa-label text-bold font-sans-xs" for="totp-code">
-                  Código Google Authenticator (6 dígitos) <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
-                </label>
-                <div class="usa-hint font-sans-3xs text-base-dark" id="totp-hint">
-                  Ingrese el código dinámico de su aplicación de autenticación
-                </div>
-                <input
-                  class="usa-input font-mono-lg letter-spacing-2 text-center"
-                  id="totp-code"
-                  name="totpCode"
-                  type="text"
-                  inputmode="numeric"
-                  pattern="[0-9]*"
-                  maxlength="6"
-                  placeholder="000000"
-                  aria-describedby="totp-hint"
-                />
-              </div>
-
-              <input
-                class="usa-button margin-top-3 width-full font-sans-xs padding-y-105"
+              <button
                 type="submit"
-                id="btn-submit"
-                value="Ingresar al Sistema Forense"
-              />
-            </div>
-          </fieldset>
-        </form>
+                id="btn-request-otp"
+                class="usa-button width-full margin-top-3 font-sans-sm padding-y-105 display-flex flex-align-center flex-justify-center"
+              >
+                <Icon name="mail" className="margin-right-1 text-white" />
+                <span>Enviar Código de Acceso al Correo</span>
+              </button>
+            </fieldset>
+          </form>
 
+          <p class="font-sans-3xs text-base-dark text-center margin-top-2 margin-bottom-0">
+            Solo los 2 correos autorizados en la lista blanca de SHA256.US pueden recibir códigos de acceso.
+          </p>
+        </section>
+
+        <!-- ================================================================
+             ESTADO (b): Introducir Código de 6 Dígitos Enviado al Correo
+             ================================================================ -->
+        <section id="state-otp-verify" aria-labelledby="heading-otp-verify" hidden>
+          <div class="bg-base-lightest border-1px border-base-lighter padding-2 radius-md margin-bottom-3">
+            <div class="display-flex flex-align-center flex-justify">
+              <div>
+                <span class="usa-tag bg-success-dark text-white font-mono-3xs">CÓDIGO ENVIADO</span>
+                <h2 id="heading-otp-verify" class="font-heading-sm margin-top-1 margin-bottom-05 text-ink">
+                  Revise su correo e ingrese los 6 dígitos
+                </h2>
+                <p class="font-mono-2xs text-base-dark margin-0">
+                  Enviado a: <strong id="otp-target-email">---</strong>
+                </p>
+              </div>
+              <span id="otp-ttl-badge" class="usa-tag bg-accent-warm-dark text-white font-mono-3xs">
+                EXPIRA EN 5:00
+              </span>
+            </div>
+          </div>
+
+          <form id="form-verify-otp" class="usa-form width-full maxw-full">
+            <fieldset class="usa-fieldset">
+              <legend class="usa-sr-only">Código de verificación de 6 dígitos</legend>
+
+              <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-otp-code">
+                Código de Acceso (6 dígitos)
+                <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <span class="usa-hint font-sans-3xs text-base-dark" id="hint-otp-code">
+                También puede hacer clic directamente en el botón "Ingresar en 1 Clic" dentro del correo recibido.
+              </span>
+              <input
+                id="input-otp-code"
+                name="otpCode"
+                type="text"
+                class="usa-input font-mono-lg letter-spacing-2 text-center text-bold"
+                inputmode="numeric"
+                pattern="[0-9\s]{6,8}"
+                maxlength="7"
+                autocomplete="one-time-code"
+                placeholder="000 000"
+                aria-describedby="hint-otp-code"
+                required
+              />
+
+              <button
+                type="submit"
+                id="btn-verify-otp"
+                class="usa-button width-full margin-top-3 font-sans-sm padding-y-105"
+              >
+                Verificar e Ingresar a la Bóveda
+              </button>
+            </fieldset>
+          </form>
+
+          <div class="display-flex flex-wrap flex-justify flex-align-center margin-top-2 padding-top-2 border-top-1px border-base-lighter">
+            <button
+              type="button"
+              id="btn-resend-otp"
+              class="usa-button usa-button--unstyled font-sans-2xs text-primary"
+              disabled
+            >
+              Reenviar código (45s)
+            </button>
+            <button
+              type="button"
+              id="btn-change-email"
+              class="usa-button usa-button--unstyled font-sans-2xs text-base-dark"
+            >
+              Cambiar correo
+            </button>
+          </div>
+        </section>
+
+        <!-- ================================================================
+             ESTADO (c): Verificación Automática de Enlace Mágico (?magic=...)
+             ================================================================ -->
+        <section id="state-magic-verifying" aria-labelledby="heading-magic-verifying" hidden>
+          <div class="bg-base-lightest border-1px border-base-lighter padding-4 radius-md text-center">
+            <Icon name="verified_user" className="text-primary width-5 height-5 margin-bottom-1" />
+            <h2 id="heading-magic-verifying" class="font-heading-md margin-top-0 margin-bottom-1 text-ink">
+              Verificando Enlace Mágico Seguro...
+            </h2>
+            <p class="font-body-2xs text-base-dark margin-0">
+              Validando token criptográfico de un solo uso y abriendo su sesión pericial en SHA256.US.
+            </p>
+          </div>
+        </section>
+
+        <!-- Pie de Garantía Criptográfica -->
         <div class="margin-top-3 border-top-1px border-base-lighter padding-top-2 text-center">
-          <p class="font-sans-3xs text-base margin-0">
-            🔒 Sesión pericial protegida con cifrado FIPS y trazabilidad de acceso en base de datos MySQL (cPanel).
+          <p class="font-sans-3xs text-base-dark margin-0 display-inline-flex flex-align-center">
+            <Icon name="lock" className="margin-right-05 text-primary" />
+            <span>Sesión protegida con cookie HttpOnly, expiración 30m/8h, CSRF y auditoría inmutable SHA-256.</span>
           </p>
         </div>
-
       </div>
     </div>
   </div>
@@ -109,102 +202,265 @@
 
 <script>
   import { phpApi } from '../../lib/data/phpApi';
-  import { useAuthStore } from '../../store/authStore';
 
-  const form = document.getElementById('login-form');
   const errorAlert = document.getElementById('login-error-alert');
   const errorMsg = document.getElementById('login-error-msg');
-  const btnSubmit = document.getElementById('btn-submit') as HTMLInputElement;
-  const totpWrap = document.getElementById('campo-totp-wrap');
-  const emailInput = document.getElementById('email') as HTMLInputElement;
-  const passwordInput = document.getElementById('password') as HTMLInputElement;
-  const totpInput = document.getElementById('totp-code') as HTMLInputElement;
 
-  // Verificar si viene redirigido por intento de acceso sin autenticación
-  const urlParams = new URLSearchParams(window.location.search);
-  const msg = urlParams.get('msg');
-  if (msg === 'sesion_requerida') {
-    if (errorAlert && errorMsg) {
-      errorMsg.textContent = 'Acceso Denegado: Debe iniciar sesión con su correo y contraseña para acceder a la boveda pericial.';
-      errorAlert.hidden = false;
+  const stateEmail = document.getElementById('state-email-request');
+  const stateOtp = document.getElementById('state-otp-verify');
+  const stateMagic = document.getElementById('state-magic-verifying');
+
+  const formRequestOtp = document.getElementById('form-request-otp') as HTMLFormElement | null;
+  const inputEmail = document.getElementById('input-email') as HTMLInputElement | null;
+  const btnRequestOtp = document.getElementById('btn-request-otp') as HTMLButtonElement | null;
+
+  const otpTargetEmailEl = document.getElementById('otp-target-email');
+  const otpTtlBadge = document.getElementById('otp-ttl-badge');
+  const formVerifyOtp = document.getElementById('form-verify-otp') as HTMLFormElement | null;
+  const inputOtpCode = document.getElementById('input-otp-code') as HTMLInputElement | null;
+  const btnVerifyOtp = document.getElementById('btn-verify-otp') as HTMLButtonElement | null;
+  const btnResendOtp = document.getElementById('btn-resend-otp') as HTMLButtonElement | null;
+  const btnChangeEmail = document.getElementById('btn-change-email') as HTMLButtonElement | null;
+
+  let activeEmail = '';
+  let ttlTimer: ReturnType<typeof setInterval> | null = null;
+  let cooldownTimer: ReturnType<typeof setInterval> | null = null;
+
+  function showAlert(message: string, variant: 'error' | 'warning' | 'info' | 'success' = 'error') {
+    if (!errorAlert || !errorMsg) return;
+    errorAlert.classList.remove('usa-alert--error', 'usa-alert--warning', 'usa-alert--info', 'usa-alert--success');
+    errorAlert.classList.add(`usa-alert--${variant}`);
+    errorMsg.textContent = message;
+    errorAlert.hidden = false;
+  }
+
+  function hideAlert() {
+    if (errorAlert) errorAlert.hidden = true;
+  }
+
+  function setViewState(view: 'email' | 'otp' | 'magic') {
+    if (stateEmail) stateEmail.hidden = view !== 'email';
+    if (stateOtp) stateOtp.hidden = view !== 'otp';
+    if (stateMagic) stateMagic.hidden = view !== 'magic';
+  }
+
+  function clearTimers() {
+    if (ttlTimer) {
+      clearInterval(ttlTimer);
+      ttlTimer = null;
     }
-  } else if (msg === 'sesion_cerrada') {
-    if (errorAlert && errorMsg) {
-      errorAlert.classList.remove('usa-alert--error');
-      errorAlert.classList.add('usa-alert--info');
-      errorMsg.textContent = 'Su sesión pericial ha sido cerrada de forma segura.';
-      errorAlert.hidden = false;
+    if (cooldownTimer) {
+      clearInterval(cooldownTimer);
+      cooldownTimer = null;
     }
   }
 
-  if (form) {
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
+  function startOtpCountdowns(ttlSeconds: number, cooldownSeconds: number) {
+    clearTimers();
 
-      if (btnSubmit) {
-        btnSubmit.value = 'Verificando credenciales...';
-        btnSubmit.disabled = true;
+    let remainingTtl = Math.max(0, ttlSeconds);
+    const updateTtlLabel = () => {
+      if (!otpTtlBadge) return;
+      if (remainingTtl <= 0) {
+        otpTtlBadge.textContent = 'CÓDIGO EXPIRADO';
+        otpTtlBadge.className = 'usa-tag bg-secondary-dark text-white font-mono-3xs';
+        return;
       }
-      if (errorAlert) errorAlert.hidden = true;
-
-      const email = (emailInput?.value || '').trim();
-      const pass = (passwordInput?.value || '').trim();
-      const totp = (totpInput?.value || '').trim();
-
-      try {
-        const res = await phpApi.login(email, pass, totp);
-
-        if (res.ok) {
-          sessionStorage.setItem('fcco_auth_active', '1');
-          if (res.data?.user) {
-            sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
-          }
-          window.location.href = '/dashboard';
-          return;
-        }
-
-        // Si el backend solicita código 2FA
-        if (res.data?.requires_totp || res.data?.needs_mfa) {
-          if (totpWrap) {
-            totpWrap.hidden = false;
-            totpInput.required = true;
-            totpInput.focus();
-          }
-          if (btnSubmit) {
-            btnSubmit.value = 'Validar Código 2FA';
-            btnSubmit.disabled = false;
-          }
-          return;
-        }
-
-        // Fallback local autenticado
-        const localOk = await useAuthStore.getState().login(email, pass, totp);
-        if (localOk) {
-          sessionStorage.setItem('fcco_auth_active', '1');
-          window.location.href = '/dashboard';
-          return;
-        }
-
-        sessionStorage.removeItem('fcco_auth_active');
-        sessionStorage.removeItem('fcco_auth_user');
-
-        if (errorAlert && errorMsg) {
-          errorMsg.textContent = res.error || useAuthStore.getState().error || 'Credenciales no autorizadas o código 2FA erróneo.';
-          errorAlert.hidden = false;
-        }
-      } catch (err: any) {
-        sessionStorage.removeItem('fcco_auth_active');
-        sessionStorage.removeItem('fcco_auth_user');
-        if (errorAlert && errorMsg) {
-          errorMsg.textContent = err.message || 'Error de conexión con el servidor.';
-          errorAlert.hidden = false;
-        }
-      } finally {
-        if (btnSubmit) {
-          btnSubmit.value = totpWrap && !totpWrap.hidden ? 'Validar Código 2FA' : 'Ingresar al Sistema Forense';
-          btnSubmit.disabled = false;
-        }
+      const m = Math.floor(remainingTtl / 60);
+      const s = String(remainingTtl % 60).padStart(2, '0');
+      otpTtlBadge.textContent = `EXPIRA EN ${m}:${s}`;
+      otpTtlBadge.className = 'usa-tag bg-accent-warm-dark text-white font-mono-3xs';
+    };
+    updateTtlLabel();
+    ttlTimer = setInterval(() => {
+      remainingTtl = Math.max(0, remainingTtl - 1);
+      updateTtlLabel();
+      if (remainingTtl <= 0 && ttlTimer) {
+        clearInterval(ttlTimer);
+        ttlTimer = null;
       }
-    });
+    }, 1000);
+
+    let remainingCooldown = Math.max(0, cooldownSeconds);
+    const updateResendBtn = () => {
+      if (!btnResendOtp) return;
+      if (remainingCooldown <= 0) {
+        btnResendOtp.disabled = false;
+        btnResendOtp.textContent = 'Reenviar nuevo código';
+      } else {
+        btnResendOtp.disabled = true;
+        btnResendOtp.textContent = `Reenviar código (${remainingCooldown}s)`;
+      }
+    };
+    updateResendBtn();
+    cooldownTimer = setInterval(() => {
+      remainingCooldown = Math.max(0, remainingCooldown - 1);
+      updateResendBtn();
+      if (remainingCooldown <= 0 && cooldownTimer) {
+        clearInterval(cooldownTimer);
+        cooldownTimer = null;
+      }
+    }, 1000);
+  }
+
+  function handleQueryMessage() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const msg = urlParams.get('msg');
+    if (msg === 'sesion_requerida') {
+      showAlert('Acceso Denegado: Solicite un código de 6 dígitos a su correo autorizado para ingresar a la bóveda pericial.', 'error');
+    } else if (msg === 'sesion_cerrada') {
+      showAlert('Su sesión pericial ha sido cerrada de forma segura.', 'info');
+    }
+  }
+
+  async function triggerSendOtp(email: string) {
+    hideAlert();
+    if (btnRequestOtp) {
+      btnRequestOtp.disabled = true;
+      btnRequestOtp.textContent = 'Enviando código seguro...';
+    }
+    if (btnResendOtp) btnResendOtp.disabled = true;
+
+    try {
+      const res = await phpApi.requestOtp(email);
+      if (res.status === 200 && res.ok) {
+        activeEmail = res.data?.email || email;
+        if (otpTargetEmailEl) otpTargetEmailEl.textContent = activeEmail;
+        setViewState('otp');
+        startOtpCountdowns(res.data?.expires_in ?? 300, res.data?.cooldown ?? 45);
+        showAlert(
+          res.data?.message || `Enviamos un código de 6 dígitos y un enlace de 1 clic a ${activeEmail}.`,
+          'info'
+        );
+        if (inputOtpCode) {
+          inputOtpCode.value = '';
+          inputOtpCode.focus();
+        }
+        return;
+      }
+
+      if (res.data?.retry_after && activeEmail) {
+        startOtpCountdowns(300, res.data.retry_after);
+      }
+      showAlert(res.error || 'No se pudo enviar el código de acceso.', 'error');
+    } catch {
+      showAlert('Error de conexión con el servidor de autenticación.', 'error');
+    } finally {
+      if (btnRequestOtp) {
+        btnRequestOtp.disabled = false;
+        btnRequestOtp.textContent = 'Enviar Código de Acceso al Correo';
+      }
+    }
+  }
+
+  formRequestOtp?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (inputEmail?.value || '').trim().toLowerCase();
+    if (!email || !email.includes('@')) {
+      showAlert('Ingrese un correo electrónico válido.', 'error');
+      return;
+    }
+    await triggerSendOtp(email);
+  });
+
+  btnResendOtp?.addEventListener('click', async () => {
+    if (!activeEmail) return;
+    await triggerSendOtp(activeEmail);
+  });
+
+  btnChangeEmail?.addEventListener('click', () => {
+    clearTimers();
+    hideAlert();
+    setViewState('email');
+    inputEmail?.focus();
+  });
+
+  formVerifyOtp?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAlert();
+
+    const code = (inputOtpCode?.value || '').replace(/\s+/g, '');
+    if (!/^\d{6}$/.test(code)) {
+      showAlert('Ingrese exactamente los 6 dígitos numéricos enviados a su correo.', 'error');
+      return;
+    }
+
+    if (btnVerifyOtp) {
+      btnVerifyOtp.disabled = true;
+      btnVerifyOtp.textContent = 'Verificando código...';
+    }
+
+    try {
+      const res = await phpApi.verifyOtp(activeEmail, code);
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        clearTimers();
+        sessionStorage.setItem('fcco_auth_active', '1');
+        sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+        window.location.href = '/dashboard';
+        return;
+      }
+
+      showAlert(res.error || 'Código de 6 dígitos incorrecto o expirado.', 'error');
+      if (inputOtpCode) {
+        inputOtpCode.select();
+        inputOtpCode.focus();
+      }
+    } catch {
+      showAlert('Error de conexión al verificar el código.', 'error');
+    } finally {
+      if (btnVerifyOtp) {
+        btnVerifyOtp.disabled = false;
+        btnVerifyOtp.textContent = 'Verificar e Ingresar a la Bóveda';
+      }
+    }
+  });
+
+  async function initLoginView() {
+    handleQueryMessage();
+
+    // 1. Verificar si el usuario ya posee sesión activa confirmada (HTTP 200)
+    const authRes = await phpApi.checkAuth();
+    if (authRes.status === 200 && authRes.ok && authRes.data?.authenticated === true && authRes.data?.user) {
+      sessionStorage.setItem('fcco_auth_active', '1');
+      sessionStorage.setItem('fcco_auth_user', JSON.stringify(authRes.data.user));
+      window.location.replace('/dashboard');
+      return;
+    }
+
+    sessionStorage.removeItem('fcco_auth_active');
+    sessionStorage.removeItem('fcco_auth_user');
+
+    // 2. Si viene desde el Enlace Mágico del correo (?magic=<64-hex>), validar vía POST + CSRF
+    const urlParams = new URLSearchParams(window.location.search);
+    const magicToken = (urlParams.get('magic') || '').trim();
+    if (magicToken !== '') {
+      // Limpiar inmediatamente el token de la barra de direcciones por seguridad
+      window.history.replaceState({}, '', '/');
+      setViewState('magic');
+
+      const res = await phpApi.verifyMagicLink(magicToken);
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        sessionStorage.setItem('fcco_auth_active', '1');
+        sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+        window.location.replace('/dashboard');
+        return;
+      }
+
+      setViewState('email');
+      showAlert(res.error || 'El enlace mágico expiró o ya fue utilizado. Solicite un nuevo código.', 'error');
+      return;
+    }
+
+    // 3. Estado por defecto: formulario único de correo autorizado
+    setViewState('email');
+    inputEmail?.focus();
+  }
+
+  if (typeof window !== 'undefined') {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initLoginView);
+    } else {
+      initLoginView();
+    }
   }
 </script>
