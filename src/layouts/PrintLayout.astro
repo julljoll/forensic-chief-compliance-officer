@@ -1,12 +1,11 @@
 ---
 /**
  * SHA256.US — PrintLayout para Planillas Oficiales en Folio (216mm x 330mm)
- * Aislado 100% en .folio-forense-aislado con soporte para impresión web limpia o exportación a PDF.
+ * Aislado 100% en .folio-forense-aislado con generación única de Planilla QR + PDF vectorial.
  */
 import '../styles/folio-aislado.css';
 import PrintToolbar from '../components/layout/PrintToolbar.astro';
 import AuthGuard from '../components/layout/AuthGuard.astro';
-import EmitirPdfAdobeModal from '../components/planillas/EmitirPdfAdobeModal.astro';
 
 interface Props {
   title?: string;
@@ -57,12 +56,8 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
       </div>
     </main>
 
-    <EmitirPdfAdobeModal />
-
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
     <script>
-      import { exportCurrentPlanillaToWordDocx } from '../lib/export/exportWordDocx';
-      import { exportCurrentPlanillaToEditablePdf } from '../lib/export/exportEditablePdf';
       import {
         generarPlanillaConQrNativo,
         type GenerarPlanillaQrResult,
@@ -71,11 +66,6 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
       const urlParams = new URLSearchParams(window.location.search);
       const btnGenerarQr = document.getElementById('btn-generar-planilla-qr');
       const txtGenerarQr = document.getElementById('txt-btn-generar-qr');
-      const btnWord = document.getElementById('btn-descargar-word');
-      const txtWord = document.getElementById('txt-btn-word');
-      const btnPdfEditable = document.getElementById('btn-descargar-pdf-editable');
-      const txtPdfEditable = document.getElementById('txt-btn-pdf-editable');
-      const btnImprimir = document.getElementById('btn-imprimir-folio');
 
       const bannerSellada = document.getElementById('banner-planilla-sellada');
       const selladaCodigoEl = document.getElementById('sellada-codigo-planilla');
@@ -165,75 +155,11 @@ const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = 
         ejecutarGeneracionQrNativa(false, true);
       });
 
-      btnImprimir?.addEventListener('click', () => {
-        window.print();
-      });
-
-      // Manejador de descarga Microsoft Word (.docx)
-      btnWord?.addEventListener('click', async () => {
-        if (txtWord) txtWord.textContent = 'Generando...';
-        btnWord.setAttribute('disabled', 'true');
-        try {
-          await exportCurrentPlanillaToWordDocx();
-        } catch (err) {
-          console.error('Error al exportar Word:', err);
-          alert('Hubo un inconveniente al generar el documento Word. Revise la consola pericial.');
-        } finally {
-          if (txtWord) txtWord.textContent = 'Word (.docx)';
-          btnWord.removeAttribute('disabled');
-        }
-      });
-
-      // Manejador de descarga PDF Editable: abre Modal de Firma + Sellado QR Rojo & SHA-256 en cPanel
-      btnPdfEditable?.addEventListener('click', async () => {
-        const container =
-          document.getElementById('contenedor-planilla-activa') ||
-          document.querySelector('.folio-forense-aislado');
-        const slug =
-          container?.getAttribute('data-slug') ||
-          window.location.pathname.split('/').pop()?.replace('.html', '') ||
-          'planilla';
-        const titulo =
-          container?.querySelector('.canonical-doc-title')?.textContent?.trim() ||
-          document.title ||
-          slug;
-        const codigoDoc =
-          container?.querySelector('.control-box-val')?.textContent?.trim() || 'FO-FOR-01';
-        const faseMatch = codigoDoc.match(/F[0-5]/i);
-        const faseIso = faseMatch ? faseMatch[0].toUpperCase() : 'F0';
-
-        const openModal = (window as any).fccoOpenEmitirPdfModal;
-        if (typeof openModal === 'function') {
-          openModal({ mode: 'current', slug, titulo, codigoDoc, faseIso });
-          return;
-        }
-
-        if (txtPdfEditable) txtPdfEditable.textContent = 'Generando...';
-        btnPdfEditable.setAttribute('disabled', 'true');
-        try {
-          await exportCurrentPlanillaToEditablePdf();
-        } catch (err) {
-          console.error('Error al exportar PDF Editable:', err);
-          alert('Hubo un inconveniente al generar el PDF editable con firma digital.');
-        } finally {
-          if (txtPdfEditable) txtPdfEditable.textContent = 'PDF Editable (Adobe)';
-          btnPdfEditable.removeAttribute('disabled');
-        }
-      });
-
-      // Disparo automático en 1 clic: ?generar=1 (desde "Generar Planilla" en /planillas)
+      // Disparo automático opcional si se abre con ?generar=1
       if (urlParams.get('generar') === '1' && urlParams.get('render_pdf') !== '1') {
         setTimeout(() => {
           ejecutarGeneracionQrNativa(true, false);
         }, 450);
-      } else if (urlParams.get('descargar') === 'docx') {
-        setTimeout(async () => {
-          await exportCurrentPlanillaToWordDocx();
-        }, 700);
-      } else if (urlParams.get('descargar') === 'pdf_editable') {
-        setTimeout(async () => {
-          await exportCurrentPlanillaToEditablePdf();
-        }, 700);
       }
     </script>
     <AuthGuard />

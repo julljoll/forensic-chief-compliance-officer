@@ -98,25 +98,33 @@ describe('generarPlanillaQr — Sello QR Rojo Nativo en las 13 Planillas Oficial
     expect(cssSrc).toContain('print-color-adjust: exact !important;');
   });
 
-  it('QRN-04: PrintToolbar, PrintLayout y PlanillasCatalogoView integran el flujo de 1 clic Generar Planilla (QR + PDF) sin emojis', () => {
+  it('QRN-04: PlanillasCatalogoView solo muestra Ver Formato y PrintToolbar deja exclusivamente el botón rojo Generar Planilla (QR + PDF)', () => {
     const root = process.cwd();
     const toolbarSrc = fs.readFileSync(path.resolve(root, 'src/components/layout/PrintToolbar.astro'), 'utf8');
     const layoutSrc = fs.readFileSync(path.resolve(root, 'src/layouts/PrintLayout.astro'), 'utf8');
     const catalogoSrc = fs.readFileSync(path.resolve(root, 'src/components/views/PlanillasCatalogoView.astro'), 'utf8');
 
+    // En la barra superior del formato: solo el botón rojo Generar Planilla (QR + PDF) para emitir (sin Word, sin PDF Editable ni Imprimir simple)
     expect(toolbarSrc).toContain('id="btn-generar-planilla-qr"');
     expect(toolbarSrc).toContain('Generar Planilla (QR + PDF)');
     expect(toolbarSrc).toContain('id="banner-planilla-sellada"');
     expect(toolbarSrc).toContain('sprite.svg#verified_user');
+    expect(toolbarSrc).not.toContain('id="btn-descargar-word"');
+    expect(toolbarSrc).not.toContain('id="btn-descargar-pdf-editable"');
+    expect(toolbarSrc).not.toContain('id="btn-imprimir-folio"');
     expect(toolbarSrc).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
 
     expect(layoutSrc).toContain('generarPlanillaConQrNativo');
-    expect(layoutSrc).toContain("urlParams.get('generar') === '1'");
     expect(layoutSrc).toContain('banner-planilla-sellada');
+    expect(layoutSrc).not.toContain('exportCurrentPlanillaToWordDocx');
+    expect(layoutSrc).not.toContain('exportCurrentPlanillaToEditablePdf');
 
-    expect(catalogoSrc).toContain('Generar Planilla (QR + PDF)');
-    expect(catalogoSrc).toContain('?modo=blanco&generar=1');
-    expect(catalogoSrc).toContain('link-generar-planilla');
+    // En las tarjetas del catálogo: únicamente el botón Ver Formato
+    expect(catalogoSrc).toContain('Ver Formato');
+    expect(catalogoSrc).toContain('link-abrir-planilla');
+    expect(catalogoSrc).not.toContain('link-generar-planilla');
+    expect(catalogoSrc).not.toContain('btn-descargar-docx');
+    expect(catalogoSrc).not.toContain('btn-descargar-pdf-editable');
     expect(catalogoSrc).not.toMatch(/[\u{1F300}-\u{1F9FF}]/u);
   });
 });

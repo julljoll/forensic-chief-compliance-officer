@@ -86,22 +86,25 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     expect(sigNames).toContain('FirmaDigital_CoPerito_O_Consignante');
   });
 
-  it('PDF-04: PrintToolbar.astro contiene el botón oficial para descarga en PDF Editable (Adobe)', () => {
+  it('PDF-04: PrintToolbar.astro mantiene únicamente el botón rojo Generar Planilla (QR + PDF) sin formas alternativas de exportación', () => {
     const toolbarPath = path.resolve(process.cwd(), 'src/components/layout/PrintToolbar.astro');
     const toolbarContent = fs.readFileSync(toolbarPath, 'utf8');
 
-    expect(toolbarContent).toContain('id="btn-descargar-pdf-editable"');
-    expect(toolbarContent).toContain('PDF Editable (Adobe)');
-    expect(toolbarContent).toContain('sprite.svg#edit');
+    expect(toolbarContent).toContain('id="btn-generar-planilla-qr"');
+    expect(toolbarContent).toContain('Generar Planilla (QR + PDF)');
+    expect(toolbarContent).not.toContain('id="btn-descargar-pdf-editable"');
+    expect(toolbarContent).not.toContain('id="btn-descargar-word"');
+    expect(toolbarContent).not.toContain('id="btn-imprimir-folio"');
   });
 
-  it('PDF-05: PlanillasCatalogoView.astro integra el botón de descarga PDF (Adobe) en cada tarjeta', () => {
+  it('PDF-05: PlanillasCatalogoView.astro deja únicamente el botón Ver Formato en cada tarjeta', () => {
     const catalogoPath = path.resolve(process.cwd(), 'src/components/views/PlanillasCatalogoView.astro');
     const catalogoContent = fs.readFileSync(catalogoPath, 'utf8');
 
-    expect(catalogoContent).toContain('btn-descargar-pdf-editable');
-    expect(catalogoContent).toContain('PDF (Adobe)');
-    expect(catalogoContent).toContain('descargarPlanillaPdfEditablePorSlug');
+    expect(catalogoContent).toContain('Ver Formato');
+    expect(catalogoContent).not.toContain('btn-descargar-pdf-editable');
+    expect(catalogoContent).not.toContain('btn-descargar-docx');
+    expect(catalogoContent).not.toContain('link-generar-planilla');
   });
 
   it('PDF-06: Estampa el número único de planilla, SHA-256 y enlace QR Rojo en metadatos del PDF', async () => {
