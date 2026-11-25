@@ -1,0 +1,528 @@
+---
+/**
+ * SHA256.US — Modal Canónico USWDS de Emisión de Planilla PDF Editable (Adobe Acrobat)
+ * Solicita modalidad de firma pericial (Adobe Electrónica / Manual / Híbrida), Co-Perito y
+ * vinculación a Expediente, registra en MySQL (cPanel) con el usuario logueado y estampa
+ * el Sello Rojo Forense (QR Rojo #B50909 + Code-128 + N° de Planilla + SHA-256).
+ */
+import Icon from '../uswds/Icon.astro';
+---
+
+<div
+  id="modal-emitir-pdf-adobe"
+  class="fcco-modal-backdrop no-print"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="modal-emitir-pdf-heading"
+  hidden
+>
+  <div class="fcco-modal-dialog bg-white radius-md shadow-4 border-1px border-base-lighter">
+    <!-- Cabecera del Modal -->
+    <div class="bg-primary-darker text-white padding-2 display-flex flex-justify flex-align-center radius-top-md">
+      <div class="display-flex flex-align-center">
+        <Icon name="verified_user" className="margin-right-1 text-white" />
+        <div>
+          <h2 id="modal-emitir-pdf-heading" class="margin-0 font-heading-sm text-white">
+            Emitir PDF Editable con Sello QR Rojo y SHA-256
+          </h2>
+          <p class="margin-0 font-mono-3xs text-base-lightest">
+            Registro Atómico en MySQL (cPanel) · Adobe Acrobat PAdES / Firma Manuscrita
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        id="btn-cerrar-modal-emitir-pdf"
+        class="usa-button usa-button--unstyled text-white padding-05"
+        aria-label="Cerrar ventana"
+        style="cursor: pointer;"
+      >
+        <Icon name="close" className="text-white" />
+      </button>
+    </div>
+
+    <!-- Cuerpo del Formulario de Emisión -->
+    <div id="modal-emitir-form-body" class="padding-3">
+      <!-- Resumen de Planilla y Perito Logueado -->
+      <div class="usa-summary-box margin-bottom-2 padding-2 bg-base-lightest border-base-lighter">
+        <div class="grid-row grid-gap-2">
+          <div class="tablet:grid-col-6">
+            <span class="font-mono-3xs text-base-dark text-uppercase display-block">Planilla Oficial a Emitir</span>
+            <strong id="emitir-planilla-titulo" class="font-sans-xs text-ink display-block">Acta Pericial</strong>
+            <span id="emitir-planilla-meta" class="usa-tag bg-primary-darker text-white font-mono-3xs margin-top-05">
+              FO-FOR-01 · F0
+            </span>
+          </div>
+          <div class="tablet:grid-col-6 border-top-1px tablet:border-top-0 tablet:border-left-1px border-base-lighter padding-top-1 tablet:padding-top-0 tablet:padding-left-2">
+            <span class="font-mono-3xs text-base-dark text-uppercase display-block">Perito Emisor (Sesión Activa)</span>
+            <strong id="emitir-perito-nombre" class="font-sans-xs text-ink display-block">Perito Autenticado</strong>
+            <span id="emitir-perito-civ" class="usa-tag bg-secondary-dark text-white font-mono-3xs margin-top-05">
+              CIV-299410
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <form id="form-emitir-pdf-adobe" class="usa-form maxw-none">
+        <div class="grid-row grid-gap-2">
+          <!-- Vincular Expediente (Opcional) -->
+          <div class="tablet:grid-col-6">
+            <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="emitir-select-caso">
+              Expediente / Caso Asociado (Opcional)
+            </label>
+            <select class="usa-select font-sans-2xs" id="emitir-select-caso" name="casoId">
+              <option value="">-- Emitir plantilla oficial foliada en blanco --</option>
+            </select>
+          </div>
+
+          <!-- Seleccionar Co-Perito (Opcional) -->
+          <div class="tablet:grid-col-6">
+            <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="emitir-select-coperito">
+              Co-Perito / Segundo Perito Firmante (Opcional)
+            </label>
+            <select class="usa-select font-sans-2xs" id="emitir-select-coperito" name="coPeritoSelect">
+              <option value="">-- Sin co-perito preasignado (editable en PDF) --</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-row grid-gap-2 margin-top-1">
+          <div class="tablet:grid-col-6">
+            <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="emitir-input-coperito-nombre">
+              Nombre del Co-Perito (manual si no está en lista)
+            </label>
+            <input
+              class="usa-input font-sans-2xs"
+              id="emitir-input-coperito-nombre"
+              type="text"
+              placeholder="Ej. Ing. María Torres"
+              maxlength="180"
+            />
+          </div>
+          <div class="tablet:grid-col-6">
+            <label class="usa-label margin-top-1 font-sans-2xs text-bold" for="emitir-input-coperito-civ">
+              CIV / Credencial Co-Perito
+            </label>
+            <input
+              class="usa-input font-sans-2xs font-mono-2xs"
+              id="emitir-input-coperito-civ"
+              type="text"
+              placeholder="Ej. CIV-310520"
+              maxlength="64"
+            />
+          </div>
+        </div>
+
+        <!-- Modalidad de Firma Pericial Requerida -->
+        <fieldset class="usa-fieldset margin-top-2 padding-2 bg-base-lightest radius-sm border-1px border-base-lighter">
+          <legend class="usa-legend font-sans-2xs text-bold text-ink margin-bottom-1">
+            Requerimiento de Firma de los Peritos en el Documento
+          </legend>
+
+          <div class="usa-radio margin-bottom-1">
+            <input
+              class="usa-radio__input"
+              id="firma-mod-hibrida"
+              type="radio"
+              name="modalidadFirma"
+              value="hibrida"
+              checked
+            />
+            <label class="usa-radio__label font-sans-2xs" for="firma-mod-hibrida">
+              <strong>Híbrida (Recomendada):</strong> Habilita firma electrónica digital en Adobe Acrobat (PAdES) y preserva firma manuscrita + huellas bilaterales para impresión.
+            </label>
+          </div>
+
+          <div class="usa-radio margin-bottom-1">
+            <input
+              class="usa-radio__input"
+              id="firma-mod-adobe"
+              type="radio"
+              name="modalidadFirma"
+              value="adobe_electronica"
+            />
+            <label class="usa-radio__label font-sans-2xs" for="firma-mod-adobe">
+              <strong>Firma Electrónica Digital (Adobe Acrobat):</strong> Solicita certificado digital PKCS#7 / PAdES conforme a LMDFE Arts. 4 y 16.
+            </label>
+          </div>
+
+          <div class="usa-radio">
+            <input
+              class="usa-radio__input"
+              id="firma-mod-manual"
+              type="radio"
+              name="modalidadFirma"
+              value="manual_autografa"
+            />
+            <label class="usa-radio__label font-sans-2xs" for="firma-mod-manual">
+              <strong>Firma Manuscrita Autógrafa + Huellas Bilaterales:</strong> Emisión foliada con QR rojo para impresión y suscripción física ante partes (COPP Art. 187).
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Nota de Sello Rojo -->
+        <div class="usa-alert usa-alert--info usa-alert--slim margin-top-2">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text font-sans-3xs">
+              Al generar el PDF, el servidor asignará un <strong>N° Único de Planilla</strong>, estampará el
+              <strong style="color: #b50909;">Código QR Rojo + Barras Code-128</strong> en la esquina superior derecha
+              y registrará el <strong>Hash SHA-256</strong> en la base de datos de cPanel para verificación pública.
+            </p>
+          </div>
+        </div>
+
+        <div id="emitir-pdf-error" class="usa-alert usa-alert--error usa-alert--slim margin-top-2" hidden>
+          <div class="usa-alert__body">
+            <p id="emitir-pdf-error-msg" class="usa-alert__text font-sans-2xs"></p>
+          </div>
+        </div>
+
+        <!-- Botones de Acción -->
+        <div class="display-flex flex-justify-end flex-align-center margin-top-3 padding-top-2 border-top-1px border-base-lighter">
+          <button
+            type="button"
+            id="btn-cancelar-emitir-pdf"
+            class="usa-button usa-button--outline font-sans-2xs margin-right-1"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            id="btn-confirmar-emitir-pdf"
+            class="usa-button usa-button--secondary font-sans-2xs display-inline-flex flex-align-center"
+          >
+            <Icon name="verified_user" className="margin-right-05 text-white" />
+            <span id="txt-confirmar-emitir-pdf">Generar, Sellar SHA-256 y Descargar PDF</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Vista de Confirmación Post-Emisión -->
+    <div id="modal-emitir-result-body" class="padding-3" hidden>
+      <div id="emitir-result-alert" class="usa-alert usa-alert--success margin-top-0 margin-bottom-2">
+        <div class="usa-alert__body">
+          <h3 id="emitir-result-title" class="usa-alert__heading font-heading-xs">
+            Planilla Sellada y Registrada en cPanel
+          </h3>
+          <p id="emitir-result-desc" class="usa-alert__text font-sans-2xs">
+            El PDF editable con Código QR Rojo, barras Code-128 y campos de firma para Adobe Acrobat se ha descargado correctamente.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-base-lightest padding-2 radius-sm border-1px border-base-lighter margin-bottom-2">
+        <div class="grid-row grid-gap-2 flex-align-center">
+          <div class="tablet:grid-col-8">
+            <div class="margin-bottom-1">
+              <span class="font-mono-3xs text-base-dark text-uppercase display-block">Número Único de Planilla (QR &amp; Barras)</span>
+              <strong id="res-codigo-planilla" class="font-mono-md text-bold" style="color: #b50909;">PLN-2026-000001</strong>
+            </div>
+            <div class="margin-bottom-1">
+              <span class="font-mono-3xs text-base-dark text-uppercase display-block">Perito Emisor Registrado</span>
+              <span id="res-perito-emisor" class="font-sans-2xs text-bold text-ink">---</span>
+            </div>
+            <div class="margin-bottom-1">
+              <span class="font-mono-3xs text-base-dark text-uppercase display-block">SHA-256 Emisión (RFC 8785)</span>
+              <code id="res-hash-emision" class="font-mono-3xs text-ink" style="word-break: break-all;">---</code>
+            </div>
+            <div>
+              <span class="font-mono-3xs text-base-dark text-uppercase display-block">SHA-256 Binario del Archivo PDF</span>
+              <code id="res-hash-pdf" class="font-mono-3xs text-primary-darker" style="word-break: break-all;">---</code>
+            </div>
+          </div>
+          <div class="tablet:grid-col-4 text-center">
+            <div id="res-barcode-container" class="bg-white padding-1 radius-sm border-1px" style="border-color: #b50909;">
+              <!-- Barras SVG Code-128 inyectadas -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="display-flex flex-wrap flex-justify-between flex-align-center padding-top-2 border-top-1px border-base-lighter">
+        <a
+          id="res-link-verificar-qr"
+          href="/verificar"
+          target="_blank"
+          rel="noopener"
+          class="usa-button font-sans-2xs display-inline-flex flex-align-center margin-bottom-1 tablet:margin-bottom-0"
+        >
+          <Icon name="launch" className="margin-right-05 text-white" />
+          <span>Abrir Popup de Corroboración QR</span>
+        </a>
+        <button
+          type="button"
+          id="btn-finalizar-emitir-pdf"
+          class="usa-button usa-button--outline font-sans-2xs"
+        >
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fcco-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 46, 81, 0.72);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  .fcco-modal-backdrop[hidden] {
+    display: none !important;
+  }
+  .fcco-modal-dialog {
+    width: 100%;
+    max-width: 700px;
+    max-height: 92vh;
+    overflow-y: auto;
+  }
+</style>
+
+<script>
+  import { phpApi, type ModalidadFirmaPlanilla } from '../../lib/data/phpApi';
+  import {
+    exportCurrentPlanillaToEditablePdf,
+    descargarPlanillaPdfEditablePorSlug,
+    type EmitirPdfResult,
+  } from '../../lib/export/exportEditablePdf';
+  import { renderCode128Svg } from '../../lib/export/code128';
+
+  interface OpenEmitirModalOpts {
+    mode: 'current' | 'slug';
+    slug: string;
+    titulo: string;
+    codigoDoc?: string;
+    faseIso?: string;
+  }
+
+  let currentOpts: OpenEmitirModalOpts | null = null;
+  let dataLoaded = false;
+
+  const modal = document.getElementById('modal-emitir-pdf-adobe');
+  const formBody = document.getElementById('modal-emitir-form-body');
+  const resultBody = document.getElementById('modal-emitir-result-body');
+  const form = document.getElementById('form-emitir-pdf-adobe') as HTMLFormElement | null;
+
+  const tituloEl = document.getElementById('emitir-planilla-titulo');
+  const metaEl = document.getElementById('emitir-planilla-meta');
+  const peritoNombreEl = document.getElementById('emitir-perito-nombre');
+  const peritoCivEl = document.getElementById('emitir-perito-civ');
+
+  const selectCaso = document.getElementById('emitir-select-caso') as HTMLSelectElement | null;
+  const selectCoPerito = document.getElementById('emitir-select-coperito') as HTMLSelectElement | null;
+  const inputCoNombre = document.getElementById('emitir-input-coperito-nombre') as HTMLInputElement | null;
+  const inputCoCiv = document.getElementById('emitir-input-coperito-civ') as HTMLInputElement | null;
+
+  const errorBox = document.getElementById('emitir-pdf-error');
+  const errorMsg = document.getElementById('emitir-pdf-error-msg');
+  const btnConfirmar = document.getElementById('btn-confirmar-emitir-pdf') as HTMLButtonElement | null;
+  const txtConfirmar = document.getElementById('txt-confirmar-emitir-pdf');
+
+  function closeModal() {
+    if (modal) modal.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function showFormView() {
+    if (formBody) formBody.hidden = false;
+    if (resultBody) resultBody.hidden = true;
+    if (errorBox) errorBox.hidden = true;
+  }
+
+  function hydrateLoggedPerito() {
+    try {
+      const raw = sessionStorage.getItem('fcco_auth_user');
+      if (raw) {
+        const u = JSON.parse(raw);
+        const fullName = [u.nombre, u.apellido].filter(Boolean).join(' ') || u.email || 'Perito Forense';
+        if (peritoNombreEl) peritoNombreEl.textContent = fullName;
+        if (peritoCivEl) peritoCivEl.textContent = u.civ || u.ci || 'SESIÓN ACTIVA';
+      }
+    } catch {
+      // mantener por defecto
+    }
+  }
+
+  async function hydrateDropdowns() {
+    if (dataLoaded) return;
+    dataLoaded = true;
+
+    try {
+      const [casos, peritos] = await Promise.all([
+        phpApi.listarCasos().catch(() => []),
+        phpApi.listarPeritosActivos().catch(() => []),
+      ]);
+
+      if (selectCaso && Array.isArray(casos)) {
+        for (const c of casos) {
+          const opt = document.createElement('option');
+          opt.value = c.id;
+          opt.dataset.numeroCaso = c.numeroCaso || '';
+          opt.dataset.numeroPrcc = (c as any).numeroPRCC || (c as any).numero_prcc || '';
+          opt.textContent = `${c.numeroCaso || c.id} — ${(c.titulo || 'Expediente').slice(0, 48)}`;
+          selectCaso.appendChild(opt);
+        }
+      }
+
+      if (selectCoPerito && Array.isArray(peritos)) {
+        for (const p of peritos) {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.dataset.nombre = p.nombre;
+          opt.dataset.civ = p.civ || '';
+          opt.textContent = `${p.nombre}${p.civ ? ` (${p.civ})` : ''} — ${p.cargo || 'Perito'}`;
+          selectCoPerito.appendChild(opt);
+        }
+      }
+    } catch {
+      // modo offline: inputs manuales siguen operativos
+    }
+  }
+
+  selectCoPerito?.addEventListener('change', () => {
+    const sel = selectCoPerito.selectedOptions[0];
+    if (sel && sel.value) {
+      if (inputCoNombre) inputCoNombre.value = sel.dataset.nombre || '';
+      if (inputCoCiv) inputCoCiv.value = sel.dataset.civ || '';
+    }
+  });
+
+  function renderResult(res: EmitirPdfResult) {
+    if (formBody) formBody.hidden = true;
+    if (resultBody) resultBody.hidden = false;
+
+    const alertEl = document.getElementById('emitir-result-alert');
+    const titleEl = document.getElementById('emitir-result-title');
+    const descEl = document.getElementById('emitir-result-desc');
+
+    if (res.offlineDraft) {
+      alertEl?.classList.remove('usa-alert--success');
+      alertEl?.classList.add('usa-alert--warning');
+      if (titleEl) titleEl.textContent = 'PDF Emitido en Modo Borrador Local (Sin Conexión a MySQL)';
+      if (descEl) {
+        descEl.textContent =
+          'No se detectó respuesta del servidor PHP/cPanel. El documento fue sellado localmente con QR Rojo y guardado en este navegador para pruebas; para validez oficial ante tribunales, emítalo conectado a cPanel.';
+      }
+    } else {
+      alertEl?.classList.remove('usa-alert--warning');
+      alertEl?.classList.add('usa-alert--success');
+      if (titleEl) titleEl.textContent = 'Planilla Sellada y Registrada en Base de Datos cPanel';
+      if (descEl) {
+        descEl.textContent =
+          'El PDF editable con Código QR Rojo, barras Code-128, SHA-256 y campos de firma para Adobe Acrobat ha sido descargado y vinculado a la cadena inmutable de auditoría.';
+      }
+    }
+
+    const elCodigo = document.getElementById('res-codigo-planilla');
+    const elPerito = document.getElementById('res-perito-emisor');
+    const elHashEmision = document.getElementById('res-hash-emision');
+    const elHashPdf = document.getElementById('res-hash-pdf');
+    const elBarcode = document.getElementById('res-barcode-container');
+    const elLink = document.getElementById('res-link-verificar-qr') as HTMLAnchorElement | null;
+
+    if (elCodigo) elCodigo.textContent = res.planilla.codigoPlanilla;
+    if (elPerito) {
+      elPerito.textContent = `${res.planilla.perito.nombre} (${res.planilla.perito.civ || res.planilla.perito.ci || 'Perito'})`;
+    }
+    if (elHashEmision) elHashEmision.textContent = res.planilla.hashEmisionSha256;
+    if (elHashPdf) elHashPdf.textContent = res.hashPdfSha256;
+    if (elBarcode) {
+      elBarcode.innerHTML =
+        renderCode128Svg(res.planilla.codigoPlanilla, { color: '#B50909', height: 34 }) +
+        `<div class="font-mono-3xs text-bold margin-top-05" style="color: #b50909;">${res.planilla.codigoPlanilla}</div>`;
+    }
+    if (elLink) {
+      elLink.href = `/verificar?codigo=${encodeURIComponent(res.planilla.codigoPlanilla)}`;
+    }
+  }
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!currentOpts) return;
+
+    if (errorBox) errorBox.hidden = true;
+    if (btnConfirmar) btnConfirmar.disabled = true;
+    if (txtConfirmar) txtConfirmar.textContent = 'Sellando SHA-256 y generando PDF...';
+
+    try {
+      const selectedCasoOpt = selectCaso?.selectedOptions?.[0];
+      const casoId = selectCaso?.value || null;
+      const numeroCaso = selectedCasoOpt?.dataset.numeroCaso || null;
+      const numeroPRCC = selectedCasoOpt?.dataset.numeroPrcc || null;
+
+      const coPeritoNombre = inputCoNombre?.value?.trim() || null;
+      const coPeritoCiv = inputCoCiv?.value?.trim() || null;
+
+      const checkedRadio = form.querySelector<HTMLInputElement>('input[name="modalidadFirma"]:checked');
+      const modalidadFirma = (checkedRadio?.value as ModalidadFirmaPlanilla) || 'hibrida';
+
+      let res: EmitirPdfResult | undefined;
+      if (currentOpts.mode === 'current') {
+        res = await exportCurrentPlanillaToEditablePdf(currentOpts.titulo, {
+          slug: currentOpts.slug,
+          codigoDoc: currentOpts.codigoDoc,
+          faseIso: currentOpts.faseIso,
+          casoId,
+          numeroCaso,
+          numeroPRCC,
+          coPeritoNombre,
+          coPeritoCiv,
+          modalidadFirma,
+          isBlankMode: !casoId,
+        });
+      } else {
+        res = await descargarPlanillaPdfEditablePorSlug(
+          currentOpts.slug,
+          casoId ? 'datos' : 'blanco',
+          casoId,
+          currentOpts.titulo,
+          {
+            codigoDoc: currentOpts.codigoDoc,
+            faseIso: currentOpts.faseIso,
+            numeroCaso,
+            numeroPRCC,
+            coPeritoNombre,
+            coPeritoCiv,
+            modalidadFirma,
+          }
+        );
+      }
+
+      if (res) {
+        renderResult(res);
+      }
+    } catch (err: any) {
+      if (errorBox) errorBox.hidden = false;
+      if (errorMsg) errorMsg.textContent = err?.message || 'Error inesperado al generar el PDF editable.';
+    } finally {
+      if (btnConfirmar) btnConfirmar.disabled = false;
+      if (txtConfirmar) txtConfirmar.textContent = 'Generar, Sellar SHA-256 y Descargar PDF';
+    }
+  });
+
+  document.getElementById('btn-cerrar-modal-emitir-pdf')?.addEventListener('click', closeModal);
+  document.getElementById('btn-cancelar-emitir-pdf')?.addEventListener('click', closeModal);
+  document.getElementById('btn-finalizar-emitir-pdf')?.addEventListener('click', closeModal);
+
+  modal?.addEventListener('click', (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  (window as any).fccoOpenEmitirPdfModal = (opts: OpenEmitirModalOpts) => {
+    currentOpts = opts;
+    if (tituloEl) tituloEl.textContent = opts.titulo || opts.slug;
+    if (metaEl) metaEl.textContent = `${opts.codigoDoc || 'FO-FOR-01'} · ${opts.faseIso || 'F0'}`;
+    hydrateLoggedPerito();
+    hydrateDropdowns();
+    showFormView();
+    if (modal) modal.hidden = false;
+    document.body.style.overflow = 'hidden';
+  };
+</script>

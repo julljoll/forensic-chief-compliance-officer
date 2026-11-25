@@ -1,0 +1,481 @@
+---
+/**
+ * SHA256.US — Popup Oficial USWDS de Corroboración Documental por Código QR Rojo
+ * Consulta en vivo la base de datos cPanel (`GET /api/planillas-emitidas.php?codigo=...`)
+ * para corroborar perito emisor, número de planilla (barras Code-128), SHA-256 y firmas.
+ */
+import Icon from '../uswds/Icon.astro';
+
+interface Props {
+  autoOpen?: boolean;
+}
+
+const { autoOpen = false } = Astro.props;
+---
+
+<div
+  id="fcco-qr-verificacion-popup"
+  class="fcco-qr-popup-backdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="qr-popup-heading"
+  data-auto-open={autoOpen ? '1' : '0'}
+  hidden
+>
+  <div class="fcco-qr-popup-dialog bg-white radius-md shadow-5 border-2px" style="border-color: #b50909;">
+    <!-- Cabecera Institucional Roja / Azul Federal -->
+    <div class="padding-2 text-white display-flex flex-justify flex-align-center radius-top-sm" style="background-color: #112e51; border-bottom: 4px solid #b50909;">
+      <div class="display-flex flex-align-center">
+        <Icon name="verified_user" className="margin-right-1 text-white" />
+        <div>
+          <h2 id="qr-popup-heading" class="margin-0 font-heading-sm text-white">
+            Corroboración Oficial de Planilla Forense — SHA256.US
+          </h2>
+          <p class="margin-0 font-mono-3xs text-base-lightest">
+            Consulta en Vivo a Base de Datos de Planillas Emitidas · RFC 8785 · COPP Art. 187
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        id="btn-cerrar-qr-popup"
+        class="usa-button usa-button--unstyled text-white padding-05"
+        aria-label="Cerrar ventana de corroboración"
+        style="cursor: pointer;"
+      >
+        <Icon name="close" className="text-white" />
+      </button>
+    </div>
+
+    <div class="padding-3">
+      <!-- Estado de Carga -->
+      <div id="qr-popup-loading" class="padding-y-4 text-center">
+        <p class="font-sans-sm text-bold text-primary-darker margin-0">
+          Consultando registro oficial en servidor SHA256.US...
+        </p>
+        <p class="font-mono-3xs text-base-dark margin-top-1">
+          Verificando identificador único, perito emisor y cadena SHA-256
+        </p>
+      </div>
+
+      <!-- Estado de Error / No Registrada -->
+      <div id="qr-popup-not-found" hidden>
+        <div class="usa-alert usa-alert--error margin-top-0">
+          <div class="usa-alert__body">
+            <h3 class="usa-alert__heading font-heading-sm">
+              Planilla No Registrada o Código Inválido
+            </h3>
+            <p id="qr-popup-error-text" class="usa-alert__text font-body-2xs">
+              El código consultado no coincide con ningún documento emitido oficialmente en el servidor de SHA256.US.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado Verificado: Detalle Completo del Documento -->
+      <div id="qr-popup-content" hidden>
+        <!-- Banner de Veredicto -->
+        <div id="qr-veredicto-banner" class="usa-alert usa-alert--success margin-top-0 margin-bottom-2">
+          <div class="usa-alert__body">
+            <h3 id="qr-veredicto-titulo" class="usa-alert__heading font-heading-sm">
+              Planilla Auténtica Verificada en Servidor Oficial
+            </h3>
+            <p id="qr-veredicto-sub" class="usa-alert__text font-sans-2xs">
+              Los datos coinciden con el registro inmutable almacenado en la base de datos del Laboratorio Forense SHA256.US.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bloque 1: Número de Planilla + Código de Barras Rojo Code-128 -->
+        <div class="bg-base-lightest padding-2 radius-sm border-1px margin-bottom-2" style="border-color: #b50909;">
+          <div class="grid-row grid-gap-2 flex-align-center">
+            <div class="tablet:grid-col-7">
+              <span class="font-mono-3xs text-uppercase text-bold display-block" style="color: #b50909;">
+                Número Identificador de Planilla (QR &amp; Barras)
+              </span>
+              <div id="qr-val-codigo" class="font-mono-lg text-bold" style="color: #b50909;">
+                PLN-2026-000001
+              </div>
+              <div class="margin-top-05 display-flex flex-wrap">
+                <span id="qr-val-codigo-doc" class="usa-tag bg-primary-darker text-white font-mono-3xs margin-right-1 margin-bottom-05">
+                  FO-F0-01
+                </span>
+                <span id="qr-val-fase" class="usa-tag bg-primary text-white font-mono-3xs margin-right-1 margin-bottom-05">
+                  FASE F0
+                </span>
+                <span id="qr-val-fecha" class="usa-tag bg-base-darker text-white font-mono-3xs margin-bottom-05">
+                  ---
+                </span>
+              </div>
+              <div id="qr-val-titulo" class="font-sans-xs text-bold text-ink margin-top-1">
+                ---
+              </div>
+              <div id="qr-val-expediente" class="font-mono-3xs text-base-dark margin-top-05">
+                ---
+              </div>
+            </div>
+            <div class="tablet:grid-col-5 text-center">
+              <div id="qr-val-barcode" class="bg-white padding-105 radius-sm border-1px" style="border-color: #b50909;">
+                <!-- SVG Code-128 inyectado dinámicamente -->
+              </div>
+              <span class="font-mono-3xs text-base-dark display-block margin-top-05">
+                Coteje este código de barras con la planilla impresa
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 2: Perito Generador (Usuario Logueado) & Requerimiento de Firmas -->
+        <div class="grid-row grid-gap-2 margin-bottom-2">
+          <div class="tablet:grid-col-6">
+            <div class="bg-white padding-2 radius-sm border-1px border-base-lighter height-full">
+              <div class="display-flex flex-align-center margin-bottom-1 text-primary-darker">
+                <Icon name="account_circle" className="margin-right-05" />
+                <strong class="font-sans-2xs text-uppercase">Perito Emisor (Usuario Logueado)</strong>
+              </div>
+              <div id="qr-val-perito-nombre" class="font-sans-sm text-bold text-ink">---</div>
+              <div id="qr-val-perito-cargo" class="font-sans-3xs text-base-dark margin-top-05">---</div>
+              <div class="margin-top-1 font-mono-3xs text-ink">
+                <div><strong>C.I.:</strong> <span id="qr-val-perito-ci">---</span></div>
+                <div><strong>CIV / INPRE:</strong> <span id="qr-val-perito-cred">---</span></div>
+                <div><strong>Organismo:</strong> <span id="qr-val-perito-org">---</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tablet:grid-col-6">
+            <div class="bg-white padding-2 radius-sm border-1px border-base-lighter height-full">
+              <div class="display-flex flex-align-center margin-bottom-1 text-primary-darker">
+                <Icon name="edit" className="margin-right-05" />
+                <strong class="font-sans-2xs text-uppercase">Firmas Periciales (Adobe / Manual)</strong>
+              </div>
+              <div class="margin-bottom-1">
+                <span id="qr-val-estado-firma" class="usa-tag bg-accent-warm-dark text-ink font-mono-3xs text-bold">
+                  PENDIENTE_FIRMA
+                </span>
+              </div>
+              <div class="font-sans-3xs text-ink">
+                <div><strong>Modalidad requerida:</strong> <span id="qr-val-modalidad-firma">---</span></div>
+                <div class="margin-top-05"><strong>Co-Perito asignado:</strong> <span id="qr-val-coperito">---</span></div>
+                <div class="margin-top-05"><strong>Fecha de certificación:</strong> <span id="qr-val-firmada-en">Pendiente de suscripción</span></div>
+              </div>
+              <p class="font-sans-3xs text-base-dark margin-top-1 margin-bottom-0">
+                Verifique que el documento cuente con la firma electrónica digital en Adobe Acrobat (PAdES) o la firma manuscrita con huellas bilaterales de los peritos.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 3: Hashes SHA-256 + Verificador Local Drag & Drop -->
+        <div class="bg-base-lightest padding-2 radius-sm border-1px border-base-lighter">
+          <div class="display-flex flex-align-center flex-justify margin-bottom-1">
+            <div class="display-flex flex-align-center text-primary-darker">
+              <Icon name="fingerprint" className="margin-right-05" />
+              <strong class="font-sans-2xs text-uppercase">Integridad Criptográfica SHA-256 (cPanel)</strong>
+            </div>
+            <span id="qr-val-auditoria-seq" class="usa-tag bg-success-dark text-white font-mono-3xs">
+              Cadena Auditoría #---
+            </span>
+          </div>
+
+          <div class="font-mono-3xs margin-bottom-1">
+            <span class="text-base-dark display-block">SHA-256 Emisión Canónica (RFC 8785):</span>
+            <code id="qr-val-hash-emision" class="text-ink text-bold" style="word-break: break-all;">---</code>
+          </div>
+
+          <div class="font-mono-3xs margin-bottom-1">
+            <span class="text-base-dark display-block">SHA-256 Binario del PDF Generado:</span>
+            <code id="qr-val-hash-pdf" class="text-primary-darker text-bold" style="word-break: break-all;">---</code>
+          </div>
+
+          <div id="qr-row-hash-firmado" class="font-mono-3xs margin-bottom-1" hidden>
+            <span class="text-base-dark display-block">SHA-256 Binario del PDF Firmado en Adobe:</span>
+            <code id="qr-val-hash-firmado" class="text-success-dark text-bold" style="word-break: break-all;">---</code>
+          </div>
+
+          <!-- Comprobador Local de Integridad de Archivo PDF -->
+          <div class="border-top-1px border-base-lighter padding-top-105 margin-top-105">
+            <label class="font-sans-3xs text-bold text-ink display-block margin-bottom-05" for="qr-input-file-check">
+              Cotejar archivo PDF recibido (verificación SHA-256 local sin subir el archivo):
+            </label>
+            <input
+              id="qr-input-file-check"
+              type="file"
+              accept="application/pdf,.pdf"
+              class="usa-input font-sans-3xs padding-05"
+            />
+            <div id="qr-file-check-result" class="margin-top-1" hidden></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Pie del Popup -->
+      <div class="display-flex flex-justify-end margin-top-2 padding-top-2 border-top-1px border-base-lighter">
+        <button type="button" id="btn-ok-cerrar-qr-popup" class="usa-button usa-button--outline font-sans-2xs">
+          Cerrar Ventana
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .fcco-qr-popup-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 46, 81, 0.78);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    overflow-y: auto;
+  }
+  .fcco-qr-popup-backdrop[hidden] {
+    display: none !important;
+  }
+  .fcco-qr-popup-dialog {
+    width: 100%;
+    max-width: 760px;
+    max-height: 94vh;
+    overflow-y: auto;
+  }
+</style>
+
+<script>
+  import { phpApi, type PlanillaEmitidaDTO } from '../../lib/data/phpApi';
+  import { renderCode128Svg } from '../../lib/export/code128';
+  import { computeSha256HexFromBytes } from '../../lib/export/exportEditablePdf';
+
+  const popup = document.getElementById('fcco-qr-verificacion-popup');
+  const loadingEl = document.getElementById('qr-popup-loading');
+  const notFoundEl = document.getElementById('qr-popup-not-found');
+  const errorTextEl = document.getElementById('qr-popup-error-text');
+  const contentEl = document.getElementById('qr-popup-content');
+  const fileCheckInput = document.getElementById('qr-input-file-check') as HTMLInputElement | null;
+  const fileCheckRes = document.getElementById('qr-file-check-result');
+
+  let activePlanilla: PlanillaEmitidaDTO | null = null;
+
+  function formatModalidad(mod: string): string {
+    if (mod === 'adobe_electronica') return 'Firma Electrónica Digital (Adobe Acrobat PAdES)';
+    if (mod === 'manual_autografa') return 'Firma Manuscrita Autógrafa + Huellas Bilaterales';
+    return 'Híbrida (Electrónica Adobe Acrobat o Manuscrita + Huellas)';
+  }
+
+  function formatEstadoFirma(estado: string): { label: string; cls: string } {
+    switch (estado) {
+      case 'FIRMADA_ADOBE':
+        return { label: 'FIRMADA EN ADOBE ACROBAT (PAdES)', cls: 'bg-success-dark text-white' };
+      case 'FIRMADA_MANUAL':
+        return { label: 'FIRMADA MANUSCRITAMENTE + HUELLAS', cls: 'bg-success-dark text-white' };
+      case 'FIRMADA_HIBRIDA':
+        return { label: 'FIRMADA (ADOBE + AUTÓGRAFA)', cls: 'bg-success-dark text-white' };
+      case 'REVOCADA':
+        return { label: 'PLANILLA REVOCADA / ANULADA', cls: 'bg-secondary-dark text-white' };
+      default:
+        return { label: 'PENDIENTE DE FIRMA DE PERITOS', cls: 'bg-accent-warm-dark text-ink' };
+    }
+  }
+
+  function closePopup() {
+    if (popup) popup.hidden = true;
+    document.body.style.overflow = '';
+  }
+
+  function renderPlanillaData(p: PlanillaEmitidaDTO, isLocalFallback = false) {
+    activePlanilla = p;
+    if (loadingEl) loadingEl.hidden = true;
+    if (notFoundEl) notFoundEl.hidden = true;
+    if (contentEl) contentEl.hidden = false;
+    if (fileCheckRes) fileCheckRes.hidden = true;
+    if (fileCheckInput) fileCheckInput.value = '';
+
+    const verBanner = document.getElementById('qr-veredicto-banner');
+    const verTit = document.getElementById('qr-veredicto-titulo');
+    const verSub = document.getElementById('qr-veredicto-sub');
+
+    verBanner?.classList.remove('usa-alert--success', 'usa-alert--warning', 'usa-alert--error');
+    if (p.estadoFirma === 'REVOCADA') {
+      verBanner?.classList.add('usa-alert--error');
+      if (verTit) verTit.textContent = 'Atención: Planilla Revocada / Sin Vigencia';
+      if (verSub) verSub.textContent = 'Este documento figura como revocado en el registro oficial del laboratorio.';
+    } else if (isLocalFallback || p.offlineDraft) {
+      verBanner?.classList.add('usa-alert--warning');
+      if (verTit) verTit.textContent = 'Borrador Local Detectado (Sin Registro en Servidor MySQL)';
+      if (verSub) verSub.textContent = 'Esta planilla fue generada en modo local sin conexión a cPanel.';
+    } else {
+      verBanner?.classList.add('usa-alert--success');
+      if (verTit) verTit.textContent = 'Planilla Auténtica Verificada en Servidor Oficial SHA256.US';
+      if (verSub) {
+        verSub.textContent =
+          'El número identificador, perito emisor y sellos SHA-256 coinciden con el registro inmutable en cPanel.';
+      }
+    }
+
+    const setTxt = (id: string, val: string) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = val;
+    };
+
+    setTxt('qr-val-codigo', p.codigoPlanilla);
+    setTxt('qr-val-codigo-doc', p.codigoDoc || 'FO-FOR-01');
+    setTxt('qr-val-fase', `FASE ${p.faseIso || 'F0'}`);
+    setTxt('qr-val-fecha', p.emitidoEnUtc ? new Date(p.emitidoEnUtc).toLocaleString('es-VE') : '---');
+    setTxt('qr-val-titulo', p.tituloPlanilla || p.planillaSlug);
+    setTxt(
+      'qr-val-expediente',
+      p.numeroCaso || p.numeroPRCC
+        ? `Expediente: ${p.numeroCaso || 'N/A'} · PRCC: ${p.numeroPRCC || 'N/A'}`
+        : 'Plantilla Oficial Foliada (sin expediente precargado)'
+    );
+
+    const barcodeEl = document.getElementById('qr-val-barcode');
+    if (barcodeEl) {
+      try {
+        barcodeEl.innerHTML =
+          renderCode128Svg(p.codigoPlanilla, { color: '#B50909', height: 36 }) +
+          `<div class="font-mono-3xs text-bold margin-top-05" style="color: #b50909;">${p.codigoPlanilla}</div>`;
+      } catch {
+        barcodeEl.textContent = p.codigoPlanilla;
+      }
+    }
+
+    setTxt('qr-val-perito-nombre', p.perito.nombre);
+    setTxt('qr-val-perito-cargo', p.perito.cargo || 'Perito Informático Forense');
+    setTxt('qr-val-perito-ci', p.perito.ci || 'No especificado');
+    setTxt(
+      'qr-val-perito-cred',
+      [p.perito.civ, p.perito.inpre].filter(Boolean).join(' / ') || 'Acreditado SHA256.US'
+    );
+    setTxt('qr-val-perito-org', p.perito.organismo || 'Laboratorio Privado SHA256.US');
+
+    const estadoInfo = formatEstadoFirma(p.estadoFirma);
+    const estadoEl = document.getElementById('qr-val-estado-firma');
+    if (estadoEl) {
+      estadoEl.textContent = estadoInfo.label;
+      estadoEl.className = `usa-tag font-mono-3xs text-bold ${estadoInfo.cls}`;
+    }
+
+    setTxt('qr-val-modalidad-firma', formatModalidad(p.modalidadFirma));
+    setTxt(
+      'qr-val-coperito',
+      p.coPerito?.nombre
+        ? `${p.coPerito.nombre}${p.coPerito.civ ? ` (${p.coPerito.civ})` : ''}`
+        : 'Por designar al momento de la firma'
+    );
+    setTxt(
+      'qr-val-firmada-en',
+      p.firmadaEn ? new Date(p.firmadaEn).toLocaleString('es-VE') : 'Pendiente de certificación de firma'
+    );
+
+    setTxt(
+      'qr-val-auditoria-seq',
+      p.auditoriaSeq ? `Bloque Auditoría #${p.auditoriaSeq}` : 'Sin asiento remoto'
+    );
+    setTxt('qr-val-hash-emision', p.hashEmisionSha256);
+    setTxt('qr-val-hash-pdf', p.hashPdfSha256 || 'Pendiente de registro binario');
+
+    const rowFirmado = document.getElementById('qr-row-hash-firmado');
+    if (p.hashPdfFirmadoSha256) {
+      if (rowFirmado) rowFirmado.hidden = false;
+      setTxt('qr-val-hash-firmado', p.hashPdfFirmadoSha256);
+    } else if (rowFirmado) {
+      rowFirmado.hidden = true;
+    }
+  }
+
+  async function openAndVerifyCode(rawCode: string) {
+    const code = rawCode.trim().toUpperCase();
+    if (!code) return;
+
+    if (popup) popup.hidden = false;
+    document.body.style.overflow = 'hidden';
+    if (loadingEl) loadingEl.hidden = false;
+    if (notFoundEl) notFoundEl.hidden = true;
+    if (contentEl) contentEl.hidden = true;
+
+    const res = await phpApi.verificarPlanillaPorCodigo(code);
+    if (res.ok && res.data?.planilla) {
+      renderPlanillaData(res.data.planilla, false);
+      return;
+    }
+
+    // Respaldo de consulta local para borradores emitidos en modo local sin PHP
+    try {
+      const localMap: Record<string, PlanillaEmitidaDTO> = JSON.parse(
+        localStorage.getItem('fcco_planillas_emitidas_local') || '{}'
+      );
+      if (localMap[code]) {
+        renderPlanillaData(localMap[code], true);
+        return;
+      }
+    } catch {
+      // ignorar
+    }
+
+    if (loadingEl) loadingEl.hidden = true;
+    if (notFoundEl) notFoundEl.hidden = false;
+    if (errorTextEl) {
+      errorTextEl.textContent =
+        res.error ||
+        `El número de planilla "${code}" no figura en la base de datos oficial de SHA256.US. Verifique que el código coincida con la hoja impresa.`;
+    }
+  }
+
+  // Cotejo local SHA-256 del archivo PDF arrastrado/seleccionado
+  fileCheckInput?.addEventListener('change', async () => {
+    const file = fileCheckInput.files?.[0];
+    if (!file || !activePlanilla || !fileCheckRes) return;
+
+    const buf = await file.arrayBuffer();
+    const calculated = await computeSha256HexFromBytes(new Uint8Array(buf));
+
+    const matchOriginal = activePlanilla.hashPdfSha256 && calculated === activePlanilla.hashPdfSha256;
+    const matchFirmado =
+      activePlanilla.hashPdfFirmadoSha256 && calculated === activePlanilla.hashPdfFirmadoSha256;
+
+    fileCheckRes.hidden = false;
+    if (matchOriginal || matchFirmado) {
+      const tipo = matchFirmado ? 'PDF FIRMADO EN ADOBE ACROBAT' : 'PDF ORIGINAL EMITIDO';
+      fileCheckRes.innerHTML = `
+        <div class="usa-alert usa-alert--success usa-alert--slim margin-top-0">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text font-sans-3xs">
+              <strong>COINCIDENCIA EXACTA (MATCH — ${tipo}):</strong> El archivo no ha sido alterado.
+              <br/><code class="font-mono-3xs" style="word-break: break-all;">${calculated}</code>
+            </p>
+          </div>
+        </div>
+      `;
+    } else {
+      fileCheckRes.innerHTML = `
+        <div class="usa-alert usa-alert--warning usa-alert--slim margin-top-0">
+          <div class="usa-alert__body">
+            <p class="usa-alert__text font-sans-3xs">
+              <strong>HASH DIFERENTE (MISMATCH):</strong> El archivo seleccionado difiere del PDF base registrado (puede contener ediciones/firmas aún no certificadas en servidor o alteraciones).
+              <br/><code class="font-mono-3xs" style="word-break: break-all;">Calculado: ${calculated}</code>
+            </p>
+          </div>
+        </div>
+      `;
+    }
+  });
+
+  document.getElementById('btn-cerrar-qr-popup')?.addEventListener('click', closePopup);
+  document.getElementById('btn-ok-cerrar-qr-popup')?.addEventListener('click', closePopup);
+  popup?.addEventListener('click', (e) => {
+    if (e.target === popup) closePopup();
+  });
+
+  (window as any).fccoOpenVerificacionQrPopup = openAndVerifyCode;
+
+  // Apertura automática cuando se escanea el QR Rojo hacia /verificar?codigo=PLN-...
+  if (popup?.getAttribute('data-auto-open') === '1') {
+    const params = new URLSearchParams(window.location.search);
+    const codigo = params.get('codigo') || params.get('id') || '';
+    if (codigo) {
+      openAndVerifyCode(codigo);
+    }
+  }
+</script>

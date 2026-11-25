@@ -6,13 +6,14 @@
 import '../styles/folio-aislado.css';
 import PrintToolbar from '../components/layout/PrintToolbar.astro';
 import AuthGuard from '../components/layout/AuthGuard.astro';
+import EmitirPdfAdobeModal from '../components/planillas/EmitirPdfAdobeModal.astro';
 
 interface Props {
   title?: string;
   activeSlug?: string;
 }
 
-const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
+const { title = 'Documento Pericial Oficial — SHA256.US', activeSlug = '' } = Astro.props;
 ---
 <!doctype html>
 <html lang="es" class="fcco-auth-loading">
@@ -47,10 +48,12 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
 
     <!-- Contenedor Raíz Aislado Monocromático Folio (216mm × 330mm) -->
     <main id="main-content" class="display-flex flex-column flex-align-center width-full overflow-x-auto padding-x-1">
-      <div class="folio-forense-aislado">
+      <div class="folio-forense-aislado" data-slug={activeSlug}>
         <slot />
       </div>
     </main>
+
+    <EmitirPdfAdobeModal />
 
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
     <script>
@@ -83,8 +86,30 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
         }
       });
 
-      // Manejador de descarga PDF Editable con QR y Firma Digital para Adobe Acrobat
+      // Manejador de descarga PDF Editable: abre Modal de Firma + Sellado QR Rojo & SHA-256 en cPanel
       btnPdfEditable?.addEventListener('click', async () => {
+        const container =
+          document.getElementById('contenedor-planilla-activa') ||
+          document.querySelector('.folio-forense-aislado');
+        const slug =
+          container?.getAttribute('data-slug') ||
+          window.location.pathname.split('/').pop()?.replace('.html', '') ||
+          'planilla';
+        const titulo =
+          container?.querySelector('.canonical-doc-title')?.textContent?.trim() ||
+          document.title ||
+          slug;
+        const codigoDoc =
+          container?.querySelector('.control-box-val')?.textContent?.trim() || 'FO-FOR-01';
+        const faseMatch = codigoDoc.match(/F[0-5]/i);
+        const faseIso = faseMatch ? faseMatch[0].toUpperCase() : 'F0';
+
+        const openModal = (window as any).fccoOpenEmitirPdfModal;
+        if (typeof openModal === 'function') {
+          openModal({ mode: 'current', slug, titulo, codigoDoc, faseIso });
+          return;
+        }
+
         if (txtPdfEditable) txtPdfEditable.textContent = 'Generando...';
         btnPdfEditable.setAttribute('disabled', 'true');
         try {

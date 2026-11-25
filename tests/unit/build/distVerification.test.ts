@@ -21,9 +21,12 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `fases_caso`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `auditoria`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `login_attempts`');
+    expect(sql).toContain('CREATE TABLE IF NOT EXISTS `planillas_emitidas`');
     expect(sql).toContain('`totp_enabled`');
     expect(sql).toContain('trg_auditoria_no_update');
     expect(sql).toContain('trg_auditoria_no_delete');
+    expect(sql).toContain('trg_planillas_emitidas_no_delete');
+    expect(sql).toContain('trg_planillas_emitidas_inmutable');
   });
 
   it('dist/ debe contener .htaccess con reglas de Apache para URLs limpias y seguridad', () => {
@@ -33,6 +36,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(htaccess).toContain('RewriteEngine On');
     expect(htaccess).toContain('RewriteRule ^api/lib/ - [F,L]');
     expect(htaccess).toContain('RewriteRule ^api/ - [L]');
+    expect(htaccess).toContain('RewriteRule ^verificar/?$ verificar.html [QSA,L]');
     expect(htaccess).toContain('X-Frame-Options');
     expect(htaccess).toContain('X-Content-Type-Options');
     expect(htaccess).toContain('Content-Security-Policy');
@@ -44,6 +48,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'avanzar-etapa.php',
       'auditoria.php',
       'auth.php',
+      'planillas-emitidas.php',
       'config.php',
       'config.example.php',
       'lib/canonical.php',
@@ -70,6 +75,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'seguridad.html',
       'planillas.html',
       'planillas/index.html',
+      'verificar.html',
     ];
     for (const page of expectedPages) {
       const p = path.resolve(distDir, page);

@@ -5,6 +5,8 @@
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
+import Icon from '../uswds/Icon.astro';
+import VerificacionQrPopup from '../verificacion/VerificacionQrPopup.astro';
 ---
 
 <PageHeader
@@ -48,6 +50,110 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </SummaryBox>
 </div>
 
+<!-- Sección de Registro Oficial de Planillas Emitidas (QR Rojo, Code-128 y Firmas) -->
+<section class="margin-bottom-4" aria-labelledby="planillas-emitidas-heading">
+  <div class="display-flex flex-wrap flex-justify flex-align-center margin-bottom-2">
+    <div>
+      <h2 class="margin-0 font-heading-lg" id="planillas-emitidas-heading">
+        Registro de Planillas Emitidas (QR Rojo &amp; SHA-256)
+      </h2>
+      <p class="margin-0 font-body-2xs text-base-dark">
+        Control de planillas generadas con PDF Editable (Adobe), perito emisor, firmas periciales y enlace de verificación pública.
+      </p>
+    </div>
+    <div class="display-flex flex-align-center margin-top-1 tablet:margin-top-0">
+      <a href="/verificar" target="_blank" rel="noopener" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-05 display-inline-flex flex-align-center">
+        <Icon name="launch" className="margin-right-05" />
+        <span>Portal Público /verificar</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="usa-table-container--scrollable" tabindex="0">
+    <table class="usa-table usa-table--striped usa-table--compact width-full" id="tabla-planillas-emitidas">
+      <caption>Listado de planillas PDF emitidas y selladas en base de datos cPanel</caption>
+      <thead>
+        <tr>
+          <th scope="col">N° Planilla (QR / Barras)</th>
+          <th scope="col">Formato / Fase</th>
+          <th scope="col">Perito Emisor</th>
+          <th scope="col">Fecha Emisión</th>
+          <th scope="col">SHA-256 Emisión</th>
+          <th scope="col">Estado de Firma</th>
+          <th scope="col">Acciones</th>
+        </tr>
+      </thead>
+      <tbody id="tbody-planillas-emitidas">
+        <tr>
+          <td colspan="7">Consultando planillas selladas en servidor cPanel...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Modal Interno para Certificar Firma Electrónica (Adobe) o Manual -->
+<div
+  id="modal-certificar-firma"
+  class="fcco-cert-modal-backdrop"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="cert-firma-heading"
+  hidden
+>
+  <div class="fcco-cert-modal-dialog bg-white radius-md shadow-4 border-1px border-base-lighter">
+    <div class="bg-primary-darker text-white padding-2 display-flex flex-justify flex-align-center radius-top-md">
+      <div class="display-flex flex-align-center">
+        <Icon name="edit" className="margin-right-1 text-white" />
+        <h3 id="cert-firma-heading" class="margin-0 font-heading-sm text-white">
+          Certificar Firma de Peritos en Planilla
+        </h3>
+      </div>
+      <button type="button" id="btn-cerrar-cert-firma" class="usa-button usa-button--unstyled text-white" aria-label="Cerrar" style="cursor: pointer;">
+        <Icon name="close" className="text-white" />
+      </button>
+    </div>
+
+    <form id="form-certificar-firma" class="padding-3 usa-form maxw-none">
+      <input type="hidden" id="cert-codigo-planilla" />
+      <p class="font-sans-xs margin-top-0">
+        Planilla seleccionada: <strong id="cert-codigo-display" class="font-mono-sm" style="color: #b50909;">PLN-2026-000001</strong>
+      </p>
+
+      <label class="usa-label font-sans-2xs text-bold" for="cert-estado-firma">
+        Estado de Suscripción / Firma Aplicada
+      </label>
+      <select class="usa-select font-sans-2xs" id="cert-estado-firma" required>
+        <option value="FIRMADA_ADOBE">Firmada Electrónicamente en Adobe Acrobat (PAdES / PKCS#7)</option>
+        <option value="FIRMADA_MANUAL">Firmada Manuscritamente + Huellas Dactilares Bilaterales</option>
+        <option value="FIRMADA_HIBRIDA">Firma Híbrida (Adobe Acrobat + Autógrafa/Dactilar)</option>
+        <option value="REVOCADA">Revocar / Anular Planilla</option>
+      </select>
+
+      <label class="usa-label font-sans-2xs text-bold margin-top-2" for="cert-file-pdf-firmado">
+        Adjuntar PDF ya firmado en Adobe (opcional — solo calcula SHA-256 local para certificar en BD)
+      </label>
+      <input class="usa-input font-sans-3xs padding-05" id="cert-file-pdf-firmado" type="file" accept="application/pdf,.pdf" />
+      <div id="cert-hash-preview" class="font-mono-3xs text-primary-darker margin-top-05" style="word-break: break-all;"></div>
+
+      <div id="cert-error-box" class="usa-alert usa-alert--error usa-alert--slim margin-top-2" hidden>
+        <div class="usa-alert__body">
+          <p id="cert-error-msg" class="usa-alert__text font-sans-2xs"></p>
+        </div>
+      </div>
+
+      <div class="display-flex flex-justify-end margin-top-3 padding-top-2 border-top-1px border-base-lighter">
+        <button type="button" id="btn-cancelar-cert-firma" class="usa-button usa-button--outline font-sans-2xs margin-right-1">
+          Cancelar
+        </button>
+        <button type="submit" id="btn-guardar-cert-firma" class="usa-button font-sans-2xs">
+          Guardar Certificación en cPanel
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- USWDS: Table | https://designsystem.digital.gov/components/table/ -->
 <section class="margin-bottom-4" aria-labelledby="bloques-registrados-heading">
   <div class="display-flex flex-justify flex-align-center margin-bottom-2">
@@ -85,18 +191,188 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </section>
 
+<VerificacionQrPopup autoOpen={false} />
+
+<style>
+  .fcco-cert-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(17, 46, 81, 0.72);
+    z-index: 9998;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+  .fcco-cert-modal-backdrop[hidden] {
+    display: none !important;
+  }
+  .fcco-cert-modal-dialog {
+    width: 100%;
+    max-width: 560px;
+  }
+</style>
+
 <script>
-  import { phpApi } from '../../lib/data/phpApi';
+  import { phpApi, type EstadoFirmaPlanilla, type PlanillaEmitidaDTO } from '../../lib/data/phpApi';
   import { idbGetAll } from '../../lib/data/idb';
   import { verificarCadena } from '../../lib/crypto/hashChain';
+  import { computeSha256HexFromBytes } from '../../lib/export/exportEditablePdf';
   import type { AuditEntry } from '../../lib/domain/types';
 
   const tbody = document.getElementById('tbody-auditoria');
+  const tbodyPlanillas = document.getElementById('tbody-planillas-emitidas');
   const totalBloquesEl = document.getElementById('total-bloques');
   const btnVerificar = document.getElementById('btn-verificar-cadena');
   const contResultado = document.getElementById('contenedor-resultado-verificacion');
 
+  // Modal certificar firma
+  const certModal = document.getElementById('modal-certificar-firma');
+  const certForm = document.getElementById('form-certificar-firma') as HTMLFormElement | null;
+  const certCodigoInput = document.getElementById('cert-codigo-planilla') as HTMLInputElement | null;
+  const certCodigoDisplay = document.getElementById('cert-codigo-display');
+  const certEstadoSelect = document.getElementById('cert-estado-firma') as HTMLSelectElement | null;
+  const certFileInput = document.getElementById('cert-file-pdf-firmado') as HTMLInputElement | null;
+  const certHashPreview = document.getElementById('cert-hash-preview');
+  const certErrorBox = document.getElementById('cert-error-box');
+  const certErrorMsg = document.getElementById('cert-error-msg');
+
+  let certHashCalculado: string | null = null;
   let entriesMemoria: AuditEntry[] = [];
+
+  function closeCertModal() {
+    if (certModal) certModal.hidden = true;
+    certHashCalculado = null;
+    if (certFileInput) certFileInput.value = '';
+    if (certHashPreview) certHashPreview.textContent = '';
+    if (certErrorBox) certErrorBox.hidden = true;
+  }
+
+  function openCertModal(codigo: string) {
+    if (certCodigoInput) certCodigoInput.value = codigo;
+    if (certCodigoDisplay) certCodigoDisplay.textContent = codigo;
+    certHashCalculado = null;
+    if (certFileInput) certFileInput.value = '';
+    if (certHashPreview) certHashPreview.textContent = '';
+    if (certErrorBox) certErrorBox.hidden = true;
+    if (certModal) certModal.hidden = false;
+  }
+
+  certFileInput?.addEventListener('change', async () => {
+    const file = certFileInput.files?.[0];
+    if (!file) {
+      certHashCalculado = null;
+      if (certHashPreview) certHashPreview.textContent = '';
+      return;
+    }
+    const buf = await file.arrayBuffer();
+    certHashCalculado = await computeSha256HexFromBytes(new Uint8Array(buf));
+    if (certHashPreview) {
+      certHashPreview.textContent = `SHA-256 PDF firmado calculado: ${certHashCalculado}`;
+    }
+  });
+
+  certForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const codigo = certCodigoInput?.value || '';
+    const estado = (certEstadoSelect?.value as EstadoFirmaPlanilla) || 'FIRMADA_ADOBE';
+    if (!codigo) return;
+
+    if (certErrorBox) certErrorBox.hidden = true;
+    const res = await phpApi.certificarFirmaPlanilla(codigo, estado, certHashCalculado);
+    if (!res.ok) {
+      if (certErrorBox) certErrorBox.hidden = false;
+      if (certErrorMsg) certErrorMsg.textContent = res.error || 'No se pudo certificar la firma en cPanel.';
+      return;
+    }
+    closeCertModal();
+    await Promise.all([cargarPlanillasEmitidas(), cargarAuditoria()]);
+  });
+
+  document.getElementById('btn-cerrar-cert-firma')?.addEventListener('click', closeCertModal);
+  document.getElementById('btn-cancelar-cert-firma')?.addEventListener('click', closeCertModal);
+
+  async function cargarPlanillasEmitidas() {
+    if (!tbodyPlanillas) return;
+    let lista: PlanillaEmitidaDTO[] = await phpApi.listarPlanillasEmitidas();
+
+    // Fusionar borradores locales si existen
+    try {
+      const localMap: Record<string, PlanillaEmitidaDTO> = JSON.parse(
+        localStorage.getItem('fcco_planillas_emitidas_local') || '{}'
+      );
+      const localList = Object.values(localMap);
+      const codesRemotos = new Set(lista.map((x) => x.codigoPlanilla));
+      for (const l of localList) {
+        if (!codesRemotos.has(l.codigoPlanilla)) {
+          lista.push(l);
+        }
+      }
+    } catch {
+      // ignorar
+    }
+
+    if (lista.length === 0) {
+      tbodyPlanillas.innerHTML =
+        '<tr><td colspan="7" class="text-base-dark">Aún no se han emitido planillas con sello QR Rojo. Genere una desde <a href="/planillas" class="usa-link">Planillas Folio (13)</a> usando el botón <strong>PDF (Adobe)</strong>.</td></tr>';
+      return;
+    }
+
+    tbodyPlanillas.innerHTML = '';
+    for (const p of lista) {
+      const tr = document.createElement('tr');
+      const hashShort = `${p.hashEmisionSha256.slice(0, 8)}...${p.hashEmisionSha256.slice(-8)}`;
+      const estadoClass =
+        p.estadoFirma === 'REVOCADA'
+          ? 'bg-secondary-dark text-white'
+          : p.estadoFirma === 'PENDIENTE_FIRMA'
+            ? 'bg-accent-warm-dark text-ink'
+            : 'bg-success-dark text-white';
+
+      tr.innerHTML = `
+        <th scope="row" class="font-mono-2xs text-bold" style="color: #b50909;">${p.codigoPlanilla}</th>
+        <td>
+          <span class="usa-tag bg-primary-darker text-white font-mono-3xs">${p.codigoDoc}</span>
+          <div class="font-body-3xs text-ink margin-top-05">${p.tituloPlanilla}</div>
+        </td>
+        <td>
+          <div class="font-sans-2xs text-bold">${p.perito.nombre}</div>
+          <div class="font-mono-3xs text-base-dark">${p.perito.civ || p.perito.ci || ''}</div>
+        </td>
+        <td class="font-mono-3xs text-no-wrap">${new Date(p.emitidoEnUtc).toLocaleString('es-VE')}</td>
+        <td class="font-mono-3xs" title="${p.hashEmisionSha256}"><code>${hashShort}</code></td>
+        <td><span class="usa-tag font-mono-3xs ${estadoClass}">${p.estadoFirma}</span></td>
+        <td class="text-no-wrap">
+          <button type="button" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 margin-right-05 btn-ver-qr-row" data-codigo="${p.codigoPlanilla}">
+            Verificar QR
+          </button>
+          ${
+            !p.offlineDraft
+              ? `<button type="button" class="usa-button font-sans-3xs padding-x-1 padding-y-05 btn-certificar-firma-row" data-codigo="${p.codigoPlanilla}">Certificar Firma</button>`
+              : ''
+          }
+        </td>
+      `;
+      tbodyPlanillas.appendChild(tr);
+    }
+
+    tbodyPlanillas.querySelectorAll('.btn-ver-qr-row').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const codigo = btn.getAttribute('data-codigo') || '';
+        const openPopup = (window as any).fccoOpenVerificacionQrPopup;
+        if (typeof openPopup === 'function' && codigo) {
+          openPopup(codigo);
+        }
+      });
+    });
+
+    tbodyPlanillas.querySelectorAll('.btn-certificar-firma-row').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const codigo = btn.getAttribute('data-codigo') || '';
+        if (codigo) openCertModal(codigo);
+      });
+    });
+  }
 
   async function cargarAuditoria() {
     try {
@@ -155,26 +431,30 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     if (!tbody) return;
     tbody.innerHTML = '';
 
-    entries.forEach((e, idx) => {
+    entries.forEach((e: any, idx) => {
       const tr = document.createElement('tr');
       const hashAntTrunc = e.hashAnterior ? `${e.hashAnterior.substring(0, 8)}...${e.hashAnterior.substring(56)}` : 'GÉNESIS';
       const hashActTrunc = `${e.hashActual.substring(0, 8)}...${e.hashActual.substring(56)}`;
+      const accionLabel = e.accion || e.evento || 'EVENTO';
+      const actorLabel = e.usuario || e.actor || 'Perito';
+      const casoLabel = e.caso_id || e.casoId || 'GENERAL';
+      const detalleSub = e.detalle ? String(e.detalle).slice(0, 72) : `${e.faseOrigen || 'F0'} → ${e.faseDestino || 'F1'}`;
 
       tr.innerHTML = `
-        <th scope="row" class="text-bold">#${idx + 1}</th>
+        <th scope="row" class="text-bold">#${e.seq || idx + 1}</th>
         <td class="font-mono-2xs text-no-wrap">
           ${new Date(e.timestamp || e.ts || Date.now()).toLocaleString('es-VE')}
         </td>
         <td>
-          <strong>${e.casoId}</strong>
+          <strong>${casoLabel}</strong>
         </td>
         <td>
           <span class="usa-tag bg-base-lighter text-ink text-bold">
-            ${e.evento}
+            ${accionLabel}
           </span>
-          <div class="font-body-3xs text-base-dark margin-top-05">${e.faseOrigen || 'F0'} → ${e.faseDestino || 'F1'}</div>
+          <div class="font-body-3xs text-base-dark margin-top-05">${detalleSub}</div>
         </td>
-        <td>${e.actor}</td>
+        <td>${actorLabel}</td>
         <td class="font-mono-2xs text-base-dark" title="${e.hashAnterior}">
           <code>${hashAntTrunc}</code>
         </td>
@@ -221,7 +501,6 @@ import SummaryBox from '../uswds/SummaryBox.astro';
           `;
         }
       } catch (err) {
-        // Fallback: verificación en cliente
         const resLocal = await verificarCadena(entriesMemoria);
         if (resLocal.valida) {
           contResultado.innerHTML = `
@@ -251,6 +530,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   }
 
   if (typeof window !== 'undefined') {
+    cargarPlanillasEmitidas();
     cargarAuditoria();
   }
 </script>

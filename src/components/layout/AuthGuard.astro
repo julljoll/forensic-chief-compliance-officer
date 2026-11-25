@@ -12,7 +12,14 @@
 
   function isPublicPage(): boolean {
     const p = window.location.pathname;
-    return p === '/' || p.endsWith('/index.html') || p === '';
+    return (
+      p === '/' ||
+      p.endsWith('/index.html') ||
+      p === '' ||
+      p === '/verificar' ||
+      p === '/verificar/' ||
+      p.endsWith('/verificar.html')
+    );
   }
 
   function redirectLogin() {

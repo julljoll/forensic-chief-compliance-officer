@@ -4,8 +4,10 @@ import path from 'node:path';
 import { PDFDocument } from 'pdf-lib';
 import {
   generateEditablePdfFromElement,
+  computeSha256HexFromBytes,
   FOLIO_WIDTH_PT,
   FOLIO_HEIGHT_PT,
+  FORENSIC_RED_HEX,
 } from '../../../src/lib/export/exportEditablePdf';
 
 describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adobe Acrobat', () => {
@@ -21,6 +23,7 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     `;
 
     const pdfBytes = await generateEditablePdfFromElement(div, 'Acta de Consentimiento', {
+      codigoPlanilla: 'PLN-2026-000001',
       numeroExpediente: 'EXP-2026-TEST-001',
       numeroPRCC: 'PRCC-2026-0001',
       peritoNombre: 'Perito Forense de Prueba',
@@ -43,6 +46,7 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     div.innerHTML = '<div class="page"><div>Contenido de prueba</div></div>';
 
     const pdfBytes = await generateEditablePdfFromElement(div, 'Acta Pericial', {
+      codigoPlanilla: 'PLN-2026-000099',
       numeroExpediente: 'EXP-2026-0099',
       numeroPRCC: 'PRCC-2026-0099',
       peritoNombre: 'Ing. Perito Forense',
@@ -66,7 +70,10 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     const div = document.createElement('div');
     div.innerHTML = '<div class="page"><div>Contenido de firmas</div></div>';
 
-    const pdfBytes = await generateEditablePdfFromElement(div, 'Acta con Firmas');
+    const pdfBytes = await generateEditablePdfFromElement(div, 'Acta con Firmas', {
+      codigoPlanilla: 'PLN-2026-000042',
+      modalidadFirma: 'adobe_electronica',
+    });
     const doc = await PDFDocument.load(pdfBytes);
     const form = doc.getForm();
     const fields = form.getFields();
@@ -95,5 +102,57 @@ describe('exportEditablePdf — Generador de Planillas en PDF Editable para Adob
     expect(catalogoContent).toContain('btn-descargar-pdf-editable');
     expect(catalogoContent).toContain('PDF (Adobe)');
     expect(catalogoContent).toContain('descargarPlanillaPdfEditablePorSlug');
+  });
+
+  it('PDF-06: Estampa el número único de planilla, SHA-256 y enlace QR Rojo en metadatos del PDF', async () => {
+    const div = document.createElement('div');
+    div.innerHTML = '<div class="page"><div>Planilla Hoja 1</div></div><div class="page"><div>Planilla Hoja 2</div></div>';
+
+    const hashTest = 'a'.repeat(64);
+    const pdfBytes = await generateEditablePdfFromElement(div, 'Dictamen Colegiado', {
+      codigoPlanilla: 'PLN-2026-000077',
+      hashEmisionSha256: hashTest,
+      peritoNombre: 'Jull Joll',
+      peritoCiv: 'CIV-299410',
+      coPeritoNombre: 'SHA256 Adquisición',
+      coPeritoCiv: 'CIV-310520',
+      qrVerificationUrl: 'https://sha256.us/verificar?codigo=PLN-2026-000077',
+      modalidadFirma: 'hibrida',
+    });
+
+    const doc = await PDFDocument.load(pdfBytes);
+    expect(doc.getPages().length).toBe(2);
+    expect(doc.getTitle()).toContain('PLN-2026-000077');
+    expect(doc.getSubject()).toContain(hashTest);
+    expect(FORENSIC_RED_HEX).toBe('#B50909');
+
+    const shaBin = await computeSha256HexFromBytes(pdfBytes);
+    expect(shaBin).toMatch(/^[a-f0-9]{64}$/);
+  });
+
+  it('PDF-07: Existen los módulos de Emisión Modal, Popup QR público y API cPanel de planillas emitidas', () => {
+    const root = process.cwd();
+    const modalSrc = fs.readFileSync(path.resolve(root, 'src/components/planillas/EmitirPdfAdobeModal.astro'), 'utf8');
+    const popupSrc = fs.readFileSync(path.resolve(root, 'src/components/verificacion/VerificacionQrPopup.astro'), 'utf8');
+    const pageSrc = fs.readFileSync(path.resolve(root, 'src/pages/verificar.astro'), 'utf8');
+    const phpSrc = fs.readFileSync(path.resolve(root, 'public/api/planillas-emitidas.php'), 'utf8');
+
+    expect(modalSrc).toContain('fccoOpenEmitirPdfModal');
+    expect(modalSrc).toContain('adobe_electronica');
+    expect(modalSrc).toContain('manual_autografa');
+    expect(modalSrc).toContain('#b50909');
+
+    expect(popupSrc).toContain('fccoOpenVerificacionQrPopup');
+    expect(popupSrc).toContain('renderCode128Svg');
+    expect(popupSrc).toContain('computeSha256HexFromBytes');
+
+    expect(pageSrc).toContain('<VerificacionQrPopup autoOpen={true}');
+    expect(pageSrc).toContain('Corroborar Autenticidad de Planilla Impresa o PDF');
+
+    expect(phpSrc).toContain('Session::requireUser()');
+    expect(phpSrc).toContain('Session::requireCsrf()');
+    expect(phpSrc).toContain('Canonical::hash');
+    expect(phpSrc).toContain('EMISION_PDF_ADOBE');
+    expect(phpSrc).toContain('planillas_emitidas');
   });
 });

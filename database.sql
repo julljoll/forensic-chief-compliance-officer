@@ -133,7 +133,48 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
   KEY `idx_usuario_intentos` (`usuario`, `intentado_en`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- 7. Triggers de Inmutabilidad para la Tabla de Auditoría (Prevención de Adulteración)
+-- 7. Tabla de Planillas Emitidas con Sello QR Rojo, Barras Code-128 y Hash SHA-256
+CREATE TABLE IF NOT EXISTS `planillas_emitidas` (
+  `id` BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `codigo_planilla` VARCHAR(32) NOT NULL COMMENT 'Identificador único visible en QR Rojo y Código de Barras (ej. PLN-2026-000001)',
+  `planilla_slug` VARCHAR(80) NOT NULL COMMENT 'Slug de la plantilla (ej. acta-consentimiento)',
+  `codigo_doc` VARCHAR(32) NOT NULL DEFAULT 'FO-FOR-01' COMMENT 'Código de formulario oficial (ej. FO-F0-01)',
+  `titulo_planilla` VARCHAR(255) NOT NULL,
+  `fase_iso` VARCHAR(8) NOT NULL DEFAULT 'F0',
+  `caso_id` VARCHAR(64) DEFAULT NULL,
+  `numero_caso` VARCHAR(64) DEFAULT NULL,
+  `numero_prcc` VARCHAR(64) DEFAULT NULL,
+  `perito_usuario_id` VARCHAR(64) NOT NULL,
+  `perito_nombre` VARCHAR(200) NOT NULL,
+  `perito_ci` VARCHAR(32) NOT NULL DEFAULT '',
+  `perito_civ` VARCHAR(64) NOT NULL DEFAULT '',
+  `perito_inpre` VARCHAR(64) NOT NULL DEFAULT '',
+  `perito_cargo` VARCHAR(150) NOT NULL DEFAULT '',
+  `perito_organismo` VARCHAR(150) NOT NULL DEFAULT 'Laboratorio Privado SHA256.US',
+  `co_perito_nombre` VARCHAR(200) DEFAULT NULL,
+  `co_perito_civ` VARCHAR(64) DEFAULT NULL,
+  `modalidad_firma` ENUM('adobe_electronica', 'manual_autografa', 'hibrida') NOT NULL DEFAULT 'hibrida',
+  `estado_firma` ENUM('PENDIENTE_FIRMA', 'FIRMADA_ADOBE', 'FIRMADA_MANUAL', 'FIRMADA_HIBRIDA', 'REVOCADA') NOT NULL DEFAULT 'PENDIENTE_FIRMA',
+  `firmada_en` DATETIME DEFAULT NULL,
+  `hash_emision_sha256` CHAR(64) NOT NULL COMMENT 'SHA-256 canónico RFC 8785 calculado por el servidor al emitir',
+  `hash_pdf_sha256` CHAR(64) DEFAULT NULL COMMENT 'SHA-256 binario exacto del archivo .pdf descargado',
+  `hash_pdf_firmado_sha256` CHAR(64) DEFAULT NULL COMMENT 'SHA-256 binario opcional tras firma electrónica PAdES en Adobe Acrobat',
+  `auditoria_seq` BIGINT UNSIGNED DEFAULT NULL COMMENT 'Enlace directo al asiento inmutable en la tabla auditoria',
+  `ip_emision` VARCHAR(45) DEFAULT NULL,
+  `emitido_en_utc` VARCHAR(35) NOT NULL,
+  `creado_en` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `actualizado_en` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uk_planillas_codigo` (`codigo_planilla`),
+  KEY `idx_planillas_caso` (`caso_id`),
+  KEY `idx_planillas_perito` (`perito_usuario_id`),
+  KEY `idx_planillas_hash_emision` (`hash_emision_sha256`),
+  KEY `idx_planillas_hash_pdf` (`hash_pdf_sha256`),
+  CONSTRAINT `fk_planillas_usuario` FOREIGN KEY (`perito_usuario_id`) REFERENCES `usuarios` (`id`),
+  CONSTRAINT `fk_planillas_caso` FOREIGN KEY (`caso_id`) REFERENCES `casos` (`id`) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Triggers de Inmutabilidad para la Tabla de Auditoría y Planillas Emitidas (Prevención de Adulteración)
 DROP TRIGGER IF EXISTS `trg_auditoria_no_update`;
 DELIMITER $$
 CREATE TRIGGER `trg_auditoria_no_update` BEFORE UPDATE ON `auditoria`
@@ -149,6 +190,31 @@ CREATE TRIGGER `trg_auditoria_no_delete` BEFORE DELETE ON `auditoria`
 FOR EACH ROW
 BEGIN
   SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'VIOLACIÓN DE INTEGRIDAD FORENSE: La tabla de auditoría inmutable no permite DELETE.';
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_planillas_emitidas_no_delete`;
+DELIMITER $$
+CREATE TRIGGER `trg_planillas_emitidas_no_delete` BEFORE DELETE ON `planillas_emitidas`
+FOR EACH ROW
+BEGIN
+  SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'VIOLACIÓN DE INTEGRIDAD FORENSE: El registro de planillas emitidas no permite DELETE.';
+END$$
+DELIMITER ;
+
+DROP TRIGGER IF EXISTS `trg_planillas_emitidas_inmutable`;
+DELIMITER $$
+CREATE TRIGGER `trg_planillas_emitidas_inmutable` BEFORE UPDATE ON `planillas_emitidas`
+FOR EACH ROW
+BEGIN
+  IF OLD.codigo_planilla <> NEW.codigo_planilla
+     OR OLD.perito_usuario_id <> NEW.perito_usuario_id
+     OR OLD.perito_nombre <> NEW.perito_nombre
+     OR OLD.hash_emision_sha256 <> NEW.hash_emision_sha256
+     OR OLD.emitido_en_utc <> NEW.emitido_en_utc
+     OR (OLD.hash_pdf_sha256 IS NOT NULL AND OLD.hash_pdf_sha256 <> NEW.hash_pdf_sha256) THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'VIOLACIÓN DE INTEGRIDAD FORENSE: Los sellos inmutables de la planilla emitida no pueden alterarse.';
+  END IF;
 END$$
 DELIMITER ;
 

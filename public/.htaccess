@@ -75,6 +75,10 @@ DirectoryIndex index.html
     # Permitir acceso a la página pública de inicio de sesión (raíz, index.html)
     RewriteRule ^(index(\.html)?)?$ - [L]
 
+    # Permitir acceso público a la página de corroboración QR (/verificar)
+    RewriteRule ^verificar/?$ verificar.html [QSA,L]
+    RewriteRule ^verificar\.html$ - [L]
+
     # GATEKEEPER SERVER-SIDE: Interceptar todas las vistas del CMS y planillas oficiales
     # Requiere sesión PHP activa; si no existe, gatekeeper.php redirige a /?msg=sesion_requerida
     RewriteRule ^(dashboard|casos|flujo|custodia|normativa|auditoria|exportar|seguridad|planillas)(.*)$ gatekeeper.php [QSA,L]

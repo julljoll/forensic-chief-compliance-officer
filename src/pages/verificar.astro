@@ -1,0 +1,154 @@
+---
+/**
+ * SHA256.US — Portal Público de Corroboración Documental por Código QR Rojo y Barras Code-128
+ * Accesible sin inicio de sesión para jueces, fiscales, abogados y auditores que escaneen
+ * una planilla impresa o PDF emitido con el Forensic Chief Compliance Officer (FCCO).
+ */
+import SiteBanner from '../components/layout/SiteBanner.astro';
+import SiteFooter from '../components/layout/SiteFooter.astro';
+import Icon from '../components/uswds/Icon.astro';
+import VerificacionQrPopup from '../components/verificacion/VerificacionQrPopup.astro';
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Verificación Oficial de Planillas Forenses (QR / SHA-256) — SHA256.US</title>
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css?v=3.14.0" />
+    <script is:inline src="/assets/uswds/js/uswds-init.min.js"></script>
+  </head>
+  <body class="bg-base-lightest display-flex flex-column minh-viewport">
+    <a class="usa-skipnav" href="#main-content">Saltar al contenido principal</a>
+    <SiteBanner />
+
+    <!-- Encabezado Público Institucional USWDS -->
+    <header class="usa-header usa-header--basic bg-white border-bottom-1px border-base-lighter">
+      <div class="usa-nav-container">
+        <div class="usa-navbar width-full display-flex flex-justify flex-align-center padding-y-1">
+          <div class="display-flex flex-align-center">
+            <a href="/" class="margin-right-105 display-inline-block" title="SHA256.US">
+              <img src="/logo.png?v=2" alt="Logo SHA256.US" class="width-4 height-4 display-block" />
+            </a>
+            <div>
+              <div class="font-heading-sm text-bold text-primary-darker">
+                SHA256.US — Verificación Pública de Planillas Periciales
+              </div>
+              <div class="font-mono-3xs text-base-dark">
+                Sistema de Corroboración Criptográfica QR Rojo · Code-128 · SHA-256 (RFC 8785)
+              </div>
+            </div>
+          </div>
+          <div>
+            <a href="/" class="usa-button usa-button--outline font-sans-2xs padding-x-105 padding-y-05 display-inline-flex flex-align-center">
+              <Icon name="lock" className="margin-right-05" />
+              <span>Acceso Peritos CMS</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Cuerpo Principal -->
+    <main id="main-content" class="usa-section padding-y-4 flex-1">
+      <div class="grid-container">
+        <div class="grid-row grid-gap-4 flex-justify-center">
+          <div class="tablet:grid-col-10 desktop:grid-col-8">
+            <div class="bg-white padding-3 radius-md shadow-2 border-1px border-base-lighter">
+              <div class="display-flex flex-align-center margin-bottom-2 padding-bottom-2 border-bottom-1px border-base-lighter">
+                <Icon name="verified_user" size="4" className="margin-right-105" />
+                <div>
+                  <h1 class="margin-0 font-heading-lg text-primary-darker">
+                    Corroborar Autenticidad de Planilla Impresa o PDF
+                  </h1>
+                  <p class="margin-top-05 margin-bottom-0 font-body-2xs text-base-dark">
+                    Escanee el <strong style="color: #b50909;">Código QR Rojo</strong> ubicado en la esquina superior derecha de la hoja Folio o ingrese el número identificador impreso debajo del código de barras.
+                  </p>
+                </div>
+              </div>
+
+              <form id="form-buscar-codigo-planilla" class="usa-form maxw-none">
+                <label class="usa-label margin-top-0 font-sans-xs text-bold" for="input-codigo-planilla-verificar">
+                  Número Único de Planilla (idéntico al QR Rojo y Código de Barras)
+                </label>
+                <div class="grid-row grid-gap-1 margin-top-1">
+                  <div class="tablet:grid-col-8">
+                    <input
+                      id="input-codigo-planilla-verificar"
+                      name="codigo"
+                      type="text"
+                      class="usa-input font-mono-sm text-uppercase margin-top-0"
+                      placeholder="Ej. PLN-2026-000001"
+                      required
+                      autocomplete="off"
+                    />
+                  </div>
+                  <div class="tablet:grid-col-4 margin-top-1 tablet:margin-top-0">
+                    <button
+                      type="submit"
+                      class="usa-button width-full height-full font-sans-xs display-inline-flex flex-align-center flex-justify-center margin-0"
+                      style="background-color: #b50909;"
+                    >
+                      <Icon name="search" className="margin-right-05 text-white" />
+                      <span>Corroborar en Servidor</span>
+                    </button>
+                  </div>
+                </div>
+              </form>
+
+              <div class="usa-summary-box margin-top-3 bg-base-lightest border-base-lighter">
+                <div class="usa-summary-box__body">
+                  <h2 class="usa-summary-box__heading font-heading-xs">
+                    Garantías de Verificación Forense (COPP Art. 187 · LMDFE Art. 16)
+                  </h2>
+                  <div class="usa-summary-box__text font-body-2xs">
+                    <ul class="usa-list margin-y-1">
+                      <li><strong>Identidad Certificada del Perito:</strong> Confirma exactamente qué perito logueado generó la planilla, su N° de Cédula y credencial CIV / INPRE.</li>
+                      <li><strong>Coincidencia de Identificador y Barras:</strong> Permite cotejar el número impreso y las barras Code-128 contra el registro inmutable en servidor.</li>
+                      <li><strong>Integridad SHA-256:</strong> Permite comprobar bit-a-bit el archivo PDF sin subirlo a Internet.</li>
+                      <li><strong>Estado de Firma Pericial:</strong> Verifica la modalidad y certificación de firma electrónica en Adobe Acrobat (PAdES) o firma manuscrita con huellas bilaterales.</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Popup Oficial de Corroboración QR (se abre automáticamente si existe ?codigo=PLN-...) -->
+    <VerificacionQrPopup autoOpen={true} />
+
+    <SiteFooter />
+    <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
+    <script>
+      const formBuscar = document.getElementById('form-buscar-codigo-planilla') as HTMLFormElement | null;
+      const inputCodigo = document.getElementById('input-codigo-planilla-verificar') as HTMLInputElement | null;
+
+      // Pre-llenar el campo de búsqueda con el parámetro ?codigo=... si vino del escaneo QR
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialCode = urlParams.get('codigo') || urlParams.get('id') || '';
+      if (initialCode && inputCodigo) {
+        inputCodigo.value = initialCode.toUpperCase();
+      }
+
+      formBuscar?.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const code = inputCodigo?.value?.trim().toUpperCase() || '';
+        if (!code) return;
+
+        // Actualizar query string sin recargar para compartir URL directa
+        const nextUrl = new URL(window.location.href);
+        nextUrl.searchParams.set('codigo', code);
+        window.history.replaceState({}, '', nextUrl.toString());
+
+        const openPopup = (window as any).fccoOpenVerificacionQrPopup;
+        if (typeof openPopup === 'function') {
+          openPopup(code);
+        }
+      });
+    </script>
+  </body>
+</html>

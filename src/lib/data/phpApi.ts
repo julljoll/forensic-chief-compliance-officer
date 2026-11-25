@@ -37,6 +37,105 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
   }
 }
 
+export type ModalidadFirmaPlanilla = 'adobe_electronica' | 'manual_autografa' | 'hibrida';
+export type EstadoFirmaPlanilla =
+  | 'PENDIENTE_FIRMA'
+  | 'FIRMADA_ADOBE'
+  | 'FIRMADA_MANUAL'
+  | 'FIRMADA_HIBRIDA'
+  | 'REVOCADA';
+
+export interface PeritoDirectorioDTO {
+  id: string;
+  nombre: string;
+  ci: string;
+  civ: string;
+  inpre: string;
+  cargo: string;
+  organismo: string;
+}
+
+export interface PlanillaEmitidaDTO {
+  id?: number;
+  codigoPlanilla: string;
+  planillaSlug: string;
+  codigoDoc: string;
+  tituloPlanilla: string;
+  faseIso: string;
+  casoId: string | null;
+  numeroCaso: string | null;
+  numeroPRCC: string | null;
+  perito: {
+    usuarioId: string;
+    nombre: string;
+    ci: string;
+    civ: string;
+    inpre: string;
+    cargo: string;
+    organismo: string;
+  };
+  coPerito: {
+    nombre: string;
+    civ: string;
+  } | null;
+  modalidadFirma: ModalidadFirmaPlanilla;
+  estadoFirma: EstadoFirmaPlanilla;
+  firmadaEn: string | null;
+  hashEmisionSha256: string;
+  hashPdfSha256: string | null;
+  hashPdfFirmadoSha256: string | null;
+  auditoriaSeq: number | null;
+  auditoriaHash: string | null;
+  emitidoEnUtc: string;
+  offlineDraft?: boolean;
+}
+
+export interface EmitirPlanillaPayload {
+  planillaSlug: string;
+  codigoDoc: string;
+  tituloPlanilla: string;
+  faseIso: string;
+  casoId?: string | null;
+  numeroCaso?: string | null;
+  numeroPRCC?: string | null;
+  coPeritoNombre?: string | null;
+  coPeritoCiv?: string | null;
+  modalidadFirma: ModalidadFirmaPlanilla;
+}
+
+let cachedCsrfToken: string | null = null;
+
+function readStoredCsrf(): string | null {
+  if (cachedCsrfToken) return cachedCsrfToken;
+  if (typeof window !== 'undefined') {
+    const stored = sessionStorage.getItem('fcco_csrf_token');
+    if (stored) {
+      cachedCsrfToken = stored;
+      return stored;
+    }
+  }
+  return null;
+}
+
+function storeCsrf(token?: string | null): void {
+  if (!token) return;
+  cachedCsrfToken = token;
+  if (typeof window !== 'undefined') {
+    sessionStorage.setItem('fcco_csrf_token', token);
+  }
+}
+
+async function ensureCsrfToken(): Promise<string | null> {
+  const current = readStoredCsrf();
+  if (current) return current;
+  const authRes = await request<{ csrf_token?: string }>('/auth.php', { method: 'GET' });
+  if (authRes.data?.csrf_token) {
+    storeCsrf(authRes.data.csrf_token);
+    return authRes.data.csrf_token;
+  }
+  return null;
+}
+
 export const phpApi = {
   // ── Casos ──
   async listarCasos(): Promise<CasoCMS[]> {
@@ -137,15 +236,94 @@ export const phpApi = {
     return this.verificarCadenaAuditoria();
   },
 
-  // ── Autenticación ──
-  async login(email: string, pass: string = '', totpCode: string = ''): Promise<ApiResponse<any>> {
-    return request('/auth.php', {
+  // ── Planillas Emitidas (QR Rojo + Code-128 + SHA-256 en cPanel) ──
+  async emitirPlanilla(
+    payload: EmitirPlanillaPayload
+  ): Promise<ApiResponse<{ ok: boolean; qrUrl: string; planilla: PlanillaEmitidaDTO }>> {
+    const csrf = await ensureCsrfToken();
+    return request('/planillas-emitidas.php', {
       method: 'POST',
-      body: JSON.stringify({ action: 'login', email, password: pass, totp_code: totpCode }),
+      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
+      body: JSON.stringify(payload),
     });
   },
 
+  async fijarHashPdfPlanilla(
+    codigoPlanilla: string,
+    hashPdfSha256: string
+  ): Promise<ApiResponse<{ ok: boolean; codigoPlanilla: string; hashPdfSha256: string; actualizado: boolean }>> {
+    const csrf = await ensureCsrfToken();
+    return request('/planillas-emitidas.php', {
+      method: 'PUT',
+      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
+      body: JSON.stringify({
+        action: 'fijar_hash_pdf',
+        codigoPlanilla,
+        hashPdfSha256,
+      }),
+    });
+  },
+
+  async certificarFirmaPlanilla(
+    codigoPlanilla: string,
+    estadoFirma: EstadoFirmaPlanilla,
+    hashPdfFirmadoSha256?: string | null
+  ): Promise<ApiResponse<{ ok: boolean; codigoPlanilla: string; estadoFirma: EstadoFirmaPlanilla; auditoriaSeq?: number }>> {
+    const csrf = await ensureCsrfToken();
+    return request('/planillas-emitidas.php', {
+      method: 'PUT',
+      headers: csrf ? { 'X-CSRF-Token': csrf } : {},
+      body: JSON.stringify({
+        action: 'certificar_firma',
+        codigoPlanilla,
+        estadoFirma,
+        hashPdfFirmadoSha256: hashPdfFirmadoSha256 || null,
+      }),
+    });
+  },
+
+  async verificarPlanillaPorCodigo(
+    codigo: string
+  ): Promise<ApiResponse<{ ok: boolean; verificada: boolean; planilla?: PlanillaEmitidaDTO; error?: string }>> {
+    return request(`/planillas-emitidas.php?codigo=${encodeURIComponent(codigo.trim().toUpperCase())}`, {
+      method: 'GET',
+    });
+  },
+
+  async listarPlanillasEmitidas(casoId?: string): Promise<PlanillaEmitidaDTO[]> {
+    const qs = casoId ? `?caso_id=${encodeURIComponent(casoId)}` : '?listar=1';
+    const res = await request<{ ok: boolean; planillas: PlanillaEmitidaDTO[] }>(`/planillas-emitidas.php${qs}`);
+    if (res.ok && Array.isArray(res.data?.planillas)) {
+      return res.data.planillas;
+    }
+    return [];
+  },
+
+  async listarPeritosActivos(): Promise<PeritoDirectorioDTO[]> {
+    const res = await request<{ ok: boolean; peritos: PeritoDirectorioDTO[] }>('/planillas-emitidas.php?peritos=1');
+    if (res.ok && Array.isArray(res.data?.peritos)) {
+      return res.data.peritos;
+    }
+    return [];
+  },
+
+  // ── Autenticación ──
+  async login(email: string, pass: string = '', totpCode: string = ''): Promise<ApiResponse<any>> {
+    const res = await request<any>('/auth.php', {
+      method: 'POST',
+      body: JSON.stringify({ action: 'login', email, password: pass, totp_code: totpCode }),
+    });
+    if (res.ok && res.data?.csrf_token) {
+      storeCsrf(res.data.csrf_token);
+    }
+    return res;
+  },
+
   async logout(): Promise<void> {
+    cachedCsrfToken = null;
+    if (typeof window !== 'undefined') {
+      sessionStorage.removeItem('fcco_csrf_token');
+    }
     await request('/auth.php', {
       method: 'POST',
       body: JSON.stringify({ action: 'logout' }),
@@ -153,6 +331,10 @@ export const phpApi = {
   },
 
   async checkAuth(): Promise<ApiResponse<any>> {
-    return request('/auth.php', { method: 'GET' });
+    const res = await request<any>('/auth.php', { method: 'GET' });
+    if (res.data?.csrf_token) {
+      storeCsrf(res.data.csrf_token);
+    }
+    return res;
   },
 };
