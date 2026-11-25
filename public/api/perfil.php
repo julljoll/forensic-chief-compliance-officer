@@ -7,7 +7,7 @@
  *   del perito (nombre, apellido, C.I., cargo, CIV, INPRE, organismo, despacho, teléfono, dirección,
  *   especialidad), refresca `$_SESSION['usuario']` y registra asiento inmutable en `auditoria`.
  * - POST (Autenticado + CSRF, action=cambiar_password): Bloqueado permanentemente con HTTP 403
- *   (`password_login_enabled = false`; acceso exclusivo Google OIDC + Google Authenticator).
+ *   (`password_login_enabled = false`; acceso sin contraseña vía Código OTP 6 dígitos / Enlace Mágico por correo).
  */
 
 declare(strict_types=1);
@@ -207,7 +207,7 @@ if ($method === 'PUT') {
 }
 
 // ============================================================================
-// POST: Cambio de Contraseña Local — DESHABILITADO (Opción C: Solo Google OIDC + TOTP)
+// POST: Cambio de Contraseña Local — DESHABILITADO (Acceso por Código OTP / Enlace Mágico)
 // ============================================================================
 if ($method === 'POST') {
     $sessionUser = Session::requireUser();
@@ -228,7 +228,7 @@ if ($method === 'POST') {
         echo json_encode([
             'ok'                     => false,
             'password_login_enabled' => false,
-            'error'                  => 'Las contraseñas locales están deshabilitadas permanentemente. Gestione su acceso desde Google y Google Authenticator (/seguridad).',
+            'error'                  => 'Las contraseñas locales están deshabilitadas permanentemente. El acceso usa códigos de 6 dígitos y enlaces mágicos por correo (/seguridad).',
         ], JSON_UNESCAPED_UNICODE);
         exit;
     }

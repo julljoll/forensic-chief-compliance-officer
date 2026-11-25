@@ -1,11 +1,12 @@
 ---
 /**
- * SHA256.US — Vista Oficial de Acceso Pericial (Opción C — Grado Forense)
+ * SHA256.US — Vista Oficial de Acceso Pericial (Código de 6 Dígitos + Enlace Mágico por Correo)
  *
- * 3 Estados Limpios (USWDS 3.14 DC3 Light Theme, sin contraseñas locales ni SDK JS externos):
- *  (a) Botón único "Continuar con Cuenta Google Autorizada" (OAuth 2.0 / OIDC + PKCE S256 server-to-server)
- *  (b) Paso de verificación de 6 dígitos Google Authenticator (RFC 6238) o código de recuperación
- *  (c) Enrolamiento obligatorio con QR 100 % local (librería qrcode) y entrega única de 8 códigos de respaldo
+ * Diseño simple, rápido y seguro (USWDS 3.14 DC3 Light Theme):
+ *  - Cero contraseñas locales, cero Google Cloud Console, cero apps autenticadoras.
+ *  - Paso 1: Ingresar correo del perito autorizado (lista blanca estricta de 2 peritos).
+ *  - Paso 2: Introducir código de 6 dígitos enviado al correo (válido 5 min, un solo uso)
+ *            o hacer clic en el Enlace Mágico de 1 clic incluido en el mismo correo.
  */
 import Icon from '../uswds/Icon.astro';
 ---
@@ -24,9 +25,9 @@ import Icon from '../uswds/Icon.astro';
             CMS de Cumplimiento Normativo ISO/IEC 27037 y Cadena de Custodia MUCC-2017
           </p>
           <div class="display-flex flex-wrap flex-justify-center grid-gap-1">
-            <span class="usa-tag bg-primary-darker text-white font-mono-3xs">GOOGLE OIDC · PKCE S256</span>
-            <span class="usa-tag bg-primary text-white font-mono-3xs">TOTP RFC 6238 OBLIGATORIO</span>
-            <span class="usa-tag bg-base-lighter text-ink font-mono-3xs">LISTA BLANCA ESTRICTA</span>
+            <span class="usa-tag bg-primary-darker text-white font-mono-3xs">CÓDIGO OTP 6 DÍGITOS</span>
+            <span class="usa-tag bg-primary text-white font-mono-3xs">ENLACE MÁGICO 1 CLIC</span>
+            <span class="usa-tag bg-base-lighter text-ink font-mono-3xs">SIN CONTRASEÑAS</span>
           </div>
         </div>
 
@@ -43,126 +44,110 @@ import Icon from '../uswds/Icon.astro';
         </div>
 
         <!-- ================================================================
-             ESTADO (a): Inicio de Sesión Exclusivo con Cuenta Google Autorizada
+             ESTADO (a): Solicitar Código de 6 Dígitos / Enlace Mágico al Correo
              ================================================================ -->
-        <section id="state-google-login" aria-labelledby="heading-google-login">
-          <h2 id="heading-google-login" class="usa-sr-only">
-            Autenticación con Cuenta Google Autorizada
+        <section id="state-email-request" aria-labelledby="heading-email-request">
+          <h2 id="heading-email-request" class="usa-sr-only">
+            Solicitar código de acceso por correo electrónico
           </h2>
 
-          <div class="usa-summary-box margin-bottom-3" role="region" aria-label="Requisitos de acceso forense">
+          <div class="usa-summary-box margin-bottom-3" role="region" aria-label="Cómo iniciar sesión">
             <div class="usa-summary-box__body">
-              <p class="usa-summary-box__heading font-heading-xs margin-bottom-1">
-                Autenticación de Grado Forense (2 Factores Obligatorios)
+              <p class="usa-summary-box__heading font-heading-xs margin-bottom-05">
+                Ingreso Rápido y Seguro Sin Contraseña
               </p>
               <div class="usa-summary-box__text font-body-2xs">
-                <ul class="usa-list margin-y-05">
-                  <li><strong>Factor 1:</strong> Identidad verificada con Cuenta Google de la lista blanca inmutable de peritos (OAuth 2.0 / OIDC server-to-server con firma RS256 JWKS).</li>
-                  <li><strong>Factor 2:</strong> Código dinámico de 6 dígitos de Google Authenticator (RFC 6238) exigido en cada ingreso.</li>
-                </ul>
+                Escriba su correo de perito autorizado. Le enviaremos al instante un <strong>código de 6 dígitos</strong> y un <strong>botón de 1 clic</strong> válidos por 5 minutos (un solo uso).
               </div>
             </div>
           </div>
 
-          <a
-            id="btn-google-login"
-            href="/api/auth-google-start.php"
-            class="usa-button width-full font-sans-sm padding-y-105 display-flex flex-align-center flex-justify-center text-no-underline"
-          >
-            <svg
-              aria-hidden="true"
-              focusable="false"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              class="margin-right-105 bg-white radius-pill padding-2px"
-            >
-              <path fill="#4285F4" d="M23.49 12.27c0-.79-.07-1.54-.2-2.27H12v4.3h6.45a5.52 5.52 0 0 1-2.39 3.62v3h3.87c2.26-2.08 3.56-5.15 3.56-8.65z" />
-              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.07 7.93-2.9l-3.87-3c-1.07.72-2.45 1.15-4.06 1.15-3.12 0-5.77-2.11-6.72-4.95H1.29v3.1A12 12 0 0 0 12 24z" />
-              <path fill="#FBBC05" d="M5.28 14.3A7.22 7.22 0 0 1 4.9 12c0-.8.14-1.57.38-2.3V6.6H1.29A12 12 0 0 0 0 12c0 1.94.46 3.77 1.29 5.4l3.99-3.1z" />
-              <path fill="#EA4335" d="M12 4.75c1.76 0 3.34.61 4.59 1.8l3.44-3.44C17.95 1.19 15.24 0 12 0A12 12 0 0 0 1.29 6.6l3.99 3.1C6.23 6.86 8.88 4.75 12 4.75z" />
-            </svg>
-            <span>Continuar con Cuenta Google Autorizada</span>
-          </a>
+          <form id="form-request-otp" class="usa-form width-full maxw-full">
+            <fieldset class="usa-fieldset">
+              <legend class="usa-sr-only">Correo electrónico del perito autorizado</legend>
+
+              <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-email">
+                Correo Electrónico del Perito Autorizado
+                <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <input
+                class="usa-input font-mono-sm"
+                id="input-email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                autocapitalize="off"
+                autocorrect="off"
+                placeholder="perito@gmail.com"
+                required
+              />
+
+              <button
+                type="submit"
+                id="btn-request-otp"
+                class="usa-button width-full margin-top-3 font-sans-sm padding-y-105 display-flex flex-align-center flex-justify-center"
+              >
+                <Icon name="mail" className="margin-right-1 text-white" />
+                <span>Enviar Código de Acceso al Correo</span>
+              </button>
+            </fieldset>
+          </form>
 
           <p class="font-sans-3xs text-base-dark text-center margin-top-2 margin-bottom-0">
-            El acceso mediante contraseña local está deshabilitado permanentemente. Todo intento queda registrado en la cadena SHA-256.
+            Solo los 2 correos autorizados en la lista blanca de SHA256.US pueden recibir códigos de acceso.
           </p>
         </section>
 
         <!-- ================================================================
-             ESTADO (b): Paso de Verificación Google Authenticator (6 dígitos / Respaldo)
+             ESTADO (b): Introducir Código de 6 Dígitos Enviado al Correo
              ================================================================ -->
-        <section id="state-mfa-verify" aria-labelledby="heading-mfa-verify" hidden>
+        <section id="state-otp-verify" aria-labelledby="heading-otp-verify" hidden>
           <div class="bg-base-lightest border-1px border-base-lighter padding-2 radius-md margin-bottom-3">
             <div class="display-flex flex-align-center flex-justify">
               <div>
-                <span class="usa-tag bg-success-dark text-white font-mono-3xs">GOOGLE OIDC VERIFICADO</span>
-                <h2 id="heading-mfa-verify" class="font-heading-sm margin-top-1 margin-bottom-05 text-ink">
-                  Paso 2: Código de Google Authenticator
+                <span class="usa-tag bg-success-dark text-white font-mono-3xs">CÓDIGO ENVIADO</span>
+                <h2 id="heading-otp-verify" class="font-heading-sm margin-top-1 margin-bottom-05 text-ink">
+                  Revise su correo e ingrese los 6 dígitos
                 </h2>
                 <p class="font-mono-2xs text-base-dark margin-0">
-                  Cuenta: <strong id="mfa-pending-email">---</strong>
+                  Enviado a: <strong id="otp-target-email">---</strong>
                 </p>
               </div>
-              <span id="mfa-ttl-badge" class="usa-tag bg-accent-warm-dark text-white font-mono-3xs">
-                VENTANA: 5 MIN
+              <span id="otp-ttl-badge" class="usa-tag bg-accent-warm-dark text-white font-mono-3xs">
+                EXPIRA EN 5:00
               </span>
             </div>
           </div>
 
-          <form id="form-mfa-verify" class="usa-form width-full maxw-full">
+          <form id="form-verify-otp" class="usa-form width-full maxw-full">
             <fieldset class="usa-fieldset">
-              <legend class="usa-sr-only">Verificación de segundo factor Google Authenticator</legend>
+              <legend class="usa-sr-only">Código de verificación de 6 dígitos</legend>
 
-              <!-- Modo TOTP 6 dígitos -->
-              <div id="wrap-mfa-totp">
-                <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-mfa-totp">
-                  Código Google Authenticator (6 dígitos)
-                  <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
-                </label>
-                <span class="usa-hint font-sans-3xs text-base-dark" id="hint-mfa-totp">
-                  Abra Google Authenticator en su dispositivo móvil e ingrese el código vigente de 30 segundos.
-                </span>
-                <input
-                  id="input-mfa-totp"
-                  name="totpCode"
-                  type="text"
-                  class="usa-input font-mono-lg letter-spacing-2 text-center text-bold"
-                  inputmode="numeric"
-                  pattern="[0-9]{6}"
-                  maxlength="6"
-                  autocomplete="one-time-code"
-                  placeholder="000000"
-                  aria-describedby="hint-mfa-totp"
-                />
-              </div>
-
-              <!-- Modo Código de Recuperación (8 caracteres) -->
-              <div id="wrap-mfa-recovery" hidden>
-                <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-mfa-recovery">
-                  Código de Recuperación de Emergencia (un solo uso)
-                  <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
-                </label>
-                <span class="usa-hint font-sans-3xs text-base-dark" id="hint-mfa-recovery">
-                  Ingrese uno de los 8 códigos de respaldo entregados durante su enrolamiento (ej. ABCD-EFGH).
-                </span>
-                <input
-                  id="input-mfa-recovery"
-                  name="recoveryCode"
-                  type="text"
-                  class="usa-input font-mono-md letter-spacing-1 text-center text-bold text-uppercase"
-                  maxlength="12"
-                  autocomplete="off"
-                  placeholder="XXXX-XXXX"
-                  aria-describedby="hint-mfa-recovery"
-                />
-              </div>
+              <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-otp-code">
+                Código de Acceso (6 dígitos)
+                <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
+              </label>
+              <span class="usa-hint font-sans-3xs text-base-dark" id="hint-otp-code">
+                También puede hacer clic directamente en el botón "Ingresar en 1 Clic" dentro del correo recibido.
+              </span>
+              <input
+                id="input-otp-code"
+                name="otpCode"
+                type="text"
+                class="usa-input font-mono-lg letter-spacing-2 text-center text-bold"
+                inputmode="numeric"
+                pattern="[0-9\s]{6,8}"
+                maxlength="7"
+                autocomplete="one-time-code"
+                placeholder="000 000"
+                aria-describedby="hint-otp-code"
+                required
+              />
 
               <button
                 type="submit"
-                id="btn-verify-mfa"
-                class="usa-button width-full margin-top-3 font-sans-xs padding-y-105"
+                id="btn-verify-otp"
+                class="usa-button width-full margin-top-3 font-sans-sm padding-y-105"
               >
                 Verificar e Ingresar a la Bóveda
               </button>
@@ -172,161 +157,34 @@ import Icon from '../uswds/Icon.astro';
           <div class="display-flex flex-wrap flex-justify flex-align-center margin-top-2 padding-top-2 border-top-1px border-base-lighter">
             <button
               type="button"
-              id="btn-toggle-recovery"
+              id="btn-resend-otp"
               class="usa-button usa-button--unstyled font-sans-2xs text-primary"
+              disabled
             >
-              Usar código de recuperación de emergencia
+              Reenviar código (45s)
             </button>
             <button
               type="button"
-              id="btn-cancel-mfa"
+              id="btn-change-email"
               class="usa-button usa-button--unstyled font-sans-2xs text-base-dark"
             >
-              Cancelar y cambiar cuenta
+              Cambiar correo
             </button>
           </div>
         </section>
 
         <!-- ================================================================
-             ESTADO (c): Enrolamiento Obligatorio con QR 100 % Local + 8 Códigos de Respaldo
+             ESTADO (c): Verificación Automática de Enlace Mágico (?magic=...)
              ================================================================ -->
-        <section id="state-mfa-enroll" aria-labelledby="heading-mfa-enroll" hidden>
-          <div class="bg-base-lightest border-1px border-base-lighter padding-2 radius-md margin-bottom-3">
-            <span class="usa-tag bg-primary-darker text-white font-mono-3xs">PRIMER INGRESO · ENROLAMIENTO OBLIGATORIO</span>
-            <h2 id="heading-mfa-enroll" class="font-heading-sm margin-top-1 margin-bottom-05 text-ink">
-              Configure Google Authenticator antes de acceder
+        <section id="state-magic-verifying" aria-labelledby="heading-magic-verifying" hidden>
+          <div class="bg-base-lightest border-1px border-base-lighter padding-4 radius-md text-center">
+            <Icon name="verified_user" className="text-primary width-5 height-5 margin-bottom-1" />
+            <h2 id="heading-magic-verifying" class="font-heading-md margin-top-0 margin-bottom-1 text-ink">
+              Verificando Enlace Mágico Seguro...
             </h2>
-            <p class="font-body-3xs text-base-dark margin-0">
-              Cuenta verificada: <strong id="enroll-pending-email">---</strong>. Escanee el QR generado 100 % localmente en su navegador y confirme su primer código de 6 dígitos.
+            <p class="font-body-2xs text-base-dark margin-0">
+              Validando token criptográfico de un solo uso y abriendo su sesión pericial en SHA256.US.
             </p>
-          </div>
-
-          <!-- Sub-panel 1: Escaneo QR local + confirmación de 1.er código -->
-          <div id="enroll-step-qr">
-            <div class="text-center margin-bottom-2">
-              <div
-                id="enroll-qr-container"
-                class="display-inline-block bg-white padding-2 border-1px border-base-light radius-md shadow-1"
-                style="min-height: 200px; min-width: 200px;"
-              >
-                <div class="padding-4 font-body-3xs text-base">Generando código QR local...</div>
-              </div>
-              <p class="font-mono-3xs text-base-dark margin-top-1 margin-bottom-0">
-                QR renderizado localmente (librería qrcode · cero solicitudes externas).
-              </p>
-            </div>
-
-            <div class="bg-base-lightest border-1px border-base-lighter padding-2 radius-md margin-bottom-3">
-              <label class="usa-label margin-top-0 font-sans-3xs text-uppercase text-bold" for="enroll-secret-manual">
-                Clave manual Base32 (si no puede escanear el QR):
-              </label>
-              <div class="display-flex flex-align-center margin-top-05">
-                <input
-                  id="enroll-secret-manual"
-                  type="text"
-                  class="usa-input font-mono-xs text-bold margin-0 flex-1 bg-white"
-                  readonly
-                  value=""
-                />
-                <button
-                  id="btn-copy-enroll-secret"
-                  type="button"
-                  class="usa-button usa-button--outline font-sans-2xs padding-x-105 margin-left-1"
-                >
-                  Copiar
-                </button>
-              </div>
-            </div>
-
-            <form id="form-mfa-enroll" class="usa-form width-full maxw-full">
-              <fieldset class="usa-fieldset">
-                <legend class="usa-sr-only">Confirmación del primer código Google Authenticator</legend>
-                <label class="usa-label text-bold font-sans-xs margin-top-0" for="input-enroll-totp">
-                  Primer Código de Confirmación (6 dígitos)
-                  <abbr title="obligatorio" class="usa-hint usa-hint--required">*</abbr>
-                </label>
-                <input
-                  id="input-enroll-totp"
-                  name="enrollCode"
-                  type="text"
-                  class="usa-input font-mono-lg letter-spacing-2 text-center text-bold"
-                  inputmode="numeric"
-                  pattern="[0-9]{6}"
-                  maxlength="6"
-                  autocomplete="one-time-code"
-                  placeholder="000000"
-                  required
-                />
-                <button
-                  type="submit"
-                  id="btn-confirm-enroll"
-                  class="usa-button width-full margin-top-2 font-sans-xs padding-y-105"
-                >
-                  Activar Google Authenticator y Generar Códigos de Respaldo
-                </button>
-              </fieldset>
-            </form>
-
-            <div class="text-right margin-top-2">
-              <button
-                type="button"
-                id="btn-cancel-enroll"
-                class="usa-button usa-button--unstyled font-sans-2xs text-base-dark"
-              >
-                Cancelar enrolamiento
-              </button>
-            </div>
-          </div>
-
-          <!-- Sub-panel 2: Entrega única de los 8 códigos de respaldo (bcrypt en servidor) -->
-          <div id="enroll-recovery-panel" hidden>
-            <div class="usa-alert usa-alert--warning margin-bottom-2" role="alert">
-              <div class="usa-alert__body">
-                <h3 class="usa-alert__heading font-heading-xs">Entrega Única de 8 Códigos de Respaldo</h3>
-                <p class="usa-alert__text font-body-2xs">
-                  Guarde estos 8 códigos en un resguardo cifrado o impreso. El servidor almacena únicamente sus hashes bcrypt y <strong>no podrá volver a mostrarlos</strong>.
-                </p>
-              </div>
-            </div>
-
-            <div id="enroll-recovery-grid" class="grid-row grid-gap-1 margin-bottom-2"></div>
-
-            <div class="display-flex flex-wrap grid-gap-1 margin-bottom-2">
-              <button
-                type="button"
-                id="btn-download-enroll-codes"
-                class="usa-button usa-button--outline font-sans-2xs flex-1"
-              >
-                Descargar Códigos (.txt)
-              </button>
-              <button
-                type="button"
-                id="btn-copy-enroll-codes"
-                class="usa-button usa-button--outline font-sans-2xs flex-1"
-              >
-                Copiar Todos
-              </button>
-            </div>
-
-            <div class="usa-checkbox margin-bottom-2">
-              <input
-                class="usa-checkbox__input"
-                id="chk-saved-recovery-codes"
-                type="checkbox"
-              />
-              <label class="usa-checkbox__label font-sans-2xs" for="chk-saved-recovery-codes">
-                Confirmo que descargué o resguardé mis 8 códigos de respaldo de emergencia en un lugar seguro.
-              </label>
-            </div>
-
-            <button
-              type="button"
-              id="btn-enter-dashboard"
-              class="usa-button width-full font-sans-xs padding-y-105"
-              disabled
-            >
-              Continuar al Panel Pericial (/dashboard)
-            </button>
           </div>
         </section>
 
@@ -334,7 +192,7 @@ import Icon from '../uswds/Icon.astro';
         <div class="margin-top-3 border-top-1px border-base-lighter padding-top-2 text-center">
           <p class="font-sans-3xs text-base-dark margin-0 display-inline-flex flex-align-center">
             <Icon name="lock" className="margin-right-05 text-primary" />
-            <span>Sesión cifrada con cookie HttpOnly/SameSite=Lax, expiración 30m/8h y auditoría inmutable SHA-256.</span>
+            <span>Sesión protegida con cookie HttpOnly, expiración 30m/8h, CSRF y auditoría inmutable SHA-256.</span>
           </p>
         </div>
       </div>
@@ -343,50 +201,30 @@ import Icon from '../uswds/Icon.astro';
 </div>
 
 <script>
-  import QRCode from 'qrcode';
-  import saveAs from 'file-saver';
   import { phpApi } from '../../lib/data/phpApi';
 
   const errorAlert = document.getElementById('login-error-alert');
   const errorMsg = document.getElementById('login-error-msg');
 
-  const stateGoogle = document.getElementById('state-google-login');
-  const stateVerify = document.getElementById('state-mfa-verify');
-  const stateEnroll = document.getElementById('state-mfa-enroll');
+  const stateEmail = document.getElementById('state-email-request');
+  const stateOtp = document.getElementById('state-otp-verify');
+  const stateMagic = document.getElementById('state-magic-verifying');
 
-  // Elementos Estado (b) — Verificación MFA
-  const mfaPendingEmailEl = document.getElementById('mfa-pending-email');
-  const mfaTtlBadge = document.getElementById('mfa-ttl-badge');
-  const formMfaVerify = document.getElementById('form-mfa-verify') as HTMLFormElement | null;
-  const wrapMfaTotp = document.getElementById('wrap-mfa-totp');
-  const wrapMfaRecovery = document.getElementById('wrap-mfa-recovery');
-  const inputMfaTotp = document.getElementById('input-mfa-totp') as HTMLInputElement | null;
-  const inputMfaRecovery = document.getElementById('input-mfa-recovery') as HTMLInputElement | null;
-  const btnVerifyMfa = document.getElementById('btn-verify-mfa') as HTMLButtonElement | null;
-  const btnToggleRecovery = document.getElementById('btn-toggle-recovery') as HTMLButtonElement | null;
-  const btnCancelMfa = document.getElementById('btn-cancel-mfa') as HTMLButtonElement | null;
+  const formRequestOtp = document.getElementById('form-request-otp') as HTMLFormElement | null;
+  const inputEmail = document.getElementById('input-email') as HTMLInputElement | null;
+  const btnRequestOtp = document.getElementById('btn-request-otp') as HTMLButtonElement | null;
 
-  // Elementos Estado (c) — Enrolamiento QR Local
-  const enrollPendingEmailEl = document.getElementById('enroll-pending-email');
-  const enrollStepQr = document.getElementById('enroll-step-qr');
-  const enrollQrContainer = document.getElementById('enroll-qr-container');
-  const enrollSecretManual = document.getElementById('enroll-secret-manual') as HTMLInputElement | null;
-  const btnCopyEnrollSecret = document.getElementById('btn-copy-enroll-secret');
-  const formMfaEnroll = document.getElementById('form-mfa-enroll') as HTMLFormElement | null;
-  const inputEnrollTotp = document.getElementById('input-enroll-totp') as HTMLInputElement | null;
-  const btnConfirmEnroll = document.getElementById('btn-confirm-enroll') as HTMLButtonElement | null;
-  const btnCancelEnroll = document.getElementById('btn-cancel-enroll') as HTMLButtonElement | null;
+  const otpTargetEmailEl = document.getElementById('otp-target-email');
+  const otpTtlBadge = document.getElementById('otp-ttl-badge');
+  const formVerifyOtp = document.getElementById('form-verify-otp') as HTMLFormElement | null;
+  const inputOtpCode = document.getElementById('input-otp-code') as HTMLInputElement | null;
+  const btnVerifyOtp = document.getElementById('btn-verify-otp') as HTMLButtonElement | null;
+  const btnResendOtp = document.getElementById('btn-resend-otp') as HTMLButtonElement | null;
+  const btnChangeEmail = document.getElementById('btn-change-email') as HTMLButtonElement | null;
 
-  const enrollRecoveryPanel = document.getElementById('enroll-recovery-panel');
-  const enrollRecoveryGrid = document.getElementById('enroll-recovery-grid');
-  const btnDownloadEnrollCodes = document.getElementById('btn-download-enroll-codes');
-  const btnCopyEnrollCodes = document.getElementById('btn-copy-enroll-codes');
-  const chkSavedCodes = document.getElementById('chk-saved-recovery-codes') as HTMLInputElement | null;
-  const btnEnterDashboard = document.getElementById('btn-enter-dashboard') as HTMLButtonElement | null;
-
-  let usingRecoveryCode = false;
-  let issuedRecoveryCodes: string[] = [];
-  let enrollEmailForExport = '';
+  let activeEmail = '';
+  let ttlTimer: ReturnType<typeof setInterval> | null = null;
+  let cooldownTimer: ReturnType<typeof setInterval> | null = null;
 
   function showAlert(message: string, variant: 'error' | 'warning' | 'info' | 'success' = 'error') {
     if (!errorAlert || !errorMsg) return;
@@ -400,258 +238,179 @@ import Icon from '../uswds/Icon.astro';
     if (errorAlert) errorAlert.hidden = true;
   }
 
-  function setViewState(view: 'google' | 'verify' | 'enroll') {
-    if (stateGoogle) stateGoogle.hidden = view !== 'google';
-    if (stateVerify) stateVerify.hidden = view !== 'verify';
-    if (stateEnroll) stateEnroll.hidden = view !== 'enroll';
+  function setViewState(view: 'email' | 'otp' | 'magic') {
+    if (stateEmail) stateEmail.hidden = view !== 'email';
+    if (stateOtp) stateOtp.hidden = view !== 'otp';
+    if (stateMagic) stateMagic.hidden = view !== 'magic';
+  }
+
+  function clearTimers() {
+    if (ttlTimer) {
+      clearInterval(ttlTimer);
+      ttlTimer = null;
+    }
+    if (cooldownTimer) {
+      clearInterval(cooldownTimer);
+      cooldownTimer = null;
+    }
+  }
+
+  function startOtpCountdowns(ttlSeconds: number, cooldownSeconds: number) {
+    clearTimers();
+
+    let remainingTtl = Math.max(0, ttlSeconds);
+    const updateTtlLabel = () => {
+      if (!otpTtlBadge) return;
+      if (remainingTtl <= 0) {
+        otpTtlBadge.textContent = 'CÓDIGO EXPIRADO';
+        otpTtlBadge.className = 'usa-tag bg-secondary-dark text-white font-mono-3xs';
+        return;
+      }
+      const m = Math.floor(remainingTtl / 60);
+      const s = String(remainingTtl % 60).padStart(2, '0');
+      otpTtlBadge.textContent = `EXPIRA EN ${m}:${s}`;
+      otpTtlBadge.className = 'usa-tag bg-accent-warm-dark text-white font-mono-3xs';
+    };
+    updateTtlLabel();
+    ttlTimer = setInterval(() => {
+      remainingTtl = Math.max(0, remainingTtl - 1);
+      updateTtlLabel();
+      if (remainingTtl <= 0 && ttlTimer) {
+        clearInterval(ttlTimer);
+        ttlTimer = null;
+      }
+    }, 1000);
+
+    let remainingCooldown = Math.max(0, cooldownSeconds);
+    const updateResendBtn = () => {
+      if (!btnResendOtp) return;
+      if (remainingCooldown <= 0) {
+        btnResendOtp.disabled = false;
+        btnResendOtp.textContent = 'Reenviar nuevo código';
+      } else {
+        btnResendOtp.disabled = true;
+        btnResendOtp.textContent = `Reenviar código (${remainingCooldown}s)`;
+      }
+    };
+    updateResendBtn();
+    cooldownTimer = setInterval(() => {
+      remainingCooldown = Math.max(0, remainingCooldown - 1);
+      updateResendBtn();
+      if (remainingCooldown <= 0 && cooldownTimer) {
+        clearInterval(cooldownTimer);
+        cooldownTimer = null;
+      }
+    }, 1000);
   }
 
   function handleQueryMessage() {
     const urlParams = new URLSearchParams(window.location.search);
     const msg = urlParams.get('msg');
-    if (!msg) return;
-
     if (msg === 'sesion_requerida') {
-      showAlert('Acceso Denegado: Debe iniciar sesión con su Cuenta Google autorizada y Google Authenticator para ingresar a la bóveda pericial.', 'error');
+      showAlert('Acceso Denegado: Solicite un código de 6 dígitos a su correo autorizado para ingresar a la bóveda pericial.', 'error');
     } else if (msg === 'sesion_cerrada') {
       showAlert('Su sesión pericial ha sido cerrada de forma segura.', 'info');
-    } else if (msg === 'correo_no_autorizado' || msg === 'usuario_no_autorizado') {
-      showAlert('Acceso Rechazado: Esta cuenta Google no pertenece a la lista blanca inmutable de peritos autorizados de SHA256.US. El intento ha sido auditado.', 'error');
-    } else if (msg === 'google_sub_mismatch') {
-      showAlert('Alerta Crítica de Integridad: El identificador inmutable de Google (google_sub) no coincide con el vinculado en base de datos. Evento registrado en auditoría SHA-256.', 'error');
-    } else if (msg === 'estado_invalido') {
-      showAlert('La sesión OAuth expiró o el parámetro de seguridad state/PKCE es inválido. Intente iniciar sesión nuevamente.', 'warning');
-    } else if (msg === 'google_cancelado') {
-      showAlert('Inicio de sesión con Google cancelado por el usuario.', 'warning');
-    } else if (msg === 'oauth_no_configurado' || msg === 'config_whitelist_invalida') {
-      showAlert('Configuración de seguridad incompleta en el servidor (Google OIDC o lista blanca de 2 correos en config.local.php).', 'error');
-    } else if (msg === 'oidc_error') {
-      showAlert('No se pudo verificar criptográficamente el ID Token de Google (RS256/JWKS). Intente nuevamente.', 'error');
-    } else if (msg === 'rate_limited') {
-      showAlert('Demasiados intentos fallidos. Por seguridad pericial, espere 15 minutos antes de volver a intentar.', 'error');
     }
   }
 
-  async function startLocalQrEnrollment(email: string) {
-    enrollEmailForExport = email;
-    if (enrollPendingEmailEl) enrollPendingEmailEl.textContent = email;
-    if (enrollStepQr) enrollStepQr.hidden = false;
-    if (enrollRecoveryPanel) enrollRecoveryPanel.hidden = true;
-
-    const res = await phpApi.enrollMfaStart();
-    if (!res.ok || !res.data?.uri || !res.data?.secret) {
-      showAlert(res.error || 'No se pudo iniciar el enrolamiento de Google Authenticator.', 'error');
-      return;
+  async function triggerSendOtp(email: string) {
+    hideAlert();
+    if (btnRequestOtp) {
+      btnRequestOtp.disabled = true;
+      btnRequestOtp.textContent = 'Enviando código seguro...';
     }
+    if (btnResendOtp) btnResendOtp.disabled = true;
 
-    const secret = res.data.secret;
-    const uri = res.data.uri;
+    try {
+      const res = await phpApi.requestOtp(email);
+      if (res.status === 200 && res.ok) {
+        activeEmail = res.data?.email || email;
+        if (otpTargetEmailEl) otpTargetEmailEl.textContent = activeEmail;
+        setViewState('otp');
+        startOtpCountdowns(res.data?.expires_in ?? 300, res.data?.cooldown ?? 45);
+        showAlert(
+          res.data?.message || `Enviamos un código de 6 dígitos y un enlace de 1 clic a ${activeEmail}.`,
+          'info'
+        );
+        if (inputOtpCode) {
+          inputOtpCode.value = '';
+          inputOtpCode.focus();
+        }
+        return;
+      }
 
-    if (enrollSecretManual) {
-      enrollSecretManual.value = secret.match(/.{1,4}/g)?.join(' ') || secret;
-    }
-
-    if (enrollQrContainer) {
-      try {
-        const svgString = await QRCode.toString(uri, {
-          type: 'svg',
-          errorCorrectionLevel: 'M',
-          margin: 1,
-          width: 210,
-        });
-        enrollQrContainer.innerHTML = svgString;
-      } catch {
-        enrollQrContainer.innerHTML = '<p class="text-secondary font-body-3xs">No se pudo renderizar el QR local. Utilice la clave manual Base32.</p>';
+      if (res.data?.retry_after && activeEmail) {
+        startOtpCountdowns(300, res.data.retry_after);
+      }
+      showAlert(res.error || 'No se pudo enviar el código de acceso.', 'error');
+    } catch {
+      showAlert('Error de conexión con el servidor de autenticación.', 'error');
+    } finally {
+      if (btnRequestOtp) {
+        btnRequestOtp.disabled = false;
+        btnRequestOtp.textContent = 'Enviar Código de Acceso al Correo';
       }
     }
-
-    inputEnrollTotp?.focus();
   }
 
-  function renderRecoveryCodes(codes: string[]) {
-    issuedRecoveryCodes = codes;
-    if (!enrollRecoveryGrid) return;
-    enrollRecoveryGrid.innerHTML = '';
+  formRequestOtp?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (inputEmail?.value || '').trim().toLowerCase();
+    if (!email || !email.includes('@')) {
+      showAlert('Ingrese un correo electrónico válido.', 'error');
+      return;
+    }
+    await triggerSendOtp(email);
+  });
 
-    codes.forEach((code, idx) => {
-      const col = document.createElement('div');
-      col.className = 'tablet:grid-col-6 margin-bottom-1';
-      col.innerHTML = `
-        <div class="bg-base-lightest border-1px border-base-light padding-1 radius-sm display-flex flex-justify flex-align-center">
-          <span class="font-mono-3xs text-base-dark">#${idx + 1}</span>
-          <code class="font-mono-xs text-bold text-ink">${code}</code>
-        </div>
-      `;
-      enrollRecoveryGrid.appendChild(col);
-    });
-  }
+  btnResendOtp?.addEventListener('click', async () => {
+    if (!activeEmail) return;
+    await triggerSendOtp(activeEmail);
+  });
 
-  function downloadRecoveryCodesTxt() {
-    const lines = [
-      '========================================================================',
-      '        SHA256.US — CÓDIGOS DE RECUPERACIÓN DE EMERGENCIA (MFA)',
-      '========================================================================',
-      `CUENTA GOOGLE AUTORIZADA: ${enrollEmailForExport || 'perito@sha256.us'}`,
-      `FECHA DE EMISIÓN UTC: ${new Date().toISOString()}`,
-      'ADVERTENCIA: Entrega única. Cada código es de un solo uso (hash bcrypt).',
-      'Resguarde este archivo en medio cifrado o impresión física en bóveda.',
-      '------------------------------------------------------------------------',
-      ...issuedRecoveryCodes.map((c, i) => `Código #${i + 1}: ${c}`),
-      '========================================================================',
-    ].join('\n');
-    const blob = new Blob([lines], { type: 'text/plain;charset=utf-8' });
-    saveAs(blob, 'sha256us_codigos_respaldo_mfa.txt');
-  }
-
-  btnToggleRecovery?.addEventListener('click', () => {
-    usingRecoveryCode = !usingRecoveryCode;
+  btnChangeEmail?.addEventListener('click', () => {
+    clearTimers();
     hideAlert();
-    if (wrapMfaTotp) wrapMfaTotp.hidden = usingRecoveryCode;
-    if (wrapMfaRecovery) wrapMfaRecovery.hidden = !usingRecoveryCode;
-    if (btnToggleRecovery) {
-      btnToggleRecovery.textContent = usingRecoveryCode
-        ? 'Volver a código de 6 dígitos Google Authenticator'
-        : 'Usar código de recuperación de emergencia';
-    }
-    if (usingRecoveryCode) {
-      inputMfaRecovery?.focus();
-    } else {
-      inputMfaTotp?.focus();
-    }
+    setViewState('email');
+    inputEmail?.focus();
   });
 
-  async function cancelPendingFlow() {
-    hideAlert();
-    await phpApi.cancelPendingMfa();
-    sessionStorage.removeItem('fcco_auth_active');
-    sessionStorage.removeItem('fcco_auth_user');
-    window.history.replaceState({}, '', '/');
-    setViewState('google');
-  }
-
-  btnCancelMfa?.addEventListener('click', cancelPendingFlow);
-  btnCancelEnroll?.addEventListener('click', cancelPendingFlow);
-
-  btnCopyEnrollSecret?.addEventListener('click', async () => {
-    if (enrollSecretManual?.value) {
-      await navigator.clipboard.writeText(enrollSecretManual.value.replace(/\s+/g, ''));
-      showAlert('Clave secreta Base32 copiada al portapapeles.', 'info');
-    }
-  });
-
-  btnDownloadEnrollCodes?.addEventListener('click', downloadRecoveryCodesTxt);
-
-  btnCopyEnrollCodes?.addEventListener('click', async () => {
-    if (issuedRecoveryCodes.length > 0) {
-      await navigator.clipboard.writeText(issuedRecoveryCodes.join('\n'));
-      showAlert('Los 8 códigos de respaldo fueron copiados al portapapeles.', 'info');
-    }
-  });
-
-  chkSavedCodes?.addEventListener('change', () => {
-    if (btnEnterDashboard && chkSavedCodes) {
-      btnEnterDashboard.disabled = !chkSavedCodes.checked;
-    }
-  });
-
-  btnEnterDashboard?.addEventListener('click', () => {
-    window.location.href = '/dashboard';
-  });
-
-  // Submit Estado (b): Verificación TOTP / Código de Recuperación
-  formMfaVerify?.addEventListener('submit', async (e) => {
+  formVerifyOtp?.addEventListener('submit', async (e) => {
     e.preventDefault();
     hideAlert();
 
-    const code = usingRecoveryCode
-      ? (inputMfaRecovery?.value || '').trim()
-      : (inputMfaTotp?.value || '').trim();
-
-    if (!code) {
-      showAlert(
-        usingRecoveryCode
-          ? 'Ingrese uno de sus códigos de recuperación de emergencia.'
-          : 'Ingrese el código de 6 dígitos de Google Authenticator.',
-        'error'
-      );
+    const code = (inputOtpCode?.value || '').replace(/\s+/g, '');
+    if (!/^\d{6}$/.test(code)) {
+      showAlert('Ingrese exactamente los 6 dígitos numéricos enviados a su correo.', 'error');
       return;
     }
 
-    if (btnVerifyMfa) {
-      btnVerifyMfa.disabled = true;
-      btnVerifyMfa.textContent = 'Validando segundo factor...';
+    if (btnVerifyOtp) {
+      btnVerifyOtp.disabled = true;
+      btnVerifyOtp.textContent = 'Verificando código...';
     }
 
     try {
-      const res = await phpApi.verifyMfa(code, usingRecoveryCode);
+      const res = await phpApi.verifyOtp(activeEmail, code);
       if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        clearTimers();
         sessionStorage.setItem('fcco_auth_active', '1');
         sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
         window.location.href = '/dashboard';
         return;
       }
 
-      if (res.data?.pending_mfa_expired) {
-        setViewState('google');
-      } else if (res.data?.needs_enroll) {
-        setViewState('enroll');
-        await startLocalQrEnrollment(mfaPendingEmailEl?.textContent || '');
+      showAlert(res.error || 'Código de 6 dígitos incorrecto o expirado.', 'error');
+      if (inputOtpCode) {
+        inputOtpCode.select();
+        inputOtpCode.focus();
       }
-
-      showAlert(res.error || 'Código de verificación inválido o expirado.', 'error');
     } catch {
-      showAlert('Error de conexión con el servidor de autenticación.', 'error');
+      showAlert('Error de conexión al verificar el código.', 'error');
     } finally {
-      if (btnVerifyMfa) {
-        btnVerifyMfa.disabled = false;
-        btnVerifyMfa.textContent = 'Verificar e Ingresar a la Bóveda';
-      }
-    }
-  });
-
-  // Submit Estado (c): Confirmación de primer código TOTP y entrega única de 8 códigos
-  formMfaEnroll?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    hideAlert();
-
-    const code = (inputEnrollTotp?.value || '').trim();
-    if (!/^\d{6}$/.test(code)) {
-      showAlert('Ingrese los 6 dígitos numéricos mostrados en Google Authenticator.', 'error');
-      return;
-    }
-
-    if (btnConfirmEnroll) {
-      btnConfirmEnroll.disabled = true;
-      btnConfirmEnroll.textContent = 'Cifrando secreto AES-256-GCM y activando MFA...';
-    }
-
-    try {
-      const res = await phpApi.enrollMfaConfirm(code);
-      if (res.status === 200 && res.ok && res.data?.user) {
-        sessionStorage.setItem('fcco_auth_active', '1');
-        sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
-
-        const codes = res.data.recovery_codes || [];
-        renderRecoveryCodes(codes);
-
-        if (enrollStepQr) enrollStepQr.hidden = true;
-        if (enrollRecoveryPanel) enrollRecoveryPanel.hidden = false;
-        if (chkSavedCodes) chkSavedCodes.checked = false;
-        if (btnEnterDashboard) btnEnterDashboard.disabled = true;
-        showAlert('Google Authenticator activado y cifrado en reposo (AES-256-GCM). Guarde sus 8 códigos de respaldo para continuar.', 'success');
-        return;
-      }
-
-      if (res.data?.pending_mfa_expired) {
-        setViewState('google');
-      }
-      showAlert(res.error || 'Código de verificación incorrecto o desfasado.', 'error');
-    } catch {
-      showAlert('Error de conexión con el servidor durante el enrolamiento MFA.', 'error');
-    } finally {
-      if (btnConfirmEnroll) {
-        btnConfirmEnroll.disabled = false;
-        btnConfirmEnroll.textContent = 'Activar Google Authenticator y Generar Códigos de Respaldo';
+      if (btnVerifyOtp) {
+        btnVerifyOtp.disabled = false;
+        btnVerifyOtp.textContent = 'Verificar e Ingresar a la Bóveda';
       }
     }
   });
@@ -659,9 +418,8 @@ import Icon from '../uswds/Icon.astro';
   async function initLoginView() {
     handleQueryMessage();
 
+    // 1. Verificar si el usuario ya posee sesión activa confirmada (HTTP 200)
     const authRes = await phpApi.checkAuth();
-
-    // Si ya tiene sesión completa verificada (HTTP 200 authenticated=true), ir al dashboard
     if (authRes.status === 200 && authRes.ok && authRes.data?.authenticated === true && authRes.data?.user) {
       sessionStorage.setItem('fcco_auth_active', '1');
       sessionStorage.setItem('fcco_auth_user', JSON.stringify(authRes.data.user));
@@ -669,30 +427,33 @@ import Icon from '../uswds/Icon.astro';
       return;
     }
 
-    // Limpiar cualquier bandera residual en cliente mientras no exista sesión completa
     sessionStorage.removeItem('fcco_auth_active');
     sessionStorage.removeItem('fcco_auth_user');
 
-    // Si completó Google OIDC y está en ventana pending_mfa (TTL 5 min)
-    if (authRes.data?.pending_mfa === true) {
-      const pendingEmail = authRes.data.pending_email || 'perito@sha256.us';
-      const remainingSec = authRes.data.pending_expires_in ?? 300;
-      const mins = Math.max(1, Math.ceil(remainingSec / 60));
+    // 2. Si viene desde el Enlace Mágico del correo (?magic=<64-hex>), validar vía POST + CSRF
+    const urlParams = new URLSearchParams(window.location.search);
+    const magicToken = (urlParams.get('magic') || '').trim();
+    if (magicToken !== '') {
+      // Limpiar inmediatamente el token de la barra de direcciones por seguridad
+      window.history.replaceState({}, '', '/');
+      setViewState('magic');
 
-      if (authRes.data.mfa_step === 'enroll') {
-        setViewState('enroll');
-        await startLocalQrEnrollment(pendingEmail);
-      } else {
-        setViewState('verify');
-        if (mfaPendingEmailEl) mfaPendingEmailEl.textContent = pendingEmail;
-        if (mfaTtlBadge) mfaTtlBadge.textContent = `EXPIRA EN ~${mins} MIN`;
-        inputMfaTotp?.focus();
+      const res = await phpApi.verifyMagicLink(magicToken);
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
+        sessionStorage.setItem('fcco_auth_active', '1');
+        sessionStorage.setItem('fcco_auth_user', JSON.stringify(res.data.user));
+        window.location.replace('/dashboard');
+        return;
       }
+
+      setViewState('email');
+      showAlert(res.error || 'El enlace mágico expiró o ya fue utilizado. Solicite un nuevo código.', 'error');
       return;
     }
 
-    // Estado por defecto (a): botón único de Google OIDC
-    setViewState('google');
+    // 3. Estado por defecto: formulario único de correo autorizado
+    setViewState('email');
+    inputEmail?.focus();
   }
 
   if (typeof window !== 'undefined') {

@@ -1,15 +1,11 @@
 <?php
 /**
- * SHA256.US — Plantilla de Configuración Local para cPanel / Apache (Opción C — Grado Forense).
+ * SHA256.US — Plantilla Opcional de Configuración Local para cPanel (`config.local.php`).
  *
- * INSTRUCCIONES DE DESPLIEGUE:
- * 1. Copie este archivo como `public/api/config.local.php` (o `dist/api/config.local.php` en cPanel).
- *    Ese archivo está excluido en `.gitignore` y bloqueado por `.htaccess`.
- * 2. Configure las credenciales de MySQL, Google OAuth 2.0 (Web Application), los EXACTAMENTE 2 correos
- *    de peritos autorizados y una clave AES-256-GCM generada con:
- *      openssl rand -hex 32
- * 3. Registre en Google Cloud Console como Authorized Redirect URI:
- *      https://sha256.us/api/auth-google-callback.php
+ * OPCIONAL: El sistema ya funciona en cPanel usando el correo local (`mail()`).
+ * Si deseas usar SMTP autenticado de cPanel (recomendado para evitar carpeta Spam en Gmail)
+ * o personalizar credenciales de MySQL / lista blanca, copia este archivo como
+ * `public_html/api/config.local.php` (excluido de Git y bloqueado por `.htaccess`).
  */
 
 declare(strict_types=1);
@@ -24,32 +20,29 @@ return [
         'charset'  => 'utf8mb4',
     ],
     'session' => [
-        'name'             => 'SHA256_SESSID',
-        'lifetime'         => 28800, // 8 horas absolutas
-        'idle_timeout'     => 1800,  // 30 minutos de inactividad
-        'absolute_timeout' => 28800, // 8 horas absolutas
-        'pending_mfa_ttl'  => 300,   // 5 minutos para completar Google Authenticator
-        'oidc_state_ttl'   => 600,   // 10 minutos para flujo OAuth PKCE/state
-        'secure'           => true,  // Obligatorio true en producción HTTPS (SSL)
-        'httponly'         => true,
-        'samesite'         => 'Lax', // Requerido para callback GET de Google OAuth 2.0
+        'secure'   => true,  // true en producción HTTPS (SSL)
+        'httponly' => true,
+        'samesite' => 'Lax',
     ],
     'security' => [
         'require_https'          => true,
-        'password_login_enabled' => false, // Siempre deshabilitado: solo Google OIDC + TOTP
-        'rate_limit_max'         => 5,     // 5 intentos fallidos
-        'rate_limit_minutes'     => 15,    // Bloqueo de 15 minutos
-        // Lista blanca inmutable estricta: EXACTAMENTE 2 correos de peritos autorizados
+        'password_login_enabled' => false,
+        // Lista blanca estricta de EXACTAMENTE 2 correos de peritos autorizados
         'allowed_emails'         => [
             'perito.principal@example.com',
             'perito.adquisicion@example.com',
         ],
-        // Clave maestra AES-256-GCM (32 bytes en hexadecimal: ejecutar `openssl rand -hex 32`)
-        'totp_encryption_key'    => 'REEMPLAZAR_CON_64_CARACTERES_HEX_GENERADOS_CON_OPENSSL_RAND_HEX_32',
     ],
-    'google_oidc' => [
-        'client_id'     => 'REEMPLAZAR_CLIENT_ID.apps.googleusercontent.com',
-        'client_secret' => 'GOCSPX-REEMPLAZAR_CLIENT_SECRET',
-        'redirect_uri'  => 'https://sha256.us/api/auth-google-callback.php',
+    'mail' => [
+        'driver'          => 'smtp', // 'auto' | 'smtp' | 'php_mail'
+        'from_email'      => 'no-reply@sha256.us',
+        'from_name'       => 'SHA256.US — Bóveda Pericial',
+        'app_url'         => 'https://sha256.us',
+        // Datos de cuenta de correo creada en cPanel -> Cuentas de correo electrónico
+        'smtp_host'       => 'mail.sha256.us',
+        'smtp_port'       => 465,
+        'smtp_encryption' => 'ssl', // 'ssl' (puerto 465) o 'tls' (puerto 587)
+        'smtp_user'       => 'no-reply@sha256.us',
+        'smtp_pass'       => 'CLAVE_DE_LA_CUENTA_NO_REPLY_EN_CPANEL',
     ],
 ];

@@ -2,8 +2,8 @@
 /**
  * SHA256.US — Servicio Compartido de Auditoría Inmutable (Cadena SHA-256 / RFC 8785)
  *
- * Registra eventos forenses y de seguridad de acceso (login autorizado, correo no autorizado,
- * mismatch de google_sub, fallos TOTP, uso y regeneración de códigos de recuperación) en la
+ * Registra eventos forenses y de seguridad de acceso (solicitud OTP, login autorizado por OTP o
+ * enlace mágico, correo no autorizado, fallos de verificación y cierres de sesión) en la
  * tabla append-only `auditoria` preservando paridad 1:1 con `public/api/auditoria.php?verificar=1`.
  */
 

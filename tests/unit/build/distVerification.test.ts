@@ -11,7 +11,7 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     execSync('npm run build', { cwd: rootDir, stdio: 'inherit' });
   }, 90000);
 
-  it('debe existir database.sql y migrations/002_google_oidc_mfa.sql con esquema relacional, Google OIDC e inmutabilidad', () => {
+  it('debe existir database.sql y migrations/002_email_otp_auth.sql con email_otp_tokens e inmutabilidad', () => {
     const sqlPath = path.resolve(rootDir, 'database.sql');
     expect(fs.existsSync(sqlPath)).toBe(true);
     const sql = fs.readFileSync(sqlPath, 'utf-8');
@@ -19,14 +19,10 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `fases_caso`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `auditoria`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `login_attempts`');
+    expect(sql).toContain('CREATE TABLE IF NOT EXISTS `email_otp_tokens`');
     expect(sql).toContain('CREATE TABLE IF NOT EXISTS `planillas_emitidas`');
     expect(sql).toContain('`direccion`');
     expect(sql).toContain('`especialidad`');
-    expect(sql).toContain('`google_sub`');
-    expect(sql).toContain('`uk_usuarios_google_sub`');
-    expect(sql).toContain('`totp_enabled`');
-    expect(sql).toContain('`totp_enrolled_at`');
-    expect(sql).toContain('`totp_last_step`');
     expect(sql).toContain('`last_login_at`');
     expect(sql).toContain('`last_login_ip`');
     expect(sql).toContain('trg_auditoria_no_update');
@@ -34,12 +30,12 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(sql).toContain('trg_planillas_emitidas_no_delete');
     expect(sql).toContain('trg_planillas_emitidas_inmutable');
 
-    const migPath = path.resolve(rootDir, 'migrations/002_google_oidc_mfa.sql');
+    const migPath = path.resolve(rootDir, 'migrations/002_email_otp_auth.sql');
     expect(fs.existsSync(migPath)).toBe(true);
     const migSql = fs.readFileSync(migPath, 'utf-8');
-    expect(migSql).toContain('google_sub');
-    expect(migSql).toContain('totp_enrolled_at');
-    expect(migSql).toContain('totp_last_step');
+    expect(migSql).toContain('email_otp_tokens');
+    expect(migSql).toContain('otp_hash');
+    expect(migSql).toContain('magic_token_hash');
     expect(migSql).toContain('last_login_at');
     expect(migSql).toContain('last_login_ip');
   });
@@ -60,14 +56,12 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     expect(htaccess).not.toContain('accounts.google.com');
   });
 
-  it('dist/api/ debe contener todos los controladores y bibliotecas de PHP PDO, Google OIDC y Auditoría', () => {
+  it('dist/api/ debe contener todos los controladores y bibliotecas de PHP PDO, Email OTP, Mailer y Auditoría', () => {
     const expectedPhp = [
       'casos.php',
       'avanzar-etapa.php',
       'auditoria.php',
       'auth.php',
-      'auth-google-start.php',
-      'auth-google-callback.php',
       'perfil.php',
       'planillas-emitidas.php',
       'config.php',
@@ -75,9 +69,10 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
       'lib/canonical.php',
       'lib/db.php',
       'lib/auth.php',
-      'lib/totp.php',
-      'lib/google_oidc.php',
+      'lib/email_otp.php',
+      'lib/mailer.php',
       'lib/audit.php',
+      'lib/totp.php',
     ];
     for (const file of expectedPhp) {
       const p = path.resolve(distDir, 'api', file);
@@ -85,14 +80,14 @@ describe('Verificación de Despliegue cPanel y Estructura en dist/', () => {
     }
   });
 
-  it('dist/index.html debe mostrar exclusivamente inicio de sesión con Google + MFA sin campos de contraseña local', () => {
+  it('dist/index.html debe mostrar acceso por Código OTP / Enlace Mágico sin campos de contraseña local', () => {
     const indexHtml = fs.readFileSync(path.resolve(distDir, 'index.html'), 'utf-8');
-    expect(indexHtml).toContain('Continuar con Cuenta Google Autorizada');
-    expect(indexHtml).toContain('/api/auth-google-start.php');
-    expect(indexHtml).toContain('state-mfa-verify');
-    expect(indexHtml).toContain('state-mfa-enroll');
+    expect(indexHtml).toContain('Enviar Código de Acceso al Correo');
+    expect(indexHtml).toContain('state-email-request');
+    expect(indexHtml).toContain('state-otp-verify');
+    expect(indexHtml).toContain('state-magic-verifying');
     expect(indexHtml).not.toContain('type="password"');
-    expect(indexHtml).not.toContain('accounts.google.com/gsi/client');
+    expect(indexHtml).not.toContain('accounts.google.com');
   });
 
   it('dist/ debe contener todas las páginas principales compiladas en HTML estático', () => {

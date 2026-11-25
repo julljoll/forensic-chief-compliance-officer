@@ -27,8 +27,6 @@ describe('Seguridad y Gating Estricto de Autenticación (Anti-Bypass Fail-Closed
     expect(htaccess).toContain('RewriteRule ^api/ - [L]');
     expect(htaccess).toContain("script-src 'self'");
     expect(htaccess).not.toContain('accounts.google.com');
-    expect(htaccess).not.toContain('apis.google.com');
-    expect(htaccess).not.toContain('gstatic.com');
   });
 
   it('public/api/auth.php debe devolver HTTP 401 sin usuario autenticado y bloquear login por contraseña (HTTP 403)', () => {
@@ -78,43 +76,38 @@ describe('Seguridad y Gating Estricto de Autenticación (Anti-Bypass Fail-Closed
     expect(content).toContain("sessionStorage.removeItem('fcco_auth_active')");
     expect(content).toContain("window.location.replace('/?msg=sesion_requerida')");
 
-    // Verificar estrictamente que solo exista una llamada a revealContent() (jamás dentro del bloque catch)
     const revealCalls = content.match(/\brevealContent\s*\(/g) ?? [];
-    expect(revealCalls.length).toBe(2); // 1 definición de función + 1 única invocación tras HTTP 200 authenticated=true
+    expect(revealCalls.length).toBe(2);
     expect(content).not.toContain('Verificación de sesión offline');
   });
 
-  it('LoginView.astro debe implementar los 3 estados limpios (Google OIDC, TOTP/Respaldo, QR local) sin contraseñas locales', () => {
+  it('LoginView.astro debe implementar flujo simple de Código OTP 6 dígitos + Enlace Mágico sin contraseñas locales', () => {
     const loginPath = path.resolve(rootDir, 'src/components/views/LoginView.astro');
     expect(fs.existsSync(loginPath)).toBe(true);
 
     const content = fs.readFileSync(loginPath, 'utf-8');
-    expect(content).toContain('id="state-google-login"');
-    expect(content).toContain('id="state-mfa-verify"');
-    expect(content).toContain('id="state-mfa-enroll"');
-    expect(content).toContain('Continuar con Cuenta Google Autorizada');
-    expect(content).toContain('/api/auth-google-start.php');
-    expect(content).toContain("import QRCode from 'qrcode'");
+    expect(content).toContain('id="state-email-request"');
+    expect(content).toContain('id="state-otp-verify"');
+    expect(content).toContain('id="state-magic-verifying"');
+    expect(content).toContain('Enviar Código de Acceso al Correo');
+    expect(content).toContain('phpApi.requestOtp');
+    expect(content).toContain('phpApi.verifyOtp');
+    expect(content).toContain('phpApi.verifyMagicLink');
     expect(content).toContain("sessionStorage.setItem('fcco_auth_active', '1')");
     expect(content).toContain("msg === 'sesion_requerida'");
-    expect(content).toContain("msg === 'correo_no_autorizado'");
-    expect(content).toContain("msg === 'google_sub_mismatch'");
-    // Prohibición estricta de inputs de contraseña local o SDK externo de Google
     expect(content).not.toContain('type="password"');
-    expect(content).not.toContain('accounts.google.com/gsi/client');
+    expect(content).not.toContain('accounts.google.com');
   });
 
-  it('SeguridadTotpView.astro debe mostrar estado Google vinculado, TOTP activo y regeneración de códigos sin localStorage', () => {
+  it('SeguridadTotpView.astro debe mostrar estado OTP por correo y permitir probar entrega de correo sin localStorage', () => {
     const segPath = path.resolve(rootDir, 'src/components/views/SeguridadTotpView.astro');
     expect(fs.existsSync(segPath)).toBe(true);
 
     const content = fs.readFileSync(segPath, 'utf-8');
-    expect(content).toContain('id="badge-google-linked"');
-    expect(content).toContain('id="seg-google-sub"');
-    expect(content).toContain('id="form-regenerar-codigos"');
-    expect(content).toContain('phpApi.regenerateRecoveryCodes');
-    expect(content).toContain("import QRCode from 'qrcode'");
+    expect(content).toContain('id="seg-user-email"');
+    expect(content).toContain('id="seg-mail-driver"');
+    expect(content).toContain('id="btn-enviar-correo-prueba"');
+    expect(content).toContain('phpApi.sendTestEmail');
     expect(content).not.toContain('fcco_totp_secret');
-    expect(content).not.toContain('fcco_totp_backup_codes');
   });
 });

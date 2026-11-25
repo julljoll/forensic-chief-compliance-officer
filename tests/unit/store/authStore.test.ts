@@ -17,14 +17,10 @@ const mockUserDto: UsuarioPerfilDTO = {
   especialidad: 'Informática Forense',
   civ: 'CIV-299410',
   inpre: 'INPRE-184920',
-  google_linked: true,
-  google_sub_masked: '108••••••••0987',
-  totp_enabled: 1,
-  totp_enrolled_at: '2026-11-25 10:00:00',
-  recovery_codes_remaining: 8,
+  auth_method: 'email_otp',
 };
 
-describe('useAuthStore (Google OIDC + Google Authenticator TOTP — Fail-Closed)', () => {
+describe('useAuthStore (Código OTP 6 Dígitos + Enlace Mágico por Correo — Fail-Closed)', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.spyOn(phpApi, 'logout').mockResolvedValue();
@@ -38,6 +34,7 @@ describe('useAuthStore (Google OIDC + Google Authenticator TOTP — Fail-Closed)
       data: {
         ok: true,
         authenticated: true,
+        auth_method: 'email_otp',
         password_login_enabled: false,
         user: mockUserDto,
         csrf_token: 'csrf-token-256bit',
@@ -50,97 +47,92 @@ describe('useAuthStore (Google OIDC + Google Authenticator TOTP — Fail-Closed)
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(true);
     expect(state.user?.email).toBe('julljoll@gmail.com');
-    expect(state.user?.google_linked).toBe(true);
     expect(state.csrfToken).toBe('csrf-token-256bit');
-    expect(state.pendingMfa).toBe(false);
   });
 
-  it('debe mantener isAuthenticated=false y activar pendingMfa cuando el servidor devuelve 401 con pending_mfa=true', async () => {
-    vi.spyOn(phpApi, 'checkAuth').mockResolvedValueOnce({
-      ok: false,
-      status: 401,
+  it('debe solicitar código OTP de 6 dígitos para correo válido y marcar otpSent=true', async () => {
+    vi.spyOn(phpApi, 'requestOtp').mockResolvedValueOnce({
+      ok: true,
+      status: 200,
       data: {
-        ok: false,
-        authenticated: false,
-        password_login_enabled: false,
-        pending_mfa: true,
-        mfa_step: 'verify',
-        pending_email: 'julljoll@gmail.com',
-        user: null,
-        csrf_token: 'csrf-pending',
+        ok: true,
+        email: 'julljoll@gmail.com',
+        expires_in: 300,
+        cooldown: 45,
       },
     });
 
-    const isAuth = await useAuthStore.getState().hydrateSession();
-    expect(isAuth).toBe(false);
+    const ok = await useAuthStore.getState().requestOtp('JullJoll@gmail.com');
+    expect(ok).toBe(true);
 
     const state = useAuthStore.getState();
-    expect(state.isAuthenticated).toBe(false);
-    expect(state.user).toBeNull();
-    expect(state.pendingMfa).toBe(true);
-    expect(state.mfaStep).toBe('verify');
+    expect(state.otpSent).toBe(true);
     expect(state.pendingEmail).toBe('julljoll@gmail.com');
+    expect(state.isAuthenticated).toBe(false);
   });
 
-  it('debe promover sesión tras verificar código de 6 dígitos de Google Authenticator', async () => {
-    vi.spyOn(phpApi, 'verifyMfa').mockResolvedValueOnce({
+  it('debe autenticar al verificar un código OTP de 6 dígitos válido', async () => {
+    vi.spyOn(phpApi, 'verifyOtp').mockResolvedValueOnce({
       ok: true,
       status: 200,
       data: {
         ok: true,
         authenticated: true,
+        auth_method: 'email_otp',
         user: mockUserDto,
-        csrf_token: 'csrf-after-mfa',
+        csrf_token: 'csrf-after-otp',
       },
     });
 
-    const ok = await useAuthStore.getState().verifyMfa('123456', false);
+    const ok = await useAuthStore.getState().verifyOtp('julljoll@gmail.com', '482 917');
     expect(ok).toBe(true);
 
     const state = useAuthStore.getState();
     expect(state.isAuthenticated).toBe(true);
     expect(state.user?.email).toBe('julljoll@gmail.com');
-    expect(state.csrfToken).toBe('csrf-after-mfa');
-    expect(state.pendingMfa).toBe(false);
+    expect(state.csrfToken).toBe('csrf-after-otp');
   });
 
-  it('debe validar formato de 6 dígitos TOTP y 8 caracteres de recuperación antes de llamar a la red', async () => {
-    const spy = vi.spyOn(phpApi, 'verifyMfa');
-
-    expect(await useAuthStore.getState().verifyMfa('12345', false)).toBe(false);
-    expect(useAuthStore.getState().error).toContain('6 dígitos');
-    expect(await useAuthStore.getState().verifyMfa('ABC', true)).toBe(false);
-    expect(useAuthStore.getState().error).toContain('8 caracteres');
-    expect(spy).not.toHaveBeenCalled();
-  });
-
-  it('debe confirmar enrolamiento TOTP inicial y devolver los 8 códigos de respaldo', async () => {
-    const codes = ['AAAA-BBBB', 'CCCC-DDDD', 'EEEE-FFFF', 'GGGG-HHHH', 'JJJJ-KKKK', 'LLLL-MMMM', 'NNNN-PPPP', 'QQQQ-RRRR'];
-    vi.spyOn(phpApi, 'enrollMfaConfirm').mockResolvedValueOnce({
+  it('debe autenticar con un enlace mágico válido de 64 caracteres hex', async () => {
+    const validToken = 'a'.repeat(64);
+    vi.spyOn(phpApi, 'verifyMagicLink').mockResolvedValueOnce({
       ok: true,
       status: 200,
       data: {
         ok: true,
         authenticated: true,
+        auth_method: 'magic_link',
         user: mockUserDto,
-        recovery_codes: codes,
-        csrf_token: 'csrf-enrolled',
+        csrf_token: 'csrf-after-magic',
       },
     });
 
-    const res = await useAuthStore.getState().enrollMfaConfirm('654321');
-    expect(res.ok).toBe(true);
-    expect(res.recoveryCodes).toEqual(codes);
+    const ok = await useAuthStore.getState().verifyMagicLink(validToken);
+    expect(ok).toBe(true);
     expect(useAuthStore.getState().isAuthenticated).toBe(true);
+    expect(useAuthStore.getState().csrfToken).toBe('csrf-after-magic');
   });
 
-  it('debe cerrar sesión correctamente y limpiar el estado y tokens', () => {
+  it('debe rechazar correo, código OTP y token mágico malformados antes de llamar a la red', async () => {
+    const reqSpy = vi.spyOn(phpApi, 'requestOtp');
+    const otpSpy = vi.spyOn(phpApi, 'verifyOtp');
+    const magSpy = vi.spyOn(phpApi, 'verifyMagicLink');
+
+    expect(await useAuthStore.getState().requestOtp('correo-invalido')).toBe(false);
+    expect(await useAuthStore.getState().verifyOtp('julljoll@gmail.com', '123')).toBe(false);
+    expect(await useAuthStore.getState().verifyMagicLink('token-corto')).toBe(false);
+
+    expect(reqSpy).not.toHaveBeenCalled();
+    expect(otpSpy).not.toHaveBeenCalled();
+    expect(magSpy).not.toHaveBeenCalled();
+  });
+
+  it('debe cerrar sesión correctamente y limpiar estado', () => {
     useAuthStore.setState({
       isAuthenticated: true,
       user: { id: '1', email: 'j@g.com', nombre: 'J', rol: 'admin' },
       csrfToken: 'tok',
-      pendingMfa: true,
-      mfaStep: 'verify',
+      otpSent: true,
       pendingEmail: 'j@g.com',
     });
 
@@ -149,8 +141,7 @@ describe('useAuthStore (Google OIDC + Google Authenticator TOTP — Fail-Closed)
     expect(state.isAuthenticated).toBe(false);
     expect(state.user).toBeNull();
     expect(state.csrfToken).toBeNull();
-    expect(state.pendingMfa).toBe(false);
-    expect(state.mfaStep).toBeNull();
+    expect(state.otpSent).toBe(false);
     expect(state.pendingEmail).toBeNull();
   });
 

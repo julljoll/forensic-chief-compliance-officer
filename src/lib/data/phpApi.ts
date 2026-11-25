@@ -1,6 +1,6 @@
 /**
  * SHA256.US — Cliente de API REST PHP con Protección CSRF Global (X-CSRF-Token)
- * y Respaldo Offline exclusivo para datos de casos (IndexedDB).
+ * y Acceso sin Contraseña por Código OTP de 6 Dígitos + Enlace Mágico por Correo.
  *
  * IMPORTANTE: La verificación de sesión (`checkAuth`) es estrictamente fail-closed
  * sin fallback offline.
@@ -101,13 +101,9 @@ export interface UsuarioPerfilDTO {
   especialidad: string;
   civ: string;
   inpre: string;
-  totp_enabled?: number;
-  totp_enrolled_at?: string | null;
-  google_linked?: boolean;
-  google_sub_masked?: string | null;
+  auth_method?: string;
   last_login_at?: string | null;
   last_login_ip?: string | null;
-  recovery_codes_remaining?: number;
   activo?: number;
   actualizado_en?: string;
 }
@@ -130,57 +126,37 @@ export interface AuthStatusDTO {
   ok: boolean;
   authenticated: boolean;
   auth_method?: string;
+  mail_driver?: string;
   password_login_enabled: boolean;
-  pending_mfa?: boolean;
-  mfa_step?: 'verify' | 'enroll' | null;
-  pending_email?: string | null;
-  pending_nombre?: string | null;
-  pending_expires_in?: number;
   user: UsuarioPerfilDTO | null;
   csrf_token?: string;
   error?: string;
 }
 
-export interface MfaVerifyResponseDTO {
+export interface RequestOtpResponseDTO {
   ok: boolean;
-  authenticated?: boolean;
-  used_recovery_code?: boolean;
-  recovery_codes_remaining?: number;
-  pending_mfa_expired?: boolean;
-  needs_enroll?: boolean;
-  user?: UsuarioPerfilDTO;
-  csrf_token?: string;
-  error?: string;
-}
-
-export interface MfaEnrollStartDTO {
-  ok: boolean;
-  secret?: string;
-  uri?: string;
   email?: string;
-  mode?: 'initial_enroll' | 're_enroll';
+  expires_in?: number;
+  cooldown?: number;
+  retry_after?: number;
+  message?: string;
   error?: string;
 }
 
-export interface MfaEnrollConfirmDTO {
+export interface VerifyAuthResponseDTO {
   ok: boolean;
-  success?: boolean;
   authenticated?: boolean;
-  message?: string;
-  recovery_codes?: string[];
-  recovery_codes_remaining?: number;
-  pending_mfa_expired?: boolean;
+  auth_method?: string;
+  reason?: string;
   user?: UsuarioPerfilDTO;
   csrf_token?: string;
   error?: string;
 }
 
-export interface RegenerateRecoveryDTO {
+export interface SendTestEmailDTO {
   ok: boolean;
+  mail_driver?: string;
   message?: string;
-  recovery_codes?: string[];
-  recovery_codes_remaining?: number;
-  user?: UsuarioPerfilDTO;
   error?: string;
 }
 
@@ -410,7 +386,7 @@ export const phpApi = {
     return this.verificarCadenaAuditoria();
   },
 
-  // ── Planillas Emitidas (QR Rojo + Code-128 + SHA-256 en cPanel) ──
+  // ── Planillas Emitidas ──
   async emitirPlanilla(
     payload: EmitirPlanillaPayload
   ): Promise<ApiResponse<{ ok: boolean; qrUrl: string; planilla: PlanillaEmitidaDTO }>> {
@@ -475,7 +451,7 @@ export const phpApi = {
     return [];
   },
 
-  // ── Perfil y Credenciales del Perito ──
+  // ── Perfil del Perito ──
   async obtenerPerfil(): Promise<ApiResponse<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>> {
     return request<{ ok: boolean; user: UsuarioPerfilDTO; csrf_token?: string }>('/perfil.php', {
       method: 'GET',
@@ -491,53 +467,46 @@ export const phpApi = {
     });
   },
 
-  // ── Autenticación Google OIDC + Google Authenticator (TOTP RFC 6238) ──
+  // ── Autenticación por Código OTP (6 dígitos) + Enlace Mágico por Correo ──
   async checkAuth(): Promise<ApiResponse<AuthStatusDTO>> {
     return rawRequest<AuthStatusDTO>('/auth.php', { method: 'GET' });
   },
 
-  async verifyMfa(code: string, useRecovery: boolean = false): Promise<ApiResponse<MfaVerifyResponseDTO>> {
-    return request<MfaVerifyResponseDTO>('/auth.php', {
+  async requestOtp(email: string): Promise<ApiResponse<RequestOtpResponseDTO>> {
+    return request<RequestOtpResponseDTO>('/auth.php', {
       method: 'POST',
       body: JSON.stringify({
-        action: 'verify_mfa',
-        code: code.trim(),
-        use_recovery: useRecovery,
+        action: 'request_otp',
+        email: email.trim().toLowerCase(),
       }),
     });
   },
 
-  async enrollMfaStart(): Promise<ApiResponse<MfaEnrollStartDTO>> {
-    return request<MfaEnrollStartDTO>('/auth.php', {
-      method: 'POST',
-      body: JSON.stringify({ action: 'enroll_mfa_start' }),
-    });
-  },
-
-  async enrollMfaConfirm(code: string): Promise<ApiResponse<MfaEnrollConfirmDTO>> {
-    return request<MfaEnrollConfirmDTO>('/auth.php', {
+  async verifyOtp(email: string, code: string): Promise<ApiResponse<VerifyAuthResponseDTO>> {
+    return request<VerifyAuthResponseDTO>('/auth.php', {
       method: 'POST',
       body: JSON.stringify({
-        action: 'enroll_mfa_confirm',
+        action: 'verify_otp',
+        email: email.trim().toLowerCase(),
         code: code.trim(),
       }),
     });
   },
 
-  async regenerateRecoveryCodes(code: string): Promise<ApiResponse<RegenerateRecoveryDTO>> {
-    return request<RegenerateRecoveryDTO>('/auth.php', {
+  async verifyMagicLink(token: string): Promise<ApiResponse<VerifyAuthResponseDTO>> {
+    return request<VerifyAuthResponseDTO>('/auth.php', {
       method: 'POST',
       body: JSON.stringify({
-        action: 'regenerate_recovery_codes',
-        code: code.trim(),
+        action: 'verify_magic_link',
+        token: token.trim(),
       }),
     });
   },
 
-  async cancelPendingMfa(): Promise<ApiResponse<{ ok: boolean }>> {
-    return request<{ ok: boolean }>('/auth.php', {
+  async sendTestEmail(): Promise<ApiResponse<SendTestEmailDTO>> {
+    return request<SendTestEmailDTO>('/auth.php', {
       method: 'POST',
-      body: JSON.stringify({ action: 'cancel_pending_mfa' }),
+      body: JSON.stringify({ action: 'send_test_email' }),
     });
   },
 

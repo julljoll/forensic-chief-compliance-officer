@@ -1,7 +1,6 @@
 /**
- * SHA256.US — Store de Autenticación Forense (Opción C — Grado Forense)
- * Solo Google OIDC (Authorization Code + PKCE S256 + RS256 JWKS) + Google Authenticator (RFC 6238).
- * Inicio de sesión con contraseña local deshabilitado permanentemente.
+ * SHA256.US — Store de Autenticación sin Contraseña (Código OTP 6 Dígitos + Enlace Mágico por Correo)
+ * Toda validación es ejecutada por el backend PHP PDO (/api/auth.php) en modo fail-closed.
  */
 
 import { phpApi, type UsuarioPerfilDTO } from '../lib/data/phpApi';
@@ -16,17 +15,11 @@ export interface User {
   rol: 'admin' | 'perito_lider' | 'perito_asistente' | 'fiscal' | 'compliance_officer' | 'coordinador';
   organismo?: string;
   despacho?: string;
-  google_linked?: boolean;
-  google_sub_masked?: string | null;
-  totp_enabled?: number;
-  totp_enrolled_at?: string | null;
+  auth_method?: string;
   last_login_at?: string | null;
   last_login_ip?: string | null;
-  recovery_codes_remaining?: number;
   profileImage?: string;
 }
-
-export type MfaStep = 'verify' | 'enroll' | null;
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -34,17 +27,16 @@ export interface AuthState {
   csrfToken: string | null;
   error: string | null;
   isLoading: boolean;
-  pendingMfa: boolean;
-  mfaStep: MfaStep;
+  otpSent: boolean;
   pendingEmail: string | null;
 
   hydrateSession: () => Promise<boolean>;
-  verifyMfa: (code: string, useRecovery?: boolean) => Promise<boolean>;
-  enrollMfaConfirm: (code: string) => Promise<{ ok: boolean; recoveryCodes?: string[] }>;
-  cancelPendingMfa: () => Promise<void>;
+  requestOtp: (email: string) => Promise<boolean>;
+  verifyOtp: (email: string, code: string) => Promise<boolean>;
+  verifyMagicLink: (token: string) => Promise<boolean>;
   logout: () => void;
   updateProfileImage: (b64: string) => void;
-  setPendingMfa: (pending: boolean, step?: MfaStep, email?: string | null) => void;
+  resetOtpStep: () => void;
 }
 
 function toStoreUser(dto: UsuarioPerfilDTO): User {
@@ -58,13 +50,9 @@ function toStoreUser(dto: UsuarioPerfilDTO): User {
     rol: (dto.rol as User['rol']) || 'perito_lider',
     organismo: dto.organismo,
     despacho: dto.despacho,
-    google_linked: dto.google_linked,
-    google_sub_masked: dto.google_sub_masked,
-    totp_enabled: dto.totp_enabled,
-    totp_enrolled_at: dto.totp_enrolled_at,
+    auth_method: dto.auth_method,
     last_login_at: dto.last_login_at,
     last_login_ip: dto.last_login_ip,
-    recovery_codes_remaining: dto.recovery_codes_remaining,
   };
 }
 
@@ -74,8 +62,7 @@ let state: AuthState = {
   csrfToken: null,
   error: null,
   isLoading: false,
-  pendingMfa: false,
-  mfaStep: null,
+  otpSent: false,
   pendingEmail: null,
 
   hydrateSession: async () => {
@@ -90,8 +77,7 @@ let state: AuthState = {
         state.isAuthenticated = true;
         state.user = toStoreUser(res.data.user);
         state.csrfToken = res.data.csrf_token || null;
-        state.pendingMfa = false;
-        state.mfaStep = null;
+        state.otpSent = false;
         state.pendingEmail = null;
         state.error = null;
         state.isLoading = false;
@@ -99,25 +85,9 @@ let state: AuthState = {
         return true;
       }
 
-      if (res.data?.pending_mfa === true) {
-        state.isAuthenticated = false;
-        state.user = null;
-        state.csrfToken = res.data.csrf_token || null;
-        state.pendingMfa = true;
-        state.mfaStep = res.data.mfa_step || 'verify';
-        state.pendingEmail = res.data.pending_email || null;
-        state.error = null;
-        state.isLoading = false;
-        notify();
-        return false;
-      }
-
       state.isAuthenticated = false;
       state.user = null;
       state.csrfToken = res.data?.csrf_token || null;
-      state.pendingMfa = false;
-      state.mfaStep = null;
-      state.pendingEmail = null;
       state.error = null;
       state.isLoading = false;
       notify();
@@ -125,9 +95,6 @@ let state: AuthState = {
     } catch (err: any) {
       state.isAuthenticated = false;
       state.user = null;
-      state.pendingMfa = false;
-      state.mfaStep = null;
-      state.pendingEmail = null;
       state.error = err?.message || 'Error al verificar la sesión pericial';
       state.isLoading = false;
       notify();
@@ -135,15 +102,10 @@ let state: AuthState = {
     }
   },
 
-  verifyMfa: async (code: string, useRecovery: boolean = false) => {
-    const clean = (code || '').trim();
-    if (!useRecovery && !/^\d{6}$/.test(clean)) {
-      state.error = 'Ingrese un código válido de 6 dígitos de Google Authenticator';
-      notify();
-      return false;
-    }
-    if (useRecovery && clean.replace(/[^a-zA-Z0-9]/g, '').length !== 8) {
-      state.error = 'Ingrese un código de recuperación válido de 8 caracteres';
+  requestOtp: async (email: string) => {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      state.error = 'Ingrese un correo electrónico válido';
       notify();
       return false;
     }
@@ -153,13 +115,56 @@ let state: AuthState = {
     notify();
 
     try {
-      const res = await phpApi.verifyMfa(clean, useRecovery);
+      const res = await phpApi.requestOtp(cleanEmail);
+      if (res.status === 200 && res.ok) {
+        state.otpSent = true;
+        state.pendingEmail = cleanEmail;
+        state.error = null;
+        state.isLoading = false;
+        notify();
+        return true;
+      }
+
+      state.otpSent = false;
+      state.error = res.error || 'No se pudo enviar el código de acceso';
+      state.isLoading = false;
+      notify();
+      return false;
+    } catch (err: any) {
+      state.otpSent = false;
+      state.error = err?.message || 'Error de conexión al solicitar código';
+      state.isLoading = false;
+      notify();
+      return false;
+    }
+  },
+
+  verifyOtp: async (email: string, code: string) => {
+    const cleanEmail = (email || '').trim().toLowerCase();
+    const cleanCode = (code || '').replace(/\s+/g, '');
+
+    if (!cleanEmail || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      state.error = 'Correo electrónico inválido';
+      notify();
+      return false;
+    }
+    if (!/^\d{6}$/.test(cleanCode)) {
+      state.error = 'Ingrese el código de 6 dígitos enviado a su correo';
+      notify();
+      return false;
+    }
+
+    state.isLoading = true;
+    state.error = null;
+    notify();
+
+    try {
+      const res = await phpApi.verifyOtp(cleanEmail, cleanCode);
       if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
         state.isAuthenticated = true;
         state.user = toStoreUser(res.data.user);
         state.csrfToken = res.data.csrf_token || state.csrfToken;
-        state.pendingMfa = false;
-        state.mfaStep = null;
+        state.otpSent = false;
         state.pendingEmail = null;
         state.error = null;
         state.isLoading = false;
@@ -167,33 +172,28 @@ let state: AuthState = {
         return true;
       }
 
-      if (res.data?.pending_mfa_expired) {
-        state.pendingMfa = false;
-        state.mfaStep = null;
-        state.pendingEmail = null;
-      }
       state.isAuthenticated = false;
       state.user = null;
-      state.error = res.error || 'Código de verificación inválido o expirado';
+      state.error = res.error || 'Código de 6 dígitos incorrecto o expirado';
       state.isLoading = false;
       notify();
       return false;
     } catch (err: any) {
       state.isAuthenticated = false;
       state.user = null;
-      state.error = err?.message || 'Error de conexión al validar Google Authenticator';
+      state.error = err?.message || 'Error de conexión al verificar el código';
       state.isLoading = false;
       notify();
       return false;
     }
   },
 
-  enrollMfaConfirm: async (code: string) => {
-    const clean = (code || '').trim();
-    if (!/^\d{6}$/.test(clean)) {
-      state.error = 'Ingrese el código de 6 dígitos generado por Google Authenticator';
+  verifyMagicLink: async (token: string) => {
+    const cleanToken = (token || '').trim().toLowerCase();
+    if (!/^[a-f0-9]{64}$/.test(cleanToken)) {
+      state.error = 'El enlace mágico es inválido o está incompleto';
       notify();
-      return { ok: false };
+      return false;
     }
 
     state.isLoading = true;
@@ -201,43 +201,33 @@ let state: AuthState = {
     notify();
 
     try {
-      const res = await phpApi.enrollMfaConfirm(clean);
-      if (res.status === 200 && res.ok && res.data?.user) {
+      const res = await phpApi.verifyMagicLink(cleanToken);
+      if (res.status === 200 && res.ok && res.data?.authenticated === true && res.data?.user) {
         state.isAuthenticated = true;
         state.user = toStoreUser(res.data.user);
         state.csrfToken = res.data.csrf_token || state.csrfToken;
-        state.pendingMfa = false;
-        state.mfaStep = null;
+        state.otpSent = false;
         state.pendingEmail = null;
         state.error = null;
         state.isLoading = false;
         notify();
-        return { ok: true, recoveryCodes: res.data.recovery_codes || [] };
+        return true;
       }
 
-      state.error = res.error || 'No se pudo confirmar el enrolamiento TOTP';
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = res.error || 'El enlace mágico expiró o ya fue utilizado';
       state.isLoading = false;
       notify();
-      return { ok: false };
+      return false;
     } catch (err: any) {
-      state.error = err?.message || 'Error de conexión durante enrolamiento TOTP';
+      state.isAuthenticated = false;
+      state.user = null;
+      state.error = err?.message || 'Error de conexión al validar el enlace mágico';
       state.isLoading = false;
       notify();
-      return { ok: false };
+      return false;
     }
-  },
-
-  cancelPendingMfa: async () => {
-    state.pendingMfa = false;
-    state.mfaStep = null;
-    state.pendingEmail = null;
-    state.error = null;
-    try {
-      await phpApi.cancelPendingMfa();
-    } catch {
-      // continuar limpiando estado local
-    }
-    notify();
   },
 
   logout: () => {
@@ -245,8 +235,7 @@ let state: AuthState = {
     state.user = null;
     state.csrfToken = null;
     state.error = null;
-    state.pendingMfa = false;
-    state.mfaStep = null;
+    state.otpSent = false;
     state.pendingEmail = null;
     phpApi.logout().catch(() => {});
     notify();
@@ -259,10 +248,10 @@ let state: AuthState = {
     }
   },
 
-  setPendingMfa: (pending: boolean, step: MfaStep = null, email: string | null = null) => {
-    state.pendingMfa = pending;
-    state.mfaStep = pending ? (step || 'verify') : null;
-    state.pendingEmail = pending ? email : null;
+  resetOtpStep: () => {
+    state.otpSent = false;
+    state.pendingEmail = null;
+    state.error = null;
     notify();
   },
 };

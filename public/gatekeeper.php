@@ -14,10 +14,10 @@ use Sha256\Auth\Session;
 header('Cache-Control: no-store, no-cache, must-revalidate, private');
 header('Pragma: no-cache');
 
-// 1. Verificar sesión activa de perito en PHP (Google OIDC + TOTP verificado; pending_mfa retorna null)
+// 1. Verificar sesión activa de perito en PHP (Código OTP 6 dígitos o Enlace Mágico verificado)
 $user = Session::getUser();
 if (!$user) {
-    // Si no está autenticado con MFA completo, redirigir inmediatamente a la página de login con 302
+    // Si no está autenticado, redirigir inmediatamente a la página de login con 302
     header('Location: /?msg=sesion_requerida', true, 302);
     exit;
 }

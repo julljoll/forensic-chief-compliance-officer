@@ -1,12 +1,12 @@
 ---
 /**
- * SHA256.US — Guarda de Sesión Fail-Closed Absoluto (Opción C — Grado Forense)
+ * SHA256.US — Guarda de Sesión Fail-Closed Absoluto (Acceso por Código OTP / Enlace Mágico)
  *
  * REGLA INQUEBRANTABLE:
  * Ningún contenido protegido puede revelarse sin una respuesta autoritativa
  * HTTP 200 con `authenticated === true` y `user` válido desde `/api/auth.php`.
- * Cualquier fallo de red, respuesta 401/403/5xx, estado `pending_mfa` o excepción
- * destruye las credenciales de cliente y redirige inmediatamente a `/?msg=sesion_requerida`.
+ * Cualquier fallo de red, respuesta 401/403/5xx o excepción destruye las
+ * credenciales de cliente y redirige inmediatamente a `/?msg=sesion_requerida`.
  */
 ---
 <script>
