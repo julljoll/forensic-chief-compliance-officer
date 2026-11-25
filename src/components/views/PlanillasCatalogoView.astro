@@ -222,7 +222,7 @@ const PLANILLAS = [
                 <span>Imprimir</span>
               </a>
             </li>
-            <li class="usa-button-group__item width-full margin-top-1">
+            <li class="usa-button-group__item flex-1 margin-top-1">
               <button
                 type="button"
                 class="usa-button usa-button--base font-sans-2xs padding-x-1 padding-y-05 width-full text-center btn-descargar-docx"
@@ -233,7 +233,21 @@ const PLANILLAS = [
                 <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
                   <use href="/assets/uswds/img/sprite.svg#file_download"></use>
                 </svg>
-                <span class="txt-descargar-docx">Word (.docx)</span>
+                <span class="txt-descargar-docx">Word</span>
+              </button>
+            </li>
+            <li class="usa-button-group__item flex-1 margin-top-1">
+              <button
+                type="button"
+                class="usa-button usa-button--secondary font-sans-2xs padding-x-1 padding-y-05 width-full text-center btn-descargar-pdf-editable"
+                data-slug={p.slug}
+                data-titulo={p.titulo}
+                title="Descargar en PDF editable con código QR y campos para firma electrónica en Adobe Acrobat"
+              >
+                <svg class="usa-icon margin-right-05" aria-hidden="true" focusable="false" role="img">
+                  <use href="/assets/uswds/img/sprite.svg#edit"></use>
+                </svg>
+                <span class="txt-descargar-pdf-editable">PDF (Adobe)</span>
               </button>
             </li>
           </ul>
@@ -245,6 +259,7 @@ const PLANILLAS = [
 
 <script>
   import { descargarPlanillaPorSlug } from '../../lib/export/exportWordDocx';
+  import { descargarPlanillaPdfEditablePorSlug } from '../../lib/export/exportEditablePdf';
 
   function initCatalogo() {
     // Configurar listeners de descarga directa Microsoft Word (.docx) siempre en blanco
@@ -265,7 +280,31 @@ const PLANILLAS = [
           console.error('Error al descargar Word:', err);
           alert('Hubo un inconveniente al generar la planilla en formato Word.');
         } finally {
-          if (spanTxt) spanTxt.textContent = 'Word (.docx)';
+          if (spanTxt) spanTxt.textContent = 'Word';
+          button.disabled = false;
+        }
+      });
+    });
+
+    // Configurar listeners de descarga directa PDF Editable (Adobe Acrobat / QR / Firma)
+    document.querySelectorAll('.btn-descargar-pdf-editable').forEach((btn) => {
+      btn.addEventListener('click', async (e) => {
+        e.preventDefault();
+        const button = btn as HTMLButtonElement;
+        const slug = button.getAttribute('data-slug') || '';
+        const titulo = button.getAttribute('data-titulo') || '';
+        const spanTxt = button.querySelector('.txt-descargar-pdf-editable');
+
+        if (spanTxt) spanTxt.textContent = 'Generando...';
+        button.disabled = true;
+
+        try {
+          await descargarPlanillaPdfEditablePorSlug(slug, 'blanco', undefined, titulo);
+        } catch (err) {
+          console.error('Error al descargar PDF Editable:', err);
+          alert('Hubo un inconveniente al generar la planilla en PDF editable.');
+        } finally {
+          if (spanTxt) spanTxt.textContent = 'PDF (Adobe)';
           button.disabled = false;
         }
       });

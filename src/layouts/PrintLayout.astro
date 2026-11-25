@@ -55,10 +55,13 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
     <script is:inline src="/assets/uswds/js/uswds.min.js"></script>
     <script>
       import { exportCurrentPlanillaToWordDocx } from '../lib/export/exportWordDocx';
+      import { exportCurrentPlanillaToEditablePdf } from '../lib/export/exportEditablePdf';
 
       const urlParams = new URLSearchParams(window.location.search);
       const btnWord = document.getElementById('btn-descargar-word');
       const txtWord = document.getElementById('txt-btn-word');
+      const btnPdfEditable = document.getElementById('btn-descargar-pdf-editable');
+      const txtPdfEditable = document.getElementById('txt-btn-pdf-editable');
       const btnImprimir = document.getElementById('btn-imprimir-folio');
 
       btnImprimir?.addEventListener('click', () => {
@@ -80,10 +83,29 @@ const { title = 'Documento Pericial Oficial — SHA256.US' } = Astro.props;
         }
       });
 
-      // Descarga automática por parámetro URL ?descargar=docx
+      // Manejador de descarga PDF Editable con QR y Firma Digital para Adobe Acrobat
+      btnPdfEditable?.addEventListener('click', async () => {
+        if (txtPdfEditable) txtPdfEditable.textContent = 'Generando...';
+        btnPdfEditable.setAttribute('disabled', 'true');
+        try {
+          await exportCurrentPlanillaToEditablePdf();
+        } catch (err) {
+          console.error('Error al exportar PDF Editable:', err);
+          alert('Hubo un inconveniente al generar el PDF editable con firma digital.');
+        } finally {
+          if (txtPdfEditable) txtPdfEditable.textContent = 'PDF Editable (Adobe)';
+          btnPdfEditable.removeAttribute('disabled');
+        }
+      });
+
+      // Descarga automática por parámetro URL ?descargar=docx o ?descargar=pdf_editable
       if (urlParams.get('descargar') === 'docx') {
         setTimeout(async () => {
           await exportCurrentPlanillaToWordDocx();
+        }, 700);
+      } else if (urlParams.get('descargar') === 'pdf_editable') {
+        setTimeout(async () => {
+          await exportCurrentPlanillaToEditablePdf();
         }, 700);
       }
     </script>
