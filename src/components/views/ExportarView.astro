@@ -1,15 +1,33 @@
 ---
 /**
  * SHA256.US — Vista Hub de Exportación y Empaquetado de Expedientes Forenses
- * Genera el paquete ZIP con documentos independientes HTML, JSON canónico y reporte SHA-256.
+ * Incluye las 13 Planillas Oficiales en Folio (FO-F0-01 a FO-F5-13) y manifiesto
+ * verificado contra RAG/Informacion_docling_rag/Informatica.
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import SummaryBox from '../uswds/SummaryBox.astro';
+
+const ITEMS_EXPORT = [
+  { id: 'acta_consentimiento', codigo: 'FO-F0-01', fase: 'F0', titulo: 'Acta de Consentimiento Informado', desc: 'Hábeas Data y exclusión de antijuridicidad (LEDCI Arts. 20–21).' },
+  { id: 'acta_entrevista', codigo: 'FO-F0-02', fase: 'F0', titulo: 'Acta de Entrevista Forense', desc: 'Contexto, pruebas a validar y credenciales (MUCC-2017).' },
+  { id: 'acta_obtencion', codigo: 'FO-F1-03', fase: 'F1', titulo: 'Acta de Obtención y Preservación', desc: 'Fijación 360°, Faraday y precintado (ISO/IEC 27037 §5.4.2–5.4.3).' },
+  { id: 'prcc', codigo: 'FO-F1-04', fase: 'F1', titulo: 'Planilla de Registro de Cadena de Custodia (PRCC)', desc: 'Obligatoria conforme al COPP Art. 187 y MUCC-2017.' },
+  { id: 'acta_desprecintado', codigo: 'FO-F2-05', fase: 'F2', titulo: 'Acta de Desprecintado en Laboratorio', desc: 'Adquisición verificada con Hash SHA-256 (ISO/IEC 27037 §5.4.4).' },
+  { id: 'informe_audio_sonic', codigo: 'FO-F3-06', fase: 'F3', titulo: 'Planilla de Análisis Forense de Audio', desc: 'Espectrograma FFT, formantes y continuidad (ISO/IEC 27042).' },
+  { id: 'planilla_evaluacion_ux', codigo: 'FO-F3-07', fase: 'F3', titulo: 'Planilla de Evaluación de Interfaz UX', desc: 'Cotejo de capturas e interfaz vs registros SQLite (LMDFE Art. 4).' },
+  { id: 'acta_dictamen', codigo: 'FO-F4-08', fase: 'F4', titulo: 'Dictamen Pericial Oficial Colegiado', desc: 'Informe motivado con doble firma pericial (COPP Arts. 223–225).' },
+  { id: 'dictamen_imagenes', codigo: 'FO-F4-09', fase: 'F4', titulo: 'Dictamen Especializado de Imágenes', desc: 'Análisis EXIF, ELA e integridad de píxeles (ISO/IEC 27042).' },
+  { id: 'dictamen_audios', codigo: 'FO-F4-10', fase: 'F4', titulo: 'Dictamen Especializado de Audios', desc: 'Autenticidad de nota de voz o grabación (LMDFE Art. 7).' },
+  { id: 'acta_entrega_resultados', codigo: 'FO-F5-11', fase: 'F5', titulo: 'Acta de Disposición Final y Devolución', desc: 'Cierre de custodia y entrega formal (MUCC-2017).' },
+  { id: 'acta_sanitizacion', codigo: 'FO-F5-12', fase: 'F5', titulo: 'Acta de Sanitización Criptográfica', desc: 'Supresión segura de copias temporales (ISO/IEC 27002 A.8.10).' },
+  { id: 'acta_auditoria_timeline', codigo: 'FO-F5-13', fase: 'F5', titulo: 'Acta de Auditoría y Trazabilidad SHA-256', desc: 'Cadena de hashes concatenados (RFC 8785 · UNE 71505).' },
+  { id: 'manifest_sha256', codigo: 'MANIFEST', fase: 'RAG', titulo: 'Manifiesto Criptográfico y Fuentes RAG Informática', desc: 'Árbol SHA-256 y referencias verificadas en RAG/Informacion_docling_rag/Informatica.' },
+];
 ---
 
 <PageHeader
   title="Exportación y Empaquetado Oficial del Expediente"
-  subtitle="Generación de entregables judiciales en formato comprimido (.ZIP) con planillas Folio y manifiesto criptográfico SHA-256."
+  subtitle="Generación de entregables judiciales en formato comprimido (.ZIP) con las 13 planillas Folio y manifiesto SHA-256."
   tag="Paquete Judicial ZIP"
   tagColor="bg-primary-darker"
 >
@@ -20,8 +38,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </PageHeader>
 
-<!-- USWDS: Summary box | https://designsystem.digital.gov/components/summary-box/ -->
-<div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="exportar-caso-titulo">
+<!-- Selector de Expediente -->
+<div class="usa-summary-box margin-bottom-205" role="region" aria-labelledby="exportar-caso-titulo">
   <div class="usa-summary-box__body">
     <div class="grid-row grid-gap flex-align-center flex-justify">
       <div class="tablet:grid-col-7">
@@ -48,109 +66,48 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </div>
 
-<!-- Resumen de Requisitos de Entrega Judicial -->
-<div class="margin-bottom-3">
-  <SummaryBox heading="Estructura del Paquete Forense Digital (ISO/IEC 27043 · COPP 223)" headingId="summary-paquete-forense">
-    <p class="margin-top-0 margin-bottom-1">
-      El archivo ZIP exportado constituye una unidad documental sellada. Incluye las planillas en HTML para visualización sin conexión,
-      el manifiesto de datos JSON canónico y el árbol de hashes SHA-256 para comprobación por el tribunal.
+<!-- Resumen Compacto -->
+<div class="margin-bottom-205">
+  <SummaryBox heading="Paquete Forense Digital Sellado (13 Planillas Folio + Manifiesto RAG Informática)" headingId="summary-paquete-forense">
+    <p class="margin-top-0 margin-bottom-1 font-body-2xs">
+      El archivo ZIP exportado incluye los instrumentos seleccionados en formato Folio, el JSON canónico (RFC 8785) y el manifiesto de fuentes verificadas en <code>RAG/Informacion_docling_rag/Informatica</code>.
     </p>
     <div class="display-flex flex-wrap">
-      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05">STANDALONE HTML (FOLIO)</span>
+      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05">13 PLANILLAS FOLIO (216×330mm)</span>
       <span class="usa-tag bg-primary margin-right-1 margin-bottom-05">CANONICAL JSON (RFC 8785)</span>
-      <span class="usa-tag bg-green margin-bottom-05">MANIFEST SHA-256</span>
+      <span class="usa-tag bg-green margin-bottom-05">RAG INFORMATICA VERIFIED</span>
     </div>
   </SummaryBox>
 </div>
 
-<!-- USWDS: Card with Checkboxes | https://designsystem.digital.gov/components/card/ -->
+<!-- Selección de las 13 Planillas y Manifiesto -->
 <div class="usa-card width-full margin-bottom-3">
   <div class="usa-card__container padding-3">
     <fieldset class="usa-fieldset">
-      <legend class="usa-legend font-heading-lg text-bold margin-bottom-2">
-        Seleccione los Documentos y Entregables a Incluir
+      <legend class="usa-legend font-heading-md text-bold margin-bottom-2">
+        Seleccione los Documentos y Entregables a Incluir (13 Planillas Oficiales + Manifiesto)
       </legend>
 
-      <div class="grid-row grid-gap">
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-prcc" type="checkbox" name="export-items" value="prcc" checked />
-            <label class="usa-checkbox__label" for="chk-exp-prcc">
-              Planilla de Registro de Cadena de Custodia (PRCC)
-              <span class="usa-checkbox__label-description">Obligatoria conforme al COPP Art. 187 y MUCC-2017.</span>
-            </label>
+      <div class="grid-row grid-gap-1">
+        {ITEMS_EXPORT.map((item) => (
+          <div class="tablet:grid-col-6 margin-bottom-105">
+            <div class="usa-checkbox">
+              <input
+                class="usa-checkbox__input usa-checkbox__input--tile chk-export-item"
+                id={`chk-exp-${item.id}`}
+                type="checkbox"
+                name="export-items"
+                value={item.id}
+                checked
+              />
+              <label class="usa-checkbox__label font-body-2xs" for={`chk-exp-${item.id}`}>
+                <span class="usa-tag bg-primary-darker text-white font-mono-3xs margin-right-05">{item.codigo}</span>
+                <strong>{item.titulo}</strong>
+                <span class="usa-checkbox__label-description font-body-3xs">{item.desc}</span>
+              </label>
+            </div>
           </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-consentimiento" type="checkbox" name="export-items" value="acta_consentimiento" checked />
-            <label class="usa-checkbox__label" for="chk-exp-consentimiento">
-              Acta de Consentimiento Informado
-              <span class="usa-checkbox__label-description">Respaldo de Hábeas Data (CRBV Art. 28).</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-entrevista" type="checkbox" name="export-items" value="acta_entrevista" checked />
-            <label class="usa-checkbox__label" for="chk-exp-entrevista">
-              Acta de Entrevista Forense
-              <span class="usa-checkbox__label-description">Declaraciones iniciales y contexto técnico.</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-obtencion" type="checkbox" name="export-items" value="acta_obtencion" checked />
-            <label class="usa-checkbox__label" for="chk-exp-obtencion">
-              Acta de Obtención y Preservación
-              <span class="usa-checkbox__label-description">Fijación fotográfica inicial y precintado.</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-desprecintado" type="checkbox" name="export-items" value="acta_desprecintado" checked />
-            <label class="usa-checkbox__label" for="chk-exp-desprecintado">
-              Acta de Desprecintado en Laboratorio
-              <span class="usa-checkbox__label-description">Apertura reglamentaria para adquisición bit-a-bit.</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-dictamen" type="checkbox" name="export-items" value="acta_dictamen" checked />
-            <label class="usa-checkbox__label" for="chk-exp-dictamen">
-              Dictamen Pericial Oficial
-              <span class="usa-checkbox__label-description">Informe motivado con firma pericial bilateral.</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-sanitizacion" type="checkbox" name="export-items" value="acta_sanitizacion" checked />
-            <label class="usa-checkbox__label" for="chk-exp-sanitizacion">
-              Acta de Sanitización (NIST SP 800-88)
-              <span class="usa-checkbox__label-description">Certificación de purga y destrucción segura.</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="tablet:grid-col-6 margin-bottom-2">
-          <div class="usa-checkbox">
-            <input class="usa-checkbox__input usa-checkbox__input--tile chk-export-item" id="chk-exp-manifest" type="checkbox" name="export-items" value="manifest_sha256" checked />
-            <label class="usa-checkbox__label" for="chk-exp-manifest">
-              Manifiesto Criptográfico y Cadena SHA-256
-              <span class="usa-checkbox__label-description">Árbol de hashes para verificación matemática por el juez.</span>
-            </label>
-          </div>
-        </div>
+        ))}
       </div>
     </fieldset>
 
@@ -176,6 +133,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   import { idbGetAll } from '../../lib/data/idb';
   import { phpApi } from '../../lib/data/phpApi';
   import { canonicalJson, sha256Hex } from '../../lib/crypto/canonical';
+  import { RAG_INFORMATICA_CATALOG, RAG_INFORMATICA_BASE_DIR } from '../../data/ragInformaticaCatalog';
   import type { CasoCMS } from '../../lib/domain/types';
 
   const select = document.getElementById('select-exportar-caso') as HTMLSelectElement;
@@ -252,12 +210,14 @@ import SummaryBox from '../uswds/SummaryBox.astro';
         const zip = new JSZip();
         const baseFolder = zip.folder(`EXPEDIENTE_${casoSeleccionado.numeroCaso.replace(/[^a-zA-Z0-9_-]/g, '_')}`);
 
-        // 1. Manifiesto JSON Canónico
         const jsonCanonica = canonicalJson(casoSeleccionado as any);
         const hashCaso = await sha256Hex(jsonCanonica);
         baseFolder?.file('metadatos_caso_rfc8785.json', jsonCanonica);
 
-        // 2. Reporte de Manifiesto Criptográfico
+        const fuentesRag = RAG_INFORMATICA_CATALOG.map(
+          (d) => `- [${d.codigo}] ${d.archivoRag} (SHA-256 PDF: ${d.hashPdfSha256})`
+        ).join('\n');
+
         const reporteManifest = [
           '========================================================================',
           '               SHA256.US — REPORTE DE INTEGRIDAD CRIPTOGRÁFICA',
@@ -268,36 +228,17 @@ import SummaryBox from '../uswds/SummaryBox.astro';
           `CONSIGNANTE: ${casoSeleccionado.consignanteNombre} (C.I. ${casoSeleccionado.consignanteCedula})`,
           `PERITO LÍDER: ${casoSeleccionado.peritoLiderNombre || 'Jull Joll'}`,
           `FECHA DE EXPORTACIÓN: ${new Date().toISOString()}`,
+          `FUENTE ÚNICA RAG: ${RAG_INFORMATICA_BASE_DIR}`,
           '------------------------------------------------------------------------',
           `HASH CANÓNICO SHA-256 DEL CASO: ${hashCaso}`,
           'ESTADO DE LA CADENA DE CUSTODIA: ÍNTEGRA Y CONFORME',
-          'MARCO NORMATIVO: ISO/IEC 27037 · ISO/IEC 27042 · MUCC-2017 · COPP Art. 187',
+          '------------------------------------------------------------------------',
+          'INSTRUMENTOS VERIFICADOS EN RAG/Informacion_docling_rag/Informatica:',
+          fuentesRag,
           '========================================================================',
         ].join('\n');
         baseFolder?.file('MANIFIESTO_SHA256.txt', reporteManifest);
 
-        // 3. Documento HTML Standalone de la Planilla PRCC
-        const htmlPRCC = `<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <title>Planilla PRCC — ${casoSeleccionado.numeroCaso}</title>
-  <link rel="stylesheet" href="/assets/uswds/css/uswds.min.css" />
-</head>
-<body class="usa-prose padding-4">
-  <h1>PLANILLA DE REGISTRO DE CADENA DE CUSTODIA (PRCC)</h1>
-  <div>
-    <p><strong>N° Expediente:</strong> ${casoSeleccionado.numeroCaso}</p>
-    <p><strong>Evidencia:</strong> ${casoSeleccionado.evidenciaMarca} ${casoSeleccionado.evidenciaModelo} (S/N: ${casoSeleccionado.evidenciaSerial})</p>
-    <p><strong>Consignante:</strong> ${casoSeleccionado.consignanteNombre}</p>
-    <p><strong>Hash SHA-256:</strong> <code>${hashCaso}</code></p>
-  </div>
-  <p>Documento generado oficialmente por SHA256.US bajo el estándar ISO/IEC 27037:2012.</p>
-</body>
-</html>`;
-        baseFolder?.file('PLANILLA_PRCC_OFICIAL.html', htmlPRCC);
-
-        // Generar archivo ZIP y descargar
         const content = await zip.generateAsync({ type: 'blob' });
         saveAs(content, `EXPEDIENTE_${casoSeleccionado.numeroCaso}.zip`);
 

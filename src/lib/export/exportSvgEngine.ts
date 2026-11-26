@@ -222,7 +222,7 @@ export async function exportPlanillaToSvgZip(options: SvgExportOptions) {
         <tr><td style="font-weight: bold; font-size: 8.5pt; color: #0F172A; width: 35%; padding: 3px 0;">Apellidos y Nombres Consignante:</td><td style="border-bottom: 1px solid #64748B; font-size: 8.5pt; color: #0F172A; width: 65%; padding: 3px 0;">${c.solicitante_nombre || 'Alexander R. Wright'}</td></tr>
         <tr><td style="font-weight: bold; font-size: 8.5pt; color: #0F172A; width: 35%; padding: 3px 0;">Cédula de Identidad / RIF:</td><td style="border-bottom: 1px solid #64748B; font-size: 8.5pt; color: #0F172A; width: 65%; padding: 3px 0;">${c.solicitante_cedula || 'V-18.492.019'}</td></tr>
         <tr><td style="font-weight: bold; font-size: 8.5pt; color: #0F172A; width: 35%; padding: 3px 0;">Fecha y Hora de Actuación:</td><td style="border-bottom: 1px solid #64748B; font-size: 8.5pt; color: #0F172A; width: 65%; padding: 3px 0;">${fecha}</td></tr>
-        <tr><td style="font-weight: bold; font-size: 8.5pt; color: #0F172A; width: 35%; padding: 3px 0;">Plataformas Forenses:</td><td style="border-bottom: 1px solid #64748B; font-size: 8.5pt; color: #0F172A; width: 65%; padding: 3px 0;">IPED Forensics v4.1, PhotoHolmes Python Engine (ELA), PyOgg Audio Engine</td></tr>
+        <tr><td style="font-weight: bold; font-size: 8.5pt; color: #0F172A; width: 35%; padding: 3px 0;">Plataformas Forenses:</td><td style="border-bottom: 1px solid #64748B; font-size: 8.5pt; color: #0F172A; width: 65%; padding: 3px 0;">IPED Forensics v4.1, ALEAPP / Avilla Forensics, Sonic Visualiser (FFT)</td></tr>
       </table>
 
       <!-- 2.0 FORMA DE OBTENCIÓN -->

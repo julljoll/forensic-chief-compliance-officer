@@ -1,20 +1,19 @@
 ---
 /**
  * SHA256.US — Vista Modular del Ciclo Pericial ISO (F0 - F5)
- * Arquitectura Ligera Cognitivamente en 3 Micro-Pasos Heurísticos + Guía SOP Federal:
- *   Guía Operativa: Protocolo secuencial de laboratorio (.usa-process-list)
- *   Paso 1: Verificación y Datos Requeridos del Expediente
- *   Paso 2: Generación e Impresión de Planillas Oficiales en Folio (216mm × 330mm)
- *   Paso 3: Checklist RAG en Lenguaje Claro con Progressive Disclosure & Sello SHA-256
+ * UX/UI USWDS Paso a Paso Sin Sobrecarga Cognitiva + Fuente Única RAG:
+ *   RAG/Informacion_docling_rag/Informatica
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import StepIndicator from '../uswds/StepIndicator.astro';
+import Accordion from '../uswds/Accordion.astro';
+import RagSourceBadge from '../uswds/RagSourceBadge.astro';
 import { FASES_ISO } from '../../lib/domain/gating';
 ---
 
 <PageHeader
   title="Guía Operativa del Ciclo Pericial ISO/IEC (F0 – F5)"
-  subtitle="Protocolo secuencial por consignación para validar pruebas en dispositivos móviles (imágenes, redes sociales, notas de voz, capturas) y medios digitales ante tribunales."
+  subtitle="Asistente secuencial paso a paso fundamentado exclusivamente en RAG/Informacion_docling_rag/Informatica."
   tag="SOP Federal · 6 Fases"
   tagColor="bg-primary-darker"
 >
@@ -28,8 +27,8 @@ import { FASES_ISO } from '../../lib/domain/gating';
   </div>
 </PageHeader>
 
-<!-- 1. BARRA DE SELECCIÓN DE EXPEDIENTE ACTIVO -->
-<div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="caso-titulo">
+<!-- 1. BARRA COMPACTA DE SELECCIÓN DE EXPEDIENTE ACTIVO -->
+<div class="usa-summary-box margin-bottom-205" role="region" aria-labelledby="caso-titulo">
   <div class="usa-summary-box__body">
     <div class="grid-row grid-gap flex-align-center">
       <div class="tablet:grid-col-8">
@@ -60,12 +59,12 @@ import { FASES_ISO } from '../../lib/domain/gating';
 </div>
 
 <!-- 2. INDICADOR VISUAL DE ETAPAS USWDS (STEP INDICATOR) -->
-<div class="margin-bottom-3" id="step-indicator-wrap">
+<div class="margin-bottom-2" id="step-indicator-wrap">
   <StepIndicator faseActual="F0" />
 </div>
 
 <!-- 3. SEGMENTED TABS DE FASES F0 A F5 -->
-<div class="usa-button-group usa-button-group--segmented margin-bottom-3 width-full overflow-x-auto flex-nowrap" role="tablist">
+<div class="usa-button-group usa-button-group--segmented margin-bottom-205 width-full overflow-x-auto flex-nowrap" role="tablist">
   {FASES_ISO.map((f, i) => (
     <button
       type="button"
@@ -80,12 +79,12 @@ import { FASES_ISO } from '../../lib/domain/gating';
   ))}
 </div>
 
-<!-- 4. CONTENEDOR PRINCIPAL DE LA FASE ACTIVA (GUÍA SOP + ESTRUCTURA 3 PASOS) -->
+<!-- 4. CONTENEDOR PRINCIPAL DE LA FASE ACTIVA (FLUJO PASO A PASO EN 3 MICRO-PASOS) -->
 <div class="usa-card width-full margin-bottom-4 shadow-2">
   <div class="usa-card__container padding-3 tablet:padding-4">
 
     <!-- Cabecera de la Fase -->
-    <div class="grid-row grid-gap flex-align-center border-bottom-2px border-base-lighter padding-bottom-2 margin-bottom-3">
+    <div class="grid-row grid-gap flex-align-center border-bottom-2px border-base-lighter padding-bottom-2 margin-bottom-205">
       <div class="tablet:grid-col-8">
         <div class="display-flex flex-align-center margin-bottom-05">
           <span class="usa-tag bg-primary-darker text-white text-bold margin-right-1 font-mono-sm" id="badge-fase-id">
@@ -102,35 +101,63 @@ import { FASES_ISO } from '../../lib/domain/gating';
 
       <div class="tablet:grid-col-4 tablet:display-flex tablet:flex-justify-end">
         <div class="display-flex flex-wrap grid-gap-05" id="normas-fase-wrap">
-          <span class="usa-tag font-mono-3xs">ISO 37301 §8.1</span>
-          <span class="usa-tag font-mono-3xs">ISO/IEC 27043 §8</span>
+          <span class="usa-tag font-mono-3xs">LEDCI Arts. 20–22</span>
+          <span class="usa-tag font-mono-3xs">ISO/IEC 27037 §5.2</span>
           <span class="usa-tag bg-accent-warm-dark text-ink text-bold font-mono-3xs">CRBV Arts. 28/60</span>
         </div>
       </div>
     </div>
 
-    <!-- =================================================================== -->
-    <!-- GUÍA OPERATIVA DE LABORATORIO (USWDS PROCESS LIST — SOP FEDERAL)    -->
-    <!-- =================================================================== -->
-    <section class="margin-bottom-3 bg-white padding-205 radius-md border-1px border-primary-light border-left-05 border-primary" aria-labelledby="guia-sop-heading">
-      <div class="display-flex flex-justify flex-align-center margin-bottom-1">
-        <h3 class="margin-0 font-heading-xs text-primary-darker" id="guia-sop-heading">
-          📋 Guía Operativa de Ejecución Pericial (SOP por Consignación)
-        </h3>
-        <span class="usa-tag bg-primary-darker text-white font-mono-3xs" id="guia-sop-badge">PROTOCOLO F0</span>
+    <!-- Barra de Navegación Rápida de los 3 Micro-Pasos de la Fase (Reduce Carga Cognitiva) -->
+    <nav aria-label="Secuencia paso a paso de la fase activa" class="bg-base-lightest padding-105 radius-md border-1px border-base-lighter margin-bottom-205">
+      <div class="grid-row grid-gap-1 flex-align-center">
+        <div class="tablet:grid-col-4">
+          <a href="#paso1-section" class="display-flex flex-align-center text-no-underline text-ink padding-05">
+            <span class="usa-tag bg-primary text-white font-mono-3xs margin-right-1">PASO 1</span>
+            <span class="font-sans-2xs text-bold">Registrar Datos de Fase</span>
+          </a>
+        </div>
+        <div class="tablet:grid-col-4">
+          <a href="#paso2-section" class="display-flex flex-align-center text-no-underline text-ink padding-05">
+            <span class="usa-tag bg-primary text-white font-mono-3xs margin-right-1">PASO 2</span>
+            <span class="font-sans-2xs text-bold">Emitir Planillas Folio</span>
+          </a>
+        </div>
+        <div class="tablet:grid-col-4">
+          <a href="#paso3-section" class="display-flex flex-align-center text-no-underline text-ink padding-05">
+            <span class="usa-tag bg-primary-darker text-white font-mono-3xs margin-right-1">PASO 3</span>
+            <span class="font-sans-2xs text-bold">Validar RAG y Sellar SHA-256</span>
+          </a>
+        </div>
       </div>
-      <div id="guia-sop-steps-container" class="font-body-2xs text-ink">
-        <!-- Se inyecta dinámicamente la guía paso a paso según la fase F0..F5 -->
-      </div>
-    </section>
+    </nav>
+
+    <!-- =================================================================== -->
+    <!-- GUÍA OPERATIVA DE LABORATORIO (ACORDEÓN USWDS — PROGRESSIVE DISCLOSURE) -->
+    <!-- =================================================================== -->
+    <div class="margin-bottom-3">
+      <Accordion
+        id="guia-sop-protocolo"
+        title="Guía Operativa de Ejecución Pericial (SOP por Consignación — RAG/Informacion_docling_rag/Informatica)"
+        expanded={false}
+      >
+        <div class="display-flex flex-justify flex-align-center margin-bottom-1">
+          <span class="font-mono-3xs text-base-dark">Fuente autorizada: <code>RAG/Informacion_docling_rag/Informatica</code></span>
+          <span class="usa-tag bg-primary-darker text-white font-mono-3xs" id="guia-sop-badge">PROTOCOLO F0</span>
+        </div>
+        <div id="guia-sop-steps-container" class="font-body-2xs text-ink">
+          <!-- Se inyecta dinámicamente la guía paso a paso (.usa-process-list) según la fase F0..F5 -->
+        </div>
+      </Accordion>
+    </div>
 
     <!-- =================================================================== -->
     <!-- MICRO-PASO 1: DATOS REQUERIDOS DEL EXPEDIENTE PARA ESTA FASE        -->
     <!-- =================================================================== -->
-    <section class="margin-bottom-4 bg-base-lightest padding-3 radius-md border-1px border-base-lighter" aria-labelledby="paso1-heading">
-      <div class="display-flex flex-justify flex-align-center margin-bottom-2">
+    <section id="paso1-section" class="margin-bottom-3 bg-base-lightest padding-3 radius-md border-1px border-base-lighter" aria-labelledby="paso1-heading">
+      <div class="display-flex flex-justify flex-align-center margin-bottom-105">
         <div class="display-flex flex-align-center">
-          <span class="usa-tag bg-primary text-white margin-right-1 font-mono-xs text-bold">PASO 1</span>
+          <span class="usa-tag bg-primary text-white margin-right-1 font-mono-xs text-bold">PASO 1 DE 3</span>
           <h3 class="margin-0 font-heading-sm" id="paso1-heading">
             Verificación y Carga de Datos Clave de la Fase
           </h3>
@@ -140,7 +167,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
         </button>
       </div>
       <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-2">
-        Los datos ingresados se sincronizan automáticamente con las planillas oficiales en Folio y el sello criptográfico.
+        Complete únicamente los campos requeridos para esta fase. Se sincronizan con las planillas Folio y el sello SHA-256.
       </p>
 
       <div class="grid-row grid-gap-2 font-body-2xs" id="campos-fase-container">
@@ -151,15 +178,15 @@ import { FASES_ISO } from '../../lib/domain/gating';
     <!-- =================================================================== -->
     <!-- MICRO-PASO 2: INSTRUMENTOS Y PLANILLAS EN FOLIO (216mm × 330mm)     -->
     <!-- =================================================================== -->
-    <section class="margin-bottom-4" aria-labelledby="paso2-heading">
+    <section id="paso2-section" class="margin-bottom-3" aria-labelledby="paso2-heading">
       <div class="display-flex flex-align-center margin-bottom-1">
-        <span class="usa-tag bg-primary text-white margin-right-1 font-mono-xs text-bold">PASO 2</span>
+        <span class="usa-tag bg-primary text-white margin-right-1 font-mono-xs text-bold">PASO 2 DE 3</span>
         <h3 class="margin-0 font-heading-sm" id="paso2-heading">
           Instrumentos y Planillas Oficiales en Papel Folio (216mm × 330mm)
         </h3>
       </div>
       <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-2">
-        Imprima los formatos oficiales para la recolección de firmas ológrafas e impresiones dactilares pulgares:
+        Abra e imprima los formatos oficiales correspondientes a esta fase para firmas ológrafas y huellas dactilares:
       </p>
 
       <div class="grid-row grid-gap-2" id="grid-planillas-fase">
@@ -170,24 +197,24 @@ import { FASES_ISO } from '../../lib/domain/gating';
     <!-- =================================================================== -->
     <!-- MICRO-PASO 3: VERIFICACIÓN RAG Y SELLO CRIPTOGRÁFICO SHA-256        -->
     <!-- =================================================================== -->
-    <section class="border-top-2px border-base-lighter padding-top-3 margin-top-2" aria-labelledby="paso3-heading">
-      <div class="display-flex flex-justify flex-align-center margin-bottom-2">
+    <section id="paso3-section" class="border-top-2px border-base-lighter padding-top-3 margin-top-2" aria-labelledby="paso3-heading">
+      <div class="display-flex flex-justify flex-align-center margin-bottom-105">
         <div class="display-flex flex-align-center">
-          <span class="usa-tag bg-primary text-white margin-right-1 font-mono-xs text-bold">PASO 3</span>
+          <span class="usa-tag bg-primary-darker text-white margin-right-1 font-mono-xs text-bold">PASO 3 DE 3</span>
           <h3 class="margin-0 font-heading-sm" id="paso3-heading">
             Checklist de Cumplimiento Normativo RAG y Sello Criptográfico SHA-256
           </h3>
         </div>
-        <div class="font-mono-xs text-bold" id="progreso-controles-txt">
+        <div class="usa-tag bg-base-lighter text-ink font-mono-xs text-bold" id="progreso-controles-txt">
           0 / 0 Controles Verificados
         </div>
       </div>
 
       <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-2">
-        Valide cada control en lenguaje claro. Despliegue el fundamento legal para consultar los artículos exactos:
+        Marque cada control verificado. Despliegue <strong>Fundamento RAG</strong> solo si desea consultar el documento fuente exacto en <code>RAG/Informacion_docling_rag/Informatica</code>:
       </p>
 
-      <!-- Checklist de Controles con Progressive Disclosure -->
+      <!-- Checklist de Controles con Progressive Disclosure real del corpus RAG Informatica -->
       <div id="controles-fase-container" class="margin-bottom-3">
         {FASES_ISO.map((fase) => (
           <div
@@ -213,13 +240,16 @@ import { FASES_ISO } from '../../lib/domain/gating';
                       </label>
                     </div>
 
-                    <!-- Progressive Disclosure de la Cita RAG -->
+                    <!-- Progressive Disclosure de la Cita RAG Verificada -->
                     <details class="margin-top-1 font-body-3xs text-base-dark">
                       <summary class="cursor-pointer text-primary text-bold">
-                        Fundamento Legal / Estándar: <span class="usa-tag font-mono-3xs">{c.norma}</span>
+                        Fundamento RAG: <span class="usa-tag font-mono-3xs">{c.norma}</span>
                       </summary>
-                      <div class="bg-base-lightest padding-1 radius-sm margin-top-05 border-left-2px border-primary">
-                        Exigido para evitar nulidad probatoria conforme a ISO/IEC 27037 y COPP Art. 187.
+                      <div class="margin-top-05">
+                        <p class="margin-top-0 margin-bottom-05 bg-base-lightest padding-1 radius-sm border-left-2px border-primary">
+                          {c.detalleRag || `Control verificado conforme a ${c.norma}.`}
+                        </p>
+                        <RagSourceBadge archivoRag={c.fuenteRag || 'RAG/Informacion_docling_rag/Informatica/ISO IEC 27037-2012.md'} />
                       </div>
                     </details>
                   </div>
@@ -273,22 +303,22 @@ import { FASES_ISO } from '../../lib/domain/gating';
   const SOP_GUIDE_MAP: Record<string, Array<{ titulo: string; detalle: string }>> = {
     F0: [
       {
-        titulo: '1. Legitimar al Consignante y Excluir Antijuridicidad (CRBV Arts. 28, 48, 60 · LEDCI Arts. 20–22)',
-        detalle: 'Verifique la cédula/RIF y confirme que quien consigna el dispositivo móvil o medio digital (CD, disco duro, reloj, PC, servidor, cámara DVR) es el titular legítimo o interlocutor directo de las comunicaciones.',
+        titulo: '1. Legitimar al Consignante y Excluir Antijuridicidad (CRBV Arts. 28, 48, 60 · LEDCI Arts. 20–22 · LPPC Art. 2)',
+        detalle: 'Verifique la cédula/RIF y confirme que quien consigna el dispositivo móvil o medio digital es el titular legítimo o interlocutor directo (RAG: Ley Especial de Delitos informáticos 2001 y Ley sobre Protección a la Privacidad de las Comunicaciones).',
       },
       {
         titulo: '2. Suscribir Acta de Consentimiento Informado en Folio (FO-F0-01)',
-        detalle: 'Imprima en papel Folio (216mm × 330mm) el Acta FO-F0-01 y recabe firma ológrafa y huellas dactilares bilaterales (Pulgar Izq. y Der.) autorizando la extracción lógica/física para validación en tribunales.',
+        detalle: 'Imprima en papel Folio (216mm × 330mm) el Acta FO-F0-01 y recabe firma ológrafa y huellas dactilares bilaterales (Pulgar Izq. y Der.) autorizando la extracción lógica/física.',
       },
       {
         titulo: '3. Levantar Acta de Entrevista Técnico-Pericial (FO-F0-02)',
-        detalle: 'Fije bajo juramento (CP Arts. 243 y 246) qué pruebas deben validarse (imágenes, redes sociales, notas de voz, capturas de pantalla, chats) y reciba el PIN o contraseña en sobre lacrado.',
+        detalle: 'Fije bajo juramento qué pruebas deben validarse (imágenes, redes sociales, notas de voz, capturas de pantalla, chats) y reciba el PIN o contraseña en sobre lacrado.',
       },
     ],
     F1: [
       {
         titulo: '1. Fijación Fotográfica 360° e Identificación Física (ISO/IEC 27037 §5.4.2 · MUCC-2017)',
-        detalle: 'Capture 6 vistas macro del dispositivo móvil o medio digital consignado, registrando marca, modelo, color, serial/IMEI, estado de pantalla/carcasa y accesorios.',
+        detalle: 'Capture 6 vistas macro del dispositivo móvil o medio digital consignado, registrando marca, modelo, color, serial/IMEI y estado físico inicial.',
       },
       {
         titulo: '2. Aislamiento Electromagnético y Precintado (ISO/IEC 27037 §5.4.3 · NIST SP 800-101)',
@@ -296,7 +326,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
       },
       {
         titulo: '3. Emitir Acta de Obtención (FO-F1-03) y Abrir Planilla PRCC (FO-F1-04)',
-        detalle: 'Formalice la recepción marcando la Forma de Obtención N° 3 (Consignación) en la PRCC conforme al Art. 187 del COPP y Gaceta Oficial N° 41.247.',
+        detalle: 'Formalice la recepción marcando la Forma de Obtención N° 3 (Consignación) en la PRCC conforme al Art. 187 del COPP y MUCC-2017.',
       },
     ],
     F2: [
@@ -306,11 +336,11 @@ import { FASES_ISO } from '../../lib/domain/gating';
       },
       {
         titulo: '2. Adquisición Lógica Móvil o Bit-a-Bit con Write-Blocker (NIST SP 800-101 / 800-86 · CENIF G.O. 39.847)',
-        detalle: 'Extraiga las bases SQLite (msgstore.db, wa.db), redes sociales, imágenes, notas de voz y capturas con ALEAPP / Avilla Forensics / Andriller, o imagen bit-a-bit (.E01/.RAW) con bloqueador de escritura.',
+        detalle: 'Extraiga las bases SQLite (msgstore.db, wa.db), redes sociales, imágenes, notas de voz y capturas con ALEAPP / Avilla Forensics, o imagen bit-a-bit con bloqueador de escritura.',
       },
       {
         titulo: '3. Cálculo de Hash Génesis SHA-256, Verificación MATCH y Reembalaje (ISO/IEC 27037 §5.4.4 / §7.1.3)',
-        detalle: 'Calcule el digest SHA-256, compruebe MATCH 100% (otorgando valor de original según Art. 7 LMDFE) y reembale el soporte original con Nuevo Precinto de Resguardo.',
+        detalle: 'Calcule el digest SHA-256, compruebe MATCH 100% (otorgando valor de original según Art. 7 LMDFE G.O. 37.148) y reembale el soporte con Nuevo Precinto.',
       },
     ],
     F3: [
@@ -319,18 +349,18 @@ import { FASES_ISO } from '../../lib/domain/gating';
         detalle: 'Realice todo el análisis forense sobre la copia lógica o imagen adquirida en F2, preservando intacto el dispositivo o medio original en bóveda.',
       },
       {
-        titulo: '2. Análisis Espectrográfico de Notas de Voz y Audios (FO-F3-06 · SWGDE)',
-        detalle: 'Examine los archivos de audio (.opus / .wav / pistas DVR) en Sonic Visualiser / Praat verificando piso de ruido, formantes F1–F4, traza ENF 60 Hz y ausencia de edición o síntesis IA.',
+        titulo: '2. Análisis Espectrográfico de Notas de Voz y Audios (FO-F3-06 · ISO/IEC 27042 · LPPC Art. 4)',
+        detalle: 'Examine los archivos de audio (.opus / .wav) en Sonic Visualiser / Praat verificando piso de ruido, formantes F1–F4, traza ENF 60 Hz y ausencia de edición.',
       },
       {
-        titulo: '3. Cotejo de Capturas de Pantalla, Redes Sociales e Interfaz contra SQLite (FO-F3-07 · ISO/IEC 25010)',
+        titulo: '3. Cotejo de Capturas de Pantalla, Redes Sociales e Interfaz contra SQLite (FO-F3-07 · LMDFE Art. 4)',
         detalle: 'Corrobore la sincronía de sellos temporales UTC, JID de interlocutores y estados de envío entre las capturas/pantalla y los registros crudos de base de datos.',
       },
     ],
     F4: [
       {
-        titulo: '1. Actuación Colegiada de Dos Peritos Acreditados (COPP Arts. 223–225)',
-        detalle: 'Revise conjuntamente entre el Perito Principal y el Co-Perito los hallazgos técnicos para garantizar repetibilidad y validez procesal ante los tribunales.',
+        titulo: '1. Actuación Colegiada de Dos Peritos Acreditados (COPP Arts. 223–225 · MUCC-2017)',
+        detalle: 'Revise conjuntamente entre el Perito Principal y el Co-Perito los hallazgos técnicos para garantizar repetibilidad y validez procesal.',
       },
       {
         titulo: '2. Emisión del Dictamen Oficial (FO-F4-08) y Dictámenes Especializados (FO-F4-09 / FO-F4-10)',
@@ -347,8 +377,8 @@ import { FASES_ISO } from '../../lib/domain/gating';
         detalle: 'Entregue al consignante titular el Dictamen Oficial en Folio, la copia master digital sellada con SHA-256 y devuelva el móvil o medio digital consignado.',
       },
       {
-        titulo: '2. Sanitización Criptográfica de Medios del Laboratorio (FO-F5-12 · NIST SP 800-88 Rev. 1)',
-        detalle: 'Ejecute purga irreversible (Purge / Crypto-Erase DoD 5220.22-M) de los volúmenes temporales del laboratorio para cumplir el deber de confidencialidad (LEDCI Art. 22 · CRBV Art. 60).',
+        titulo: '2. Sanitización Criptográfica de Medios del Laboratorio (FO-F5-12 · ISO/IEC 27002 A.8.10 · LEDCI Art. 22)',
+        detalle: 'Ejecute purga irreversible de los volúmenes temporales del laboratorio para cumplir el deber de confidencialidad y no retención de data personal.',
       },
       {
         titulo: '3. Certificación del Timeline de Auditoría Inmutable (FO-F5-13 · LMDFE Art. 16 · UNE 71505)',
@@ -359,7 +389,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
 
   const PLANILLAS_MAP: Record<string, Array<{ id: string; codigo: string; titulo: string; slug: string; desc: string }>> = {
     F0: [
-      { id: 'acta_consentimiento', codigo: 'FO-F0-01', titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento', desc: 'Autorización legal expresa por consignación (móvil / multimedio) y privacidad (CRBV Arts. 28, 48, 60).' },
+      { id: 'acta_consentimiento', codigo: 'FO-F0-01', titulo: 'Acta de Consentimiento Informado', slug: 'acta-consentimiento', desc: 'Autorización legal expresa por consignación (móvil / multimedio) y privacidad (CRBV Arts. 28, 48, 60 · LEDCI Arts. 20–21).' },
       { id: 'acta_entrevista', codigo: 'FO-F0-02', titulo: 'Acta de Entrevista Técnico-Pericial', slug: 'acta-entrevista', desc: 'Fijación de declaraciones, pruebas a validar y credenciales bajo juramento (CP Arts. 243 y 246).' },
     ],
     F1: [
@@ -380,7 +410,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
     ],
     F5: [
       { id: 'acta_entrega_resultados', codigo: 'FO-F5-11', titulo: 'Acta de Disposición Final y Devolución', slug: 'acta-entrega-resultados', desc: 'Cierre de custodia y devolución física del móvil o medio consignado (MUCC-2017).' },
-      { id: 'acta_sanitizacion', codigo: 'FO-F5-12', titulo: 'Acta de Sanitización Criptográfica', slug: 'acta-sanitizacion', desc: 'Purga irreversible de copias de trabajo temporales (NIST SP 800-88 Rev. 1).' },
+      { id: 'acta_sanitizacion', codigo: 'FO-F5-12', titulo: 'Acta de Sanitización Criptográfica', slug: 'acta-sanitizacion', desc: 'Purga irreversible de copias de trabajo temporales (ISO/IEC 27002 A.8.10 · LEDCI Art. 22).' },
       { id: 'acta_auditoria_timeline', codigo: 'FO-F5-13', titulo: 'Acta de Auditoría y Trazabilidad', slug: 'acta-auditoria-timeline', desc: 'Historial inmutable con cadena de hashes concatenados SHA-256 (RFC 8785 · UNE 71505).' },
     ],
   };
@@ -614,7 +644,7 @@ import { FASES_ISO } from '../../lib/domain/gating';
           <input class="usa-input font-sans-xs" id="p1-receptor" value="${casoActual.receptor_nombre || solNombre || 'Titular Consignante Original'}" />
         </div>
         <div class="tablet:grid-col-4">
-          <label class="usa-label font-sans-2xs margin-top-0" for="p1-sanitizacion">Protocolo de Sanitización (NIST 800-88)</label>
+          <label class="usa-label font-sans-2xs margin-top-0" for="p1-sanitizacion">Protocolo de Sanitización (ISO 27002 A.8.10)</label>
           <input class="usa-input font-sans-xs font-mono" id="p1-sanitizacion" value="PURGE / CRYPTO-ERASE (DoD 5220.22-M 3 Pases)" />
         </div>
         <div class="tablet:grid-col-4">
@@ -838,4 +868,3 @@ import { FASES_ISO } from '../../lib/domain/gating';
   // Inicializar al cargar
   cargarCasosYSeleccionar();
 </script>
-

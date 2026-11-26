@@ -1,5 +1,5 @@
 {
-  "$comment": "SHA256.US — Catálogo canónico del ciclo pericial ISO (fuente única de verdad compartida por TypeScript y PHP). Reglas de campo: 'requerido' (no vacío), 'sha256' (64 hex), 'verdadero' (=== true). 'tipologias' vacío = aplica a todas. 'requerido': false = control recomendado, no bloquea.",
+  "$comment": "SHA256.US — Catálogo canónico del ciclo pericial ISO (fuente única de verdad compartida por TypeScript y PHP, verificada contra RAG/Informacion_docling_rag/Informatica/).",
   "version": "1.0.0",
   "genesis": "0000000000000000000000000000000000000000000000000000000000000000",
   "fases": [
@@ -8,8 +8,8 @@
       "orden": 0,
       "nombre": "Apertura y Legitimación",
       "corto": "Apertura",
-      "normas": ["ISO 37301 §8.1", "ISO/IEC 27043 §8", "CRBV Arts. 28 y 60"],
-      "objetivo": "Legitimar el encargo pericial antes de tocar la evidencia: identificar al consignante, obtener el consentimiento informado (Hábeas Data), designar al perito acreditado y delimitar el alcance.",
+      "normas": ["LEDCI Arts. 20–22", "LPPC Art. 2", "ISO/IEC 27037 §5.2", "CRBV Arts. 28/60"],
+      "objetivo": "Legitimar el encargo pericial antes de tocar la evidencia: identificar al consignante, obtener el consentimiento informado (Hábeas Data y exclusión de antijuridicidad), designar al perito acreditado y delimitar el alcance.",
       "planillas": ["acta_consentimiento", "acta_entrevista"],
       "pasosLegado": {
         "forense_whatsapp": ["wp_step1"],
@@ -18,12 +18,54 @@
         "forense_imagen": []
       },
       "controles": [
-        { "id": "f0_expediente", "texto": "Expediente y tipología pericial registrados", "norma": "ISO 37301 §8.1", "campos": [{ "campo": "numeroCaso", "regla": "requerido" }, { "campo": "tipoProyecto", "regla": "requerido" }] },
-        { "id": "f0_consignante", "texto": "Consignante identificado (nombre y C.I.)", "norma": "MUCC-2017 Consignación", "campos": [{ "campo": "solicitante_nombre", "regla": "requerido" }, { "campo": "solicitante_cedula", "regla": "requerido" }] },
-        { "id": "f0_perito", "texto": "Perito líder designado y acreditado", "norma": "ISO/IEC 27037 §6.2", "campos": [{ "campo": "peritoLider", "regla": "requerido" }] },
-        { "id": "f0_consentimiento", "texto": "Acta de Consentimiento Informado firmada y con huellas", "norma": "CRBV Arts. 28 y 60", "planilla": "acta_consentimiento" },
-        { "id": "f0_entrevista", "texto": "Acta de Entrevista levantada (contexto y credenciales)", "norma": "ISO/IEC 27043 §8.3", "planilla": "acta_entrevista" },
-        { "id": "f0_alcance", "texto": "Alcance pericial y autoridad ordenante documentados", "norma": "ISO/IEC 27043 §8.2" }
+        {
+          "id": "f0_expediente",
+          "texto": "Expediente y tipología pericial registrados",
+          "norma": "ISO/IEC 27001 · UNE 71505",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO-27001_2022_NOEDER.md",
+          "detalleRag": "Registro formal del encargo y trazabilidad documental desde el inicio conforme a ISO/IEC 27001:2022 y UNE 71505.",
+          "campos": [{ "campo": "numeroCaso", "regla": "requerido" }, { "campo": "tipoProyecto", "regla": "requerido" }]
+        },
+        {
+          "id": "f0_consignante",
+          "texto": "Consignante identificado (nombre y C.I.)",
+          "norma": "MUCC-2017 Consignación",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "MUCC-2017 (Modalidad de Obtención N° 3: Consignación) exige individualizar plenamente a quien entrega voluntariamente el soporte.",
+          "campos": [{ "campo": "solicitante_nombre", "regla": "requerido" }, { "campo": "solicitante_cedula", "regla": "requerido" }]
+        },
+        {
+          "id": "f0_perito",
+          "texto": "Perito líder designado y acreditado",
+          "norma": "ISO/IEC 27037 §6.3–6.4 · CENIF",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO IEC 27037-2012.md",
+          "detalleRag": "ISO/IEC 27037 §6.3–6.4 (DEFR/DES) y Decreto CENIF G.O. N° 39.847 exigen competencia técnica acreditada del perito.",
+          "campos": [{ "campo": "peritoLider", "regla": "requerido" }]
+        },
+        {
+          "id": "f0_consentimiento",
+          "texto": "Acta de Consentimiento Informado firmada y con huellas",
+          "norma": "LEDCI Arts. 20–21 · LPPC Art. 2 · CRBV Arts. 28 y 60",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Ley Especial de Delitos informáticos (2001). Publicado en Gaceta Oficial Nº 37.313 .md",
+          "detalleRag": "La autorización libre y expresa del titular o interlocutor directo excluye la antijuridicidad prevista en LEDCI Arts. 20–21 y LPPC Art. 2.",
+          "planilla": "acta_consentimiento"
+        },
+        {
+          "id": "f0_entrevista",
+          "texto": "Acta de Entrevista levantada (contexto y credenciales)",
+          "norma": "MUCC-2017 · ISO/IEC 27042",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/el peritaje informático.md",
+          "detalleRag": "Fijación de antecedentes, rango temporal, PIN/credenciales en sobre lacrado y advertencia constitucional bajo juramento.",
+          "planilla": "acta_entrevista"
+        },
+        {
+          "id": "f0_alcance",
+          "texto": "Alcance pericial y pruebas a validar documentados",
+          "norma": "ISO/IEC 27037 §5.2 · UNE 197010",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/borrador para lista de leyes-bibliografias.md",
+          "detalleRag": "Delimitar exactamente qué artefactos (mensajería, imágenes, notas de voz, capturas o medios) se validarán conforme a UNE 197010:2015.",
+          "campos": []
+        }
       ]
     },
     {
@@ -31,8 +73,8 @@
       "orden": 1,
       "nombre": "Identificación y Recolección",
       "corto": "Recolección",
-      "normas": ["ISO/IEC 27037 §5.2–5.3", "ISO/IEC 27037 §7.1", "MUCC-2017 Fase Inicial", "COPP Art. 187"],
-      "objetivo": "Identificar y recolectar la evidencia sin alterarla: documentar el estado inicial, aislarla de toda red, embalarla con precinto numerado y abrir la Planilla de Registro de Cadena de Custodia (PRCC).",
+      "normas": ["ISO/IEC 27037 §5.4.2–5.4.3", "NIST SP 800-101", "MUCC-2017 Fase Inicial", "COPP Art. 187"],
+      "objetivo": "Identificar y recolectar la evidencia sin alterarla: documentar el estado inicial, fijar fotográficamente 360°, aislarla de toda red, embalarla con precinto numerado y abrir la Planilla PRCC.",
       "planillas": ["acta_obtencion", "prcc"],
       "pasosLegado": {
         "forense_whatsapp": ["wp_step2"],
@@ -41,14 +83,74 @@
         "forense_imagen": ["img_paso_1", "img_paso_2"]
       },
       "controles": [
-        { "id": "f1_estado_movil", "texto": "Estado inicial del dispositivo: marca, modelo, IMEI/serial y estado físico", "norma": "ISO/IEC 27037 §7.1.1", "tipologias": ["forense_whatsapp", "forense_imagen"], "campos": [{ "campo": "dispositivo_marca", "regla": "requerido" }, { "campo": "dispositivo_modelo", "regla": "requerido" }] },
-        { "id": "f1_estado_disco", "texto": "Estado inicial del medio: marca, modelo, serial y capacidad", "norma": "ISO/IEC 27037 §7.1.1", "tipologias": ["forense_discoduro"], "campos": [{ "campo": "discoduro_marca", "regla": "requerido" }, { "campo": "discoduro_serial", "regla": "requerido" }] },
-        { "id": "f1_cuenta_correo", "texto": "Cuenta y proveedor de correo identificados", "norma": "RFC 3227 §2.1", "tipologias": ["forense_email"], "campos": [{ "campo": "correo_investigar", "regla": "requerido" }] },
-        { "id": "f1_fijacion", "texto": "Fijación fotográfica 360° del estado inicial", "norma": "MUCC-2017 Fijación" },
-        { "id": "f1_aislamiento", "texto": "Aislamiento de red (bolsa Faraday / modo avión)", "norma": "ISO/IEC 27037 §7.1.3.2 · NIST SP 800-101", "tipologias": ["forense_whatsapp", "forense_imagen"], "campos": [{ "campo": "dispositivo_modo_aislamiento", "regla": "requerido" }] },
-        { "id": "f1_embalaje", "texto": "Embalaje con precinto de seguridad numerado", "norma": "MUCC-2017 Embalaje y Rotulación", "campos": [{ "campo": "precinto_numero", "regla": "requerido" }] },
-        { "id": "f1_obtencion", "texto": "Acta de Obtención firmada por consignante y perito", "norma": "MUCC-2017 §4", "planilla": "acta_obtencion" },
-        { "id": "f1_prcc", "texto": "Planilla PRCC abierta (obligatoria)", "norma": "COPP Art. 187 · MUCC-2017", "planilla": "prcc", "campos": [{ "campo": "numero_prcc", "regla": "requerido" }] }
+        {
+          "id": "f1_estado_movil",
+          "texto": "Estado inicial del dispositivo: marca, modelo, IMEI/serial y estado físico",
+          "norma": "ISO/IEC 27037 §5.4.2 / §7.1",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO IEC 27037-2012.md",
+          "detalleRag": "ISO/IEC 27037 §5.4.2 exige identificar inequívocamente el dispositivo físico antes de su recolección o embalaje.",
+          "tipologias": ["forense_whatsapp", "forense_imagen"],
+          "campos": [{ "campo": "dispositivo_marca", "regla": "requerido" }, { "campo": "dispositivo_modelo", "regla": "requerido" }]
+        },
+        {
+          "id": "f1_estado_disco",
+          "texto": "Estado inicial del medio: marca, modelo, serial y capacidad",
+          "norma": "ISO/IEC 27037 §5.4.2 / §7.1",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO IEC 27037-2012.md",
+          "detalleRag": "Individualización física completa del medio de almacenamiento (marca, serial, interfaz y estado) conforme a ISO/IEC 27037.",
+          "tipologias": ["forense_discoduro"],
+          "campos": [{ "campo": "discoduro_marca", "regla": "requerido" }, { "campo": "discoduro_serial", "regla": "requerido" }]
+        },
+        {
+          "id": "f1_cuenta_correo",
+          "texto": "Cuenta y proveedor de correo identificados",
+          "norma": "RFC 3227 · Orden de Volatilidad",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/RFC 3227 (2002).md",
+          "detalleRag": "RFC 3227 establece documentar la fuente de datos volátil o en línea y su proveedor antes de proceder a la recolección.",
+          "tipologias": ["forense_email"],
+          "campos": [{ "campo": "correo_investigar", "regla": "requerido" }]
+        },
+        {
+          "id": "f1_fijacion",
+          "texto": "Fijación fotográfica 360° del estado inicial",
+          "norma": "MUCC-2017 Fijación",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "El Manual Único de Cadena de Custodia (MUCC-2017) exige fijación fotográfica previa al embalaje para acreditar estado original."
+        },
+        {
+          "id": "f1_aislamiento",
+          "texto": "Aislamiento de red (bolsa Faraday / modo avión)",
+          "norma": "ISO/IEC 27037 §5.4.3 · NIST SP 800-101",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Guidelines on Mobile Device-NIST Special Publication 800-101.md",
+          "detalleRag": "NIST SP 800-101 Rev. 1 y ISO/IEC 27037 ordenan aislar el dispositivo de redes celulares, Wi-Fi, Bluetooth y NFC para evitar borrado remoto.",
+          "tipologias": ["forense_whatsapp", "forense_imagen"],
+          "campos": [{ "campo": "dispositivo_modo_aislamiento", "regla": "requerido" }]
+        },
+        {
+          "id": "f1_embalaje",
+          "texto": "Embalaje con precinto de seguridad numerado",
+          "norma": "MUCC-2017 Embalaje y Rotulación",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "MUCC-2017 exige una evidencia por embalaje, rotulación completa y precinto numerado inviolable.",
+          "campos": [{ "campo": "precinto_numero", "regla": "requerido" }]
+        },
+        {
+          "id": "f1_obtencion",
+          "texto": "Acta de Obtención firmada por consignante y perito",
+          "norma": "MUCC-2017 Consignación",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "Formalización documental de la entrega por consignación directa (FO-F1-03) con firmas y huellas.",
+          "planilla": "acta_obtencion"
+        },
+        {
+          "id": "f1_prcc",
+          "texto": "Planilla PRCC abierta (obligatoria)",
+          "norma": "COPP Art. 187 · MUCC-2017",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "La omisión o interrupción de la Planilla PRCC compromete la cadena de custodia prevista en COPP Art. 187 y MUCC-2017.",
+          "planilla": "prcc",
+          "campos": [{ "campo": "numero_prcc", "regla": "requerido" }]
+        }
       ]
     },
     {
@@ -56,8 +158,8 @@
       "orden": 2,
       "nombre": "Adquisición y Preservación",
       "corto": "Adquisición",
-      "normas": ["ISO/IEC 27037 §5.4", "ISO/IEC 27037 §7.1.3", "NIST SP 800-86 §3.1.2"],
-      "objetivo": "Obtener una copia forense verificable sin modificar el original: desprecintado controlado, bloqueador de escritura o método documentado, hash génesis SHA-256 y verificación MATCH.",
+      "normas": ["ISO/IEC 27037 §5.4.4 / §7.1.3", "NIST SP 800-86", "NIST SP 800-101", "LMDFE Art. 7"],
+      "objetivo": "Obtener una copia forense verificable sin modificar el original: desprecintado controlado, bloqueador de escritura o extracción lógica documentada, hash génesis SHA-256 y verificación MATCH.",
       "planillas": ["acta_desprecintado", "prcc"],
       "pasosLegado": {
         "forense_whatsapp": ["wp_step3", "wp_step4"],
@@ -66,13 +168,63 @@
         "forense_imagen": ["img_paso_3", "img_paso_4", "img_paso_5"]
       },
       "controles": [
-        { "id": "f2_desprecintado", "texto": "Acta de Desprecintado: precinto íntegro verificado", "norma": "MUCC-2017 Fase Laboratorio", "planilla": "acta_desprecintado" },
-        { "id": "f2_write_blocker", "texto": "Bloqueador de escritura certificado declarado (modelo)", "norma": "ISO/IEC 27037 §7.1.3.3", "tipologias": ["forense_discoduro", "forense_imagen"], "campos": [{ "campo": "imagen_write_blocker", "regla": "requerido" }] },
-        { "id": "f2_metodo_logico", "texto": "Método de adquisición lógica/física documentado (ADB, backup, PST/OST)", "norma": "NIST SP 800-101 §5", "tipologias": ["forense_whatsapp", "forense_email"] },
-        { "id": "f2_herramienta", "texto": "Herramienta de adquisición y versión registradas", "norma": "ISO/IEC 27037 §7.1.3", "campos": [{ "campo": "imagen_herramienta", "regla": "requerido" }] },
-        { "id": "f2_hash_genesis", "texto": "Hash génesis SHA-256 calculado y registrado", "norma": "ISO/IEC 27037 §7.1.3.4", "campos": [{ "campo": "hashSHA256", "regla": "sha256" }] },
-        { "id": "f2_hash_match", "texto": "Verificación MATCH: hash de la imagen = hash del original", "norma": "ISO/IEC 27037 §5.4.4 / §7.1.3", "tipologias": ["forense_discoduro", "forense_imagen"], "campos": [{ "campo": "imagen_match_hash", "regla": "verdadero" }] },
-        { "id": "f2_resguardo", "texto": "Original resguardado en bóveda y traspaso anotado en PRCC", "norma": "MUCC-2017 Resguardo" }
+        {
+          "id": "f2_desprecintado",
+          "texto": "Acta de Desprecintado: precinto íntegro verificado",
+          "norma": "MUCC-2017 Fase Laboratorio",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "MUCC-2017 exige comprobar la indemnidad del precinto de ingreso antes de abrir el embalaje en laboratorio.",
+          "planilla": "acta_desprecintado"
+        },
+        {
+          "id": "f2_write_blocker",
+          "texto": "Bloqueador de escritura certificado declarado (modelo)",
+          "norma": "ISO/IEC 27037 §7.1.3",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO IEC 27037-2012.md",
+          "detalleRag": "ISO/IEC 27037 requiere prevenir toda escritura sobre el medio origen mediante bloqueador de escritura certificado.",
+          "tipologias": ["forense_discoduro", "forense_imagen"],
+          "campos": [{ "campo": "imagen_write_blocker", "regla": "requerido" }]
+        },
+        {
+          "id": "f2_metodo_logico",
+          "texto": "Método de adquisición lógica/física documentado (ADB, backup, PST/OST)",
+          "norma": "NIST SP 800-101 · Avilla Forensics",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/analisis forense en android con avilla forensics.md",
+          "detalleRag": "NIST SP 800-101 y la guía técnica Android documentan el método lógico/físico utilizado para extraer bases SQLite sin alteración.",
+          "tipologias": ["forense_whatsapp", "forense_email"]
+        },
+        {
+          "id": "f2_herramienta",
+          "texto": "Herramienta de adquisición y versión registradas",
+          "norma": "ISO/IEC 27037 §7.1.3 · CENIF G.O. 39.847",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Creación del CENIF (2012). Centro Nacional de Informática Forense. Publicado en Gaceta Oficial N° 39.847 de fecha 20 de enero..md",
+          "detalleRag": "Registro obligatorio de herramientas forenses validadas y su versión para garantizar auditabilidad y reproducibilidad.",
+          "campos": [{ "campo": "imagen_herramienta", "regla": "requerido" }]
+        },
+        {
+          "id": "f2_hash_genesis",
+          "texto": "Hash génesis SHA-256 calculado y registrado",
+          "norma": "ISO/IEC 27037 §5.4.4 · LMDFE Art. 7",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md",
+          "detalleRag": "El digest SHA-256 acredita la integridad inalterada del mensaje de datos desde su extracción conforme al Art. 7 LMDFE.",
+          "campos": [{ "campo": "hashSHA256", "regla": "sha256" }]
+        },
+        {
+          "id": "f2_hash_match",
+          "texto": "Verificación MATCH: hash de la imagen = hash del original",
+          "norma": "ISO/IEC 27037 §5.4.4 / §7.1.3 · NIST SP 800-86",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/NIST SP 800-86_ingles.md",
+          "detalleRag": "NIST SP 800-86 e ISO/IEC 27037 exigen verificación exacta de coincidencia bit-a-bit entre fuente e imagen forense.",
+          "tipologias": ["forense_discoduro", "forense_imagen"],
+          "campos": [{ "campo": "imagen_match_hash", "regla": "verdadero" }]
+        },
+        {
+          "id": "f2_resguardo",
+          "texto": "Original reembalado, resguardado y traspaso anotado en PRCC",
+          "norma": "MUCC-2017 Resguardo",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "Asignación de nuevo precinto de resguardo y asiento cronológico en el reverso de la Planilla PRCC."
+        }
       ]
     },
     {
@@ -80,8 +232,8 @@
       "orden": 3,
       "nombre": "Análisis e Interpretación",
       "corto": "Análisis",
-      "normas": ["ISO/IEC 27042 §7", "ISO/IEC 27042 §8", "ACPO Principio 3"],
-      "objetivo": "Analizar únicamente la copia de trabajo con herramientas validadas y una metodología reproducible, registrando cada hallazgo con su sello de tiempo para que un tercero pueda repetir el resultado.",
+      "normas": ["ISO/IEC 27042 §7–8", "ACPO Principio 1 y 3", "NIST SP 800-101"],
+      "objetivo": "Analizar únicamente la copia de trabajo con herramientas validadas y metodología reproducible, registrando cada hallazgo con su sello de tiempo para que un tercero pueda repetir el resultado.",
       "planillas": ["informe_audio_sonic", "planilla_evaluacion_ux"],
       "pasosLegado": {
         "forense_whatsapp": ["wp_step5", "wp_step6"],
@@ -90,11 +242,44 @@
         "forense_imagen": ["img_paso_6"]
       },
       "controles": [
-        { "id": "f3_copia_trabajo", "texto": "Análisis ejecutado sobre copia de trabajo, nunca sobre el original", "norma": "ISO/IEC 27042 §7.2 · ACPO P1" },
-        { "id": "f3_herramientas", "texto": "Herramientas forenses y versiones documentadas y validadas", "norma": "ISO/IEC 27042 §7.3" },
-        { "id": "f3_reproducible", "texto": "Metodología reproducible documentada (pasos y parámetros)", "norma": "ISO/IEC 27042 §8.2" },
-        { "id": "f3_hallazgos", "texto": "Hallazgos registrados con sello de tiempo y hash", "norma": "ISO/IEC 27042 §8.3" },
-        { "id": "f3_informe_audio", "texto": "Informe forense de audio (Sonic Visualiser) cuando haya notas de voz", "norma": "SWGDE · FRE 702", "planilla": "informe_audio_sonic", "tipologias": ["forense_whatsapp"], "requerido": false }
+        {
+          "id": "f3_copia_trabajo",
+          "texto": "Análisis ejecutado sobre copia de trabajo, nunca sobre el original",
+          "norma": "ISO/IEC 27042 §7 · ACPO Principio 1",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ACPO_Good_Practice_Guide_for_Digital_Evidence_v5.md",
+          "detalleRag": "ACPO Principio 1 prohíbe alterar datos originales; toda inspección se practica exclusivamente sobre copia verificada."
+        },
+        {
+          "id": "f3_herramientas",
+          "texto": "Herramientas forenses y versiones documentadas y validadas",
+          "norma": "ISO/IEC 27042 §7 · CENIF G.O. 39.847",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO-IEC 27042 2015.md",
+          "detalleRag": "ISO/IEC 27042 requiere que las herramientas utilizadas sean idóneas y estén documentadas con su versión exacta."
+        },
+        {
+          "id": "f3_reproducible",
+          "texto": "Metodología reproducible documentada (pasos y parámetros)",
+          "norma": "ISO/IEC 27042 §8",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO-IEC 27042 2015.md",
+          "detalleRag": "Un segundo perito competente debe poder repetir los pasos y obtener exactamente los mismos resultados."
+        },
+        {
+          "id": "f3_hallazgos",
+          "texto": "Hallazgos registrados con sello de tiempo y hash",
+          "norma": "ISO/IEC 27042 §8 · LMDFE Art. 4",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md",
+          "detalleRag": "Correlación de marcas temporales UTC, registros crudos y digest SHA-256 para eficacia probatoria (LMDFE Art. 4)."
+        },
+        {
+          "id": "f3_informe_audio",
+          "texto": "Informe forense de audio (Sonic Visualiser) cuando haya notas de voz",
+          "norma": "ISO/IEC 27042 · LPPC Art. 4",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ley-sobre-proteccion-a-la-privacidad-de-las-comunicaciones.md",
+          "detalleRag": "Verificación acústica de continuidad, formantes y descarte de alteración/forjamiento (LPPC Art. 4).",
+          "planilla": "informe_audio_sonic",
+          "tipologias": ["forense_whatsapp"],
+          "requerido": false
+        }
       ]
     },
     {
@@ -102,7 +287,7 @@
       "orden": 4,
       "nombre": "Informe Pericial",
       "corto": "Dictamen",
-      "normas": ["ISO/IEC 27043 §9", "ISO/IEC 27042 §9", "COPP Arts. 223–225"],
+      "normas": ["ISO/IEC 27042 §9", "COPP Arts. 223–225", "UNE 197010", "LMDFE Arts. 4 y 7"],
       "objetivo": "Emitir un dictamen motivado que cite metodología, herramientas, hashes SHA-256 y conclusiones, firmado por dos peritos y revisado técnica y jurídicamente.",
       "planillas": ["acta_dictamen", "dictamen_imagenes", "dictamen_audios"],
       "pasosLegado": {
@@ -112,11 +297,46 @@
         "forense_imagen": ["img_paso_7"]
       },
       "controles": [
-        { "id": "f4_dictamen", "texto": "Dictamen pericial redactado (objeto, metodología, hallazgos, conclusiones)", "norma": "COPP Art. 225", "planilla": "acta_dictamen" },
-        { "id": "f4_hashes", "texto": "Hash SHA-256 de la evidencia citado en el dictamen", "norma": "ISO/IEC 27042 §9", "campos": [{ "campo": "hashSHA256", "regla": "sha256" }] },
-        { "id": "f4_doble_firma", "texto": "Firma de dos peritos (líder y coadyuvante)", "norma": "COPP Art. 223", "campos": [{ "campo": "peritoLider", "regla": "requerido" }, { "campo": "perito_coadyuvante", "regla": "requerido" }] },
-        { "id": "f4_revision", "texto": "Revisión técnico-jurídica del dictamen", "norma": "ISO 37301 §9.1" },
-        { "id": "f4_especializado", "texto": "Dictamen especializado de imágenes/audios cuando aplique", "norma": "ISO/IEC 27042 · Daubert", "planilla": "dictamen_audios", "requerido": false }
+        {
+          "id": "f4_dictamen",
+          "texto": "Dictamen pericial redactado (objeto, metodología, hallazgos, conclusiones)",
+          "norma": "COPP Art. 225 · UNE 197010",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/el peritaje informático.md",
+          "detalleRag": "Estructura motivada exigida por COPP Art. 225 (motivo, operaciones técnicas, conclusiones) y UNE 197010:2015.",
+          "planilla": "acta_dictamen"
+        },
+        {
+          "id": "f4_hashes",
+          "texto": "Hash SHA-256 de la evidencia citado en el dictamen",
+          "norma": "ISO/IEC 27042 §9 · LMDFE Art. 7",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md",
+          "detalleRag": "Citación literal del digest SHA-256 de 64 caracteres para vincular la evidencia digital con el informe.",
+          "campos": [{ "campo": "hashSHA256", "regla": "sha256" }]
+        },
+        {
+          "id": "f4_doble_firma",
+          "texto": "Firma de dos peritos (líder y coadyuvante)",
+          "norma": "COPP Art. 223",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "Actuación colegiada y suscripción bilateral de dos peritos calificados con registro profesional y huellas.",
+          "campos": [{ "campo": "peritoLider", "regla": "requerido" }, { "campo": "perito_coadyuvante", "regla": "requerido" }]
+        },
+        {
+          "id": "f4_revision",
+          "texto": "Revisión técnico-jurídica del dictamen",
+          "norma": "ISO/IEC 27001 · ISO/IEC 27042 §9",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO-IEC 27042 2015.md",
+          "detalleRag": "Control de calidad documental para garantizar objetividad, claridad y ausencia de contradicciones."
+        },
+        {
+          "id": "f4_especializado",
+          "texto": "Dictamen especializado de imágenes/audios cuando aplique",
+          "norma": "ISO/IEC 27042 · LMDFE Art. 7",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO-IEC 27042 2015.md",
+          "detalleRag": "Anexos periciales especializados para análisis EXIF/ELA de imágenes (FO-F4-09) o acústico de notas de voz (FO-F4-10).",
+          "planilla": "dictamen_audios",
+          "requerido": false
+        }
       ]
     },
     {
@@ -124,8 +344,8 @@
       "orden": 5,
       "nombre": "Entrega, Disposición y Sanitización",
       "corto": "Cierre",
-      "normas": ["MUCC-2017 Disposición Final", "NIST SP 800-88 Rev. 1", "ISO 37301 §9.2", "ISO/IEC 27001 A.8.10"],
-      "objetivo": "Cerrar el expediente con trazabilidad completa: entrega formal con N° PRCC, sanitización certificada de los medios del laboratorio y verificación de la cadena de auditoría inmutable.",
+      "normas": ["MUCC-2017 Disposición Final", "ISO/IEC 27002 A.8.10 / A.8.15", "LEDCI Art. 22", "UNE 71505"],
+      "objetivo": "Cerrar el expediente con trazabilidad completa: entrega formal con N° PRCC, sanitización certificada de copias temporales del laboratorio y verificación de la cadena de auditoría inmutable.",
       "planillas": ["acta_entrega_resultados", "acta_sanitizacion", "acta_auditoria_timeline", "planilla_evaluacion_ux"],
       "pasosLegado": {
         "forense_whatsapp": ["wp_step9"],
@@ -134,11 +354,48 @@
         "forense_imagen": ["img_paso_8"]
       },
       "controles": [
-        { "id": "f5_entrega", "texto": "Acta de Entrega de Resultados con N° PRCC", "norma": "MUCC-2017 Entrega", "planilla": "acta_entrega_resultados", "campos": [{ "campo": "numero_prcc", "regla": "requerido" }] },
-        { "id": "f5_receptor", "texto": "Receptor identificado (nombre y C.I.)", "norma": "MUCC-2017 Transferencia", "campos": [{ "campo": "receptor_nombre", "regla": "requerido" }, { "campo": "receptor_cedula", "regla": "requerido" }] },
-        { "id": "f5_sanitizacion", "texto": "Sanitización certificada de medios del laboratorio", "norma": "NIST SP 800-88 Rev. 1", "planilla": "acta_sanitizacion" },
-        { "id": "f5_auditoria", "texto": "Cadena de auditoría SHA-256 verificada íntegra", "norma": "ISO/IEC 27001 A.8.15", "planilla": "acta_auditoria_timeline" },
-        { "id": "f5_evaluacion", "texto": "Evaluación de calidad del servicio pericial", "norma": "ISO 37301 §9.1", "planilla": "planilla_evaluacion_ux", "requerido": false }
+        {
+          "id": "f5_entrega",
+          "texto": "Acta de Entrega de Resultados con N° PRCC",
+          "norma": "MUCC-2017 Disposición Final",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "Cierre formal de la Planilla PRCC y entrega del dictamen y soporte consignado mediante Acta FO-F5-11.",
+          "planilla": "acta_entrega_resultados",
+          "campos": [{ "campo": "numero_prcc", "regla": "requerido" }]
+        },
+        {
+          "id": "f5_receptor",
+          "texto": "Receptor identificado (nombre y C.I.)",
+          "norma": "MUCC-2017 Transferencia Final",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md",
+          "detalleRag": "Registro inequívoco de quien recibe el dispositivo o evidencia en disposición final.",
+          "campos": [{ "campo": "receptor_nombre", "regla": "requerido" }, { "campo": "receptor_cedula", "regla": "requerido" }]
+        },
+        {
+          "id": "f5_sanitizacion",
+          "texto": "Sanitización certificada de copias temporales del laboratorio",
+          "norma": "ISO/IEC 27002 A.8.10 · LEDCI Art. 22",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO 27002_2022 ES.md",
+          "detalleRag": "Supresión segura e irreversible de copias temporales para cumplir el deber de confidencialidad (LEDCI Art. 22 y ISO 27002 A.8.10).",
+          "planilla": "acta_sanitizacion"
+        },
+        {
+          "id": "f5_auditoria",
+          "texto": "Cadena de auditoría SHA-256 verificada íntegra",
+          "norma": "ISO/IEC 27002 A.8.15 · LMDFE Art. 16 · UNE 71505",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/Normativas SUSCERTE Forense Digital y Firma Electronica.md",
+          "detalleRag": "Comprobación matemática de toda la línea temporal SHA-256 conforme a ISO/IEC 27002 A.8.15 y UNE 71505.",
+          "planilla": "acta_auditoria_timeline"
+        },
+        {
+          "id": "f5_evaluacion",
+          "texto": "Evaluación de calidad e integridad UX del servicio pericial",
+          "norma": "ISO/IEC 27001 Mejora Continua",
+          "fuenteRag": "RAG/Informacion_docling_rag/Informatica/ISO-27001_2022_NOEDER.md",
+          "detalleRag": "Registro opcional de evaluación de calidad del servicio conforme al ciclo de mejora continua ISO/IEC 27001.",
+          "planilla": "planilla_evaluacion_ux",
+          "requerido": false
+        }
       ]
     }
   ]

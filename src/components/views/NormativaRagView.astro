@@ -1,116 +1,18 @@
 ---
 /**
- * SHA256.US — Vista Base Normativa Forense RAG (77 Normas y Estándares)
- * Compendio de directrices ISO/IEC, NIST, MUCC-2017 y legislación procesal penal.
+ * SHA256.US — Vista Base Normativa Forense RAG
+ * Fuente Única de Verdad Verificada: RAG/Informacion_docling_rag/Informatica
  */
 import PageHeader from '../uswds/PageHeader.astro';
-import SummaryBox from '../uswds/SummaryBox.astro';
-import { NORMATIVAS_INICIALES } from '../../lib/data/seed';
-
-const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ codigo: string; slug: string }> }> = {
-  'ISO/IEC 27037:2012': {
-    fases: ['F1', 'F2'],
-    planillas: [
-      { codigo: 'FO-F1-03', slug: 'acta-obtencion' },
-      { codigo: 'FO-F1-04', slug: 'planilla-prcc' },
-      { codigo: 'FO-F2-05', slug: 'acta-desprecintado' },
-    ],
-  },
-  'ISO/IEC 27042:2015': {
-    fases: ['F3', 'F4'],
-    planillas: [
-      { codigo: 'FO-F3-06', slug: 'planilla-audio-sonic' },
-      { codigo: 'FO-F3-07', slug: 'planilla-evaluacion-ux' },
-      { codigo: 'FO-F4-08', slug: 'acta-dictamen' },
-      { codigo: 'FO-F4-09', slug: 'dictamen-imagenes' },
-      { codigo: 'FO-F4-10', slug: 'dictamen-audios' },
-    ],
-  },
-  'NIST SP 800-101 r1': {
-    fases: ['F1', 'F2', 'F3'],
-    planillas: [
-      { codigo: 'FO-F1-03', slug: 'acta-obtencion' },
-      { codigo: 'FO-F2-05', slug: 'acta-desprecintado' },
-    ],
-  },
-  'MUCC-2017': {
-    fases: ['F0', 'F1', 'F2', 'F5'],
-    planillas: [
-      { codigo: 'FO-F0-02', slug: 'acta-entrevista' },
-      { codigo: 'FO-F1-03', slug: 'acta-obtencion' },
-      { codigo: 'FO-F1-04', slug: 'planilla-prcc' },
-      { codigo: 'FO-F5-11', slug: 'acta-entrega-resultados' },
-    ],
-  },
-  'ACPO-v5': {
-    fases: ['F1', 'F2', 'F3'],
-    planillas: [
-      { codigo: 'FO-F1-04', slug: 'planilla-prcc' },
-      { codigo: 'FO-F2-05', slug: 'acta-desprecintado' },
-    ],
-  },
-  'LEDI-2001': {
-    fases: ['F0', 'F4'],
-    planillas: [
-      { codigo: 'FO-F0-01', slug: 'acta-consentimiento' },
-      { codigo: 'FO-F4-08', slug: 'acta-dictamen' },
-    ],
-  },
-  'LMDF-1999': {
-    fases: ['F1', 'F3', 'F4', 'F5'],
-    planillas: [
-      { codigo: 'FO-F1-04', slug: 'planilla-prcc' },
-      { codigo: 'FO-F3-06', slug: 'planilla-audio-sonic' },
-      { codigo: 'FO-F4-08', slug: 'acta-dictamen' },
-      { codigo: 'FO-F4-10', slug: 'dictamen-audios' },
-      { codigo: 'FO-F5-13', slug: 'acta-auditoria-timeline' },
-    ],
-  },
-  'COPP': {
-    fases: ['F0', 'F1', 'F4', 'F5'],
-    planillas: [
-      { codigo: 'FO-F0-02', slug: 'acta-entrevista' },
-      { codigo: 'FO-F1-03', slug: 'acta-obtencion' },
-      { codigo: 'FO-F1-04', slug: 'planilla-prcc' },
-      { codigo: 'FO-F4-08', slug: 'acta-dictamen' },
-      { codigo: 'FO-F5-11', slug: 'acta-entrega-resultados' },
-    ],
-  },
-  'CENIF-2012': {
-    fases: ['F2', 'F4'],
-    planillas: [
-      { codigo: 'FO-F2-05', slug: 'acta-desprecintado' },
-      { codigo: 'FO-F4-08', slug: 'acta-dictamen' },
-    ],
-  },
-  'ISO/IEC 27002:2022': {
-    fases: ['F2', 'F5'],
-    planillas: [
-      { codigo: 'FO-F5-12', slug: 'acta-sanitizacion' },
-    ],
-  },
-  'ISO/IEC 27001:2022': {
-    fases: ['F0', 'F5'],
-    planillas: [
-      { codigo: 'FO-F5-12', slug: 'acta-sanitizacion' },
-      { codigo: 'FO-F5-13', slug: 'acta-auditoria-timeline' },
-    ],
-  },
-  'NIST SP 800-86': {
-    fases: ['F1', 'F2', 'F3', 'F4'],
-    planillas: [
-      { codigo: 'FO-F1-03', slug: 'acta-obtencion' },
-      { codigo: 'FO-F2-05', slug: 'acta-desprecintado' },
-      { codigo: 'FO-F4-08', slug: 'acta-dictamen' },
-    ],
-  },
-};
+import Accordion from '../uswds/Accordion.astro';
+import RagSourceBadge from '../uswds/RagSourceBadge.astro';
+import { RAG_INFORMATICA_CATALOG, RAG_INFORMATICA_BASE_DIR } from '../../data/ragInformaticaCatalog';
 ---
 
 <PageHeader
-  title="Base de Conocimiento Normativo RAG"
-  subtitle="Compendio legal y técnico internacional (Informatica/) que fundamenta los dictámenes periciales y garantiza la licitud probatoria."
-  tag="ISO / NIST / Leyes VE"
+  title="Base de Conocimiento Normativo RAG (Informática Forense)"
+  subtitle={`Fuente única e inmutable del CMS: ${RAG_INFORMATICA_BASE_DIR} (${RAG_INFORMATICA_CATALOG.length} instrumentos verificados con SHA-256 Docling).`}
+  tag="Fuente Única RAG"
   tagColor="bg-primary-darker"
 >
   <div slot="actions">
@@ -120,46 +22,49 @@ const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ co
   </div>
 </PageHeader>
 
-<!-- Resumen de Jerarquía Normativa -->
-<div class="margin-bottom-3">
-  <SummaryBox heading="Pirámide de Aplicación y Supletoriedad (COPP Art. 225)" headingId="summary-piramide-normativa">
+<!-- Resumen de Jerarquía Normativa en Acordeón USWDS (Cero sobrecarga visual) -->
+<div class="margin-bottom-205">
+  <Accordion
+    id="piramide-normativa-rag"
+    title="Ver Jerarquía de Aplicación y Trazabilidad Documental (RAG/Informacion_docling_rag/Informatica)"
+    expanded={false}
+  >
     <p class="margin-top-0 margin-bottom-1 font-body-2xs">
-      En materia de informática forense, el Código Orgánico Procesal Penal faculta al perito a fundar su metodología
-      en las reglas de su ciencia, arte o técnica. La validez probatoria descansa en la aplicación armónica de:
+      Todos los controles del flujo pericial ISO (F0–F5) y las 13 planillas oficiales en Folio se alimentan exclusivamente de los documentos procesados con IBM Docling en <code>{RAG_INFORMATICA_BASE_DIR}</code>:
     </p>
     <div class="display-flex flex-wrap">
-      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-1 font-mono-3xs">1. CRBV Arts. 28 y 60 (Hábeas Data)</span>
-      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-1 font-mono-3xs">2. COPP Arts. 187, 223–225</span>
-      <span class="usa-tag bg-primary margin-right-1 margin-bottom-1 font-mono-3xs">3. MUCC-2017 (Gaceta N° 41.247)</span>
-      <span class="usa-tag bg-accent-warm-dark text-ink text-bold margin-right-1 margin-bottom-1 font-mono-3xs">4. ISO/IEC 27037 / 27042 / 27043</span>
-      <span class="usa-tag bg-green margin-bottom-1 font-mono-3xs">5. NIST SP 800-86 / 800-88</span>
+      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05 font-mono-3xs">1. CRBV G.O. 36.860 / LEDCI G.O. 37.313 / LPPC G.O. 34.863</span>
+      <span class="usa-tag bg-primary-darker margin-right-1 margin-bottom-05 font-mono-3xs">2. MUCC-2017 (G.O. 41.247) · COPP Arts. 187, 223–225</span>
+      <span class="usa-tag bg-primary margin-right-1 margin-bottom-05 font-mono-3xs">3. LMDFE (G.O. 37.148) · CENIF (G.O. 39.847) · SUSCERTE</span>
+      <span class="usa-tag bg-accent-warm-dark text-ink text-bold margin-right-1 margin-bottom-05 font-mono-3xs">4. ISO/IEC 27037 / 27042 / 27001 / 27002 · UNE 71505 / 197010</span>
+      <span class="usa-tag bg-green margin-bottom-05 font-mono-3xs">5. NIST SP 800-101 / 800-86 · ACPO v5 · RFC 3227</span>
     </div>
-  </SummaryBox>
+  </Accordion>
 </div>
 
-<!-- USWDS: Card with Search and Filters | https://designsystem.digital.gov/components/card/ -->
+<!-- Buscador y Filtros USWDS -->
 <div class="usa-card width-full margin-bottom-3">
   <div class="usa-card__container padding-2">
     <div class="grid-row grid-gap flex-align-end margin-bottom-2">
       <div class="tablet:grid-col-6">
         <div class="usa-form-group margin-top-0">
           <label class="usa-label margin-top-0 font-sans-2xs text-bold" for="input-search-normas">
-            Buscar en compendio normativo
+            Buscar en <code>{RAG_INFORMATICA_BASE_DIR}</code>
           </label>
           <input
             class="usa-input"
             id="input-search-normas"
             type="search"
-            placeholder="Buscar por código, nombre, artículo o palabra clave..."
+            placeholder="Buscar por código, ley, estándar, Gaceta o hash SHA-256..."
           />
         </div>
       </div>
       <div class="tablet:grid-col-6 margin-top-2 tablet:margin-top-0">
-        <label class="usa-label margin-top-0 font-sans-2xs text-bold margin-bottom-05">Filtrar por Instrumento:</label>
+        <label class="usa-label margin-top-0 font-sans-2xs text-bold margin-bottom-05">Filtrar por Tipo de Instrumento:</label>
         <ul class="usa-button-group flex-wrap" id="filtros-tipo-norma">
           <li class="usa-button-group__item">
             <button type="button" class="usa-button font-sans-3xs padding-x-1 padding-y-05 btn-filtro-norma" data-tipo="todos">
-              Todas ({NORMATIVAS_INICIALES.length})
+              Todas ({RAG_INFORMATICA_CATALOG.length})
             </button>
           </li>
           <li class="usa-button-group__item">
@@ -174,12 +79,17 @@ const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ co
           </li>
           <li class="usa-button-group__item">
             <button type="button" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 btn-filtro-norma" data-tipo="LEY">
-              Leyes
+              Leyes VE
             </button>
           </li>
           <li class="usa-button-group__item">
             <button type="button" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 btn-filtro-norma" data-tipo="MANUAL">
               Manuales
+            </button>
+          </li>
+          <li class="usa-button-group__item">
+            <button type="button" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05 btn-filtro-norma" data-tipo="REGLAMENTO">
+              Reglamentos
             </button>
           </li>
         </ul>
@@ -216,54 +126,57 @@ const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ co
   </div>
 </div>
 
-<!-- USWDS: Card Group | https://designsystem.digital.gov/components/card/ -->
+<!-- USWDS Card Group con Progressive Disclosure para Artículos y Planillas -->
 <ul class="usa-card-group" id="contenedor-normas">
-  {NORMATIVAS_INICIALES.map((norma) => {
-    const vinc = NORMA_VINCULACION[norma.codigo] || { fases: [], planillas: [] };
-    const fasesStr = vinc.fases.join(',');
+  {RAG_INFORMATICA_CATALOG.map((doc) => {
+    const fasesStr = doc.fasesIso.join(',');
     return (
-      <li class="usa-card tablet:grid-col-6 desktop:grid-col-4 card-norma" data-tipo={norma.tipo} data-fases={fasesStr}>
+      <li class="usa-card tablet:grid-col-6 desktop:grid-col-4 card-norma" data-tipo={doc.tipo} data-fases={fasesStr}>
         <div class="usa-card__container overflow-hidden">
           <div class="usa-card__header">
             <div class="display-flex flex-justify flex-align-center margin-bottom-1">
-              <span class="usa-tag font-mono-3xs">{norma.tipo}</span>
-              <span class="font-mono-3xs text-base-dark">Vigencia: {norma.version}</span>
+              <span class="usa-tag font-mono-3xs">{doc.tipo}</span>
+              <span class="font-mono-3xs text-base-dark">
+                {doc.gacetaOficial ? `G.O. N° ${doc.gacetaOficial}` : `Ed. ${doc.version}`}
+              </span>
             </div>
-            <h2 class="usa-card__heading font-heading-sm margin-top-0 margin-bottom-05">{norma.codigo}</h2>
-            {vinc.fases.length > 0 && (
-              <div class="display-flex flex-wrap gap-1 margin-top-05">
-                {vinc.fases.map((f) => (
-                  <span class="usa-tag bg-primary-darker text-white font-mono-3xs">{f}</span>
-                ))}
-              </div>
-            )}
+            <h2 class="usa-card__heading font-heading-sm margin-top-0 margin-bottom-05">{doc.codigo}</h2>
+            <div class="display-flex flex-wrap gap-1 margin-top-05">
+              {doc.fasesIso.map((f) => (
+                <span class="usa-tag bg-primary-darker text-white font-mono-3xs">{f}</span>
+              ))}
+            </div>
           </div>
           <div class="usa-card__body">
-            <p class="text-bold margin-top-0 margin-bottom-1 font-body-2xs">
-              {norma.nombre}
+            <p class="text-bold margin-top-0 margin-bottom-05 font-body-2xs">
+              {doc.nombreOficial}
             </p>
-            <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-2">
-              {norma.descripcion}
+            <p class="font-body-3xs text-base-dark margin-top-0 margin-bottom-105">
+              {doc.descripcion}
             </p>
-            {norma.articulos && norma.articulos.length > 0 && (
-              <div class="bg-base-lightest border-1px border-base-lighter padding-1 margin-bottom-1">
-                <p class="font-sans-3xs text-bold text-uppercase margin-top-0 margin-bottom-05">
-                  Artículos y Módulos Clave:
-                </p>
-                <ul class="usa-list margin-top-0 margin-bottom-0 font-body-3xs">
-                  {norma.articulos.map((art) => (
-                    <li>{art}</li>
-                  ))}
-                </ul>
-              </div>
+
+            {doc.articulosClave.length > 0 && (
+              <details class="margin-bottom-1 font-body-3xs">
+                <summary class="cursor-pointer text-primary text-bold">
+                  Ver Artículos y Controles Clave ({doc.articulosClave.length})
+                </summary>
+                <div class="bg-base-lightest border-1px border-base-lighter padding-1 margin-top-05">
+                  <ul class="usa-list margin-top-0 margin-bottom-0 font-body-3xs">
+                    {doc.articulosClave.map((art) => (
+                      <li>{art}</li>
+                    ))}
+                  </ul>
+                </div>
+              </details>
             )}
-            {vinc.planillas.length > 0 && (
+
+            {doc.planillasVinculadas.length > 0 && (
               <div class="bg-primary-lightest border-1px border-primary-light padding-1">
                 <p class="font-sans-3xs text-bold text-uppercase margin-top-0 margin-bottom-05 text-primary-darker">
-                  Planillas Oficiales que la Implementan:
+                  Planillas Folio Vinculadas:
                 </p>
                 <div class="display-flex flex-wrap gap-1">
-                  {vinc.planillas.map((pl) => (
+                  {doc.planillasVinculadas.map((pl) => (
                     <a
                       href={`/planillas/${pl.slug}`}
                       class="usa-button usa-button--outline font-mono-3xs padding-x-05 padding-y-0 margin-0 bg-white"
@@ -277,7 +190,7 @@ const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ co
             )}
           </div>
           <div class="usa-card__footer border-top-1px border-base-lighter padding-top-1">
-            <span class="font-mono-3xs text-base-dark">Referencia: {norma.urlReferencia}</span>
+            <RagSourceBadge archivoRag={doc.archivoRag} hashPdfSha256={doc.hashPdfSha256} />
           </div>
         </div>
       </li>
@@ -332,4 +245,3 @@ const NORMA_VINCULACION: Record<string, { fases: string[]; planillas: Array<{ co
     });
   });
 </script>
-

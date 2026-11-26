@@ -20,6 +20,8 @@ export interface ControlIso {
   id: string;
   texto: string;
   norma: string;
+  fuenteRag?: string;
+  detalleRag?: string;
   campos?: { campo: keyof CasoCMS & string; regla: ReglaCampo }[];
   planilla?: PlanillaId;
   tipologias?: TipoProyecto[];

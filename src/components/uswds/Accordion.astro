@@ -1,0 +1,31 @@
+---
+/**
+ * SHA256.US — Acordeón Oficial USWDS (.usa-accordion--bordered)
+ * Progressive Disclosure para evitar sobrecarga cognitiva en el panel pericial.
+ * https://designsystem.digital.gov/components/accordion/
+ */
+interface Props {
+  id: string;
+  title: string;
+  expanded?: boolean;
+  className?: string;
+}
+
+const { id, title, expanded = false, className = '' } = Astro.props;
+const contentId = `acc-content-${id}`;
+---
+<div class={`usa-accordion usa-accordion--bordered ${className}`.trim()}>
+  <h3 class="usa-accordion__heading">
+    <button
+      type="button"
+      class="usa-accordion__button font-sans-xs"
+      aria-expanded={expanded ? 'true' : 'false'}
+      aria-controls={contentId}
+    >
+      {title}
+    </button>
+  </h3>
+  <div id={contentId} class="usa-accordion__content usa-prose" hidden={!expanded}>
+    <slot />
+  </div>
+</div>

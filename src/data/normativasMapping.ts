@@ -1,3 +1,5 @@
+// Mapeo técnico-normativo verificado exclusivamente contra RAG/Informacion_docling_rag/Informatica/
+
 export interface NormativaRAGItem {
   codigo: string;
   nombre: string;
@@ -5,6 +7,7 @@ export interface NormativaRAGItem {
   descripcion: string;
   articuloRelevante: string;
   cumplimientoRequerido: string;
+  archivoRag: string;
 }
 
 export interface EvidenciaNormativaGroup {
@@ -14,61 +17,69 @@ export interface EvidenciaNormativaGroup {
   normativas: NormativaRAGItem[];
 }
 
+const BASE = 'RAG/Informacion_docling_rag/Informatica';
+
 export const NORMATIVAS_RAG_MAPPING: Record<string, EvidenciaNormativaGroup> = {
   movil: {
     categoriaId: 'movil',
-    tituloCategoria: 'Teléfonos Móviles, WhatsApp y Dispositivos Celulares',
+    tituloCategoria: 'Teléfonos Móviles, Mensajería y Dispositivos Celulares',
     icono: 'Smartphone',
     normativas: [
       {
         codigo: 'ISO/IEC 27037:2012',
         nombre: 'Directrices para Identificación, Recolección, Adquisición y Preservación de Evidencia Digital',
         ambito: 'Internacional',
-        descripcion: 'Define el aislamiento electromagnético (Jaula/Bolsa Faraday) antes del triaje y extracción lógica/física.',
-        articuloRelevante: 'Cláusula 6.3 - Adquisición de Dispositivos Móviles en Campo',
-        cumplimientoRequerido: 'Embalaje antiestático Faraday, modo avión activado y bloqueo de conexiones de red.'
+        descripcion: 'Define el aislamiento electromagnético (Bolsa Faraday / Modo Avión) y preservación antes de la adquisición.',
+        articuloRelevante: '§5.4.2–5.4.4 y §7.1.3 - Manejo y adquisición de dispositivos digitales',
+        cumplimientoRequerido: 'Fijación fotográfica 360°, modo avión activado, bolsa Faraday y bloqueo de conexiones.',
+        archivoRag: `${BASE}/ISO IEC 27037-2012.md`,
       },
       {
         codigo: 'NIST SP 800-101 Rev. 1',
         nombre: 'Guidelines on Mobile Device Forensics',
         ambito: 'Internacional',
-        descripcion: 'Protocolo de extracción de almacenamiento flash (Android/iOS), parseo de SQLite databases y recuperación de artefactos borrados.',
-        articuloRelevante: 'Sección 4.2 - Extractions & Data Storage Analysis',
-        cumplimientoRequerido: 'Extracción física/lógica verificada con hashes duales (SHA-256 / MD5).'
+        descripcion: 'Protocolo de extracción lógica/física en dispositivos móviles, parseo de bases SQLite y preservación de SIM.',
+        articuloRelevante: 'Preservación RF y niveles de adquisición lógica/física',
+        cumplimientoRequerido: 'Extracción verificada con hash SHA-256 sobre copia de trabajo.',
+        archivoRag: `${BASE}/Guidelines on Mobile Device-NIST Special Publication 800-101.md`,
       },
       {
-        codigo: 'MUCC-2017 (MP-CICPC)',
-        nombre: 'Manual Único de Procedimientos en Materia de Cadena de Custodia de Evidencias Físicas',
+        codigo: 'MUCC-2017',
+        nombre: 'Manual Único de Cadena de Custodia de Evidencias Físicas',
         ambito: 'Nacional (Venezuela)',
-        descripcion: 'Establece la obligatoriedad del llenado inmediato de la Planilla PRCC y el Acta de Obtención por Consignación o Incautación.',
-        articuloRelevante: 'Capítulo II - Protocolo de Fijación e Inalterabilidad Dactilar',
-        cumplimientoRequerido: 'Planilla PRCC llenada en duplicado con impresiones dactilares y firma del perito.'
+        descripcion: 'Regula la modalidad de Consignación, embalaje, precintado numerado y registro continuo en Planilla PRCC.',
+        articuloRelevante: 'Fase Inicial y Fase de Laboratorio - Registro obligatorio en PRCC',
+        cumplimientoRequerido: 'Planilla PRCC abierta con firmas bilaterales e impresiones dactilares.',
+        archivoRag: `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
       },
       {
-        codigo: 'Ley de Delitos Informáticos',
-        nombre: 'Ley Especial Contra los Delitos Informáticos (Gaceta Oficial N° 37.313)',
+        codigo: 'LEDI-2001 (G.O. N° 37.313)',
+        nombre: 'Ley Especial contra los Delitos Informáticos',
         ambito: 'Nacional (Venezuela)',
-        descripcion: 'Regula los delitos de acceso indebido, sabotaje a sistemas y violación de la privacidad de las comunicaciones.',
-        articuloRelevante: 'Arts. 6, 7 y 11 (Violación de Privacidad de la Información)',
-        cumplimientoRequerido: 'Orden judicial o consentimiento expreso por escrito de la víctima/consignante.'
+        descripcion: 'Protege la privacidad de la data y de las comunicaciones personales.',
+        articuloRelevante: 'Arts. 20, 21 y 22 (Privacidad de la data, comunicaciones y no revelación)',
+        cumplimientoRequerido: 'Consentimiento informado expreso del titular o interlocutor legítimo consignante.',
+        archivoRag: `${BASE}/Ley Especial de Delitos informáticos (2001). Publicado en Gaceta Oficial Nº 37.313 .md`,
       },
       {
-        codigo: 'LMDFE (G.O. N° 37.076)',
-        nombre: 'Ley sobre Mensajes de Datos y Firmas Electrónicas',
+        codigo: 'LMDFE (G.O. N° 37.148)',
+        nombre: 'Decreto-Ley sobre Mensajes de Datos y Firmas Electrónicas',
         ambito: 'Nacional (Venezuela)',
-        descripcion: 'Otorga plena validez y eficacia probatoria a los mensajes de texto, chats de WhatsApp y evidencias electrónicas.',
-        articuloRelevante: 'Art. 4 - Eficacia Probatoria de los Mensajes de Datos',
-        cumplimientoRequerido: 'Preservación del valor hash de los archivos de base de datos msgstore.db.'
+        descripcion: 'Reconoce eficacia probatoria y valor de original a mensajes de datos y archivos multimedia íntegros.',
+        articuloRelevante: 'Arts. 4 y 7 - Eficacia probatoria e integridad inalterada',
+        cumplimientoRequerido: 'Cálculo y verificación del hash SHA-256 de bases msgstore.db y adjuntos.',
+        archivoRag: `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
       },
       {
         codigo: 'RFC 3227',
         nombre: 'Guidelines for Evidence Collection and Archiving',
         ambito: 'Técnico / RFC',
-        descripcion: 'Prioriza la recolección de memoria RAM volátil antes del apagado o extracción de tarjeta SIM.',
-        articuloRelevante: 'Order of Volatility (Memoria RAM > Almacenamiento Flash)',
-        cumplimientoRequerido: 'Extracción inicial de datos volátiles antes de desarmar el hardware.'
-      }
-    ]
+        descripcion: 'Prioriza el orden de volatilidad y el registro cronológico de toda recolección digital.',
+        articuloRelevante: 'Orden de Volatilidad (datos volátiles antes de persistentes)',
+        cumplimientoRequerido: 'Documentación secuencial de estado antes de manipular el dispositivo.',
+        archivoRag: `${BASE}/RFC 3227 (2002).md`,
+      },
+    ],
   },
   computadora: {
     categoriaId: 'computadora',
@@ -79,35 +90,39 @@ export const NORMATIVAS_RAG_MAPPING: Record<string, EvidenciaNormativaGroup> = {
         codigo: 'NIST SP 800-86',
         nombre: 'Guide to Integrating Forensic Techniques into Incident Response',
         ambito: 'Internacional',
-        descripcion: 'Estándar para la clonación bit a bit y análisis de sistemas de archivos (NTFS, EXT4, APFS).',
-        articuloRelevante: 'Sección 3 - Media Forensics & Bit-Stream Image Acquisition',
-        cumplimientoRequerido: 'Uso de FTK Imager o Paladin Linux con validación de Hash SHA-256.'
+        descripcion: 'Estándar para recolección, clonación bit-a-bit y examen de sistemas de archivos y logs.',
+        articuloRelevante: '§3 Media Forensics & Bit-Stream Acquisition',
+        cumplimientoRequerido: 'Adquisición bit-a-bit con validación de hash SHA-256.',
+        archivoRag: `${BASE}/NIST SP 800-86_ingles.md`,
       },
       {
         codigo: 'ISO/IEC 27042:2015',
         nombre: 'Directrices para el Análisis e Interpretación de Evidencia Digital',
         ambito: 'Internacional',
-        descripcion: 'Establece los criterios para el análisis de registros de eventos (Event Logs), registro de Windows y metadatos.',
-        articuloRelevante: 'Cláusula 7 - Analysis Framework & Audit Verification',
-        cumplimientoRequerido: 'Repetibilidad del análisis en copia de trabajo sin modificar el medio original.'
+        descripcion: 'Establece criterios de repetibilidad y reproducibilidad en el análisis de logs, sistemas y metadatos.',
+        articuloRelevante: '§7–9 Análisis reproducible sobre copia de trabajo',
+        cumplimientoRequerido: 'Análisis exclusivo sobre copia de trabajo sin modificar el medio original.',
+        archivoRag: `${BASE}/ISO-IEC 27042 2015.md`,
       },
       {
-        codigo: 'ACPO Principles',
-        nombre: 'ACPO Good Practice Guide for Digital Evidence',
+        codigo: 'ACPO-v5',
+        nombre: 'ACPO Good Practice Guide for Digital Evidence v5',
         ambito: 'Internacional',
-        descripcion: '4 Principios fundamentales: Ninguna acción pericial debe modificar los datos contenidos en el medio primario.',
-        articuloRelevante: 'Principio 1 y 2 - Preservación de la Prueba Original',
-        cumplimientoRequerido: 'Intervención exclusiva sobre copias de trabajo bit a bit.'
+        descripcion: '4 Principios: no alterar datos originales, competencia del analista, auditoría completa y cumplimiento legal.',
+        articuloRelevante: 'Principios 1 y 3 - Preservación original y pista de auditoría',
+        cumplimientoRequerido: 'Intervención exclusiva sobre copias bit-a-bit y registro completo.',
+        archivoRag: `${BASE}/ACPO_Good_Practice_Guide_for_Digital_Evidence_v5.md`,
       },
       {
-        codigo: 'COPP (G.O. N° 6.644)',
-        nombre: 'Código Orgánico Procesal Penal Venezolano',
+        codigo: 'MUCC-2017 · COPP Art. 225',
+        nombre: 'Manual Único de Cadena de Custodia y Reglas del Dictamen Pericial',
         ambito: 'Nacional (Venezuela)',
-        descripcion: 'Norma la admisibilidad de dictámenes periciales en el juicio oral y público.',
-        articuloRelevante: 'Art. 225 - Dictamen Pericial Judicial',
-        cumplimientoRequerido: 'Elaboración del Acta Dictamen con identificación formal del perito actuante.'
-      }
-    ]
+        descripcion: 'Regula la cadena de custodia en laboratorio y la estructura motivada del dictamen pericial.',
+        articuloRelevante: 'MUCC-2017 Fase de Laboratorio · COPP Arts. 187, 223–225',
+        cumplimientoRequerido: 'Acta de Desprecintado y Dictamen Oficial colegiado por dos peritos.',
+        archivoRag: `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+      },
+    ],
   },
   usb: {
     categoriaId: 'usb',
@@ -115,60 +130,66 @@ export const NORMATIVAS_RAG_MAPPING: Record<string, EvidenciaNormativaGroup> = {
     icono: 'Database',
     normativas: [
       {
-        codigo: 'ISO/IEC 27037 Sec. 6.2',
+        codigo: 'ISO/IEC 27037:2012 §7.1.3',
         nombre: 'Bloqueo de Escritura en Medios Removibles',
         ambito: 'Internacional',
-        descripcion: 'Exige el empleo obligatorio de bloqueadores de escritura por hardware o software (*Write Blockers*).',
-        articuloRelevante: 'Sec. 6.2 - Hardware Write-Blocking Protocol',
-        cumplimientoRequerido: 'Conexión a través de puerto bloqueado contra escritura.'
+        descripcion: 'Exige el empleo de bloqueadores de escritura por hardware o software (Write-Blockers) al adquirir medios.',
+        articuloRelevante: '§5.4.4 y §7.1.3.3 - Adquisición sin alteración del medio origen',
+        cumplimientoRequerido: 'Conexión mediante write-blocker certificado y verificación de hash MATCH.',
+        archivoRag: `${BASE}/ISO IEC 27037-2012.md`,
       },
       {
         codigo: 'MUCC-2017 (Embalaje)',
-        nombre: 'Norma de Rotulado y Precintado de Evidencia Digital',
+        nombre: 'Rotulado y Precintado de Evidencia Digital',
         ambito: 'Nacional (Venezuela)',
-        descripcion: 'Precintado con sobre de evidencia transparente inviolable y firma sobre el sello.',
-        articuloRelevante: 'Capítulo IV - Rotulado de Medios Removibles',
-        cumplimientoRequerido: 'Asignación de número de planilla PRCC e identificación física en la etiqueta.'
+        descripcion: 'Embalaje individual con precinto de seguridad numerado y registro en Planilla PRCC.',
+        articuloRelevante: 'Fase Inicial - Embalaje, Rotulación y PRCC',
+        cumplimientoRequerido: 'Asignación de N° PRCC, precinto numerado e identificación física.',
+        archivoRag: `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
       },
       {
-        codigo: 'ISO/IEC 27041:2015',
-        nombre: 'Aseguramiento de Idoneidad de Herramientas Forenses',
-        ambito: 'Internacional',
-        descripcion: 'Valida que el software empleado no altere la estructura de la FAT/exFAT o sistema de archivos del pendrive.',
-        articuloRelevante: 'Cláusula 5 - Tool Validation for Removable Media',
-        cumplimientoRequerido: 'Uso de software verificado (IPED, FTK Imager, Andriller).'
-      }
-    ]
+        codigo: 'CENIF (G.O. N° 39.847) · ISO/IEC 27042:2015',
+        nombre: 'Idoneidad de Técnicas y Herramientas Forenses Validadas',
+        ambito: 'Nacional (Venezuela)',
+        descripcion: 'Exige el uso de técnicas y herramientas forenses ampliamente probadas y aceptadas que no alteren el medio.',
+        articuloRelevante: 'CENIF G.O. N° 39.847 · ISO/IEC 27042 §7.3',
+        cumplimientoRequerido: 'Registro de herramienta validada y versión empleada en la adquisición y análisis.',
+        archivoRag: `${BASE}/Creación del CENIF (2012). Centro Nacional de Informática Forense. Publicado en Gaceta Oficial N° 39.847 de fecha 20 de enero..md`,
+      },
+    ],
   },
   dvd_imagen: {
     categoriaId: 'dvd_imagen',
-    tituloCategoria: 'DVD / Blu-Ray / Imágenes Forenses (.E01 / .DD / .ISO)',
+    tituloCategoria: 'DVD / Medios Ópticos / Imágenes Forenses (.E01 / .DD / .RAW)',
     icono: 'Disc',
     normativas: [
       {
         codigo: 'ISO/IEC 27042:2015',
         nombre: 'Validación e Inalterabilidad de Imágenes Forenses',
         ambito: 'Internacional',
-        descripcion: 'Norma la preservación de archivos contenedor .E01 (EnCase) o .DD raw respaldados en soporte óptico.',
-        articuloRelevante: 'Cláusula 8 - Forensic Image Storage Integrity',
-        cumplimientoRequerido: 'Verificación del hash SHA-256 grabado en el soporte óptico con el acta oficial.'
+        descripcion: 'Norma la preservación e interpretación reproducible sobre imágenes forenses verificadas.',
+        articuloRelevante: '§7–8 Integridad y repetibilidad de copias de trabajo',
+        cumplimientoRequerido: 'Verificación del hash SHA-256 de la imagen contra el registro en actas.',
+        archivoRag: `${BASE}/ISO-IEC 27042 2015.md`,
       },
       {
-        codigo: 'NIST SP 800-86 Sec. 4',
-        nombre: 'Dual Hash Verification Protocol',
+        codigo: 'NIST SP 800-86',
+        nombre: 'Verificación de Integridad mediante Hash Criptográfico',
         ambito: 'Internacional',
-        descripcion: 'Comparación dual del Hash SHA-256 de la imagen ISO/E01 contra el valor registrado en el ingreso al laboratorio.',
-        articuloRelevante: 'Dual Hash Integrity Verification',
-        cumplimientoRequerido: '100% de coincidencia hexadecimal de 64 caracteres en el reporte.'
+        descripcion: 'Comparación exacta del digest SHA-256 entre el medio original y la imagen adquirida.',
+        articuloRelevante: '§3.1.2 Verificación de copia bit-a-bit',
+        cumplimientoRequerido: 'Coincidencia MATCH de 64 caracteres hexadecimales SHA-256.',
+        archivoRag: `${BASE}/NIST SP 800-86_ingles.md`,
       },
       {
-        codigo: 'ISO 27001 / 27002',
-        nombre: 'Controles de Seguridad de la Información y Almacenamiento Físico',
+        codigo: 'ISO/IEC 27001:2022 · ISO/IEC 27002:2022',
+        nombre: 'Controles de Resguardo Físico y Supresión Segura',
         ambito: 'Internacional',
-        descripcion: 'Condiciones ambientales y físicas para la custodia a largo plazo de discos ópticos periciales.',
-        articuloRelevante: 'Control A.11.2 - Physical Media Security',
-        cumplimientoRequerido: 'Bóveda de evidencias con temperatura controlada y acceso restringido.'
-      }
-    ]
-  }
+        descripcion: 'Custodia controlada en bóveda y supresión segura de copias temporales tras finalizar el peritaje.',
+        articuloRelevante: 'A.8.10 Supresión de información y A.8.15 Logs de auditoría',
+        cumplimientoRequerido: 'Resguardo en bóveda de evidencias y sanitización certificada en F5.',
+        archivoRag: `${BASE}/ISO 27002_2022 ES.md`,
+      },
+    ],
+  },
 };

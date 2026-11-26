@@ -1,0 +1,27 @@
+---
+/**
+ * SHA256.US — Insignia Verificable de Fuente Única RAG (Informatica/)
+ */
+interface Props {
+  archivoRag: string;
+  hashPdfSha256?: string;
+}
+
+const { archivoRag, hashPdfSha256 } = Astro.props;
+const fileName = archivoRag.split('/').pop() || archivoRag;
+---
+<div class="bg-base-lightest border-1px border-base-lighter padding-1 radius-sm font-mono-3xs text-base-dark">
+  <div class="display-flex flex-wrap flex-align-center flex-justify">
+    <span class="text-bold text-primary-darker">
+      Fuente RAG: <code>{fileName}</code>
+    </span>
+    {hashPdfSha256 && (
+      <span class="usa-tag bg-base-lighter text-ink font-mono-3xs" title={`SHA-256 PDF Docling: ${hashPdfSha256}`}>
+        SHA-256: {hashPdfSha256.slice(0, 10)}…
+      </span>
+    )}
+  </div>
+  <div class="font-mono-3xs text-base margin-top-05" style="word-break: break-all;">
+    {archivoRag}
+  </div>
+</div>

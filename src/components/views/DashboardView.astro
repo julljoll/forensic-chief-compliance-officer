@@ -1,16 +1,18 @@
 ---
 /**
  * SHA256.US — Vista Modular del Panel General (Dashboard)
- * Principios UX/UI: Hick's Law (Próximo Paso Recomendado Hero Card) & Proximidad Gestalt
+ * Principios UX/UI USWDS: Hick's Law (Próximo Paso Recomendado), Progressive Disclosure (Acordeón)
+ * y Fuente Única Verificada: RAG/Informacion_docling_rag/Informatica
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import KpiCard from '../uswds/KpiCard.astro';
-import SummaryBox from '../uswds/SummaryBox.astro';
+import Accordion from '../uswds/Accordion.astro';
+import StatusDot from '../uswds/StatusDot.astro';
 ---
 
 <PageHeader
   title="Panel General de Cumplimiento"
-  subtitle="Monitoreo determinista de expedientes periciales, sellos criptográficos SHA-256 y trazabilidad ISO/IEC."
+  subtitle="Control paso a paso de expedientes periciales, sellos SHA-256 y trazabilidad verificada en RAG/Informacion_docling_rag/Informatica."
   tag="Acreditación Activa"
   tagColor="bg-primary-darker"
 >
@@ -24,14 +26,19 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </PageHeader>
 
-<!-- HERO CARD: PRÓXIMO PASO RECOMENDADO (HICK'S LAW: ELIMINACIÓN DE CARGA COGNITIVA) -->
+<!-- 1. HERO CARD: PRÓXIMO PASO RECOMENDADO (HICK'S LAW: ACCIÓN ÚNICA CLARA) -->
 <div class="usa-summary-box bg-primary-darker text-white radius-md margin-bottom-3 shadow-2" role="region" aria-labelledby="hero-proximo-paso-heading">
   <div class="usa-summary-box__body padding-3">
     <div class="grid-row grid-gap flex-align-center">
       <div class="tablet:grid-col-8">
-        <span class="usa-tag bg-accent-warm-dark text-ink font-mono-3xs text-bold margin-bottom-1">
-          ACCIÓN PRIORITARIA RECOMENDADA
-        </span>
+        <div class="display-flex flex-align-center grid-gap-1 margin-bottom-1">
+          <span class="usa-tag bg-accent-warm-dark text-ink font-mono-3xs text-bold">
+            PASO SIGUIENTE RECOMENDADO
+          </span>
+          <span class="font-mono-3xs text-base-lightest">
+            Fuente Única: <code>RAG/Informacion_docling_rag/Informatica</code>
+          </span>
+        </div>
         <h2 class="usa-summary-box__heading margin-y-05 text-white font-heading-md" id="hero-proximo-paso-heading">
           Identificando siguiente paso procesal...
         </h2>
@@ -53,7 +60,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </div>
 
-<!-- Grupo de Métricas Principales (KPIs) -->
+<!-- 2. GRUPO DE MÉTRICAS PRINCIPALES (4 KPIs ESENCIALES) -->
 <div class="grid-row grid-gap-2 margin-bottom-3">
   <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
     <KpiCard
@@ -75,10 +82,10 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
   <div class="grid-col-12 tablet:grid-col-6 desktop:grid-col-3">
     <KpiCard
-      label="Fases ISO Validadas"
-      value="6 / 6"
+      label="Ciclo Canónico ISO"
+      value="6 Fases"
       id="kpi-fases"
-      subtext="Gating F0–F5 superado"
+      subtext="Gating secuencial F0 a F5"
       variant="warning"
     />
   </div>
@@ -93,66 +100,14 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </div>
 
-<SummaryBox
-  heading="Guía Operativa del Procedimiento por Consignación — Ciclo Pericial ISO 6 Fases (F0 – F5)"
-  headingId="summary-ciclo-iso"
-  className="margin-bottom-3"
->
-  <p class="margin-top-0 margin-bottom-1 font-body-2xs">
-    Este CMS guía paso a paso la validación judicial para tribunales de pruebas en <strong>dispositivos móviles</strong> (imágenes, redes sociales, notas de voz, capturas de pantalla, WhatsApp/Telegram) y <strong>medios digitales consignados</strong> (CD/DVD, disco duro, reloj inteligente, computadora, servidor, cámara de seguridad DVR/CCTV):
-  </p>
-  <div class="grid-row grid-gap-1 margin-top-105 margin-bottom-1">
-    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
-      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
-        <strong class="font-mono-3xs text-primary">F0 · APERTURA</strong>
-        <span class="display-block font-body-3xs text-base-dark">Consentimiento (FO-F0-01) y Entrevista (FO-F0-02)</span>
-      </a>
+<!-- 3. TABLA OPERATIVA DE EXPEDIENTES EN CURSO (FOCO PRINCIPAL) -->
+<section class="margin-bottom-3" aria-labelledby="expedientes-curso-heading">
+  <div class="grid-row flex-justify flex-align-center margin-bottom-105">
+    <div class="display-flex flex-align-center grid-gap-1">
+      <StatusDot status="online" />
+      <h2 class="margin-0 font-heading-md" id="expedientes-curso-heading">Expedientes Periciales en Curso</h2>
     </div>
-    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
-      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
-        <strong class="font-mono-3xs text-primary">F1 · RECOLECCIÓN</strong>
-        <span class="display-block font-body-3xs text-base-dark">Fijación 360°, Faraday (FO-F1-03) y PRCC (FO-F1-04)</span>
-      </a>
-    </div>
-    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
-      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
-        <strong class="font-mono-3xs text-primary">F2 · ADQUISICIÓN</strong>
-        <span class="display-block font-body-3xs text-base-dark">Desprecintado, Extracción y Hash SHA-256 (FO-F2-05)</span>
-      </a>
-    </div>
-    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
-      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
-        <strong class="font-mono-3xs text-primary">F3 · ANÁLISIS</strong>
-        <span class="display-block font-body-3xs text-base-dark">Audio FFT (FO-F3-06) y Capturas vs SQLite (FO-F3-07)</span>
-      </a>
-    </div>
-    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
-      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
-        <strong class="font-mono-3xs text-primary">F4 · DICTAMEN</strong>
-        <span class="display-block font-body-3xs text-base-dark">Colegiado 2 Peritos (FO-F4-08, FO-F4-09, FO-F4-10)</span>
-      </a>
-    </div>
-    <div class="tablet:grid-col-2 mobile-lg:grid-col-4 margin-bottom-1">
-      <a href="/flujo" class="display-block bg-white padding-1 radius-sm border-1px border-base-lighter text-no-underline text-ink">
-        <strong class="font-mono-3xs text-primary">F5 · CIERRE</strong>
-        <span class="display-block font-body-3xs text-base-dark">Devolución, Sanitización y Auditoría (FO-F5-11..13)</span>
-      </a>
-    </div>
-  </div>
-  <div class="display-flex flex-wrap grid-gap-05 margin-top-05">
-    <span class="usa-tag bg-primary-darker text-white font-mono-3xs">ISO/IEC 27037:2012</span>
-    <span class="usa-tag bg-primary-darker text-white font-mono-3xs">ISO/IEC 27042:2015</span>
-    <span class="usa-tag bg-primary text-white font-mono-3xs">NIST SP 800-101 / 800-86</span>
-    <span class="usa-tag bg-accent-warm-dark text-ink text-bold font-mono-3xs">MUCC-2017 (Consignación)</span>
-    <span class="usa-tag bg-success text-white font-mono-3xs">COPP Arts. 187, 223–225 · LMDFE Arts. 4, 7</span>
-  </div>
-</SummaryBox>
-
-<!-- Tabla de Expedientes Activos -->
-<section class="margin-bottom-4" aria-labelledby="expedientes-curso-heading">
-  <div class="grid-row flex-justify flex-align-center margin-bottom-2">
-    <h2 class="margin-0 font-heading-md" id="expedientes-curso-heading">Expedientes Periciales en Curso</h2>
-    <a href="/casos" class="usa-link font-sans-2xs">Ver todos los casos →</a>
+    <a href="/casos" class="usa-link font-sans-2xs">Directorio completo →</a>
   </div>
 
   <div class="usa-table-container--scrollable" tabindex="0">
@@ -161,12 +116,12 @@ import SummaryBox from '../uswds/SummaryBox.astro';
       <thead>
         <tr>
           <th scope="col">N° Expediente</th>
-          <th scope="col">Tipología Forense</th>
+          <th scope="col">Tipología</th>
           <th scope="col">Consignante / C.I.</th>
-          <th scope="col">Dispositivo Evidencia</th>
+          <th scope="col">Soporte Consignado</th>
           <th scope="col">Fase Actual</th>
           <th scope="col">Integridad</th>
-          <th scope="col">Acciones</th>
+          <th scope="col">Acción Directa</th>
         </tr>
       </thead>
       <tbody id="tabla-casos-body">
@@ -178,59 +133,56 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </section>
 
-<!-- Tarjetas Rápidas de Planillas y Normativa -->
-<div class="grid-row grid-gap-2">
-  <div class="grid-col-12 tablet:grid-col-6">
-    <div class="usa-card bg-white padding-3 radius-md shadow-1 border-1px border-base-lighter height-full display-flex flex-column flex-justify-between">
-      <div>
-        <h3 class="margin-top-0 margin-bottom-1 font-heading-sm">Planillas Oficiales en Folio (216mm × 330mm)</h3>
-        <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
-          Formatos reglamentarios con membrete oficial, dactiloscopía bilateral y márgenes de impresión exactos:
-        </p>
-        <ul class="usa-list font-body-2xs">
-          <li><a href="/planillas/acta-consentimiento" class="usa-link">Acta de Consentimiento Informado (FO-F0-01)</a></li>
-          <li><a href="/planillas/acta-entrevista" class="usa-link">Acta de Entrevista Forense al Consignante (FO-F0-02)</a></li>
-          <li><a href="/planillas/acta-obtencion" class="usa-link">Acta de Obtención y Preservación Inicial (FO-F1-03)</a></li>
-          <li><a href="/planillas/planilla-prcc" class="usa-link">Planilla de Cadena de Custodia PRCC (FO-F1-04)</a></li>
-          <li><a href="/planillas/acta-desprecintado" class="usa-link">Acta de Desprecintado en Laboratorio (FO-F2-05)</a></li>
-          <li><a href="/planillas/acta-dictamen" class="usa-link">Dictamen Pericial Oficial Forense (FO-F4-08)</a></li>
-        </ul>
-      </div>
-      <div class="border-top-1px border-base-lighter padding-top-2 margin-top-2">
-        <a href="/planillas" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
-          Ver Catálogo Completo (13 Planillas)
-        </a>
-      </div>
+<!-- 4. GUÍA RÁPIDA EN ACORDEÓN USWDS (PROGRESSIVE DISCLOSURE — CERO SOBRECARGA COGNITIVA) -->
+<Accordion
+  id="dashboard-guia-ciclo-iso"
+  title="Guía de Referencia Rápida: Las 6 Fases del Ciclo Pericial ISO (F0 – F5) y Fuente RAG Informática"
+  expanded={false}
+  className="margin-bottom-2"
+>
+  <p class="margin-top-0 margin-bottom-105 font-body-2xs">
+    Todo el procedimiento pericial por consignación se fundamenta exclusivamente en el corpus verificado
+    <code>RAG/Informacion_docling_rag/Informatica</code>:
+  </p>
+  <div class="grid-row grid-gap-1 margin-bottom-105">
+    <div class="tablet:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-base-lightest padding-105 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F0 · APERTURA Y LEGITIMACIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Consentimiento (FO-F0-01) y Entrevista (FO-F0-02) · LEDCI Arts. 20–22</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-base-lightest padding-105 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F1 · IDENTIFICACIÓN Y RECOLECCIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Fijación 360°, Faraday (FO-F1-03) y PRCC (FO-F1-04) · ISO 27037 / MUCC-2017</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-base-lightest padding-105 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F2 · ADQUISICIÓN Y PRESERVACIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Desprecintado, Write-Blocker y Hash SHA-256 (FO-F2-05) · NIST 800-101 / 800-86</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-base-lightest padding-105 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F3 · ANÁLISIS E INTERPRETACIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Copia de trabajo, Audio FFT (FO-F3-06) y UX vs SQLite (FO-F3-07) · ISO 27042</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-base-lightest padding-105 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F4 · INFORME PERICIAL Y DICTAMEN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Colegiado 2 Peritos (FO-F4-08, FO-F4-09, FO-F4-10) · COPP 223–225 / UNE 197010</span>
+      </a>
+    </div>
+    <div class="tablet:grid-col-4 margin-bottom-1">
+      <a href="/flujo" class="display-block bg-base-lightest padding-105 radius-sm border-1px border-base-lighter text-no-underline text-ink">
+        <strong class="font-mono-3xs text-primary">F5 · ENTREGA Y SANITIZACIÓN</strong>
+        <span class="display-block font-body-3xs text-base-dark">Devolución, Borrado y Auditoría (FO-F5-11..13) · ISO 27002 A.8.10 / UNE 71505</span>
+      </a>
     </div>
   </div>
-
-  <div class="grid-col-12 tablet:grid-col-6">
-    <div class="usa-card bg-white padding-3 radius-md shadow-1 border-1px border-base-lighter height-full display-flex flex-column flex-justify-between">
-      <div>
-        <h3 class="margin-top-0 margin-bottom-1 font-heading-sm">Admisibilidad y Blindaje Procesal</h3>
-        <p class="font-body-2xs text-base-dark margin-top-0 margin-bottom-1">
-          Garantías procesales activas para evitar la nulidad conforme al Art. 187 del COPP:
-        </p>
-        <ul class="usa-list font-body-2xs">
-          <li>
-            <strong>Bloqueadores de Escritura (Write-Blockers):</strong> Obligatorios para la clonación bit-a-bit en ISO 27037 §5.4.4.
-          </li>
-          <li>
-            <strong>Sellado Génesis SHA-256:</strong> Cálculo bit-a-bit antes de cualquier análisis o triaje pericial.
-          </li>
-          <li>
-            <strong>Dactiloscopía Bilateral:</strong> Pulgar izquierdo y pulgar derecho en todas las actas judiciales.
-          </li>
-        </ul>
-      </div>
-      <div class="border-top-1px border-base-lighter padding-top-2 margin-top-2">
-        <a href="/normativa" class="usa-button usa-button--outline font-sans-xs padding-x-2 padding-y-1">
-          Consultar Base Normativa RAG
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+</Accordion>
 
 <script>
   import { phpApi } from '../../lib/data/phpApi';
@@ -239,39 +191,40 @@ import SummaryBox from '../uswds/SummaryBox.astro';
 
   const PASOS_INFO: Record<string, { titulo: string; desc: string; url: string }> = {
     F0: {
-      titulo: 'Formalizar Apertura y Consentimiento Informado (F0)',
-      desc: 'El expediente requiere legitimar la posesión, firmar el Acta de Consentimiento Hábeas Data (FO-F0-01) y la Entrevista Forense (FO-F0-02).',
+      titulo: 'Paso 1 de 6 — Formalizar Apertura y Consentimiento Informado (F0)',
+      desc: 'Legitime al consignante titular, suscriba el Acta de Consentimiento (FO-F0-01) y levante la Entrevista Forense (FO-F0-02).',
       url: '/flujo',
     },
     F1: {
-      titulo: 'Fijación Fotográfica y Aislamiento Faraday (F1)',
-      desc: 'Completar fijación 360°, activar Modo Avión, precintar en bolsa Faraday blindada y aperturar la Planilla PRCC (FO-F1-04).',
+      titulo: 'Paso 2 de 6 — Fijación Fotográfica 360° y Aislamiento Faraday (F1)',
+      desc: 'Documente estado inicial, active Modo Avión, selle en Bolsa Faraday con precinto numerado y abra la Planilla PRCC (FO-F1-04).',
       url: '/flujo',
     },
     F2: {
-      titulo: 'Adquisición Lógica y Hash Génesis SHA-256 (F2)',
-      desc: 'Desprecintar en laboratorio bajo write-blocker, extraer base SQLite msgstore.db y verificar MATCH de hash SHA-256.',
+      titulo: 'Paso 3 de 6 — Adquisición Forense y Hash Génesis SHA-256 (F2)',
+      desc: 'Verifique indemnidad del precinto en laboratorio (FO-F2-05), adquiera copia de trabajo y compruebe MATCH del hash SHA-256.',
       url: '/flujo',
     },
     F3: {
-      titulo: 'Análisis Forense Acústico y Heurística UX (F3)',
-      desc: 'Cotejar notas de voz en Sonic Visualiser (espectrograma FFT) y verificar correspondencia entre pantalla y base cruda.',
+      titulo: 'Paso 4 de 6 — Análisis Reproducible sobre Copia de Trabajo (F3)',
+      desc: 'Ejecute examen acústico FFT (FO-F3-06) y cotejo de capturas/interfaz contra registros SQLite (FO-F3-07) sin tocar el original.',
       url: '/flujo',
     },
     F4: {
-      titulo: 'Emisión del Dictamen Pericial Colegiado (F4)',
-      desc: 'Redactar conclusiones técnicas motivadas y firmar bilateralmente el Dictamen Oficial (FO-F4-08) entre dos peritos titulados.',
+      titulo: 'Paso 5 de 6 — Emisión del Dictamen Pericial Colegiado (F4)',
+      desc: 'Redacte conclusiones motivadas con cita de hashes SHA-256 y suscriba bilateralmente el Dictamen Oficial (FO-F4-08) entre dos peritos.',
       url: '/flujo',
     },
     F5: {
-      titulo: 'Disposición Final y Sanitización NIST 800-88 (F5)',
-      desc: 'Devolver dispositivo al titular, certificar desincorporación de copias lógicas temporales y archivar auditoría.',
+      titulo: 'Paso 6 de 6 — Disposición Final, Sanitización y Auditoría (F5)',
+      desc: 'Entregue resultados (FO-F5-11), certifique borrado seguro de copias temporales (FO-F5-12) y selle la línea de auditoría (FO-F5-13).',
       url: '/flujo',
     },
   };
 
   function renderizarFilaDashboard(c: CasoCMS): string {
     const tipo = (c.tipoProyecto || '').replace('forense_', '').toUpperCase();
+    const fase = c.faseIsoActual || c.estado || 'F0';
     return `
       <tr>
         <th scope="row">
@@ -290,24 +243,15 @@ import SummaryBox from '../uswds/SummaryBox.astro';
           <code class="font-mono-3xs">S/N: ${c.dispositivo_imei || c.evidenciaSerial || 'N/A'}</code>
         </td>
         <td>
-          <span class="usa-tag bg-primary-darker text-white font-mono-3xs">${c.estado || c.faseIsoActual || 'F0'}</span>
+          <span class="usa-tag bg-primary-darker text-white font-mono-3xs">${fase}</span>
         </td>
         <td>
           <span class="usa-tag bg-success text-white font-mono-3xs">100% CONFORME</span>
         </td>
         <td>
-          <ul class="usa-button-group flex-wrap">
-            <li class="usa-button-group__item">
-              <a href="/flujo?casoId=${c.id}" class="usa-button usa-button--outline font-sans-3xs padding-x-1 padding-y-05">
-                Ciclo ISO
-              </a>
-            </li>
-            <li class="usa-button-group__item">
-              <a href="/planillas/planilla-prcc?casoId=${c.id}&modo=datos" class="usa-button font-sans-3xs padding-x-1 padding-y-05">
-                PRCC
-              </a>
-            </li>
-          </ul>
+          <a href="/flujo?casoId=${c.id}" class="usa-button font-sans-3xs padding-x-105 padding-y-05">
+            Continuar ${fase} →
+          </a>
         </td>
       </tr>
     `;
@@ -334,8 +278,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     if (kpiEvidencias) kpiEvidencias.textContent = String(sincronizados.length);
 
     if (sincronizados.length === 0) {
-      if (heroTit) heroTit.textContent = 'Aperturar Primer Expediente Pericial';
-      if (heroDesc) heroDesc.textContent = 'No hay expedientes activos en el laboratorio. Inicie un nuevo encargo con fijación y cadena de custodia.';
+      if (heroTit) heroTit.textContent = 'Paso Inicial: Aperturar Primer Expediente Pericial';
+      if (heroDesc) heroDesc.textContent = 'No hay expedientes activos. Registre el soporte consignado para iniciar guiado paso a paso desde la Fase F0.';
       if (heroBtn) {
         heroBtn.href = '/casos?nuevo=1';
         heroBtn.textContent = 'Aperturar Expediente →';
@@ -344,7 +288,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
         tbody.innerHTML = `
           <tr>
             <td colspan="7">
-              No hay expedientes registrados. Comience en <a href="/casos?nuevo=1" class="usa-link">Expedientes Periciales</a>.
+              No hay expedientes registrados. Comience en <a href="/casos?nuevo=1" class="usa-link text-bold">Aperturar Expediente</a>.
             </td>
           </tr>
         `;
@@ -352,9 +296,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
       return;
     }
 
-    // Expediente más prioritario / reciente
     const casoActivo = sincronizados[0];
-    const fase = casoActivo.estado || casoActivo.faseIsoActual || 'F0';
+    const fase = String(casoActivo.faseIsoActual || casoActivo.estado || 'F0');
     const info = PASOS_INFO[fase] || PASOS_INFO.F0;
 
     if (heroTit) heroTit.textContent = `${casoActivo.numeroCaso}: ${info.titulo}`;

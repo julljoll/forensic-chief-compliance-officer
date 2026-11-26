@@ -266,7 +266,7 @@ export function exportPlanillaToGoogleDocs(caso: any, title: string = 'Planilla_
       <tr><td class="field-label">Apellidos y Nombres Consignante:</td><td class="field-value">${c.solicitante_nombre || ''}</td></tr>
       <tr><td class="field-label">Cédula de Identidad / RIF:</td><td class="field-value">${c.solicitante_cedula || ''}</td></tr>
       <tr><td class="field-label">Fecha y Hora de Actuación:</td><td class="field-value">${fecha}</td></tr>
-      <tr><td class="field-label">Plataformas Forenses:</td><td class="field-value">IPED Forensics v4.1, PhotoHolmes Python Engine (ELA), PyOgg Audio Engine</td></tr>
+      <tr><td class="field-label">Plataformas Forenses:</td><td class="field-value">IPED Forensics v4.1, ALEAPP / Avilla Forensics, Sonic Visualiser (FFT)</td></tr>
     </table>
 
     <!-- 2.0 FORMA DE OBTENCIÓN -->
@@ -275,9 +275,9 @@ export function exportPlanillaToGoogleDocs(caso: any, title: string = 'Planilla_
 
     <!-- LEYENDA PROFESIONAL DE AUTENTICIDAD DE AUDIO Y FIDELIDAD -->
     <div class="legend-box">
-      <div class="legend-title">LEYENDA TÉCNICO-PERICIAL DE AUTENTICIDAD Y FIDELIDAD ACÚSTICA (OPUS / PyOgg):</div>
+      <div class="legend-title">LEYENDA TÉCNICO-PERICIAL DE AUTENTICIDAD Y FIDELIDAD ACÚSTICA (OPUS / FFT):</div>
       <div class="legend-desc">
-        El análisis espectrográfico procesado con la librería PyOgg (PyOgg Python Audio Engine) sobre el contenedor nativo Ogg/Opus extraído del directorio de notas de voz de WhatsApp confirma la respuesta frecuencial ininterrumpida (frecuencia de muestreo 48,000 Hz / 48 kHz). La preservación estricta de la estructura de paquetes OggS, el alineamiento constante de los marcos de bit-rate variable (VBR) y la continuidad armónica en los formantes de voz (3.4 kHz) certifican científicamente que el audio ES 100% FIEL, INTACTO Y AUTÉNTICO. NO PRESENTA EDICIONES, CORTES, EMPALMES, SOBREPOSICIÓN DE PISTAS NI RECOMPRESIÓN DE TERCEROS.
+        El análisis espectrográfico procesado mediante Transformada Rápida de Fourier (FFT) en Sonic Visualiser / Praat sobre el contenedor nativo Ogg/Opus confirma la respuesta frecuencial ininterrumpida (48,000 Hz / 48 kHz), preservación estricta de paquetes OggS y continuidad armónica de formantes vocálicos, certificando que el audio es fiel, íntegro y auténtico sin cortes ni empalmes.
       </div>
     </div>
 

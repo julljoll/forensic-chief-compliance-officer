@@ -10,7 +10,7 @@ export default defineConfig({
   trailingSlash: 'never',
   integrations: [
     react({
-      include: ['**/islands/**', '**/pdf/**'],
+      include: ['**/islands/**'],
     }),
   ],
   vite: {

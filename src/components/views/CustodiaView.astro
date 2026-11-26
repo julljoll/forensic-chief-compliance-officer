@@ -1,10 +1,12 @@
 ---
 /**
  * SHA256.US — Vista Modular de Cadena de Custodia (PRCC)
+ * UX/UI USWDS con Progressive Disclosure y Fuente Única RAG:
+ * RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md
  */
 import PageHeader from '../uswds/PageHeader.astro';
 import Alert from '../uswds/Alert.astro';
-import SummaryBox from '../uswds/SummaryBox.astro';
+import Accordion from '../uswds/Accordion.astro';
 ---
 <PageHeader
   title="Cadena de Custodia de Evidencias Digitales"
@@ -23,7 +25,7 @@ import SummaryBox from '../uswds/SummaryBox.astro';
 </PageHeader>
 
 <!-- Selector de Expediente en Custodia -->
-<div class="usa-summary-box margin-bottom-3" role="region" aria-labelledby="custodia-caso-titulo">
+<div class="usa-summary-box margin-bottom-205" role="region" aria-labelledby="custodia-caso-titulo">
   <div class="usa-summary-box__body">
     <div class="grid-row grid-gap flex-align-center">
       <div class="tablet:grid-col-7">
@@ -46,17 +48,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </div>
 </div>
 
-<Alert
-  type="warning"
-  heading="Garantía de Intangibilidad y Blindaje Penal (COPP Art. 187)"
-  className="margin-bottom-3"
->
-  Toda ruptura en la trazabilidad del precinto, omisión de firmas en la Planilla PRCC o falta de registro en la entrega/recepción
-  acarreará la nulidad absoluta de la evidencia digital conforme al artículo 181 y 187 del Código Orgánico Procesal Penal.
-</Alert>
-
 <!-- Metadatos de Evidencia -->
-<ul class="usa-card-group margin-bottom-3">
+<ul class="usa-card-group margin-bottom-205">
   <li class="usa-card tablet:grid-col-6 desktop:grid-col-3">
     <div class="usa-card__container">
       <div class="usa-card__header">
@@ -106,26 +99,8 @@ import SummaryBox from '../uswds/SummaryBox.astro';
   </li>
 </ul>
 
-<SummaryBox
-  heading="Guía de Custodia por Consignación — Manual Único de Cadena de Custodia (MUCC-2017)"
-  headingId="summary-mucc-2017"
-  className="margin-bottom-3"
->
-  <ul class="usa-list font-body-2xs">
-    <li>
-      <strong>1. Modalidad de Obtención (N° 3 — Consignación):</strong> Entrega física por el titular o interlocutor legítimo de dispositivos móviles (para validar imágenes, redes sociales, notas de voz, capturas de pantalla) o medios digitales (CD, disco duro, reloj, PC, servidor, cámara DVR).
-    </li>
-    <li>
-      <strong>2. Tipología de Embalaje y Aislamiento:</strong> Bolsa Faraday con Modo Avión en móviles/wearables, o empaque antiestático con bloqueo de escritura (Write-Blocker) en medios de almacenamiento, bajo precinto numerado.
-    </li>
-    <li>
-      <strong>3. Registro de Eslabones (PRCC Reverso):</strong> Cada apertura en laboratorio (`FO-F2-05`) o devolución final (`FO-F5-11`) debe asentarse cronológicamente con N° de precinto roto y nuevo precinto asignado.
-    </li>
-  </ul>
-</SummaryBox>
-
-<!-- Historial de Transferencias -->
-<section class="margin-bottom-4" aria-labelledby="historial-transferencias-heading">
+<!-- Historial de Transferencias (Foco Operativo) -->
+<section class="margin-bottom-3" aria-labelledby="historial-transferencias-heading">
   <div class="grid-row grid-gap flex-justify flex-align-center margin-bottom-2">
     <div class="tablet:grid-col-8">
       <h2 class="margin-0 font-heading-md" id="historial-transferencias-heading">
@@ -160,6 +135,37 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     </table>
   </div>
 </section>
+
+<!-- Guía Normativa en Acordeón USWDS (Progressive Disclosure) -->
+<Accordion
+  id="custodia-guia-mucc2017"
+  title="Guía de Custodia por Consignación y Garantía de Intangibilidad (MUCC-2017 · COPP Art. 187)"
+  expanded={false}
+  className="margin-bottom-3"
+>
+  <Alert
+    type="warning"
+    heading="Garantía de Intangibilidad y Blindaje Penal (COPP Art. 187)"
+    className="margin-bottom-2"
+  >
+    Toda ruptura en la trazabilidad del precinto, omisión de firmas en la Planilla PRCC o falta de registro en la entrega/recepción
+    compromete la validez de la evidencia digital conforme a los artículos 181 y 187 del COPP y el MUCC-2017.
+  </Alert>
+  <ul class="usa-list font-body-2xs">
+    <li>
+      <strong>1. Modalidad de Obtención (N° 3 — Consignación):</strong> Entrega física por el titular o interlocutor legítimo de dispositivos móviles o medios digitales.
+    </li>
+    <li>
+      <strong>2. Tipología de Embalaje y Aislamiento:</strong> Bolsa Faraday con Modo Avión en móviles/wearables, o empaque antiestático con bloqueo de escritura (Write-Blocker) en medios de almacenamiento, bajo precinto numerado.
+    </li>
+    <li>
+      <strong>3. Registro de Eslabones (PRCC Reverso):</strong> Cada apertura en laboratorio (<code>FO-F2-05</code>) o devolución final (<code>FO-F5-11</code>) debe asentarse cronológicamente con N° de precinto roto y nuevo precinto asignado.
+    </li>
+    <li>
+      <strong>Fuente RAG:</strong> <code>RAG/Informacion_docling_rag/Informatica/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md</code>
+    </li>
+  </ul>
+</Accordion>
 
 <script>
   import { idbGetAll } from '../../lib/data/idb';
@@ -301,4 +307,3 @@ import SummaryBox from '../uswds/SummaryBox.astro';
     initCustodia();
   }
 </script>
-

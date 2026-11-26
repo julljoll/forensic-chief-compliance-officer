@@ -52,6 +52,7 @@ export interface Normativa {
   version: string;
   fechaVigencia: string;
   urlReferencia?: string;
+  hashPdfSha256?: string;
   articulos?: string[];
   activa: boolean;
 }

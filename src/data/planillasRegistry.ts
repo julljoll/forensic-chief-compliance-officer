@@ -1,652 +1,413 @@
 /**
  * planillasRegistry.ts
  * ─────────────────────────────────────────────────────────────────────────────
- * Registro Unificado y Dinámico de Planillas Forenses SHA256.US
- * Proporciona el schema centralizado de títulos, normativas y secciones enumeradas
- * para que las portadas (Folio 01) se actualicen automáticamente si se modifica
- * la estructura de cualquier planilla.
+ * Registro Unificado y Dinámico de las 13 Planillas Oficiales SHA256.US
+ * Verificado exclusivamente contra RAG/Informacion_docling_rag/Informatica/.
  */
 
 export interface PlanillaSectionDef {
-  numero: string;      // ej. "1.0", "2.0", "3.0"
-  titulo: string;      // ej. "DATOS DE LA ACTUACIÓN FORENSE PRIVADA"
-  descripcion: string; // Resumen del contenido de la sección
-  camposCount?: number;// Cantidad aproximada de campos u objetos
+  numero: string;
+  titulo: string;
+  descripcion: string;
+  camposCount?: number;
 }
 
 export interface PlanillaRegistryDef {
   id: string;
   codigo: string;
+  codigoFolio: string;
+  slug: string;
+  faseIso: 'F0' | 'F1' | 'F2' | 'F3' | 'F4' | 'F5';
   nombreOficial: string;
   subtitulo: string;
   etapaLegal: string;
   normativas: string[];
+  archivosRag: string[];
   sections: PlanillaSectionDef[];
 }
 
-export const PLANILLAS_REGISTRY: Record<string, PlanillaRegistryDef> = {
-  'acta-obtencion': {
-    id: 'acta-obtencion',
-    codigo: 'FO-SHA256-ACT-001',
-    nombreOficial: 'ACTA DE OBTENCIÓN POR CONSIGNACIÓN VOLUNTARIA PRIVADA',
-    subtitulo: 'RECEPCIÓN DE DISPOSITIVO PARA ANÁLISIS FORENSE EN LABORATORIO PRIVADO SHA256.US',
-    etapaLegal: 'ETAPA 1: Consignación & Consentimiento Informado',
-    normativas: ['MUCC-2017 Fase 1', 'ISO/IEC 27037 Sec. 6', 'COPP Art. 186', 'NIST SP 800-101'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'DATOS DE LA ACTUACIÓN FORENSE PRIVADA',
-        descripcion: 'Sede de recepción, fecha, hora, expediente y perito actuante.',
-        camposCount: 4,
-      },
-      {
-        numero: '2.0',
-        titulo: 'IDENTIFICACIÓN COMPLETA DEL CONSIGNANTE PRIVADO',
-        descripcion: 'Nombres, C.I./RIF, calidad jurídica y datos de contacto.',
-        camposCount: 5,
-      },
-      {
-        numero: '3.0',
-        titulo: 'ESPECIFICACIÓN TÉCNICA RIGUROSA DEL DISPOSITIVO',
-        descripcion: 'Marca, modelo, N° serie, IMEI, capacidad y características físicas.',
-        camposCount: 8,
-      },
-      {
-        numero: '4.0',
-        titulo: 'ESTADO FÍSICO Y OBSERVACIONES VISUALES',
-        descripcion: 'Condición física de pantalla, carcasa, SIMs, tarjetas SD y accesorios. Observaciones de recepción.',
-        camposCount: 5,
-      },
-      {
-        numero: '5.0',
-        titulo: 'ALCANCE Y AUTORIZACIÓN EXPRESA DEL EXAMEN PERICIAL',
-        descripcion: 'Finalidad del peritaje, límites normativos y COPP Art. 225.',
-        camposCount: 3,
-      },
-      {
-        numero: '6.0',
-        titulo: 'CUSTODIA INICIAL, HASH SHA-256 Y EMPACADO EN BOLSA FARADAY / PRECINTO',
-        descripcion: 'Hash SHA-256 calculado al momento del embalaje (MUCC-2017 p. 37), N° de precinto, bolsa Faraday y primer custodio.',
-        camposCount: 5,
-      },
-      {
-        numero: '7.0',
-        titulo: 'ANTECEDENTES, MOTIVO DE LA CONSIGNACIÓN Y FIRMAS DE CONFORMIDAD',
-        descripcion: 'Naración de hechos que motivan la consignación, firma consignante, perito responsable y huellas dactilares.',
-        camposCount: 3,
-      },
-    ],
-  },
+const BASE = 'RAG/Informacion_docling_rag/Informatica';
 
+export const PLANILLAS_REGISTRY: Record<string, PlanillaRegistryDef> = {
   'acta-consentimiento': {
     id: 'acta-consentimiento',
     codigo: 'FO-SHA256-ACT-002',
-    nombreOficial: 'ACTA DE CONSENTIMIENTO INFORMADO & HÁBEAS DATA',
-    subtitulo: 'AUTORIZACIÓN EXPLÍCITA DE INSPECCIÓN TÉCNICO-PERICIAL Y EXENCIÓN DE RESPONSABILIDAD',
-    etapaLegal: 'ETAPA 1: Consignación & Consentimiento Informado',
-    normativas: ['CRBV Arts. 28 y 60', 'LMD FE Arts. 4 y 6', 'ISO/IEC 27701', 'COPP Art. 225'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'DECLARACIÓN DE LEGITIMACIÓN DE POSESIÓN Y TITULARIDAD',
-        descripcion: 'Acreditación jurada del titular o representante corporativo legitimado.',
-        camposCount: 4,
-      },
-      {
-        numero: '2.0',
-        titulo: 'AUTORIZACIÓN EXPRESA DE INSPECCIÓN TÉCNICO-PERICIAL',
-        descripcion: 'Consentimiento libre de coerción para extracción y análisis forense.',
-        camposCount: 3,
-      },
-      {
-        numero: '3.0',
-        titulo: 'POLÍTICA DE HÁBEAS DATA Y PROTECCIÓN DE DATOS SENSIBLES',
-        descripcion: 'Cláusula de confidencialidad, manejo de datos de terceros y privacidad.',
-        camposCount: 4,
-      },
-      {
-        numero: '4.0',
-        titulo: 'EXENCIÓN DE RESPONSABILIDAD LEGAL Y ALCANCE PERICIAL',
-        descripcion: 'Deslinde de responsabilidad sobre hallazgos ilícitos presistentes.',
-        camposCount: 3,
-      },
-      {
-        numero: '5.0',
-        titulo: 'FIRMAS Y REGISTRO DACTILAR DE AUTORIZACIÓN',
-        descripcion: 'Firma autógrafa del concedente y confirmación dactilar.',
-        camposCount: 3,
-      },
+    codigoFolio: 'FO-F0-01',
+    slug: 'acta-consentimiento',
+    faseIso: 'F0',
+    nombreOficial: 'ACTA DE CONSENTIMIENTO INFORMADO Y AUTORIZACIÓN DE ACCESO',
+    subtitulo: 'AUTORIZACIÓN EXPRESA POR CONSIGNACIÓN, HÁBEAS DATA Y EXCLUSIÓN DE ANTIJURIDICIDAD',
+    etapaLegal: 'FASE F0: Apertura y Legitimación',
+    normativas: ['CRBV Arts. 28, 48 y 60', 'LEDCI Arts. 20–22', 'LPPC Art. 2', 'ISO/IEC 27037 §5.2'],
+    archivosRag: [
+      `${BASE}/Ley Especial de Delitos informáticos (2001). Publicado en Gaceta Oficial Nº 37.313 .md`,
+      `${BASE}/ley-sobre-proteccion-a-la-privacidad-de-las-comunicaciones.md`,
+      `${BASE}/ISO IEC 27037-2012.md`,
+      `${BASE}/Normativas SUSCERTE Forense Digital y Firma Electronica.md`,
     ],
-  },
-
-  'prcc': {
-    id: 'prcc',
-    codigo: 'FO-SHA256-PRCC-001',
-    nombreOficial: 'PLANILLA DE REGISTRO DE CADENA DE CUSTODIA (PRCC)',
-    subtitulo: 'REGISTRO INMUTABLE DE TRAZABILIDAD, TRASPASOS Y CUSTODIA DE EVIDENCIA DIGITAL',
-    etapaLegal: 'ETAPA 2: Custodia & Laboratorio Forense',
-    normativas: ['MUCC-2017 Control', 'COPP Art. 187', 'ISO/IEC 27037 Sec. 7', 'RFC 3161'],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'REGISTRO GENERAL DE EVIDENCIA DIGITAL (PRCC-COPP)',
-        descripcion: 'Identificación unívoca de la pieza, N° PRCC y correlativo de expediente.',
-        camposCount: 5,
-      },
-      {
-        numero: '2.0',
-        titulo: 'CARACTERÍSTICAS TÉCNICAS Y MARCAS DE IDENTIFICACIÓN',
-        descripcion: 'Número de serie, IMEI, hash SHA-256 de origen y precinto primario.',
-        camposCount: 6,
-      },
-      {
-        numero: '3.0',
-        titulo: 'HISTORIAL DE TRASPASOS, CUSTODIOS Y CAMBIOS DE CUSTODIA',
-        descripcion: 'Matriz cronológica de entregas, recepciones, motivos y firmas.',
-        camposCount: 8,
-      },
-      {
-        numero: '4.0',
-        titulo: 'ALMACENAMIENTO EN BÓVEDA PRIVADA DE EVIDENCIAS',
-        descripcion: 'Ubicación física en caja fuerte / jaula Faraday y condiciones térmicas.',
-        camposCount: 4,
-      },
-      {
-        numero: '5.0',
-        titulo: 'CERTIFICACIÓN DE INTEGRIDAD Y VERIFICACIÓN SHA-256',
-        descripcion: 'Comprobación de no alteración y firma del custodio final.',
-        camposCount: 3,
-      },
-    ],
-  },
-
-  'acta-desprecintado': {
-    id: 'acta-desprecintado',
-    codigo: 'FO-SHA256-ACT-003',
-    nombreOficial: 'ACTA DE APERTURA Y DESPRECINTADO EN LABORATORIO',
-    subtitulo: 'APERTURA FORMAL DE CONTENEDOR DE EVIDENCIA Y VERIFICACIÓN DE INTEGRIDAD DE PRECINTO',
-    etapaLegal: 'ETAPA 2: Custodia & Laboratorio Forense',
-    normativas: ['MUCC Fase 2', 'ISO/IEC 27037 Sec. 7.2', 'COPP Art. 187'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'IDENTIFICACIÓN DEL PAQUETE Y PRECINTO DE SEGURIDAD',
-        descripcion: 'Verificación del N° de precinto recibido contra el registro PRCC.',
-        camposCount: 4,
-      },
-      {
-        numero: '2.0',
-        titulo: 'COMPROBACIÓN DE INTEGRIDAD DE LA BOLSA FARADAY / EMBALAJE',
-        descripcion: 'Inspección visual de indemnidad física del contenedor y roturas.',
-        camposCount: 4,
-      },
-      {
-        numero: '3.0',
-        titulo: 'REMOCIÓN CONTROLADA DEL PRECINTO Y EXTRACCIÓN DE EVIDENCIA',
-        descripcion: 'Corte de precinto en presencia de testigos/perito y extracción limpia.',
-        camposCount: 5,
-      },
-      {
-        numero: '4.0',
-        titulo: 'REGISTRO FOTOGRÁFICO DE APERTURA Y VERIFICACIÓN VISUAL',
-        descripcion: 'Constancia gráfica de la apertura y coincidencia de seriales.',
-        camposCount: 3,
-      },
-      {
-        numero: '5.0',
-        titulo: 'FIRMAS DE CERTIFICACIÓN DEL ANALISTA FORENSE',
-        descripcion: 'Certificación del perito de laboratorio actuante.',
-        camposCount: 3,
-      },
+      { numero: '1.0', titulo: 'DECLARACIÓN DE LEGITIMACIÓN, TITULARIDAD Y CALIDAD DE INTERLOCUTOR', descripcion: 'Acreditación del consignante titular o interlocutor directo.', camposCount: 4 },
+      { numero: '2.0', titulo: 'AUTORIZACIÓN EXPRESA DE ADQUISICIÓN FORENSE POR CONSIGNACIÓN', descripcion: 'Identificación del dispositivo/medio, taxonomía y alcance técnico.', camposCount: 5 },
+      { numero: '3.0', titulo: 'EXCLUSIÓN DE ANTIJURIDICIDAD Y PRIVACIDAD DE COMUNICACIONES', descripcion: 'Consentimiento libre e informado conforme a LEDCI Arts. 20–21 y CRBV Art. 60.', camposCount: 2 },
+      { numero: '4.0', titulo: 'EXENCIÓN DE RESPONSABILIDAD TÉCNICA', descripcion: 'Alcance sobre datos preexistentes al momento de la consignación.', camposCount: 1 },
+      { numero: '5.0', titulo: 'CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES BILATERALES', descripcion: 'Firma autógrafa y huellas dactilares (Pulgar Izq. y Der.) de consignante y perito.', camposCount: 4 },
     ],
   },
 
   'acta-entrevista': {
     id: 'acta-entrevista',
     codigo: 'FO-SHA256-ACT-004',
-    nombreOficial: 'ACTA DE ENTREVISTA TÉCNICO-PERICIAL PRIVADA',
-    subtitulo: 'DECLARACIÓN DE CONTEXTO FORENSE Y FACILITACIÓN DE CREDENCIALES DE ACCESO',
-    etapaLegal: 'ETAPA 2: Custodia & Laboratorio Forense',
-    normativas: ['COPP Art. 153', 'MUCC-2017 Entrevista', 'Redacción Forense Privada'],
+    codigoFolio: 'FO-F0-02',
+    slug: 'acta-entrevista',
+    faseIso: 'F0',
+    nombreOficial: 'ACTA DE ENTREVISTA TÉCNICO-PERICIAL AL CONSIGNANTE',
+    subtitulo: 'FIJACIÓN DE DECLARACIONES, CREDENCIALES DE ACCESO Y CONTEXTO BAJO JURAMENTO',
+    etapaLegal: 'FASE F0: Apertura y Legitimación',
+    normativas: ['MUCC-2017', 'CRBV Art. 49 ord. 5°', 'CP Arts. 243 y 246', 'ISO/IEC 27042'],
+    archivosRag: [
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/el peritaje informático.md`,
+    ],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'DATOS GENERALES Y LUGAR DE LA ENTREVISTA',
-        descripcion: 'Sede de recepción, fecha, hora y expediente pericial.',
-        camposCount: 2,
-      },
-      {
-        numero: '2.0',
-        titulo: 'IDENTIFICACIÓN DEL ENTREVISTADO Y CALIDAD JURÍDICA',
-        descripcion: 'Nombres, C.I., contacto, dirección y rol en la investigación.',
-        camposCount: 5,
-      },
-      {
-        numero: '3.0',
-        titulo: 'DECLARACIÓN TÉCNICO-PERICIAL Y ANTECEDENTES',
-        descripcion: 'Marca, modelo y serial del equipo o evidencia relacionada.',
-        camposCount: 2,
-      },
-      {
-        numero: '4.0',
-        titulo: 'CONOCIMIENTO DE DERECHOS Y AUTORIZACIÓN FORENSE',
-        descripcion: 'Declaración detallada sobre claves, antecedentes y contexto.',
-        camposCount: 2,
-      },
-      {
-        numero: '5.0',
-        titulo: 'FIRMAS Y HUELLAS DACTILARES DE LA ENTREVISTA',
-        descripcion: 'Firma de entrevistado y perito entrevistador.',
-        camposCount: 3,
-      },
+      { numero: '1.0', titulo: 'IDENTIFICACIÓN DEL CONSIGNANTE Y NOTIFICACIÓN CONSTITUCIONAL', descripcion: 'Datos de identidad y garantía contra la autoincriminación (CRBV Art. 49 ord. 5°).', camposCount: 5 },
+      { numero: '2.0', titulo: 'CUESTIONARIO TÉCNICO DIRIGIDO A LA EXTRACCIÓN Y VALIDACIÓN JUDICIAL', descripcion: 'Objeto pericial, credenciales, rango cronológico e integridad previa.', camposCount: 5 },
+      { numero: '3.0', titulo: 'DECLARACIÓN DE VERACIDAD Y CONFORMIDAD LEGAL', descripcion: 'Declaración bajo fe de juramento (CP Arts. 243 y 246).', camposCount: 1 },
+      { numero: '4.0', titulo: 'CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES', descripcion: 'Firma y dactiloscopía bilateral de entrevistado y perito.', camposCount: 4 },
+    ],
+  },
+
+  'acta-obtencion': {
+    id: 'acta-obtencion',
+    codigo: 'FO-SHA256-ACT-001',
+    codigoFolio: 'FO-F1-03',
+    slug: 'acta-obtencion',
+    faseIso: 'F1',
+    nombreOficial: 'ACTA DE OBTENCIÓN POR CONSIGNACIÓN Y PRESERVACIÓN',
+    subtitulo: 'RECEPCIÓN FÍSICA, FIJACIÓN 360°, AISLAMIENTO FARADAY Y PRECINTADO NUMERADO',
+    etapaLegal: 'FASE F1: Identificación y Recolección',
+    normativas: ['MUCC-2017 Fase 1', 'COPP Art. 187', 'ISO/IEC 27037 §5.4.2 / §5.4.3', 'NIST SP 800-101'],
+    archivosRag: [
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+      `${BASE}/ISO IEC 27037-2012.md`,
+      `${BASE}/Guidelines on Mobile Device-NIST Special Publication 800-101.md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'DATOS DEL ACTO DE CONSIGNACIÓN Y PRESERVACIÓN', descripcion: 'Sede de recepción, fecha y hora.', camposCount: 2 },
+      { numero: '2.0', titulo: 'IDENTIFICACIÓN COMPLETA DEL CONSIGNANTE', descripcion: 'Nombres, C.I./RIF, teléfono y dirección.', camposCount: 4 },
+      { numero: '3.0', titulo: 'IDENTIFICACIÓN TÉCNICA DEL DISPOSITIVO MÓVIL Y MEDIO DIGITAL', descripcion: 'Taxonomía, marca, modelo, IMEI/serial y estado físico.', camposCount: 6 },
+      { numero: '4.0', titulo: 'OBJETO DEL ENCARGO: ADQUISICIÓN FORENSE POR CONSIGNACIÓN', descripcion: 'Delimitación técnica de pruebas y fines judiciales.', camposCount: 2 },
+      { numero: '5.0', titulo: 'MEDIDAS DE PRESERVACIÓN, EMBALAJE Y AISLAMIENTO ELECTROMAGNÉTICO', descripcion: 'Bolsa Faraday, precinto numerado, modo avión y fijación 360°.', camposCount: 6 },
+      { numero: '6.0', titulo: 'DECLARACIÓN JURADA DE CONSIGNACIÓN Y APERTURA DE CADENA', descripcion: 'Entrega física formal y apertura de Planilla PRCC.', camposCount: 1 },
+      { numero: '7.0', titulo: 'CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES', descripcion: 'Suscripción bilateral consignante-perito receptor.', camposCount: 4 },
+    ],
+  },
+
+  'prcc': {
+    id: 'prcc',
+    codigo: 'FO-SHA256-PRCC-001',
+    codigoFolio: 'FO-F1-04',
+    slug: 'planilla-prcc',
+    faseIso: 'F1',
+    nombreOficial: 'PLANILLA DE REGISTRO DE CADENA DE CUSTODIA (PRCC)',
+    subtitulo: 'REGISTRO INMUTABLE DE TRAZABILIDAD, TRASPASOS Y CUSTODIA DE EVIDENCIA DIGITAL',
+    etapaLegal: 'FASE F1/F2: Cadena de Custodia Continua',
+    normativas: ['MUCC-2017 §I–V', 'COPP Art. 187', 'LMDFE Art. 7', 'ISO/IEC 27037 §6.1'],
+    archivosRag: [
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+      `${BASE}/ISO IEC 27037-2012.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'DATOS GENERALES DE LA CAUSA Y DESPACHO INSTRUCTOR', descripcion: 'N° Causa, N° PRCC, oficio, despacho y sede.', camposCount: 6 },
+      { numero: '2.0', titulo: 'FORMAS DE OBTENCIÓN DE LA EVIDENCIA (MUCC-2017)', descripcion: 'Técnica, Aseguramiento, Consignación y Derivación.', camposCount: 4 },
+      { numero: '3.0', titulo: 'OPERARIOS ACTUANTES EN LA OBTENCIÓN Y PRESERVACIÓN', descripcion: 'Fijación fotográfica 360° y recepción/embalaje Faraday.', camposCount: 4 },
+      { numero: '4.0', titulo: 'DESCRIPCIÓN DETALLADA DE LA EVIDENCIA Y HASH SHA-256', descripcion: 'Soporte físico, contenedor lógico, precinto y hash SHA-256.', camposCount: 4 },
+      { numero: '5.0', titulo: 'REGISTRO CRONOLÓGICO DE TRANSFERENCIAS DE CUSTODIA', descripcion: 'Matriz de entregas, recepciones, motivos y estado del precinto.', camposCount: 6 },
+    ],
+  },
+
+  'acta-desprecintado': {
+    id: 'acta-desprecintado',
+    codigo: 'FO-SHA256-ACT-003',
+    codigoFolio: 'FO-F2-05',
+    slug: 'acta-desprecintado',
+    faseIso: 'F2',
+    nombreOficial: 'ACTA DE DESPRECINTADO Y ADQUISICIÓN LÓGICA EN LABORATORIO',
+    subtitulo: 'APERTURA CONTROLADA, EXTRACCIÓN CON HERRAMIENTA VALIDADA, HASH SHA-256 Y REEMBALAJE',
+    etapaLegal: 'FASE F2: Adquisición y Preservación',
+    normativas: ['ISO/IEC 27037 §5.4.4 / §7.1.3', 'NIST SP 800-101 / 800-86', 'MUCC-2017 Fase Laboratorio', 'LMDFE Art. 7'],
+    archivosRag: [
+      `${BASE}/ISO IEC 27037-2012.md`,
+      `${BASE}/Guidelines on Mobile Device-NIST Special Publication 800-101.md`,
+      `${BASE}/NIST SP 800-86_ingles.md`,
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'DATOS DE APERTURA Y MEDIO CONTROLADO DE LABORATORIO', descripcion: 'Área pericial aislada, fecha y hora.', camposCount: 2 },
+      { numero: '2.0', titulo: 'TRAZABILIDAD DE PRECINTOS: INICIAL Y REEMBALAJE', descripcion: 'Verificación de indemnidad del precinto roto y nuevo precinto asignado.', camposCount: 4 },
+      { numero: '3.0', titulo: 'ADQUISICIÓN LÓGICA / BIT-A-BIT FORENSE Y CÁLCULO DE HASH', descripcion: 'Modalidad, herramienta validada (CENIF), hash SHA-256 y verificación MATCH.', camposCount: 5 },
+      { numero: '4.0', titulo: 'CONSTANCIA DE REEMBALAJE Y RESGUARDO', descripcion: 'Reembalaje del soporte original tras la extracción.', camposCount: 1 },
+      { numero: '5.0', titulo: 'CIERRE LEGAL: FIRMAS COLEGIADAS DE PERITO EXTRACTOR Y CO-PERITO', descripcion: 'Suscripción bilateral de control de calidad en laboratorio.', camposCount: 4 },
+    ],
+  },
+
+  'informe-audio-sonic': {
+    id: 'informe-audio-sonic',
+    codigo: 'FO-SHA256-AUD-002',
+    codigoFolio: 'FO-F3-06',
+    slug: 'planilla-audio-sonic',
+    faseIso: 'F3',
+    nombreOficial: 'PLANILLA DE ANÁLISIS FORENSE DE AUDIO Y ESPECTROGRAMA',
+    subtitulo: 'ANÁLISIS ESPECTROGRÁFICO FFT, DECODIFICACIÓN OPUS 48 KHZ, FORMANTES Y TRAZA ENF',
+    etapaLegal: 'FASE F3: Análisis e Interpretación',
+    normativas: ['ISO/IEC 27042 §7–8', 'LMDFE Arts. 4 y 7', 'LPPC Art. 2', 'CENIF G.O. 39.847'],
+    archivosRag: [
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+      `${BASE}/ley-sobre-proteccion-a-la-privacidad-de-las-comunicaciones.md`,
+      `${BASE}/Creación del CENIF (2012). Centro Nacional de Informática Forense. Publicado en Gaceta Oficial N° 39.847 de fecha 20 de enero..md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'IDENTIFICACIÓN DE LA NOTA DE VOZ / ARCHIVO DE AUDIO Y HASH SHA-256', descripcion: 'Nombre de archivo, hash SHA-256 y herramienta Sonic Visualiser / Praat.', camposCount: 3 },
+      { numero: '2.0', titulo: 'ESPECIFICACIONES TÉCNICAS ACÚSTICAS Y METADATOS DE TRANSMISIÓN', descripcion: 'Frecuencia, canales, profundidad, duración, códec y contenedor.', camposCount: 6 },
+      { numero: '3.0', titulo: 'COTEJO ESPECTROGRÁFICO, CONTINUIDAD Y DETECCIÓN ANTI-DEEPFAKE', descripcion: 'Noise floor, formantes F1–F4, detección de edición y traza ENF 60 Hz.', camposCount: 4 },
+      { numero: '4.0', titulo: 'CONCLUSIONES DEL PERITAJE DE AUDIO', descripcion: 'Valoración de autenticidad e integridad como mensaje de datos (LMDFE Art. 7).', camposCount: 1 },
+      { numero: '5.0', titulo: 'CIERRE LEGAL: FIRMAS COLEGIADAS DE DOS PERITOS', descripcion: 'Co-perito en acústica y perito principal.', camposCount: 4 },
+    ],
+  },
+
+  'informe_audio_sonic': {
+    id: 'informe-audio-sonic',
+    codigo: 'FO-SHA256-AUD-002',
+    codigoFolio: 'FO-F3-06',
+    slug: 'planilla-audio-sonic',
+    faseIso: 'F3',
+    nombreOficial: 'PLANILLA DE ANÁLISIS FORENSE DE AUDIO Y ESPECTROGRAMA',
+    subtitulo: 'ANÁLISIS ESPECTROGRÁFICO FFT, DECODIFICACIÓN OPUS 48 KHZ, FORMANTES Y TRAZA ENF',
+    etapaLegal: 'FASE F3: Análisis e Interpretación',
+    normativas: ['ISO/IEC 27042 §7–8', 'LMDFE Arts. 4 y 7', 'LPPC Art. 2', 'CENIF G.O. 39.847'],
+    archivosRag: [
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'IDENTIFICACIÓN DE LA NOTA DE VOZ / ARCHIVO DE AUDIO Y HASH SHA-256', descripcion: 'Nombre de archivo, hash SHA-256 y herramienta validada.', camposCount: 3 },
+      { numero: '2.0', titulo: 'ESPECIFICACIONES TÉCNICAS ACÚSTICAS', descripcion: 'Parámetros técnicos del flujo de audio.', camposCount: 6 },
+      { numero: '3.0', titulo: 'COTEJO ESPECTROGRÁFICO Y CONTINUIDAD', descripcion: 'Piso de ruido, formantes y verificación de edición.', camposCount: 4 },
+      { numero: '4.0', titulo: 'CONCLUSIONES DEL PERITAJE DE AUDIO', descripcion: 'Veredicto técnico-científico.', camposCount: 1 },
+      { numero: '5.0', titulo: 'CIERRE LEGAL COLEGIADO', descripcion: 'Firmas bilaterales y huellas dactilares.', camposCount: 4 },
+    ],
+  },
+
+  'planilla-evaluacion-ux': {
+    id: 'planilla-evaluacion-ux',
+    codigo: 'FO-SHA256-EVA-001',
+    codigoFolio: 'FO-F3-07',
+    slug: 'planilla-evaluacion-ux',
+    faseIso: 'F3',
+    nombreOficial: 'PLANILLA DE EVALUACIÓN DE INTERFAZ UX Y CALIDAD DE SOFTWARE',
+    subtitulo: 'COTEJO HEURÍSTICO DE CAPTURAS DE PANTALLA Y REDES SOCIALES VS REGISTROS SQLITE / LOGS',
+    etapaLegal: 'FASE F3: Análisis e Interpretación',
+    normativas: ['ISO/IEC 27042 §8', 'LMDFE Art. 4', 'AVILLA-FORENSICS'],
+    archivosRag: [
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+      `${BASE}/analisis forense en android con avilla forensics.md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'APLICACIÓN, RED SOCIAL Y ENTORNO DE EJECUCIÓN', descripcion: 'Software, plataforma y versión analizada.', camposCount: 2 },
+      { numero: '2.0', titulo: 'MATRIZ DE COTEJO FORENSE: INTERFAZ VS SQLITE / LOGS', descripcion: 'Timestamps, estados de envío, JID, detección de simulación y no repudio.', camposCount: 5 },
+      { numero: '3.0', titulo: 'DICTAMEN DE CONFORMIDAD DE SOFTWARE', descripcion: 'Correspondencia fidedigna entre interfaz visual y registros crudos.', camposCount: 1 },
+      { numero: '4.0', titulo: 'CIERRE LEGAL: FIRMAS COLEGIADAS DE DOS PERITOS', descripcion: 'Firmas y huellas dactilares bilaterales.', camposCount: 4 },
+    ],
+  },
+
+  'acta-dictamen': {
+    id: 'acta-dictamen',
+    codigo: 'FO-SHA256-DIC-000',
+    codigoFolio: 'FO-F4-08',
+    slug: 'acta-dictamen',
+    faseIso: 'F4',
+    nombreOficial: 'DICTAMEN PERICIAL OFICIAL DE INFORMÁTICA FORENSE',
+    subtitulo: 'INFORME CIENTÍFICO MOTIVADO COLEGIADO POR DOS PERITOS PARA TRIBUNALES',
+    etapaLegal: 'FASE F4: Informe Pericial y Dictamen',
+    normativas: ['COPP Arts. 187, 223–225', 'LMDFE Arts. 4 y 7', 'CENIF G.O. 39.847', 'ISO/IEC 27037 / 27042', 'UNE 197010'],
+    archivosRag: [
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+      `${BASE}/Creación del CENIF (2012). Centro Nacional de Informática Forense. Publicado en Gaceta Oficial N° 39.847 de fecha 20 de enero..md`,
+      `${BASE}/borrador para lista de leyes-bibliografias.md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'MARCO NORMATIVO Y FUNDAMENTACIÓN JURÍDICA', descripcion: 'COPP, LMDFE, CENIF, NIST e ISO/IEC.', camposCount: 4 },
+      { numero: '2.0', titulo: 'INDIVIDUALIZACIÓN DE LA EVIDENCIA CONSIGNADA Y HASH SHA-256', descripcion: 'Dispositivo/medio, PRCC, precinto, artefactos y verificación MATCH.', camposCount: 5 },
+      { numero: '3.0', titulo: 'METODOLOGÍA FORENSE Y PROCEDIMIENTO TÉCNICO APLICADO', descripcion: 'Adquisición verificada y análisis sobre copia de trabajo.', camposCount: 2 },
+      { numero: '4.0', titulo: 'HALLAZGOS PERICIALES', descripcion: 'Resultados técnicos sobre mensajería, imágenes, audios y medios.', camposCount: 2 },
+      { numero: '5.0', titulo: 'DICTAMEN MOTIVADO Y JURAMENTO DE LEY', descripcion: 'Conclusiones unánimes y firma colegiada de dos peritos (COPP Art. 223).', camposCount: 4 },
     ],
   },
 
   'dictamen-imagenes': {
     id: 'dictamen-imagenes',
     codigo: 'FO-SHA256-DIC-001',
-    nombreOficial: 'DICTAMEN PERICIAL INFORMÁTICO FORENSE — ANÁLISIS DE IMÁGENES',
-    subtitulo: 'INFORME TÉCNICO PERICIAL DE AUTENTICIDAD, ELA MAP, COPY-MOVE Y METADATOS EXIF',
-    etapaLegal: 'ETAPA 3: Análisis Técnico & Certificación',
-    normativas: ['Daubert Standard (1993)', 'FRE Rule 702', 'ISO/IEC 27042:2015', 'COPP Arts. 187, 223, 225'],
+    codigoFolio: 'FO-F4-09',
+    slug: 'dictamen-imagenes',
+    faseIso: 'F4',
+    nombreOficial: 'DICTAMEN PERICIAL ESPECIALIZADO EN ANÁLISIS DE IMÁGENES',
+    subtitulo: 'ANÁLISIS DE METADATOS EXIF, ERROR LEVEL ANALYSIS (ELA) E INTEGRIDAD DE PÍXELES',
+    etapaLegal: 'FASE F4: Informe Pericial y Dictamen',
+    normativas: ['COPP Arts. 223–225', 'LMDFE Arts. 4 y 7', 'ISO/IEC 27042'],
+    archivosRag: [
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+    ],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'MARCO NORMATIVO Y PREÁMBULO INSTITUCIONAL',
-        descripcion: 'Bases legales, justificación técnico-científica y acreditación.',
-        camposCount: 6,
-      },
-      {
-        numero: '2.0',
-        titulo: 'ACREDITACIÓN DE PERITOS Y OBJETO PERICIAL',
-        descripcion: 'Cualificación profesional de los peritos y preguntas formuladas.',
-        camposCount: 5,
-      },
-      {
-        numero: '3.0',
-        titulo: 'METODOLOGÍA CIENTÍFICA (ISO/IEC 27042:2015)',
-        descripcion: 'Fases de procesamiento, herramientas PhotoHolmes y algoritmos.',
-        camposCount: 6,
-      },
-      {
-        numero: '4.0',
-        titulo: 'ANÁLISIS ELA (ERROR LEVEL ANALYSIS) Y HALLAZGOS',
-        descripcion: 'Evaluación de niveles de compresión y zonas de manipulación.',
-        camposCount: 4,
-      },
-      {
-        numero: '5.0',
-        titulo: 'DETECCIÓN COPY-MOVE Y ANÁLISIS ESTRUCTURAL',
-        descripcion: 'Identificación de duplicación de bloques de píxeles.',
-        camposCount: 4,
-      },
-      {
-        numero: '6.0',
-        titulo: 'ANÁLISIS JPEG GHOSTS Y METADATOS EXIF',
-        descripcion: 'Detección de re-salvados y consistencia de encabezados EXIF.',
-        camposCount: 5,
-      },
-      {
-        numero: '7.0',
-        titulo: 'CONCLUSIONES TÉCNICO-PERICIALES Y HASHES SHA-256',
-        descripcion: 'Dictamen de autenticidad final e inmutabilidad criptográfica.',
-        camposCount: 4,
-      },
-      {
-        numero: '8.0',
-        titulo: 'ANEXO NORMATIVO — TRAZABILIDAD SHA-256 E INTEGRIDAD CRIPTOGRÁFICA',
-        descripcion: 'Hash SHA-256 del archivo original, copia de trabajo, fecha de cálculo y herramienta de verificación.',
-        camposCount: 4,
-      },
+      { numero: '1.0', titulo: 'MOTIVO Y DESCRIPCIÓN DEL OBJETO PERITADO (COPP ART. 225.1)', descripcion: 'Archivo de imagen/captura, hash SHA-256 y resolución.', camposCount: 3 },
+      { numero: '2.0', titulo: 'OPERACIONES TÉCNICAS: ANÁLISIS EXIF Y METADATOS (COPP ART. 225.2)', descripcion: 'Sensor de captura, fecha original, GPS y ausencia de software de edición.', camposCount: 4 },
+      { numero: '3.0', titulo: 'OPERACIONES TÉCNICAS: ANÁLISIS ELA Y PÍXELES', descripcion: 'Uniformidad de compresión y descarte de fotomontaje.', camposCount: 2 },
+      { numero: '4.0', titulo: 'CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225.3)', descripcion: 'Dictamen colegiado sobre autenticidad e integridad.', camposCount: 4 },
     ],
   },
 
   'dictamen-audios': {
     id: 'dictamen-audios',
     codigo: 'FO-SHA256-DIC-002',
-    nombreOficial: 'DICTAMEN PERICIAL INFORMÁTICO FORENSE — ANÁLISIS DE AUDIOS / WHATSAPP',
-    subtitulo: 'INFORME DE AUTENTICIDAD DE NOTAS DE VOZ, DECODIFICACIÓN OPUS, ESPECTROGRAMA Y CONTINUIDAD',
-    etapaLegal: 'ETAPA 3: Análisis Técnico & Certificación',
-    normativas: ['COPP Arts. 187, 223', 'ISO/IEC 27042:2015', 'PyOgg Engine', 'MUCC-2017 Audio'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'MARCO NORMATIVO Y REQUISITOS PROBATORIOS',
-        descripcion: 'Requisitos de admisibilidad de notas de voz en tribunales.',
-        camposCount: 5,
-      },
-      {
-        numero: '2.0',
-        titulo: 'ACREDITACIÓN PERICIAL E IDENTIFICACIÓN DE AUDIOS',
-        descripcion: 'Ficheros analizados, contenedor Opus/Ogg y hashes de origen.',
-        camposCount: 6,
-      },
-      {
-        numero: '3.0',
-        titulo: 'METODOLOGÍA DE DECODIFICACIÓN OPUS Y METADATOS',
-        descripcion: 'Estructura de paquetes OggOpus, cabeceras y muestra de audio.',
-        camposCount: 5,
-      },
-      {
-        numero: '4.0',
-        titulo: 'ESPECTROGRAMA Y ANÁLISIS DE FRECUENCIA AUDIO',
-        descripcion: 'Representación tiempo-frecuencia y detección de ruidos de fondo.',
-        camposCount: 4,
-      },
-      {
-        numero: '5.0',
-        titulo: 'CÁLCULO DE PITCH, FORMANTES Y CONTINUIDAD',
-        descripcion: 'Consistencia acústica de la voz y ausencia de inserciones.',
-        camposCount: 4,
-      },
-      {
-        numero: '6.0',
-        titulo: 'VERIFICACIÓN DE EDICIÓN Y CORTE DE ONDA',
-        descripcion: 'Análisis de fases de señal y posibles ediciones digitales.',
-        camposCount: 4,
-      },
-      {
-        numero: '7.0',
-        titulo: 'CONCLUSIONES PERICIALES Y REGISTRO DE CADENA',
-        descripcion: 'Veredicto pericial de no manipulación acústica.',
-        camposCount: 4,
-      },
-      {
-        numero: '8.0',
-        titulo: 'ANEXO DE TRAZABILIDAD SHA-256',
-        descripcion: 'Log criptográfico de preservación de ficheros de audio.',
-        camposCount: 3,
-      },
+    codigoFolio: 'FO-F4-10',
+    slug: 'dictamen-audios',
+    faseIso: 'F4',
+    nombreOficial: 'DICTAMEN PERICIAL DE AUTENTICIDAD DE AUDIOS DIGITALES',
+    subtitulo: 'ESPECTROGRAMA FFT, FORMANTES VOCÁLICOS, CONTINUIDAD OPUS Y REPRODUCIBILIDAD',
+    etapaLegal: 'FASE F4: Informe Pericial y Dictamen',
+    normativas: ['COPP Arts. 223–225', 'LMDFE Arts. 4 y 7', 'ISO/IEC 27042', 'CENIF G.O. 39.847'],
+    archivosRag: [
+      `${BASE}/ISO-IEC 27042 2015.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+      `${BASE}/Creación del CENIF (2012). Centro Nacional de Informática Forense. Publicado en Gaceta Oficial N° 39.847 de fecha 20 de enero..md`,
     ],
-  },
-
-  'acta-sanitizacion': {
-    id: 'acta-sanitizacion',
-    codigo: 'FO-SHA256-ACT-005',
-    nombreOficial: 'ACTA DE SANITIZACIÓN Y DESTRUCCIÓN SEGURA DE COPIAS',
-    subtitulo: 'CERTIFICADO DE DESTRUCCIÓN O BORRADO SEGURO DE COPIAS DE TRABAJO (NIST SP 800-88)',
-    etapaLegal: 'ETAPA 4: Cierre & Devolución',
-    normativas: ['NIST SP 800-88 Rev 1', 'ISO/IEC 27001 A.8.10', 'MUCC-2017 Cierre'],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'EVIDENCIA Y MEDIOS DIGITALES A SANITIZAR',
-        descripcion: 'Imágenes forenses de trabajo, datos temporales y réplicas.',
-        camposCount: 4,
-      },
-      {
-        numero: '2.0',
-        titulo: 'METODOLOGÍA DE BORRADO SEGURO (OVERWRITE / CRYPTO-ERASE)',
-        descripcion: 'Algoritmo aplicado (DoD 5220.22-M / NIST Clear/Purge).',
-        camposCount: 5,
-      },
-      {
-        numero: '3.0',
-        titulo: 'REGISTRO DE SOFTWARE Y LOGS DE SANITIZACIÓN',
-        descripcion: 'Herramienta utilizada, pasadas ejecutadas y verificación de sectores.',
-        camposCount: 4,
-      },
-      {
-        numero: '4.0',
-        titulo: 'VERIFICACIÓN Y CERTIFICADO DE ZEROIZATION',
-        descripcion: 'Comprobación de imposibilidad de recuperación de datos.',
-        camposCount: 3,
-      },
-      {
-        numero: '5.0',
-        titulo: 'FIRMAS Y CONSTANCIA DE SANITIZACIÓN',
-        descripcion: 'Conformidad del perito de laboratorio y responsable.',
-        camposCount: 3,
-      },
+      { numero: '1.0', titulo: 'MOTIVO Y ESPECIFICACIÓN TÉCNICA DEL OBJETO PERITADO (COPP ART. 225.1)', descripcion: 'Archivo de audio, hash SHA-256 y formato/frecuencia.', camposCount: 3 },
+      { numero: '2.0', titulo: 'OPERACIONES TÉCNICAS: ESPECTROGRAMA FFT Y FORMANTES (COPP ART. 225.2)', descripcion: 'Formantes F1–F3, piso de ruido, traza ENF y análisis vocal.', camposCount: 4 },
+      { numero: '3.0', titulo: 'RESULTADOS PARTICULARES Y REPRODUCIBILIDAD CIENTÍFICA', descripcion: 'Coherencia de la señal acústica sin cortes ni clonación sintética.', camposCount: 2 },
+      { numero: '4.0', titulo: 'CONCLUSIONES Y DICTAMEN MOTIVADO (COPP ART. 225.3)', descripcion: 'Dictamen colegiado por dos peritos.', camposCount: 4 },
     ],
   },
 
   'entrega-resultados': {
     id: 'entrega-resultados',
     codigo: 'FO-SHA256-ACT-006',
-    nombreOficial: 'ACTA DE ENTREGA DE RESULTADOS Y DEVOLUCIÓN DE EVIDENCIA',
-    subtitulo: 'DEVOLUCIÓN FORMAL DE EVIDENCIA FÍSICA Y ENTREGA DEL INFORME PERICIAL',
-    etapaLegal: 'ETAPA 4: Cierre & Devolución',
-    normativas: ['MUCC-2017 Cierre', 'COPP Art. 187', 'ISO/IEC 27037 Sec. 8'],
+    codigoFolio: 'FO-F5-11',
+    slug: 'acta-entrega-resultados',
+    faseIso: 'F5',
+    nombreOficial: 'ACTA DE DISPOSICIÓN FINAL Y DEVOLUCIÓN DE EVIDENCIAS',
+    subtitulo: 'ENTREGA DE DICTAMEN OFICIAL, COPIA MASTER Y DEVOLUCIÓN DEL MEDIO CONSIGNADO',
+    etapaLegal: 'FASE F5: Entrega, Disposición y Sanitización',
+    normativas: ['MUCC-2017 Disposición Final', 'COPP Art. 187', 'ISO/IEC 27037'],
+    archivosRag: [
+      `${BASE}/MANUAL_ÚNICO_DE_CADENA DE_CUSTODIA_DE_EVIDENCIAS_(VERSIÓN_FINAL_29SEP17).md`,
+      `${BASE}/ISO IEC 27037-2012.md`,
+    ],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'IDENTIFICACIÓN DE LA ENTREGA, N° PRCC Y RECEPCIÓN DE INFORMES',
-        descripcion: 'N° Expediente, N° PRCC de cierre, datos del receptor, fecha/hora y sede de entrega.',
-        camposCount: 6,
-      },
-      {
-        numero: '2.0',
-        titulo: 'INVENTARIO DE EVIDENCIA FÍSICA Y DIGITAL DEVUELTA',
-        descripcion: 'Verificación física de dispositivos, pendrives y sobres sellados.',
-        camposCount: 5,
-      },
-      {
-        numero: '3.0',
-        titulo: 'RE-PRECINTADO Y VERIFICACIÓN DE ESTADO FINAL',
-        descripcion: 'N° de nuevo precinto final de resguardo corporativo.',
-        camposCount: 4,
-      },
-      {
-        numero: '4.0',
-        titulo: 'CONSTANCIA DE CONFORMIDAD DEL SOLICITANTE',
-        descripcion: 'Declaración de recepción a satisfacción completa.',
-        camposCount: 3,
-      },
-      {
-        numero: '5.0',
-        titulo: 'FIRMAS Y REGISTRO DACTILAR DE RECEPCIÓN',
-        descripcion: 'Firma del receptor, perito actuante y huellas dactilares.',
-        camposCount: 3,
-      },
+      { numero: '1.0', titulo: 'DATOS DEL ACTO DE DISPOSICIÓN FINAL Y DESTINO LEGAL', descripcion: '4 modalidades reglamentarias MUCC-2017 de disposición final.', camposCount: 4 },
+      { numero: '2.0', titulo: 'IDENTIFICACIÓN DEL CONSIGNANTE RECEPTOR DE EVIDENCIAS', descripcion: 'Nombre, C.I. y carácter jurídico del receptor.', camposCount: 3 },
+      { numero: '3.0', titulo: 'RELACIÓN DE DOCUMENTOS, DISPOSITIVOS Y COPIAS MASTER ENTREGADAS', descripcion: 'Dictamen, copia digital sellada, dispositivo devuelto y hash de cierre.', camposCount: 4 },
+      { numero: '4.0', titulo: 'DECLARACIÓN DE RECEPCIÓN Y CONFORMIDAD', descripcion: 'Cierre de cadena de custodia sin observaciones.', camposCount: 1 },
+      { numero: '5.0', titulo: 'CIERRE LEGAL: FIRMAS Y HUELLAS DACTILARES', descripcion: 'Suscripción bilateral de entrega y recepción conforme.', camposCount: 4 },
+    ],
+  },
+
+  'acta-sanitizacion': {
+    id: 'acta-sanitizacion',
+    codigo: 'FO-SHA256-ACT-005',
+    codigoFolio: 'FO-F5-12',
+    slug: 'acta-sanitizacion',
+    faseIso: 'F5',
+    nombreOficial: 'ACTA DE SANITIZACIÓN CRIPTOGRÁFICA Y BORRADO SEGURO',
+    subtitulo: 'PURGA IRREVERSIBLE DE COPIAS DE TRABAJO TEMPORALES EN LABORATORIO',
+    etapaLegal: 'FASE F5: Entrega, Disposición y Sanitización',
+    normativas: ['ISO/IEC 27001 / 27002 A.8.10', 'LEDCI Arts. 20 y 22', 'CRBV Art. 60'],
+    archivosRag: [
+      `${BASE}/ISO-27001_2022_NOEDER.md`,
+      `${BASE}/ISO 27002_2022 ES.md`,
+      `${BASE}/Ley Especial de Delitos informáticos (2001). Publicado en Gaceta Oficial Nº 37.313 .md`,
+    ],
+    sections: [
+      { numero: '1.0', titulo: 'VOLÚMENES TEMPORALES Y COPIAS LÓGICAS DE TRABAJO A SANITIZAR', descripcion: 'Volumen, serial de partición y hash SHA-256 previo.', camposCount: 3 },
+      { numero: '2.0', titulo: 'PROTOCOLO DE DESTRUCCIÓN LÓGICA', descripcion: 'Nivel de purga, sobrescritura, utilidad empleada y verificación de no remanencia.', camposCount: 4 },
+      { numero: '3.0', titulo: 'AUDITORÍA DE NO RETENCIÓN Y DEBER DE CONFIDENCIALIDAD', descripcion: 'Cumplimiento de LEDCI Arts. 20 y 22.', camposCount: 1 },
+      { numero: '4.0', titulo: 'FE DE JURAMENTO Y CIERRE COLEGIADO', descripcion: 'Firmas de perito responsable y auditor de cumplimiento.', camposCount: 4 },
     ],
   },
 
   'acta-auditoria-timeline': {
     id: 'acta-auditoria-timeline',
     codigo: 'FO-SHA256-ACT-007',
-    nombreOficial: 'AUDIT LOG & TIMELINE COMPLIANCE RECORD',
-    subtitulo: 'HOJA DE AUDITORÍA INMUTABLE SHA-256 Y CRONOLOGÍA DE CUMPLIMIENTO',
-    etapaLegal: 'ETAPA 4: Cierre & Devolución',
-    normativas: ['ISO/IEC 27037', 'RFC 3161 Timestamping', 'Audit Chain SHA-256'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'RESUMEN DE TRAZABILIDAD Y HASH CHAIN SHA-256',
-        descripcion: 'Bloques criptográficos encadenados de cada actuación.',
-        camposCount: 5,
-      },
-      {
-        numero: '2.0',
-        titulo: 'CRONOLOGÍA DE EVENTOS Y OPERACIONES PERICIALES',
-        descripcion: 'Línea de tiempo de hitos desde la recepción hasta el informe.',
-        camposCount: 6,
-      },
-      {
-        numero: '3.0',
-        titulo: 'VERIFICACIÓN INMUTABLE DE LOGS DE SISTEMA',
-        descripcion: 'Verificación de integridad contra la base de datos inmutable.',
-        camposCount: 4,
-      },
-      {
-        numero: '4.0',
-        titulo: 'ESTADO DE CUMPLIMIENTO REGULATORIO Y NORMATIVO',
-        descripcion: 'Checklist de normas aplicadas del marco legal-forense.',
-        camposCount: 5,
-      },
-      {
-        numero: '5.0',
-        titulo: 'VALIDACIÓN Y SELLO DE INTEGRIDAD DIGITAL',
-        descripcion: 'Sello de tiempo criptográfico y firma del Oficial de Cumplimiento.',
-        camposCount: 3,
-      },
+    codigoFolio: 'FO-F5-13',
+    slug: 'acta-auditoria-timeline',
+    faseIso: 'F5',
+    nombreOficial: 'ACTA DE AUDITORÍA Y TRAZABILIDAD CRIPTOGRÁFICA',
+    subtitulo: 'HISTORIAL INMUTABLE DE EVENTOS CON CADENA DE HASHES CONCATENADOS SHA-256',
+    etapaLegal: 'FASE F5: Entrega, Disposición y Sanitización',
+    normativas: ['ISO/IEC 27037', 'ISO/IEC 27002 A.8.15', 'LMDFE Arts. 4, 7 y 16', 'UNE 71505'],
+    archivosRag: [
+      `${BASE}/ISO IEC 27037-2012.md`,
+      `${BASE}/ISO 27002_2022 ES.md`,
+      `${BASE}/Ley-sobre-Mensajes-de-Datos-y-Firmas-Electronicas.md`,
+      `${BASE}/Normativas SUSCERTE Forense Digital y Firma Electronica.md`,
     ],
-  },
-  'planilla-evaluacion-ux': {
-    id: 'planilla-evaluacion-ux',
-    codigo: 'FO-SHA256-EVA-001',
-    nombreOficial: 'PLANILLA DE EVALUACIÓN Y AUDITORÍA DE EXPERIENCIA DE USUARIO (UX/UI FORENSE)',
-    subtitulo: 'INSTRUMENTO PERICIAL DE COMPROBACIÓN DE USABILIDAD (1-5) DE PLANILLAS LOCALES PARA PERITOS, ABOGADOS LITIGANTES Y JUECES',
-    etapaLegal: 'ETAPA 4: Auditoría & Evaluación UX/UI',
-    normativas: ['ISO/IEC 27037', 'USWDS 3.0', 'DC3 Cyber Forensics', 'NIST SP 800-86'],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'OBJETIVO Y COBERTURA DE EVALUACIÓN DE PLANILLAS LOCALES',
-        descripcion: 'Definición del ámbito de comprobación de usabilidad (Likert 1-5) en Peritos, Abogados y Jueces.',
-        camposCount: 4,
-      },
-      {
-        numero: '2.0',
-        titulo: 'MATRIZ DE CUESTIONARIO Y VALORACIÓN UX/UI DE PLANILLAS LOCALES',
-        descripcion: '7 Criterios probatorios de amigabilidad, legibilidad, velocidad de llenado y admisibilidad en juicio.',
-        camposCount: 7,
-      },
-      {
-        numero: '3.0',
-        titulo: 'CUESTIONARIO DIAGNÓSTICO CUALITATIVO DE EXPERIENCIA EN TRIBUNALES',
-        descripcion: 'Preguntas diagnósticas escritas sobre novedad procesal, amigabilidad UI y celeridad procesal.',
-        camposCount: 3,
-      },
-      {
-        numero: '4.0',
-        titulo: 'CERTIFICACIÓN DE EVALUACIÓN UX, DACTILOSCOPÍA Y FIRMAS',
-        descripcion: 'Firmas bilaterales, recuadros dactiloscópicos (pulgares) y sello inmutable SHA-256.',
-        camposCount: 4,
-      },
-    ],
-  },
-  'informe-audio-sonic': {
-    id: 'informe-audio-sonic',
-    codigo: 'FO-SHA256-AUD-002',
-    nombreOficial: 'PLANILLA DE INFORME FORENSE DE AUDIO (SONIC VISUALISER)',
-    subtitulo: 'ANÁLISIS ESPECTROGRÁFICO, FORMA DE ONDA, FRECUENCIA FUNDAMENTAL (F0) Y EVALUACIÓN DAUBERT / FRE 702 / SWGDE',
-    etapaLegal: 'ETAPA 3: Análisis Técnico & Certificación Pericial',
-    normativas: ['FRE 702 / Daubert Standard', 'SWGDE Audio Guidelines', 'MUCC-2017 § 6 / COPP Art. 187', 'ISO/IEC 27037 / 27042'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'ENCABEZADO DEL CASO & CADENA DE CUSTODIA (SHA-256 GÉNESIS)',
-        descripcion: 'Expediente, tribunal/jurisdicción, perito líder, custodios y hash de integridad original.',
-        camposCount: 6,
-      },
-      {
-        numero: '2.0',
-        titulo: 'METADATOS TÉCNICOS Y REGISTRO DE PROCESOS EN SONIC VISUALISER',
-        descripcion: 'Parámetros FFT, forma de onda, detección de picos, análisis F0, capturas comparativas antes/después y observaciones técnicas objetivas.',
-        camposCount: 8,
-      },
-      {
-        numero: '3.0',
-        titulo: 'DICTAMEN INDIVIDUALIZADO POR AUDIO Y FUNDAMENTO METODOLÓGICO',
-        descripcion: 'Conclusión pericial individualizada (Auténtico / Sin evidencia de alteración / Inconcluso / Indicios de manipulación), SWGDE y limitaciones.',
-        camposCount: 4,
-      },
-      {
-        numero: '4.0',
-        titulo: 'IDENTIFICACIÓN TÉCNICA DEL SOFTWARE INSTRUMENTAL (SONIC VISUALISER)',
-        descripcion: 'Centre for Digital Music QMUL, licencia GPL-2.0-or-later, versión auditable y descargo legal de metodología Daubert.',
-        camposCount: 4,
-      },
-      {
-        numero: '5.0',
-        titulo: 'DECLARACIÓN JURADA DEL PERITO, TASA DE ERROR Y CIERRE DACTILOSCÓPICO',
-        descripcion: 'Declaración jurada de reproducibilidad técnica, tasa de error conocida del método, firmas bilaterales y recuadros dactilares.',
-        camposCount: 4,
-      },
-    ],
-  },
-  'informe_audio_sonic': {
-    id: 'informe-audio-sonic',
-    codigo: 'FO-SHA256-AUD-002',
-    nombreOficial: 'PLANILLA DE INFORME FORENSE DE AUDIO (SONIC VISUALISER)',
-    subtitulo: 'ANÁLISIS ESPECTROGRÁFICO, FORMA DE ONDA, FRECUENCIA FUNDAMENTAL (F0) Y EVALUACIÓN DAUBERT / FRE 702 / SWGDE',
-    etapaLegal: 'ETAPA 3: Análisis Técnico & Certificación Pericial',
-    normativas: ['FRE 702 / Daubert Standard', 'SWGDE Audio Guidelines', 'MUCC-2017 § 6 / COPP Art. 187', 'ISO/IEC 27037 / 27042'],
-    sections: [
-      {
-        numero: '1.0',
-        titulo: 'ENCABEZADO DEL CASO & CADENA DE CUSTODIA (SHA-256 GÉNESIS)',
-        descripcion: 'Expediente, tribunal/jurisdicción, perito líder, custodios y hash de integridad original.',
-        camposCount: 6,
-      },
-      {
-        numero: '2.0',
-        titulo: 'METADATOS TÉCNICOS Y REGISTRO DE PROCESOS EN SONIC VISUALISER',
-        descripcion: 'Parámetros FFT, forma de onda, detección de picos, análisis F0, capturas comparativas antes/después y observaciones técnicas objetivas.',
-        camposCount: 8,
-      },
-      {
-        numero: '3.0',
-        titulo: 'DICTAMEN INDIVIDUALIZADO POR AUDIO Y FUNDAMENTO METODOLÓGICO',
-        descripcion: 'Conclusión pericial individualizada (Auténtico / Sin evidencia de alteración / Inconcluso / Indicios de manipulación), SWGDE y limitaciones.',
-        camposCount: 4,
-      },
-      {
-        numero: '4.0',
-        titulo: 'IDENTIFICACIÓN TÉCNICA DEL SOFTWARE INSTRUMENTAL (SONIC VISUALISER)',
-        descripcion: 'Centre for Digital Music QMUL, licencia GPL-2.0-or-later, versión auditable y descargo legal de metodología Daubert.',
-        camposCount: 4,
-      },
-      {
-        numero: '5.0',
-        titulo: 'DECLARACIÓN JURADA DEL PERITO, TASA DE ERROR Y CIERRE DACTILOSCÓPICO',
-        descripcion: 'Declaración jurada de reproducibilidad técnica, tasa de error conocida del método, firmas bilaterales y recuadros dactilares.',
-        camposCount: 4,
-      },
+      { numero: '1.0', titulo: 'ESTADO DE INTEGRIDAD DE LA CADENA DE BLOQUES FORENSE', descripcion: 'Expediente asignado, total de fases y verificación Hash-Chain.', camposCount: 3 },
+      { numero: '2.0', titulo: 'REGISTRO CRONOLÓGICO DE EVENTOS Y CADENA DE HASHES SHA-256', descripcion: 'Secuencia cronológica F0–F5 con hashes sellados.', camposCount: 6 },
+      { numero: '3.0', titulo: 'CERTIFICACIÓN DE NO REPUDIO Y CONTINUIDAD CRIPTOGRÁFICA', descripcion: 'Garantía matemática de inmutabilidad (RFC 8785 · LMDFE Art. 7).', camposCount: 1 },
+      { numero: '4.0', titulo: 'FE PÚBLICA DE AUDITORÍA Y CIERRE COLEGIADO', descripcion: 'Firmas de perito auditor y oficial de cumplimiento.', camposCount: 4 },
     ],
   },
 };
 
-/**
- * Obtiene la definición de registro para una planilla por su ID o clave corta.
- */
 export function getPlanillaRegistry(id: string): PlanillaRegistryDef {
   const normalizedId = id.toLowerCase().trim();
   if (PLANILLAS_REGISTRY[normalizedId]) {
     return PLANILLAS_REGISTRY[normalizedId];
   }
-
+  if (normalizedId === 'planilla-prcc') {
+    return PLANILLAS_REGISTRY['prcc'];
+  }
+  if (normalizedId === 'acta-entrega-resultados') {
+    return PLANILLAS_REGISTRY['entrega-resultados'];
+  }
   if (normalizedId.includes('sonic') || (normalizedId.includes('audio') && normalizedId.includes('informe'))) {
     return PLANILLAS_REGISTRY['informe-audio-sonic'];
   }
-
   if (normalizedId.includes('evaluacion') || normalizedId.includes('ux')) {
     return PLANILLAS_REGISTRY['planilla-evaluacion-ux'];
   }
-
-  // Búsqueda aproximada si el id viene con variaciones (ej. 'dictamen-imagenes' vs 'dictamen')
   if (normalizedId.includes('dictamen') && normalizedId.includes('audio')) {
     return PLANILLAS_REGISTRY['dictamen-audios'];
+  }
+  if (normalizedId.includes('dictamen') && normalizedId.includes('imagen')) {
+    return PLANILLAS_REGISTRY['dictamen-imagenes'];
   }
   if (normalizedId.includes('dictamen')) {
     return PLANILLAS_REGISTRY['dictamen-imagenes'];
   }
 
-  // Fallback genérico si no existe
   return {
     id: normalizedId,
     codigo: 'FO-SHA256-GEN-000',
+    codigoFolio: 'FO-GEN-00',
+    slug: normalizedId,
+    faseIso: 'F0',
     nombreOficial: `PLANILLA FORENSE — ${normalizedId.toUpperCase()}`,
-    subtitulo: 'DOCUMENTO PROBATORIO OFICIAL EN LABORATORIO PRIVADO SHA256.US',
-    etapaLegal: 'ETAPA DE CUSTODIA & COMPLIANCE',
-    normativas: ['MUCC-2017', 'ISO/IEC 27037', 'COPP Art. 187'],
+    subtitulo: 'DOCUMENTO PROBATORIO OFICIAL EN LABORATORIO SHA256.US',
+    etapaLegal: 'CADENA DE CUSTODIA & COMPLIANCE',
+    normativas: ['MUCC-2017', 'ISO/IEC 27037:2012', 'COPP Art. 187'],
+    archivosRag: [`${BASE}/ISO IEC 27037-2012.md`],
     sections: [
-      {
-        numero: '1.0',
-        titulo: 'DATOS GENERALES DEL CASO Y ACTUACIÓN',
-        descripcion: 'Identificación del expediente y fecha de actuación.',
-      },
-      {
-        numero: '2.0',
-        titulo: 'DESCRIPCIÓN DE EVIDENCIA Y REGISTRO TÉCNICO',
-        descripcion: 'Propiedades del elemento bajo peritaje.',
-      },
-      {
-        numero: '3.0',
-        titulo: 'REGISTRO DE CUSTODIA Y CERTIFICACIÓN',
-        descripcion: 'Firmas de responsabilidad e inmutabilidad SHA-256.',
-      },
+      { numero: '1.0', titulo: 'DATOS GENERALES DEL CASO Y ACTUACIÓN', descripcion: 'Identificación del expediente y fecha de actuación.' },
+      { numero: '2.0', titulo: 'DESCRIPCIÓN DE EVIDENCIA Y REGISTRO TÉCNICO', descripcion: 'Propiedades del elemento bajo peritaje.' },
+      { numero: '3.0', titulo: 'REGISTRO DE CUSTODIA Y CERTIFICACIÓN', descripcion: 'Firmas de responsabilidad e inmutabilidad SHA-256.' },
     ],
   };
 }
